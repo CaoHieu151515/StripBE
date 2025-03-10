@@ -20,6 +20,8 @@ public interface UsermanageMapper {
     @Mapping(source = "userDetail.phone", target = "phoneNumber")
     UsermanageDTO toDto(User user, UserDetail userDetail);
 
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.login", target = "username")
     @Mapping(source = "userDetail.userimage", target = "userImage")
     @Mapping(source = "driver.driverStatus", target = "driverStatus")
     @Mapping(source = "user.firstName", target = "firstName")

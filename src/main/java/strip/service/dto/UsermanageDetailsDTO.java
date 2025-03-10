@@ -8,6 +8,8 @@ import strip.domain.UserDetail;
 
 public class UsermanageDetailsDTO implements Serializable {
 
+    private Long userId;
+    private String username;
     private byte[] userImage;
     private String driverStatus;
     private String firstName;
@@ -24,6 +26,8 @@ public class UsermanageDetailsDTO implements Serializable {
 
     public UsermanageDetailsDTO(User user, UserDetail userDetail, Driver driver) {
         if (user != null) {
+            this.userId = user.getId();
+            this.username = user.getLogin();
             this.firstName = user.getFirstName();
             this.lastName = user.getLastName();
             this.email = user.getEmail();
@@ -45,6 +49,23 @@ public class UsermanageDetailsDTO implements Serializable {
     }
 
     // Getters và Setters
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public byte[] getUserImage() {
         return userImage;
     }
