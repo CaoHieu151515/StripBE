@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { IUser } from 'app/shared/model/user.model';
 
 export interface IUserDetail {
@@ -7,6 +8,8 @@ export interface IUserDetail {
   userimage?: string | null;
   phone?: string | null;
   gender?: string | null;
+  address?: string | null;
+  dob?: dayjs.Dayjs | null;
   user?: IUser | null;
 }
 

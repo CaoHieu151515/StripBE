@@ -2,6 +2,7 @@ package strip.domain;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -40,6 +41,12 @@ public class UserDetail implements Serializable {
 
     @Column(name = "gender")
     private String gender;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "dob")
+    private Instant dob;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
@@ -125,6 +132,32 @@ public class UserDetail implements Serializable {
         this.gender = gender;
     }
 
+    public String getAddress() {
+        return this.address;
+    }
+
+    public UserDetail address(String address) {
+        this.setAddress(address);
+        return this;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Instant getDob() {
+        return this.dob;
+    }
+
+    public UserDetail dob(Instant dob) {
+        this.setDob(dob);
+        return this;
+    }
+
+    public void setDob(Instant dob) {
+        this.dob = dob;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -167,6 +200,8 @@ public class UserDetail implements Serializable {
             ", userimageContentType='" + getUserimageContentType() + "'" +
             ", phone='" + getPhone() + "'" +
             ", gender='" + getGender() + "'" +
+            ", address='" + getAddress() + "'" +
+            ", dob='" + getDob() + "'" +
             "}";
     }
 }

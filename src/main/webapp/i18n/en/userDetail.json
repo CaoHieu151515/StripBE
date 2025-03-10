@@ -22,6 +22,8 @@
       "userimage": "Userimage",
       "phone": "Phone",
       "gender": "Gender",
+      "address": "Address",
+      "dob": "Dob",
       "user": "User"
     }
   }

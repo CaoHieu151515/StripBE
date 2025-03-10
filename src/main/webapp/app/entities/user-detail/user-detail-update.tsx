@@ -52,6 +52,7 @@ export const UserDetailUpdate = () => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
     }
+    values.dob = convertDateTimeToServer(values.dob);
 
     const entity = {
       ...userDetailEntity,
@@ -68,9 +69,12 @@ export const UserDetailUpdate = () => {
 
   const defaultValues = () =>
     isNew
-      ? {}
+      ? {
+          dob: displayDefaultDateTime(),
+        }
       : {
           ...userDetailEntity,
+          dob: convertDateTimeFromServer(userDetailEntity.dob),
           user: userDetailEntity?.user?.id,
         };
 
@@ -126,6 +130,21 @@ export const UserDetailUpdate = () => {
                 name="gender"
                 data-cy="gender"
                 type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.userDetail.address')}
+                id="user-detail-address"
+                name="address"
+                data-cy="address"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.userDetail.dob')}
+                id="user-detail-dob"
+                name="dob"
+                data-cy="dob"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
                 id="user-detail-user"

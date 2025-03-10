@@ -20,6 +20,14 @@
     {
       "fieldName": "gender",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dob",
+      "fieldType": "Instant"
     }
   ],
   "name": "UserDetail",

@@ -14,7 +14,8 @@ public class UserDetailTestSamples {
             .id(1L)
             .appUserDetail(UUID.fromString("23d8dc04-a48b-45d9-a01d-4b728f0ad4aa"))
             .phone("phone1")
-            .gender("gender1");
+            .gender("gender1")
+            .address("address1");
     }
 
     public static UserDetail getUserDetailSample2() {
@@ -22,7 +23,8 @@ public class UserDetailTestSamples {
             .id(2L)
             .appUserDetail(UUID.fromString("ad79f240-3727-46c3-b89f-2cf6ebd74367"))
             .phone("phone2")
-            .gender("gender2");
+            .gender("gender2")
+            .address("address2");
     }
 
     public static UserDetail getUserDetailRandomSampleGenerator() {
@@ -30,6 +32,7 @@ public class UserDetailTestSamples {
             .id(longCount.incrementAndGet())
             .appUserDetail(UUID.randomUUID())
             .phone(UUID.randomUUID().toString())
-            .gender(UUID.randomUUID().toString());
+            .gender(UUID.randomUUID().toString())
+            .address(UUID.randomUUID().toString());
     }
 }

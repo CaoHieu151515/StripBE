@@ -9,6 +9,8 @@ import static strip.web.rest.TestUtil.createUpdateProxyForBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Random;
 import java.util.UUID;
@@ -49,6 +51,12 @@ class UserDetailResourceIT {
     private static final String DEFAULT_GENDER = "AAAAAAAAAA";
     private static final String UPDATED_GENDER = "BBBBBBBBBB";
 
+    private static final String DEFAULT_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_ADDRESS = "BBBBBBBBBB";
+
+    private static final Instant DEFAULT_DOB = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_DOB = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
     private static final String ENTITY_API_URL = "/api/user-details";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -86,7 +94,9 @@ class UserDetailResourceIT {
             .userimage(DEFAULT_USERIMAGE)
             .userimageContentType(DEFAULT_USERIMAGE_CONTENT_TYPE)
             .phone(DEFAULT_PHONE)
-            .gender(DEFAULT_GENDER);
+            .gender(DEFAULT_GENDER)
+            .address(DEFAULT_ADDRESS)
+            .dob(DEFAULT_DOB);
         return userDetail;
     }
 
@@ -102,7 +112,9 @@ class UserDetailResourceIT {
             .userimage(UPDATED_USERIMAGE)
             .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE)
             .phone(UPDATED_PHONE)
-            .gender(UPDATED_GENDER);
+            .gender(UPDATED_GENDER)
+            .address(UPDATED_ADDRESS)
+            .dob(UPDATED_DOB);
         return userDetail;
     }
 
@@ -174,7 +186,9 @@ class UserDetailResourceIT {
             .andExpect(jsonPath("$.[*].userimageContentType").value(hasItem(DEFAULT_USERIMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].userimage").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_USERIMAGE))))
             .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE)))
-            .andExpect(jsonPath("$.[*].gender").value(hasItem(DEFAULT_GENDER)));
+            .andExpect(jsonPath("$.[*].gender").value(hasItem(DEFAULT_GENDER)))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)))
+            .andExpect(jsonPath("$.[*].dob").value(hasItem(DEFAULT_DOB.toString())));
     }
 
     @Test
@@ -193,7 +207,9 @@ class UserDetailResourceIT {
             .andExpect(jsonPath("$.userimageContentType").value(DEFAULT_USERIMAGE_CONTENT_TYPE))
             .andExpect(jsonPath("$.userimage").value(Base64.getEncoder().encodeToString(DEFAULT_USERIMAGE)))
             .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE))
-            .andExpect(jsonPath("$.gender").value(DEFAULT_GENDER));
+            .andExpect(jsonPath("$.gender").value(DEFAULT_GENDER))
+            .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS))
+            .andExpect(jsonPath("$.dob").value(DEFAULT_DOB.toString()));
     }
 
     @Test
@@ -220,7 +236,9 @@ class UserDetailResourceIT {
             .userimage(UPDATED_USERIMAGE)
             .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE)
             .phone(UPDATED_PHONE)
-            .gender(UPDATED_GENDER);
+            .gender(UPDATED_GENDER)
+            .address(UPDATED_ADDRESS)
+            .dob(UPDATED_DOB);
 
         restUserDetailMockMvc
             .perform(
@@ -298,10 +316,7 @@ class UserDetailResourceIT {
         UserDetail partialUpdatedUserDetail = new UserDetail();
         partialUpdatedUserDetail.setId(userDetail.getId());
 
-        partialUpdatedUserDetail
-            .appUserDetail(UPDATED_APP_USER_DETAIL)
-            .userimage(UPDATED_USERIMAGE)
-            .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE);
+        partialUpdatedUserDetail.userimage(UPDATED_USERIMAGE).userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE).dob(UPDATED_DOB);
 
         restUserDetailMockMvc
             .perform(
@@ -337,7 +352,9 @@ class UserDetailResourceIT {
             .userimage(UPDATED_USERIMAGE)
             .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE)
             .phone(UPDATED_PHONE)
-            .gender(UPDATED_GENDER);
+            .gender(UPDATED_GENDER)
+            .address(UPDATED_ADDRESS)
+            .dob(UPDATED_DOB);
 
         restUserDetailMockMvc
             .perform(

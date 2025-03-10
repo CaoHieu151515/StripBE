@@ -29,11 +29,18 @@
             <column name="gender" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="dob" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
             <column name="user_id" type="bigint">
                 <constraints nullable="true" unique="true" uniqueConstraintName="ux_user_detail__user_id" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
+        <dropDefaultValue tableName="user_detail" columnName="dob" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -58,6 +65,8 @@
             <column name="userimage_content_type" type="string"/>
             <column name="phone" type="string"/>
             <column name="gender" type="string"/>
+            <column name="address" type="string"/>
+            <column name="dob" type="date"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

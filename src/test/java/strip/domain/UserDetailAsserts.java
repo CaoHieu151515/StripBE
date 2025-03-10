@@ -53,7 +53,9 @@ public class UserDetailAsserts {
                 e -> assertThat(e.getUserimageContentType()).as("check userimage contenty type").isEqualTo(actual.getUserimageContentType())
             )
             .satisfies(e -> assertThat(e.getPhone()).as("check phone").isEqualTo(actual.getPhone()))
-            .satisfies(e -> assertThat(e.getGender()).as("check gender").isEqualTo(actual.getGender()));
+            .satisfies(e -> assertThat(e.getGender()).as("check gender").isEqualTo(actual.getGender()))
+            .satisfies(e -> assertThat(e.getAddress()).as("check address").isEqualTo(actual.getAddress()))
+            .satisfies(e -> assertThat(e.getDob()).as("check dob").isEqualTo(actual.getDob()));
     }
 
     /**

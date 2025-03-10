@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { openFile, byteSize, Translate, getSortState } from 'react-jhipster';
+import { openFile, byteSize, Translate, TextFormat, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, SORT } from 'app/shared/util/pagination.constants';
 import { overrideSortStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -103,6 +104,13 @@ export const UserDetail = () => {
                   <Translate contentKey="sTripBeApp.userDetail.gender">Gender</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('gender')} />
                 </th>
+                <th className="hand" onClick={sort('address')}>
+                  <Translate contentKey="sTripBeApp.userDetail.address">Address</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('address')} />
+                </th>
+                <th className="hand" onClick={sort('dob')}>
+                  <Translate contentKey="sTripBeApp.userDetail.dob">Dob</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('dob')} />
+                </th>
                 <th>
                   <Translate contentKey="sTripBeApp.userDetail.user">User</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -135,6 +143,8 @@ export const UserDetail = () => {
                   </td>
                   <td>{userDetail.phone}</td>
                   <td>{userDetail.gender}</td>
+                  <td>{userDetail.address}</td>
+                  <td>{userDetail.dob ? <TextFormat type="date" value={userDetail.dob} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{userDetail.user ? userDetail.user.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

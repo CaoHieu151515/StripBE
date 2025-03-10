@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { Translate, openFile, byteSize } from 'react-jhipster';
+import { Translate, openFile, byteSize, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './user-detail.reducer';
@@ -68,6 +69,18 @@ export const UserDetailDetail = () => {
             </span>
           </dt>
           <dd>{userDetailEntity.gender}</dd>
+          <dt>
+            <span id="address">
+              <Translate contentKey="sTripBeApp.userDetail.address">Address</Translate>
+            </span>
+          </dt>
+          <dd>{userDetailEntity.address}</dd>
+          <dt>
+            <span id="dob">
+              <Translate contentKey="sTripBeApp.userDetail.dob">Dob</Translate>
+            </span>
+          </dt>
+          <dd>{userDetailEntity.dob ? <TextFormat value={userDetailEntity.dob} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
           <dt>
             <Translate contentKey="sTripBeApp.userDetail.user">User</Translate>
           </dt>
