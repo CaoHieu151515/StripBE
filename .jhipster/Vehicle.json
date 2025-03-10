@@ -30,6 +30,11 @@
       "fieldTypeBlobContent": "any"
     },
     {
+      "fieldName": "carInsurance",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
       "fieldName": "vehicleNumber",
       "fieldType": "String"
     },
@@ -55,6 +60,13 @@
       "relationshipName": "driver",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "trip",
+      "otherEntityRelationshipName": "vehicle",
+      "relationshipName": "trip",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no",

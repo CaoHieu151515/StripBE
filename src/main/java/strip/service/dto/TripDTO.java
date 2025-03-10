@@ -42,6 +42,8 @@ public class TripDTO implements Serializable {
 
     private TripStatus tripStatus;
 
+    private VehicleDTO vehicle;
+
     private DriverDTO driver;
 
     public Long getId() {
@@ -156,6 +158,14 @@ public class TripDTO implements Serializable {
         this.tripStatus = tripStatus;
     }
 
+    public VehicleDTO getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(VehicleDTO vehicle) {
+        this.vehicle = vehicle;
+    }
+
     public DriverDTO getDriver() {
         return driver;
     }
@@ -202,6 +212,7 @@ public class TripDTO implements Serializable {
             ", condition='" + getCondition() + "'" +
             ", cancelReason='" + getCancelReason() + "'" +
             ", tripStatus='" + getTripStatus() + "'" +
+            ", vehicle=" + getVehicle() +
             ", driver=" + getDriver() +
             "}";
     }

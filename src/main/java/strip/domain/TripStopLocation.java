@@ -40,7 +40,7 @@ public class TripStopLocation implements Serializable {
     private String stopLocaStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "vehicle", "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
     private Trip trip;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

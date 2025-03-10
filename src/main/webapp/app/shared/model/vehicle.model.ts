@@ -11,6 +11,8 @@ export interface IVehicle {
   carregistration?: string | null;
   vehicleInspectionCertificateContentType?: string | null;
   vehicleInspectionCertificate?: string | null;
+  carInsuranceContentType?: string | null;
+  carInsurance?: string | null;
   vehicleNumber?: string | null;
   numberOfSeats?: number | null;
   vehicleColor?: string | null;

@@ -73,6 +73,7 @@ public class TripAsserts {
     public static void assertTripUpdatableRelationshipsEquals(Trip expected, Trip actual) {
         assertThat(expected)
             .as("Verify Trip relationships")
+            .satisfies(e -> assertThat(e.getVehicle()).as("check vehicle").isEqualTo(actual.getVehicle()))
             .satisfies(e -> assertThat(e.getDriver()).as("check driver").isEqualTo(actual.getDriver()));
     }
 }

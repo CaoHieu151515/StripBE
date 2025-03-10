@@ -76,12 +76,12 @@ public class Driver implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "driver" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "driver", "trips" }, allowSetters = true)
     private Set<Vehicle> vehicles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "vehicle", "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
     private Set<Trip> trips = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")

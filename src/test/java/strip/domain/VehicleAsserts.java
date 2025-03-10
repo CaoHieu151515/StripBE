@@ -75,6 +75,13 @@ public class VehicleAsserts {
                         .as("check vehicleInspectionCertificate contenty type")
                         .isEqualTo(actual.getVehicleInspectionCertificateContentType())
             )
+            .satisfies(e -> assertThat(e.getCarInsurance()).as("check carInsurance").isEqualTo(actual.getCarInsurance()))
+            .satisfies(
+                e ->
+                    assertThat(e.getCarInsuranceContentType())
+                        .as("check carInsurance contenty type")
+                        .isEqualTo(actual.getCarInsuranceContentType())
+            )
             .satisfies(e -> assertThat(e.getVehicleNumber()).as("check vehicleNumber").isEqualTo(actual.getVehicleNumber()))
             .satisfies(e -> assertThat(e.getNumberOfSeats()).as("check numberOfSeats").isEqualTo(actual.getNumberOfSeats()))
             .satisfies(e -> assertThat(e.getVehicleColor()).as("check vehicleColor").isEqualTo(actual.getVehicleColor()))

@@ -146,6 +146,13 @@ export const VehicleUpdate = () => {
                 data-cy="vehicleInspectionCertificate"
                 openActionLabel={translate('entity.action.open')}
               />
+              <ValidatedBlobField
+                label={translate('sTripBeApp.vehicle.carInsurance')}
+                id="vehicle-carInsurance"
+                name="carInsurance"
+                data-cy="carInsurance"
+                openActionLabel={translate('entity.action.open')}
+              />
               <ValidatedField
                 label={translate('sTripBeApp.vehicle.vehicleNumber')}
                 id="vehicle-vehicleNumber"

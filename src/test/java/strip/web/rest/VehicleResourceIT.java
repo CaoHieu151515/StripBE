@@ -58,6 +58,11 @@ class VehicleResourceIT {
     private static final String DEFAULT_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE = "image/jpg";
     private static final String UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE = "image/png";
 
+    private static final byte[] DEFAULT_CAR_INSURANCE = TestUtil.createByteArray(1, "0");
+    private static final byte[] UPDATED_CAR_INSURANCE = TestUtil.createByteArray(1, "1");
+    private static final String DEFAULT_CAR_INSURANCE_CONTENT_TYPE = "image/jpg";
+    private static final String UPDATED_CAR_INSURANCE_CONTENT_TYPE = "image/png";
+
     private static final String DEFAULT_VEHICLE_NUMBER = "AAAAAAAAAA";
     private static final String UPDATED_VEHICLE_NUMBER = "BBBBBBBBBB";
 
@@ -111,6 +116,8 @@ class VehicleResourceIT {
             .carregistrationContentType(DEFAULT_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(DEFAULT_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(DEFAULT_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
+            .carInsurance(DEFAULT_CAR_INSURANCE)
+            .carInsuranceContentType(DEFAULT_CAR_INSURANCE_CONTENT_TYPE)
             .vehicleNumber(DEFAULT_VEHICLE_NUMBER)
             .numberOfSeats(DEFAULT_NUMBER_OF_SEATS)
             .vehicleColor(DEFAULT_VEHICLE_COLOR)
@@ -134,6 +141,8 @@ class VehicleResourceIT {
             .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)
@@ -224,6 +233,8 @@ class VehicleResourceIT {
                     hasItem(Base64.getEncoder().encodeToString(DEFAULT_VEHICLE_INSPECTION_CERTIFICATE))
                 )
             )
+            .andExpect(jsonPath("$.[*].carInsuranceContentType").value(hasItem(DEFAULT_CAR_INSURANCE_CONTENT_TYPE)))
+            .andExpect(jsonPath("$.[*].carInsurance").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_CAR_INSURANCE))))
             .andExpect(jsonPath("$.[*].vehicleNumber").value(hasItem(DEFAULT_VEHICLE_NUMBER)))
             .andExpect(jsonPath("$.[*].numberOfSeats").value(hasItem(DEFAULT_NUMBER_OF_SEATS)))
             .andExpect(jsonPath("$.[*].vehicleColor").value(hasItem(DEFAULT_VEHICLE_COLOR)))
@@ -252,6 +263,8 @@ class VehicleResourceIT {
             .andExpect(
                 jsonPath("$.vehicleInspectionCertificate").value(Base64.getEncoder().encodeToString(DEFAULT_VEHICLE_INSPECTION_CERTIFICATE))
             )
+            .andExpect(jsonPath("$.carInsuranceContentType").value(DEFAULT_CAR_INSURANCE_CONTENT_TYPE))
+            .andExpect(jsonPath("$.carInsurance").value(Base64.getEncoder().encodeToString(DEFAULT_CAR_INSURANCE)))
             .andExpect(jsonPath("$.vehicleNumber").value(DEFAULT_VEHICLE_NUMBER))
             .andExpect(jsonPath("$.numberOfSeats").value(DEFAULT_NUMBER_OF_SEATS))
             .andExpect(jsonPath("$.vehicleColor").value(DEFAULT_VEHICLE_COLOR))
@@ -286,6 +299,8 @@ class VehicleResourceIT {
             .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)
@@ -379,10 +394,11 @@ class VehicleResourceIT {
             .vehicleType(UPDATED_VEHICLE_TYPE)
             .carregistration(UPDATED_CARREGISTRATION)
             .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
-            .vehicleColor(UPDATED_VEHICLE_COLOR)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleColor(UPDATED_VEHICLE_COLOR);
 
         restVehicleMockMvc
             .perform(
@@ -419,6 +435,8 @@ class VehicleResourceIT {
             .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)

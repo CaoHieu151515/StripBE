@@ -10,6 +10,13 @@
     -->
     <changeSet id="20250303033656-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="vehicle_id"
+                                 baseTableName="trip"
+                                 constraintName="fk_trip__vehicle_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="vehicle"
+                                 />
+
         <addForeignKeyConstraint baseColumnNames="driver_id"
                                  baseTableName="trip"
                                  constraintName="fk_trip__driver_id"

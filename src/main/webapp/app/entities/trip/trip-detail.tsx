@@ -118,6 +118,10 @@ export const TripDetail = () => {
           </dt>
           <dd>{tripEntity.tripStatus}</dd>
           <dt>
+            <Translate contentKey="sTripBeApp.trip.vehicle">Vehicle</Translate>
+          </dt>
+          <dd>{tripEntity.vehicle ? tripEntity.vehicle.id : ''}</dd>
+          <dt>
             <Translate contentKey="sTripBeApp.trip.driver">Driver</Translate>
           </dt>
           <dd>{tripEntity.driver ? tripEntity.driver.id : ''}</dd>

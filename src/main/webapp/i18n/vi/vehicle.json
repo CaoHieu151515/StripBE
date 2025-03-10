@@ -23,11 +23,13 @@
       "vehicleImage": "Vehicle Image",
       "carregistration": "Carregistration",
       "vehicleInspectionCertificate": "Vehicle Inspection Certificate",
+      "carInsurance": "Car Insurance",
       "vehicleNumber": "Vehicle Number",
       "numberOfSeats": "Number Of Seats",
       "vehicleColor": "Vehicle Color",
       "vehicleBrand": "Vehicle Brand",
-      "driver": "Driver"
+      "driver": "Driver",
+      "trip": "Trip"
     }
   }
 }

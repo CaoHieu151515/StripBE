@@ -8,6 +8,8 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { IVehicle } from 'app/shared/model/vehicle.model';
+import { getEntities as getVehicles } from 'app/entities/vehicle/vehicle.reducer';
 import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
 import { ITrip } from 'app/shared/model/trip.model';
@@ -22,6 +24,7 @@ export const TripUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const vehicles = useAppSelector(state => state.vehicle.entities);
   const drivers = useAppSelector(state => state.driver.entities);
   const tripEntity = useAppSelector(state => state.trip.entity);
   const loading = useAppSelector(state => state.trip.loading);
@@ -40,6 +43,7 @@ export const TripUpdate = () => {
       dispatch(getEntity(id));
     }
 
+    dispatch(getVehicles({}));
     dispatch(getDrivers({}));
   }, []);
 
@@ -66,6 +70,7 @@ export const TripUpdate = () => {
     const entity = {
       ...tripEntity,
       ...values,
+      vehicle: vehicles.find(it => it.id.toString() === values.vehicle?.toString()),
       driver: drivers.find(it => it.id.toString() === values.driver?.toString()),
     };
 
@@ -87,6 +92,7 @@ export const TripUpdate = () => {
           ...tripEntity,
           startDate: convertDateTimeFromServer(tripEntity.startDate),
           endDate: convertDateTimeFromServer(tripEntity.endDate),
+          vehicle: tripEntity?.vehicle?.id,
           driver: tripEntity?.driver?.id,
         };
 
@@ -194,6 +200,16 @@ export const TripUpdate = () => {
                     {translate('sTripBeApp.TripStatus.' + tripStatus)}
                   </option>
                 ))}
+              </ValidatedField>
+              <ValidatedField id="trip-vehicle" name="vehicle" data-cy="vehicle" label={translate('sTripBeApp.trip.vehicle')} type="select">
+                <option value="" key="0" />
+                {vehicles
+                  ? vehicles.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
               </ValidatedField>
               <ValidatedField id="trip-driver" name="driver" data-cy="driver" label={translate('sTripBeApp.trip.driver')} type="select">
                 <option value="" key="0" />

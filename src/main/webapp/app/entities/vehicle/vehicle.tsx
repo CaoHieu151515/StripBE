@@ -133,6 +133,10 @@ export const Vehicle = () => {
                   <Translate contentKey="sTripBeApp.vehicle.vehicleInspectionCertificate">Vehicle Inspection Certificate</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('vehicleInspectionCertificate')} />
                 </th>
+                <th className="hand" onClick={sort('carInsurance')}>
+                  <Translate contentKey="sTripBeApp.vehicle.carInsurance">Car Insurance</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('carInsurance')} />
+                </th>
                 <th className="hand" onClick={sort('vehicleNumber')}>
                   <Translate contentKey="sTripBeApp.vehicle.vehicleNumber">Vehicle Number</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('vehicleNumber')} />
@@ -208,6 +212,21 @@ export const Vehicle = () => {
                         ) : null}
                         <span>
                           {vehicle.vehicleInspectionCertificateContentType}, {byteSize(vehicle.vehicleInspectionCertificate)}
+                        </span>
+                      </div>
+                    ) : null}
+                  </td>
+                  <td>
+                    {vehicle.carInsurance ? (
+                      <div>
+                        {vehicle.carInsuranceContentType ? (
+                          <a onClick={openFile(vehicle.carInsuranceContentType, vehicle.carInsurance)}>
+                            <Translate contentKey="entity.action.open">Open</Translate>
+                            &nbsp;
+                          </a>
+                        ) : null}
+                        <span>
+                          {vehicle.carInsuranceContentType}, {byteSize(vehicle.carInsurance)}
                         </span>
                       </div>
                     ) : null}

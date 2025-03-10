@@ -3,6 +3,8 @@ package strip.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -55,6 +57,13 @@ public class Vehicle implements Serializable {
     @Column(name = "vehicle_inspection_certificate_content_type")
     private String vehicleInspectionCertificateContentType;
 
+    @Lob
+    @Column(name = "car_insurance")
+    private byte[] carInsurance;
+
+    @Column(name = "car_insurance_content_type")
+    private String carInsuranceContentType;
+
     @Column(name = "vehicle_number")
     private String vehicleNumber;
 
@@ -70,6 +79,11 @@ public class Vehicle implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "user", "vehicles", "trips", "feedbacks", "ratings" }, allowSetters = true)
     private Driver driver;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vehicle")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "vehicle", "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    private Set<Trip> trips = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -190,6 +204,32 @@ public class Vehicle implements Serializable {
         this.vehicleInspectionCertificateContentType = vehicleInspectionCertificateContentType;
     }
 
+    public byte[] getCarInsurance() {
+        return this.carInsurance;
+    }
+
+    public Vehicle carInsurance(byte[] carInsurance) {
+        this.setCarInsurance(carInsurance);
+        return this;
+    }
+
+    public void setCarInsurance(byte[] carInsurance) {
+        this.carInsurance = carInsurance;
+    }
+
+    public String getCarInsuranceContentType() {
+        return this.carInsuranceContentType;
+    }
+
+    public Vehicle carInsuranceContentType(String carInsuranceContentType) {
+        this.carInsuranceContentType = carInsuranceContentType;
+        return this;
+    }
+
+    public void setCarInsuranceContentType(String carInsuranceContentType) {
+        this.carInsuranceContentType = carInsuranceContentType;
+    }
+
     public String getVehicleNumber() {
         return this.vehicleNumber;
     }
@@ -255,6 +295,37 @@ public class Vehicle implements Serializable {
         return this;
     }
 
+    public Set<Trip> getTrips() {
+        return this.trips;
+    }
+
+    public void setTrips(Set<Trip> trips) {
+        if (this.trips != null) {
+            this.trips.forEach(i -> i.setVehicle(null));
+        }
+        if (trips != null) {
+            trips.forEach(i -> i.setVehicle(this));
+        }
+        this.trips = trips;
+    }
+
+    public Vehicle trips(Set<Trip> trips) {
+        this.setTrips(trips);
+        return this;
+    }
+
+    public Vehicle addTrip(Trip trip) {
+        this.trips.add(trip);
+        trip.setVehicle(this);
+        return this;
+    }
+
+    public Vehicle removeTrip(Trip trip) {
+        this.trips.remove(trip);
+        trip.setVehicle(null);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -287,6 +358,8 @@ public class Vehicle implements Serializable {
             ", carregistrationContentType='" + getCarregistrationContentType() + "'" +
             ", vehicleInspectionCertificate='" + getVehicleInspectionCertificate() + "'" +
             ", vehicleInspectionCertificateContentType='" + getVehicleInspectionCertificateContentType() + "'" +
+            ", carInsurance='" + getCarInsurance() + "'" +
+            ", carInsuranceContentType='" + getCarInsuranceContentType() + "'" +
             ", vehicleNumber='" + getVehicleNumber() + "'" +
             ", numberOfSeats=" + getNumberOfSeats() +
             ", vehicleColor='" + getVehicleColor() + "'" +

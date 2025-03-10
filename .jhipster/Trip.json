@@ -60,6 +60,13 @@
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityName": "vehicle",
+      "otherEntityRelationshipName": "trip",
+      "relationshipName": "vehicle",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
       "otherEntityName": "driver",
       "otherEntityRelationshipName": "trip",
       "relationshipName": "driver",

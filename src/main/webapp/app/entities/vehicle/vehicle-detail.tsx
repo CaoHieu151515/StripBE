@@ -101,6 +101,25 @@ export const VehicleDetail = () => {
             ) : null}
           </dd>
           <dt>
+            <span id="carInsurance">
+              <Translate contentKey="sTripBeApp.vehicle.carInsurance">Car Insurance</Translate>
+            </span>
+          </dt>
+          <dd>
+            {vehicleEntity.carInsurance ? (
+              <div>
+                {vehicleEntity.carInsuranceContentType ? (
+                  <a onClick={openFile(vehicleEntity.carInsuranceContentType, vehicleEntity.carInsurance)}>
+                    <Translate contentKey="entity.action.open">Open</Translate>&nbsp;
+                  </a>
+                ) : null}
+                <span>
+                  {vehicleEntity.carInsuranceContentType}, {byteSize(vehicleEntity.carInsurance)}
+                </span>
+              </div>
+            ) : null}
+          </dd>
+          <dt>
             <span id="vehicleNumber">
               <Translate contentKey="sTripBeApp.vehicle.vehicleNumber">Vehicle Number</Translate>
             </span>

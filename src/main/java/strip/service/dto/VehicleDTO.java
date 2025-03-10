@@ -33,6 +33,11 @@ public class VehicleDTO implements Serializable {
 
     private String vehicleInspectionCertificateContentType;
 
+    @Lob
+    private byte[] carInsurance;
+
+    private String carInsuranceContentType;
+
     private String vehicleNumber;
 
     private Integer numberOfSeats;
@@ -115,6 +120,22 @@ public class VehicleDTO implements Serializable {
         this.vehicleInspectionCertificateContentType = vehicleInspectionCertificateContentType;
     }
 
+    public byte[] getCarInsurance() {
+        return carInsurance;
+    }
+
+    public void setCarInsurance(byte[] carInsurance) {
+        this.carInsurance = carInsurance;
+    }
+
+    public String getCarInsuranceContentType() {
+        return carInsuranceContentType;
+    }
+
+    public void setCarInsuranceContentType(String carInsuranceContentType) {
+        this.carInsuranceContentType = carInsuranceContentType;
+    }
+
     public String getVehicleNumber() {
         return vehicleNumber;
     }
@@ -186,6 +207,7 @@ public class VehicleDTO implements Serializable {
             ", vehicleImage='" + getVehicleImage() + "'" +
             ", carregistration='" + getCarregistration() + "'" +
             ", vehicleInspectionCertificate='" + getVehicleInspectionCertificate() + "'" +
+            ", carInsurance='" + getCarInsurance() + "'" +
             ", vehicleNumber='" + getVehicleNumber() + "'" +
             ", numberOfSeats=" + getNumberOfSeats() +
             ", vehicleColor='" + getVehicleColor() + "'" +

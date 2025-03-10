@@ -30,6 +30,7 @@
       "condition": "Condition",
       "cancelReason": "Cancel Reason",
       "tripStatus": "Trip Status",
+      "vehicle": "Vehicle",
       "driver": "Driver",
       "passenger": "Passenger",
       "tripStopLocation": "Trip Stop Location",

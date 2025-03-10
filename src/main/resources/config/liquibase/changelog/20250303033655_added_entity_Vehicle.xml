@@ -38,6 +38,12 @@
             <column name="vehicle_inspection_certificate_content_type" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="car_insurance" type="${blobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="car_insurance_content_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="vehicle_number" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -82,6 +88,8 @@
             <column name="carregistration_content_type" type="string"/>
             <column name="vehicle_inspection_certificate" type="blob"/>
             <column name="vehicle_inspection_certificate_content_type" type="string"/>
+            <column name="car_insurance" type="blob"/>
+            <column name="car_insurance_content_type" type="string"/>
             <column name="vehicle_number" type="string"/>
             <column name="number_of_seats" type="numeric"/>
             <column name="vehicle_color" type="string"/>

@@ -53,6 +53,9 @@
             <column name="trip_status" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="vehicle_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <column name="driver_id" type="bigint">
                 <constraints nullable="true" />
             </column>

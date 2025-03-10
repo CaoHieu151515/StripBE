@@ -2,8 +2,11 @@ package strip.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.DriverTestSamples.*;
+import static strip.domain.TripTestSamples.*;
 import static strip.domain.VehicleTestSamples.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import strip.web.rest.TestUtil;
 
@@ -33,5 +36,27 @@ class VehicleTest {
 
         vehicle.driver(null);
         assertThat(vehicle.getDriver()).isNull();
+    }
+
+    @Test
+    void tripTest() {
+        Vehicle vehicle = getVehicleRandomSampleGenerator();
+        Trip tripBack = getTripRandomSampleGenerator();
+
+        vehicle.addTrip(tripBack);
+        assertThat(vehicle.getTrips()).containsOnly(tripBack);
+        assertThat(tripBack.getVehicle()).isEqualTo(vehicle);
+
+        vehicle.removeTrip(tripBack);
+        assertThat(vehicle.getTrips()).doesNotContain(tripBack);
+        assertThat(tripBack.getVehicle()).isNull();
+
+        vehicle.trips(new HashSet<>(Set.of(tripBack)));
+        assertThat(vehicle.getTrips()).containsOnly(tripBack);
+        assertThat(tripBack.getVehicle()).isEqualTo(vehicle);
+
+        vehicle.setTrips(new HashSet<>());
+        assertThat(vehicle.getTrips()).doesNotContain(tripBack);
+        assertThat(tripBack.getVehicle()).isNull();
     }
 }

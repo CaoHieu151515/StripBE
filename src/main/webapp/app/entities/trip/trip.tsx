@@ -163,6 +163,9 @@ export const Trip = () => {
                   <FontAwesomeIcon icon={getSortIconByFieldName('tripStatus')} />
                 </th>
                 <th>
+                  <Translate contentKey="sTripBeApp.trip.vehicle">Vehicle</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
                   <Translate contentKey="sTripBeApp.trip.driver">Driver</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
@@ -204,6 +207,7 @@ export const Trip = () => {
                   <td>
                     <Translate contentKey={`sTripBeApp.TripStatus.${trip.tripStatus}`} />
                   </td>
+                  <td>{trip.vehicle ? <Link to={`/vehicle/${trip.vehicle.id}`}>{trip.vehicle.id}</Link> : ''}</td>
                   <td>{trip.driver ? <Link to={`/driver/${trip.driver.id}`}>{trip.driver.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

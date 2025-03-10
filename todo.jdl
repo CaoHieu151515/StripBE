@@ -101,6 +101,7 @@ entity Vehicle {
   vehicleImage Blob ,
   carregistration Blob,
   vehicleInspectionCertificate Blob,
+  carInsurance Blob,
   vehicleNumber String,
   numberOfSeats Integer,
   vehicleColor String,
@@ -255,6 +256,7 @@ relationship OneToOne {
 
 relationship ManyToOne {
   Vehicle to Driver,
+  Trip to Vehicle,
   Trip to Driver,
   Passenger to Trip,
   Passenger to User with builtInEntity,

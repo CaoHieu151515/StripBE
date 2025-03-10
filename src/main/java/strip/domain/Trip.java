@@ -72,6 +72,10 @@ public class Trip implements Serializable {
     private TripStatus tripStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "driver", "trips" }, allowSetters = true)
+    private Vehicle vehicle;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "user", "vehicles", "trips", "feedbacks", "ratings" }, allowSetters = true)
     private Driver driver;
 
@@ -277,6 +281,19 @@ public class Trip implements Serializable {
 
     public void setTripStatus(TripStatus tripStatus) {
         this.tripStatus = tripStatus;
+    }
+
+    public Vehicle getVehicle() {
+        return this.vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public Trip vehicle(Vehicle vehicle) {
+        this.setVehicle(vehicle);
+        return this;
     }
 
     public Driver getDriver() {

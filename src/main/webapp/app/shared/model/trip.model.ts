@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { IVehicle } from 'app/shared/model/vehicle.model';
 import { IDriver } from 'app/shared/model/driver.model';
 import { TripStatus } from 'app/shared/model/enumerations/trip-status.model';
 
@@ -17,6 +18,7 @@ export interface ITrip {
   condition?: string | null;
   cancelReason?: string | null;
   tripStatus?: keyof typeof TripStatus | null;
+  vehicle?: IVehicle | null;
   driver?: IDriver | null;
 }
 

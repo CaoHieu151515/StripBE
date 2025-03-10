@@ -81,7 +81,7 @@ public class Passenger implements Serializable {
     private Instant appliedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "vehicle", "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
     private Trip trip;
 
     @ManyToOne(fetch = FetchType.LAZY)

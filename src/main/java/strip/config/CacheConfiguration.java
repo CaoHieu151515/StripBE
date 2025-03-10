@@ -84,6 +84,7 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.UserWallet.class.getName() + ".walletTransactions");
             createCache(cm, strip.domain.UserDetail.class.getName());
             createCache(cm, "otpCache");
+            createCache(cm, strip.domain.Vehicle.class.getName() + ".trips");
             // jhipster-needle-ehcache-add-entry
         };
     }

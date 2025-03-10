@@ -7,6 +7,7 @@ import static strip.domain.PassengerTestSamples.*;
 import static strip.domain.RatingTestSamples.*;
 import static strip.domain.TripStopLocationTestSamples.*;
 import static strip.domain.TripTestSamples.*;
+import static strip.domain.VehicleTestSamples.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +28,18 @@ class TripTest {
 
         trip2 = getTripSample2();
         assertThat(trip1).isNotEqualTo(trip2);
+    }
+
+    @Test
+    void vehicleTest() {
+        Trip trip = getTripRandomSampleGenerator();
+        Vehicle vehicleBack = getVehicleRandomSampleGenerator();
+
+        trip.setVehicle(vehicleBack);
+        assertThat(trip.getVehicle()).isEqualTo(vehicleBack);
+
+        trip.vehicle(null);
+        assertThat(trip.getVehicle()).isNull();
     }
 
     @Test
