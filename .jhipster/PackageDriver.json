@@ -1,0 +1,46 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033701"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "packageID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "time",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "bonus",
+      "fieldType": "Integer"
+    }
+  ],
+  "name": "PackageDriver",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "payment",
+      "otherEntityRelationshipName": "packageDriver",
+      "relationshipName": "payment",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

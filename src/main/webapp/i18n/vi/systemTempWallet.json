@@ -1,0 +1,29 @@
+{
+  "sTripBeApp": {
+    "systemTempWallet": {
+      "home": {
+        "title": "System Temp Wallets",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một System Temp Wallet",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật System Temp Wallet",
+        "notFound": "No System Temp Wallets found"
+      },
+      "created": "Một System Temp Wallet mới được tạo với định danh {{ param }}",
+      "updated": "Một System Temp Wallet cập nhật với định danh {{ param }}",
+      "deleted": "Một System Temp Wallet đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa System Temp Wallet {{ id }}?"
+      },
+      "detail": {
+        "title": "System Temp Wallet"
+      },
+      "id": "ID",
+      "systemWalletID": "System Wallet ID",
+      "before": "Before",
+      "amount": "Amount",
+      "current": "Current",
+      "mobifyDate": "Mobify Date",
+      "walletTransaction": "Wallet Transaction"
+    }
+  }
+}

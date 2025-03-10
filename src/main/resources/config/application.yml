@@ -44,7 +44,7 @@ management:
           - liquibase
   endpoint:
     health:
-      show-details: when_authorized
+      show-details: when-authorized
       roles: 'ROLE_ADMIN'
       probes:
         enabled: true
@@ -159,7 +159,6 @@ spring:
   output:
     ansi:
       console-available: true
-
 server:
   servlet:
     session:

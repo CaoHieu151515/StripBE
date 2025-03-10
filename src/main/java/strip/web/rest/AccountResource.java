@@ -1,12 +1,17 @@
 package strip.web.rest;
 
 import jakarta.validation.Valid;
-import java.util.*;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import strip.domain.User;
 import strip.repository.UserRepository;
 import strip.security.SecurityUtils;
@@ -14,7 +19,9 @@ import strip.service.MailService;
 import strip.service.UserService;
 import strip.service.dto.AdminUserDTO;
 import strip.service.dto.PasswordChangeDTO;
-import strip.web.rest.errors.*;
+import strip.web.rest.errors.EmailAlreadyUsedException;
+import strip.web.rest.errors.InvalidPasswordException;
+import strip.web.rest.errors.LoginAlreadyUsedException;
 import strip.web.rest.vm.KeyAndPasswordVM;
 import strip.web.rest.vm.ManagedUserVM;
 
@@ -54,14 +61,51 @@ public class AccountResource {
      * @throws EmailAlreadyUsedException {@code 400 (Bad Request)} if the email is already used.
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already used.
      */
-    @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
-            throw new InvalidPasswordException();
+    // @PostMapping("/register")
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
+    //     if (isPasswordLengthInvalid(managedUserVM.getPassword())) {
+    //         throw new InvalidPasswordException();
+    //     }
+
+    //     // Kiểm tra email đã tồn tại trước khi đăng ký
+    //     if (userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).isPresent()) {
+    //         throw new EmailAlreadyUsedException();
+    //     }
+
+    //     User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
+    //     mailService.sendActivationEmail(user);
+    // }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<Void> sendOtp(@Valid @RequestBody ManagedUserVM managedUserVM) {
+        log.debug("Request to send OTP to email: {}", managedUserVM.getEmail());
+
+        // Kiểm tra xem tài khoản có tồn tại không
+        if (userRepository.findOneByEmailIgnoreCase(managedUserVM.getEmail()).isPresent()) {
+            throw new EmailAlreadyUsedException();
         }
-        User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
+
+        // Kiểm tra username đã được sử dụng chưa (nếu có username)
+        if (managedUserVM.getLogin() != null && userRepository.findOneByLogin(managedUserVM.getLogin()).isPresent()) {
+            throw new LoginAlreadyUsedException();
+        }
+
+        String OTP = userService.sendOTP(managedUserVM.getEmail());
+        mailService.sendActivationOTP(managedUserVM.getEmail(), OTP);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyOtp(@Valid @RequestBody ManagedUserVM managedUserDetailsVM) {
+        boolean isValid = userService.verifyUserOtp(managedUserDetailsVM.getEmail(), managedUserDetailsVM.getOTP());
+        if (isValid) {
+            userService.registerUserOTP(managedUserDetailsVM, managedUserDetailsVM.getPassword());
+            return ResponseEntity.ok("Register Successfully");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
+        }
     }
 
     /**

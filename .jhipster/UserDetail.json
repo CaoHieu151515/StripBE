@@ -1,0 +1,37 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033710"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "appUserDetail",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "userimage",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "phone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "gender",
+      "fieldType": "String"
+    }
+  ],
+  "name": "UserDetail",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "userDetail",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no"
+}

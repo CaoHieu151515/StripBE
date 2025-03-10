@@ -1,0 +1,28 @@
+{
+  "sTripBeApp": {
+    "sendingAplication": {
+      "home": {
+        "title": "Sending Aplications",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Sending Aplication",
+        "createOrEditLabel": "Create or edit a Sending Aplication",
+        "notFound": "No Sending Aplications found"
+      },
+      "created": "A new Sending Aplication is created with identifier {{ param }}",
+      "updated": "A Sending Aplication is updated with identifier {{ param }}",
+      "deleted": "A Sending Aplication is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Sending Aplication {{ id }}?"
+      },
+      "detail": {
+        "title": "Sending Aplication"
+      },
+      "id": "ID",
+      "apliID": "Apli ID",
+      "sendApplicationType": "Send Application Type",
+      "content": "Content",
+      "img": "Img",
+      "user": "User"
+    }
+  }
+}

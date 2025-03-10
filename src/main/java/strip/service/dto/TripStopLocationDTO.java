@@ -1,0 +1,107 @@
+package strip.service.dto;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * A DTO for the {@link strip.domain.TripStopLocation} entity.
+ */
+@SuppressWarnings("common-java:DuplicatedBlocks")
+public class TripStopLocationDTO implements Serializable {
+
+    private Long id;
+
+    private UUID stopLocaID;
+
+    private String stopLoca;
+
+    private Instant stopLocaTime;
+
+    private String stopLocaStatus;
+
+    private TripDTO trip;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UUID getStopLocaID() {
+        return stopLocaID;
+    }
+
+    public void setStopLocaID(UUID stopLocaID) {
+        this.stopLocaID = stopLocaID;
+    }
+
+    public String getStopLoca() {
+        return stopLoca;
+    }
+
+    public void setStopLoca(String stopLoca) {
+        this.stopLoca = stopLoca;
+    }
+
+    public Instant getStopLocaTime() {
+        return stopLocaTime;
+    }
+
+    public void setStopLocaTime(Instant stopLocaTime) {
+        this.stopLocaTime = stopLocaTime;
+    }
+
+    public String getStopLocaStatus() {
+        return stopLocaStatus;
+    }
+
+    public void setStopLocaStatus(String stopLocaStatus) {
+        this.stopLocaStatus = stopLocaStatus;
+    }
+
+    public TripDTO getTrip() {
+        return trip;
+    }
+
+    public void setTrip(TripDTO trip) {
+        this.trip = trip;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TripStopLocationDTO)) {
+            return false;
+        }
+
+        TripStopLocationDTO tripStopLocationDTO = (TripStopLocationDTO) o;
+        if (this.id == null) {
+            return false;
+        }
+        return Objects.equals(this.id, tripStopLocationDTO.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    // prettier-ignore
+    @Override
+    public String toString() {
+        return "TripStopLocationDTO{" +
+            "id=" + getId() +
+            ", stopLocaID='" + getStopLocaID() + "'" +
+            ", stopLoca='" + getStopLoca() + "'" +
+            ", stopLocaTime='" + getStopLocaTime() + "'" +
+            ", stopLocaStatus='" + getStopLocaStatus() + "'" +
+            ", trip=" + getTrip() +
+            "}";
+    }
+}

@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033703"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "date",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Notification",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "notification",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

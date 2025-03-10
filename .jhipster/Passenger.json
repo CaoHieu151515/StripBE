@@ -1,0 +1,93 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033658"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "passengerID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "startLoca",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "endLoca",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "amountApproveFee",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "luggageImg",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "luggageDescription",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "PassengerType",
+      "fieldValues": "LUGGAGE,PASSENGER"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "PassengerStatus",
+      "fieldValues": "WATING,BOOKED,DONE,EMPTY,CANCEL"
+    },
+    {
+      "fieldName": "pickUpTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "endTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "checkIn",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "checkInTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "checkOut",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "checkOutTIme",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "appliedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "name": "Passenger",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "trip",
+      "otherEntityRelationshipName": "passenger",
+      "relationshipName": "trip",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "passenger",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -100,10 +100,58 @@ public class MailService {
         this.sendEmailSync(user.getEmail(), subject, content, false, true);
     }
 
+    private void sendEmailFromTemplateSyncOTP(String email, String otp, String templateName, String titleKey) {
+        if (email == null || otp == null) {
+            log.error("Cannot send email OTP: email or OTP is null!");
+            return;
+        }
+
+        Locale locale = Locale.forLanguageTag("en");
+        Context context = new Context(locale);
+        context.setVariable("email", email);
+        context.setVariable("otp", otp);
+
+        if (jHipsterProperties.getMail().getBaseUrl() == null) {
+            log.error("Base URL is null, cannot send email to {}", email);
+            return;
+        }
+
+        context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
+
+        try {
+            String content = templateEngine.process(templateName, context);
+            String subject = messageSource.getMessage(titleKey, null, locale);
+            this.sendEmailSync(email, subject, content, false, true);
+        } catch (Exception e) {
+            log.error("Error processing email template {}: {}", templateName, e.getMessage(), e);
+        }
+    }
+
     @Async
     public void sendActivationEmail(User user) {
+        if (user == null) {
+            log.error("Failed to send activation email: User is null");
+            return;
+        }
+
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            log.error("Failed to send activation email: Email is null or empty for user {}", user.getLogin());
+            return;
+        }
+
         log.debug("Sending activation email to '{}'", user.getEmail());
-        this.sendEmailFromTemplateSync(user, "mail/activationEmail", "email.activation.title");
+
+        try {
+            this.sendEmailFromTemplateSync(user, "mail/activationEmail", "email.activation.title");
+        } catch (Exception e) {
+            log.error("Error sending activation email to '{}': {}", user.getEmail(), e.getMessage(), e);
+        }
+    }
+
+    @Async
+    public void sendActivationOTP(String email, String OTP) {
+        log.debug("Sending activation email to '{}'", email);
+        this.sendEmailFromTemplateSyncOTP(email, OTP, "mail/otpEmail", "email.activation.title");
     }
 
     @Async

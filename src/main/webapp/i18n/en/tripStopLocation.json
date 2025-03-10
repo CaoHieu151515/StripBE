@@ -1,0 +1,28 @@
+{
+  "sTripBeApp": {
+    "tripStopLocation": {
+      "home": {
+        "title": "Trip Stop Locations",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trip Stop Location",
+        "createOrEditLabel": "Create or edit a Trip Stop Location",
+        "notFound": "No Trip Stop Locations found"
+      },
+      "created": "A new Trip Stop Location is created with identifier {{ param }}",
+      "updated": "A Trip Stop Location is updated with identifier {{ param }}",
+      "deleted": "A Trip Stop Location is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Trip Stop Location {{ id }}?"
+      },
+      "detail": {
+        "title": "Trip Stop Location"
+      },
+      "id": "ID",
+      "stopLocaID": "Stop Loca ID",
+      "stopLoca": "Stop Loca",
+      "stopLocaTime": "Stop Loca Time",
+      "stopLocaStatus": "Stop Loca Status",
+      "trip": "Trip"
+    }
+  }
+}

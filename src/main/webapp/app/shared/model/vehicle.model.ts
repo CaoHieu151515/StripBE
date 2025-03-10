@@ -1,0 +1,21 @@
+import { IDriver } from 'app/shared/model/driver.model';
+import { VehicleType } from 'app/shared/model/enumerations/vehicle-type.model';
+
+export interface IVehicle {
+  id?: number;
+  vehicleID?: string | null;
+  vehicleType?: keyof typeof VehicleType | null;
+  vehicleImageContentType?: string | null;
+  vehicleImage?: string | null;
+  carregistrationContentType?: string | null;
+  carregistration?: string | null;
+  vehicleInspectionCertificateContentType?: string | null;
+  vehicleInspectionCertificate?: string | null;
+  vehicleNumber?: string | null;
+  numberOfSeats?: number | null;
+  vehicleColor?: string | null;
+  vehicleBrand?: string | null;
+  driver?: IDriver | null;
+}
+
+export const defaultValue: Readonly<IVehicle> = {};

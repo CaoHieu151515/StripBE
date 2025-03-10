@@ -1,0 +1,39 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033706"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "systemWalletID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "before",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "amount",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "current",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "mobifyDate",
+      "fieldType": "Instant"
+    }
+  ],
+  "name": "SystemTempWallet",
+  "relationships": [
+    {
+      "otherEntityName": "walletTransaction",
+      "otherEntityRelationshipName": "systemTempWallet",
+      "relationshipName": "walletTransaction",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no"
+}

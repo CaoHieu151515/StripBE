@@ -1,0 +1,28 @@
+{
+  "sTripBeApp": {
+    "userDetail": {
+      "home": {
+        "title": "User Details",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một User Detail",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật User Detail",
+        "notFound": "No User Details found"
+      },
+      "created": "Một User Detail mới được tạo với định danh {{ param }}",
+      "updated": "Một User Detail cập nhật với định danh {{ param }}",
+      "deleted": "Một User Detail đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa User Detail {{ id }}?"
+      },
+      "detail": {
+        "title": "User Detail"
+      },
+      "id": "ID",
+      "appUserDetail": "App User Detail",
+      "userimage": "Userimage",
+      "phone": "Phone",
+      "gender": "Gender",
+      "user": "User"
+    }
+  }
+}

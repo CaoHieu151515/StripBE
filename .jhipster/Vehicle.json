@@ -1,0 +1,62 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033655"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "vehicleID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "vehicleType",
+      "fieldType": "VehicleType",
+      "fieldValues": "CAR,BIKE"
+    },
+    {
+      "fieldName": "vehicleImage",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "carregistration",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "vehicleInspectionCertificate",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "vehicleNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "numberOfSeats",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "vehicleColor",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "vehicleBrand",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Vehicle",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "driver",
+      "otherEntityRelationshipName": "vehicle",
+      "relationshipName": "driver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

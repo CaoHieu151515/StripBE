@@ -1,7 +1,9 @@
 package strip.config;
 
 import java.time.Duration;
-import org.ehcache.config.builders.*;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.jsr107.Eh107Configuration;
 import org.hibernate.cache.jcache.ConfigSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,8 @@ import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import tech.jhipster.config.JHipsterProperties;
 import tech.jhipster.config.cache.PrefixedKeyGenerator;
 
@@ -50,6 +53,37 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.User.class.getName());
             createCache(cm, strip.domain.Authority.class.getName());
             createCache(cm, strip.domain.User.class.getName() + ".authorities");
+            createCache(cm, strip.domain.Driver.class.getName());
+            createCache(cm, strip.domain.Driver.class.getName() + ".vehicles");
+            createCache(cm, strip.domain.Driver.class.getName() + ".trips");
+            createCache(cm, strip.domain.Driver.class.getName() + ".feedbacks");
+            createCache(cm, strip.domain.Driver.class.getName() + ".ratings");
+            createCache(cm, strip.domain.Vehicle.class.getName());
+            createCache(cm, strip.domain.Trip.class.getName());
+            createCache(cm, strip.domain.Trip.class.getName() + ".passengers");
+            createCache(cm, strip.domain.Trip.class.getName() + ".tripStopLocations");
+            createCache(cm, strip.domain.Trip.class.getName() + ".feedbacks");
+            createCache(cm, strip.domain.Trip.class.getName() + ".ratings");
+            createCache(cm, strip.domain.TripStopLocation.class.getName());
+            createCache(cm, strip.domain.Passenger.class.getName());
+            createCache(cm, strip.domain.Feedback.class.getName());
+            createCache(cm, strip.domain.Rating.class.getName());
+            createCache(cm, strip.domain.PackageDriver.class.getName());
+            createCache(cm, strip.domain.PackageDriver.class.getName() + ".payments");
+            createCache(cm, strip.domain.Payment.class.getName());
+            createCache(cm, strip.domain.Payment.class.getName() + ".walletTransactions");
+            createCache(cm, strip.domain.Notification.class.getName());
+            createCache(cm, strip.domain.Report.class.getName());
+            createCache(cm, strip.domain.SystemWallet.class.getName());
+            createCache(cm, strip.domain.SystemWallet.class.getName() + ".walletTransactions");
+            createCache(cm, strip.domain.SystemTempWallet.class.getName());
+            createCache(cm, strip.domain.SystemTempWallet.class.getName() + ".walletTransactions");
+            createCache(cm, strip.domain.WalletTransaction.class.getName());
+            createCache(cm, strip.domain.SendingAplication.class.getName());
+            createCache(cm, strip.domain.UserWallet.class.getName());
+            createCache(cm, strip.domain.UserWallet.class.getName() + ".walletTransactions");
+            createCache(cm, strip.domain.UserDetail.class.getName());
+            createCache(cm, "otpCache");
             // jhipster-needle-ehcache-add-entry
         };
     }

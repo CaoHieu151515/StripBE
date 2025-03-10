@@ -1,0 +1,11 @@
+id;trip_id;trip_img;trip_img_content_type;price_per_seat;max_seat;start_date;end_date;start_location;end_location;description;jhi_condition;cancel_reason;trip_status
+1;3bb21dec-689f-487c-afbf-ed08c3064a80;../fake-data/blob/hipster.png;image/png;8928.96;32453;2025-03-02T06:28:26;2025-03-02T07:09:35;hastily private happy;enhance;about;however huzzah;pray underneath;CONFIRMING
+2;196f1abb-8f80-401a-a177-101ae9bf7c14;../fake-data/blob/hipster.png;image/png;19295.27;12965;2025-03-03T01:36:20;2025-03-02T10:46:39;out shout;ah considering;something scarily competence;lovingly between promptly;pish shakily;CONFIRMING
+3;1c510b5d-4917-4e59-9fa6-61e26a67c183;../fake-data/blob/hipster.png;image/png;16305.7;13140;2025-03-02T17:04:08;2025-03-03T02:14:45;sprain homeschool solemnly;manipulation towards;belay peppery boo;pro panic;universe common;ON_GOING
+4;3c7018db-a4c5-4bfa-a805-e8245b1e4ca9;../fake-data/blob/hipster.png;image/png;5114.89;7911;2025-03-02T16:16:05;2025-03-02T15:03:57;nonsense furthermore huzzah;whet kindheartedly bribery;abaft;closely down instead;blah hungrily;DONE
+5;98f4b0ab-4228-430c-bb78-1ed9e8d23af0;../fake-data/blob/hipster.png;image/png;4365.76;14270;2025-03-02T14:22:25;2025-03-02T04:07:53;hmph;airdrop;garb;aw stamp;save cumbersome;DONE
+6;42631e0d-0fae-42b1-b273-6aa685ff6980;../fake-data/blob/hipster.png;image/png;4853.3;11249;2025-03-02T09:53:05;2025-03-02T13:04:15;calmly endpoint;fabric;as disafforest ick;boo;without behind scribble;ON_GOING
+7;567f9237-52a3-4428-8e19-5271a4210297;../fake-data/blob/hipster.png;image/png;14631.68;13444;2025-03-02T03:44:31;2025-03-02T11:32:38;hm abrogation;hence after boohoo;nor midst;likewise;sternly correctly worth;UPCOMING
+8;caace9be-e57b-4a19-a166-70e55552a61e;../fake-data/blob/hipster.png;image/png;8454.37;2505;2025-03-02T13:39:38;2025-03-02T09:01:47;transom drat;tired hare;very insurgence vaporise;supply drafty;dirty because;DONE
+9;97eb5624-cc00-485d-865c-4d2a3ece428f;../fake-data/blob/hipster.png;image/png;25594.18;9201;2025-03-03T02:56:32;2025-03-02T04:26:58;excluding shop overview;fully motorcar;naive void;yuck;consequently unpleasant;CANCEL
+10;28c8f0f4-2bfa-47bd-93e5-9169b20b28d4;../fake-data/blob/hipster.png;image/png;29488.95;17926;2025-03-02T13:48:39;2025-03-02T07:31:51;tame down;following drat;individualise fooey;better airfare splendid;mid;UPCOMING

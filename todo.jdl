@@ -1,0 +1,283 @@
+enum DriverStatus {
+  ACTIVE,
+  BANNED,
+  NOT_DRIVER
+}
+
+enum VehicleType {
+  CAR,
+  BIKE
+}
+
+enum TripStatus {
+  UPCOMING,
+  CONFIRMING,
+  ON_GOING,
+  DONE,
+  CANCEL
+}
+
+enum FeedbackStatus {
+  WAITING,
+  DONE
+}
+
+enum PassengerStatus {
+  WATING,
+  BOOKED,
+  DONE,
+  EMPTY,
+  CANCEL
+}
+
+enum FeedbackType {
+  DRIVER_TO_USER,
+  USER_TO_DRIVER
+}
+
+enum RatingType {
+  DRIVER_TO_USER,
+  USER_TO_DRIVER
+}
+
+enum PaymentStatus {
+  PENDING,
+  SUCCESS,
+  FAILED,
+  CANCEL
+}
+
+enum TransactionStatus {
+  PENDING,
+  SUCCESS,
+  FAILED
+}
+
+enum ReportStatus {
+  WAITING,
+  DONE
+}
+
+enum AplicationType{
+	FEEDBACKSYSTEM,
+    REPORTBUG,
+    REPORTDRIVER
+
+}
+
+enum PassengerType{
+	 LUGGAGE,
+     PASSENGER
+
+}
+
+enum WalletTransactionType{
+	DEPOSIT,
+    WITHDRAW,
+    REFUND,
+    DRIVER_CREATE_TRIP_FEE, // PHÍ TÀI XẾ PHẢI TRẢ KHI TẠO CHUYẾN XE
+    DRRIVER_DONE_TRIP_REFUND, // TRẢ LẠI TIỀN GÓI ĐẦU CÓ DRIVER
+    DRIVER_DONE_TRIP_FEE, //HỆ THỐNG TÍNH PHÍ SAU KHI HOÀN THÀNH CHUYẾN ĐI.
+    PASSENGER_APPROVE_FEE //PHÍ KHI PASSENGER THAM GIA VÀO CHUYẾN ĐI
+
+}
+
+entity Driver {
+  driverID UUID,
+  usedtoDriver Boolean,
+  expirationDate Instant,
+  driverStatus DriverStatus,
+  driverPoint Integer,
+  bannedDay Instant,
+  driverLicense Blob,
+  identityCardFaceUp Blob,
+  identityCardFacedown Blob
+
+}
+
+entity Vehicle {
+  vehicleID UUID,
+  vehicleType VehicleType,
+  vehicleImage Blob ,
+  carregistration Blob,
+  vehicleInspectionCertificate Blob,
+  vehicleNumber String,
+  numberOfSeats Integer,
+  vehicleColor String,
+  vehicleBrand String
+}
+
+entity Trip {
+  tripID UUID,
+  tripImg Blob,
+  pricePerSeat Double,
+  maxSeat Integer,
+  startDate Instant,
+  endDate Instant,
+  startLocation String,
+  endLocation String,
+  description String,
+  condition String,
+  cancelReason String,
+  tripStatus TripStatus
+}
+
+entity TripStopLocation {
+  stopLocaID UUID,
+  stopLoca String,
+  stopLocaTime Instant,
+  stopLocaStatus String
+}
+
+entity Passenger {
+  passengerID UUID,
+  startLoca String,
+  endLoca String,
+  amountApproveFee Double,
+  luggageImg Blob,
+  luggageDescription String,
+  type PassengerType,
+  status PassengerStatus,
+  pickUpTime Instant,
+  endTime Instant,
+  checkIn Boolean,
+  checkInTime Instant,
+  checkOut Boolean,
+  checkOutTIme Instant,
+  appliedAt Instant
+}
+
+entity Feedback {
+  feedbackID UUID,
+  feedbackType FeedbackType,
+  feedbackDescription String,
+  feedbackRating Integer,
+  feedbackStatus FeedbackStatus
+}
+
+entity Rating {
+  ratingID UUID,
+  ratingTime Instant,
+  ratingDriver Integer,
+  ratingType RatingType
+}
+
+entity PackageDriver {
+  packageID UUID,
+  price Double,
+  name String,
+  description String,
+  time Integer,
+  bonus Integer
+}
+
+entity Payment {
+  paymentID UUID,
+  amount Double,
+  paymentDate Instant,
+  paymentStatus PaymentStatus,
+  transactionId String
+}
+
+entity Notification {
+  date Instant,
+  content String
+}
+
+entity Report {
+  reportID UUID,
+  date Instant,
+  content String,
+  reportStatus ReportStatus
+}
+
+entity SystemWallet{
+	systemWalletID UUID,
+    before Double,
+    amount Double,
+    current Double,
+    blockAmount Double,
+    mobifyDate Instant
+
+}
+
+entity SystemTempWallet{
+	systemWalletID UUID,
+    before Double,
+    amount Double,
+    current Double,
+    mobifyDate Instant
+
+}
+
+entity WalletTransaction
+{
+	transID UUID,
+	amount Double,
+    date Instant,
+    walletType WalletTransactionType,
+    transStatus TransactionStatus,
+    transactionThirdPartyID String
+
+}
+
+entity SendingAplication{
+	apliID UUID,
+    sendApplicationType AplicationType,
+    content String,
+	img Blob
+
+}
+
+entity UserWallet{
+	userWallet UUID,
+    before Double,
+    amount Double,
+    current Double,
+    mobifyDate Instant
+
+}
+
+entity UserDetail{
+	appUserDetail UUID,
+    userimage Blob,
+    phone String,
+    gender String,
+    address String,
+    dob Instant
+}
+
+relationship OneToOne {
+  UserDetail to User with builtInEntity,
+  Driver to User with builtInEntity,
+  UserWallet to User with builtInEntity
+}
+
+relationship ManyToOne {
+  Vehicle to Driver,
+  Trip to Driver,
+  Passenger to Trip,
+  Passenger to User with builtInEntity,
+  TripStopLocation to Trip,
+  Feedback to Trip,
+  Feedback to Driver,
+  Feedback to User with builtInEntity,
+  Rating to Trip,
+  Rating to Driver,
+  Rating to User with builtInEntity,
+  Payment to User with builtInEntity,
+  Payment to PackageDriver,
+  Notification to User with builtInEntity,
+  Report to User with builtInEntity,
+  Report to User with builtInEntity,
+  WalletTransaction to SystemWallet,
+  WalletTransaction to Payment,
+  SendingAplication to User with builtInEntity,
+  WalletTransaction to UserWallet,
+  WalletTransaction to SystemTempWallet
+
+}
+
+paginate Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with pagination
+service Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with serviceClass
+dto Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with mapstruct

@@ -1,0 +1,28 @@
+{
+  "sTripBeApp": {
+    "userDetail": {
+      "home": {
+        "title": "User Details",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new User Detail",
+        "createOrEditLabel": "Create or edit a User Detail",
+        "notFound": "No User Details found"
+      },
+      "created": "A new User Detail is created with identifier {{ param }}",
+      "updated": "A User Detail is updated with identifier {{ param }}",
+      "deleted": "A User Detail is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete User Detail {{ id }}?"
+      },
+      "detail": {
+        "title": "User Detail"
+      },
+      "id": "ID",
+      "appUserDetail": "App User Detail",
+      "userimage": "Userimage",
+      "phone": "Phone",
+      "gender": "Gender",
+      "user": "User"
+    }
+  }
+}

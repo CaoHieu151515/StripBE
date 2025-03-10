@@ -1,0 +1,9 @@
+{
+  "sTripBeApp": {
+    "VehicleType": {
+      "null": "",
+      "CAR": "CAR",
+      "BIKE": "BIKE"
+    }
+  }
+}

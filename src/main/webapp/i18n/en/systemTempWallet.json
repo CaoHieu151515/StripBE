@@ -1,0 +1,29 @@
+{
+  "sTripBeApp": {
+    "systemTempWallet": {
+      "home": {
+        "title": "System Temp Wallets",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new System Temp Wallet",
+        "createOrEditLabel": "Create or edit a System Temp Wallet",
+        "notFound": "No System Temp Wallets found"
+      },
+      "created": "A new System Temp Wallet is created with identifier {{ param }}",
+      "updated": "A System Temp Wallet is updated with identifier {{ param }}",
+      "deleted": "A System Temp Wallet is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete System Temp Wallet {{ id }}?"
+      },
+      "detail": {
+        "title": "System Temp Wallet"
+      },
+      "id": "ID",
+      "systemWalletID": "System Wallet ID",
+      "before": "Before",
+      "amount": "Amount",
+      "current": "Current",
+      "mobifyDate": "Mobify Date",
+      "walletTransaction": "Wallet Transaction"
+    }
+  }
+}

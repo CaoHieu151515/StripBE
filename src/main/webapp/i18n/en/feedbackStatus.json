@@ -1,0 +1,9 @@
+{
+  "sTripBeApp": {
+    "FeedbackStatus": {
+      "null": "",
+      "WAITING": "WAITING",
+      "DONE": "DONE"
+    }
+  }
+}

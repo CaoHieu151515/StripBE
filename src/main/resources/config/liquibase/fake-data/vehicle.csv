@@ -1,0 +1,11 @@
+id;vehicle_id;vehicle_type;vehicle_image;vehicle_image_content_type;carregistration;carregistration_content_type;vehicle_inspection_certificate;vehicle_inspection_certificate_content_type;vehicle_number;number_of_seats;vehicle_color;vehicle_brand
+1;1782c12b-aa9c-49ac-926e-d444f397b50a;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;wisely;7511;partial pointless spiral;cluttered plus
+2;2055f6ed-7dba-4382-b2af-c16bb00628c1;CAR;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;mechanize;23786;cheerfully;acid gosh
+3;aed89364-3d40-45d5-97ef-98981703d589;CAR;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;following unlike;11285;solidity;hmph
+4;9b245d64-4f9d-4408-8d91-b75e8de967e5;CAR;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;ah promptly;3128;monitoring align bog;penny raw
+5;abd83c2d-46fb-4cad-907d-b22e48eabb5e;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;after;17659;victorious;gah across towards
+6;1295299a-6f4c-477b-8953-17a420494791;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;trustworthy heavily;30184;rural;transom vacantly except
+7;a47aa742-ea4c-426a-95b2-d671286e6e4a;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;of likely clove;24036;versus who;terrible
+8;d41eb70c-ab23-465a-a70c-4cdefd973d13;CAR;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;because forever veal;10749;brr venerated bagpipe;stud abaft
+9;32590aec-1b9d-4490-8444-b33699c10090;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;windy fooey;10010;so slate;dear conceal deep
+10;e15dabc7-d461-4727-b560-f3327e21fcfd;BIKE;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;../fake-data/blob/hipster.png;image/png;psst hmph;32231;handsaw ack who;about

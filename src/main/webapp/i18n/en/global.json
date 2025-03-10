@@ -7,7 +7,24 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "driver": "Driver",
+        "vehicle": "Vehicle",
+        "trip": "Trip",
+        "tripStopLocation": "Trip Stop Location",
+        "passenger": "Passenger",
+        "feedback": "Feedback",
+        "rating": "Rating",
+        "packageDriver": "Package Driver",
+        "payment": "Payment",
+        "notification": "Notification",
+        "report": "Report",
+        "systemWallet": "System Wallet",
+        "systemTempWallet": "System Temp Wallet",
+        "walletTransaction": "Wallet Transaction",
+        "sendingAplication": "Sending Aplication",
+        "userWallet": "User Wallet",
+        "userDetail": "User Detail"
       },
       "account": {
         "main": "Account",

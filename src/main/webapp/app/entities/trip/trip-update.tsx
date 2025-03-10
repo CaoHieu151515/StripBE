@@ -1,0 +1,229 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, Row, Col, FormText } from 'reactstrap';
+import { isNumber, Translate, translate, ValidatedField, ValidatedForm, ValidatedBlobField } from 'react-jhipster';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { mapIdList } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+
+import { IDriver } from 'app/shared/model/driver.model';
+import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
+import { ITrip } from 'app/shared/model/trip.model';
+import { TripStatus } from 'app/shared/model/enumerations/trip-status.model';
+import { getEntity, updateEntity, createEntity, reset } from './trip.reducer';
+
+export const TripUpdate = () => {
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const isNew = id === undefined;
+
+  const drivers = useAppSelector(state => state.driver.entities);
+  const tripEntity = useAppSelector(state => state.trip.entity);
+  const loading = useAppSelector(state => state.trip.loading);
+  const updating = useAppSelector(state => state.trip.updating);
+  const updateSuccess = useAppSelector(state => state.trip.updateSuccess);
+  const tripStatusValues = Object.keys(TripStatus);
+
+  const handleClose = () => {
+    navigate('/trip' + location.search);
+  };
+
+  useEffect(() => {
+    if (isNew) {
+      dispatch(reset());
+    } else {
+      dispatch(getEntity(id));
+    }
+
+    dispatch(getDrivers({}));
+  }, []);
+
+  useEffect(() => {
+    if (updateSuccess) {
+      handleClose();
+    }
+  }, [updateSuccess]);
+
+  // eslint-disable-next-line complexity
+  const saveEntity = values => {
+    if (values.id !== undefined && typeof values.id !== 'number') {
+      values.id = Number(values.id);
+    }
+    if (values.pricePerSeat !== undefined && typeof values.pricePerSeat !== 'number') {
+      values.pricePerSeat = Number(values.pricePerSeat);
+    }
+    if (values.maxSeat !== undefined && typeof values.maxSeat !== 'number') {
+      values.maxSeat = Number(values.maxSeat);
+    }
+    values.startDate = convertDateTimeToServer(values.startDate);
+    values.endDate = convertDateTimeToServer(values.endDate);
+
+    const entity = {
+      ...tripEntity,
+      ...values,
+      driver: drivers.find(it => it.id.toString() === values.driver?.toString()),
+    };
+
+    if (isNew) {
+      dispatch(createEntity(entity));
+    } else {
+      dispatch(updateEntity(entity));
+    }
+  };
+
+  const defaultValues = () =>
+    isNew
+      ? {
+          startDate: displayDefaultDateTime(),
+          endDate: displayDefaultDateTime(),
+        }
+      : {
+          tripStatus: 'UPCOMING',
+          ...tripEntity,
+          startDate: convertDateTimeFromServer(tripEntity.startDate),
+          endDate: convertDateTimeFromServer(tripEntity.endDate),
+          driver: tripEntity?.driver?.id,
+        };
+
+  return (
+    <div>
+      <Row className="justify-content-center">
+        <Col md="8">
+          <h2 id="sTripBeApp.trip.home.createOrEditLabel" data-cy="TripCreateUpdateHeading">
+            <Translate contentKey="sTripBeApp.trip.home.createOrEditLabel">Create or edit a Trip</Translate>
+          </h2>
+        </Col>
+      </Row>
+      <Row className="justify-content-center">
+        <Col md="8">
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
+              {!isNew ? (
+                <ValidatedField
+                  name="id"
+                  required
+                  readOnly
+                  id="trip-id"
+                  label={translate('global.field.id')}
+                  validate={{ required: true }}
+                />
+              ) : null}
+              <ValidatedField label={translate('sTripBeApp.trip.tripID')} id="trip-tripID" name="tripID" data-cy="tripID" type="text" />
+              <ValidatedBlobField
+                label={translate('sTripBeApp.trip.tripImg')}
+                id="trip-tripImg"
+                name="tripImg"
+                data-cy="tripImg"
+                openActionLabel={translate('entity.action.open')}
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.pricePerSeat')}
+                id="trip-pricePerSeat"
+                name="pricePerSeat"
+                data-cy="pricePerSeat"
+                type="text"
+              />
+              <ValidatedField label={translate('sTripBeApp.trip.maxSeat')} id="trip-maxSeat" name="maxSeat" data-cy="maxSeat" type="text" />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.startDate')}
+                id="trip-startDate"
+                name="startDate"
+                data-cy="startDate"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.endDate')}
+                id="trip-endDate"
+                name="endDate"
+                data-cy="endDate"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.startLocation')}
+                id="trip-startLocation"
+                name="startLocation"
+                data-cy="startLocation"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.endLocation')}
+                id="trip-endLocation"
+                name="endLocation"
+                data-cy="endLocation"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.description')}
+                id="trip-description"
+                name="description"
+                data-cy="description"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.condition')}
+                id="trip-condition"
+                name="condition"
+                data-cy="condition"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.cancelReason')}
+                id="trip-cancelReason"
+                name="cancelReason"
+                data-cy="cancelReason"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.tripStatus')}
+                id="trip-tripStatus"
+                name="tripStatus"
+                data-cy="tripStatus"
+                type="select"
+              >
+                {tripStatusValues.map(tripStatus => (
+                  <option value={tripStatus} key={tripStatus}>
+                    {translate('sTripBeApp.TripStatus.' + tripStatus)}
+                  </option>
+                ))}
+              </ValidatedField>
+              <ValidatedField id="trip-driver" name="driver" data-cy="driver" label={translate('sTripBeApp.trip.driver')} type="select">
+                <option value="" key="0" />
+                {drivers
+                  ? drivers.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/trip" replace color="info">
+                <FontAwesomeIcon icon="arrow-left" />
+                &nbsp;
+                <span className="d-none d-md-inline">
+                  <Translate contentKey="entity.action.back">Back</Translate>
+                </span>
+              </Button>
+              &nbsp;
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+                <FontAwesomeIcon icon="save" />
+                &nbsp;
+                <Translate contentKey="entity.action.save">Save</Translate>
+              </Button>
+            </ValidatedForm>
+          )}
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default TripUpdate;

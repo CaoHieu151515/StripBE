@@ -1,8 +1,13 @@
 package strip.service;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +46,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final OtpCacheService otpCacheService;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        OtpCacheService otpCacheService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.otpCacheService = otpCacheService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -133,6 +142,74 @@ public class UserService {
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+    @Transactional
+    public User registerUserOTP(AdminUserDTO userDTO, String password) {
+        // Kiểm tra email đã tồn tại chưa
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+        if (existingUser.isPresent()) {
+            throw new EmailAlreadyUsedException(); // Chặn đăng ký nếu email đã tồn tại
+        }
+
+        // Tạo mã login ngẫu nhiên 9 ký tự và đảm bảo không bị trùng
+        String login;
+        do {
+            login = RandomUsername.generateRandomCode(9);
+        } while (userRepository.findOneByLogin(login).isPresent());
+
+        User newUser = new User();
+        String encryptedPassword = passwordEncoder.encode(password);
+
+        newUser.setLogin(login); // Gán mã 9 ký tự làm login
+        newUser.setEmail(userDTO.getEmail().toLowerCase());
+        newUser.setPassword(encryptedPassword);
+        newUser.setFirstName(userDTO.getFirstName());
+        newUser.setLastName(userDTO.getLastName());
+        newUser.setImageUrl(userDTO.getImageUrl());
+        newUser.setLangKey(userDTO.getLangKey());
+        // Mặc định tài khoản chưa kích hoạt
+        newUser.setActivated(true);
+        newUser.setActivationKey(null);
+
+        // Gán quyền mặc định cho người dùng
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.PASSENGER).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+
+        userRepository.save(newUser);
+        this.clearUserCaches(newUser);
+
+        log.debug("Created Information for User: {}", newUser);
+        return newUser;
+    }
+
+    public String sendOTP(String email) {
+        String otp = generateOTP(6);
+        otpCacheService.saveOtp(email, otp);
+
+        return otp;
+    }
+
+    public boolean verifyUserOtp(String email, String inputOtp) {
+        if (inputOtp == null || inputOtp.isEmpty()) {
+            log.warn("OTP is null or empty for email: {}", email);
+            return false;
+        }
+
+        // Lấy OTP từ cache
+        String cachedOtp = otpCacheService.getOtp(email);
+        log.debug("Cached OTP for {}: {}", email, cachedOtp);
+
+        // So sánh OTP nhập vào với OTP trong cache
+        if (cachedOtp != null && cachedOtp.equals(inputOtp)) {
+            log.info("OTP verification successful for email: {}", email);
+            otpCacheService.removeOtp(email); // Xóa OTP sau khi xác minh thành công
+            return true;
+        }
+
+        log.warn("OTP verification failed for email: {}. Input OTP: {}, Expected OTP: {}", email, inputOtp, cachedOtp);
+        return false;
     }
 
     private boolean removeNonActivatedUser(User existingUser) {
@@ -320,5 +397,14 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
+    }
+
+    public String generateOTP(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            otp.append(random.nextInt(10)); // Chỉ số
+        }
+        return otp.toString();
     }
 }

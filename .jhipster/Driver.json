@@ -1,0 +1,91 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033654"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "driverID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "usedtoDriver",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "expirationDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "driverStatus",
+      "fieldType": "DriverStatus",
+      "fieldValues": "ACTIVE,BANNED,NOT_DRIVER"
+    },
+    {
+      "fieldName": "driverPoint",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "bannedDay",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "driverLicense",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "identityCardFaceUp",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    },
+    {
+      "fieldName": "identityCardFacedown",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    }
+  ],
+  "name": "Driver",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one",
+      "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "vehicle",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "vehicle",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "trip",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "trip",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "feedback",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "feedback",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "rating",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "rating",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

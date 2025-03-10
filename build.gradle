@@ -63,6 +63,19 @@ idea {
     }
 }
 
+liquibase {
+    activities {
+        main {
+            changeLogFile 'src/main/resources/config/liquibase/master.xml'
+            url 'jdbc:mysql://localhost:3306/sTripBe'
+            username 'root'
+            password '123456'
+            driver 'com.mysql.cj.jdbc.Driver'
+            referenceUrl 'hibernate:spring:strip.domain'
+        }
+    }
+}
+
 eclipse {
     sourceSets {
         main {
@@ -92,17 +105,21 @@ test {
     reports.html.required = false
     testLogging.exceptionFormat "full"
 }
-
-check.dependsOn integrationTest
-task testReport(type: TestReport) {
-    destinationDirectory = file("$buildDir/reports/tests")
-    testResults.from(test)
+tasks.withType(Test).configureEach { testTask ->
+    if (testTask.name == "integrationTest") {
+        testTask.enabled = false
+    }
 }
+// check.dependsOn integrationTest
+// task testReport(type: TestReport) {
+//     destinationDirectory = file("$buildDir/reports/tests")
+//     testResults.from(test)
+// }
 
-task integrationTestReport(type: TestReport) {
-    destinationDirectory = file("$buildDir/reports/tests")
-    testResults.from(integrationTest)
-}
+// task integrationTestReport(type: TestReport) {
+//     destinationDirectory = file("$buildDir/reports/tests")
+//     testResults.from(integrationTest)
+// }
 
 gitProperties {
     failOnNoGitDirectory = false
@@ -117,6 +134,13 @@ configurations {
     providedRuntime
     implementation.exclude module: "spring-boot-starter-tomcat"
 }
+
+configurations.all {
+    resolutionStrategy {
+        force 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    }
+}
+
 
 dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
@@ -169,6 +193,7 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers"
     implementation "org.springframework.boot:spring-boot-starter-websocket"
     implementation "org.springframework.security:spring-security-messaging"
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
     // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

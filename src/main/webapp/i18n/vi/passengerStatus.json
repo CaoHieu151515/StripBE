@@ -1,0 +1,12 @@
+{
+  "sTripBeApp": {
+    "PassengerStatus": {
+      "null": "",
+      "WATING": "WATING",
+      "BOOKED": "BOOKED",
+      "DONE": "DONE",
+      "EMPTY": "EMPTY",
+      "CANCEL": "CANCEL"
+    }
+  }
+}

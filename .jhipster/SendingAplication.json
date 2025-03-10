@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033708"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "apliID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "sendApplicationType",
+      "fieldType": "AplicationType",
+      "fieldValues": "FEEDBACKSYSTEM,REPORTBUG,REPORTDRIVER"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "img",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "any"
+    }
+  ],
+  "name": "SendingAplication",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "sendingAplication",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no"
+}

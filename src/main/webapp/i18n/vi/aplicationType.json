@@ -1,0 +1,10 @@
+{
+  "sTripBeApp": {
+    "AplicationType": {
+      "null": "",
+      "FEEDBACKSYSTEM": "FEEDBACKSYSTEM",
+      "REPORTBUG": "REPORTBUG",
+      "REPORTDRIVER": "REPORTDRIVER"
+    }
+  }
+}

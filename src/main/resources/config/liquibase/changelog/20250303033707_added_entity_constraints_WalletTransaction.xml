@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity WalletTransaction.
+    -->
+    <changeSet id="20250303033707-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="system_wallet_id"
+                                 baseTableName="wallet_transaction"
+                                 constraintName="fk_wallet_transaction__system_wallet_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="system_wallet"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="payment_id"
+                                 baseTableName="wallet_transaction"
+                                 constraintName="fk_wallet_transaction__payment_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="payment"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="user_wallet_id"
+                                 baseTableName="wallet_transaction"
+                                 constraintName="fk_wallet_transaction__user_wallet_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_wallet"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="system_temp_wallet_id"
+                                 baseTableName="wallet_transaction"
+                                 constraintName="fk_wallet_transaction__system_temp_wallet_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="system_temp_wallet"
+                                 />
+    </changeSet>
+</databaseChangeLog>

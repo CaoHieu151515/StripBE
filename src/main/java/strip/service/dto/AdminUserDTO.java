@@ -1,11 +1,11 @@
 package strip.service.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
-import strip.config.Constants;
 import strip.domain.Authority;
 import strip.domain.User;
 
@@ -18,8 +18,8 @@ public class AdminUserDTO implements Serializable {
 
     private Long id;
 
-    @NotBlank
-    @Pattern(regexp = Constants.LOGIN_REGEX)
+    // @NotBlank
+    // @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     private String login;
 

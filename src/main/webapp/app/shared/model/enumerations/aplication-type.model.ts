@@ -1,0 +1,7 @@
+export enum AplicationType {
+  FEEDBACKSYSTEM = 'FEEDBACKSYSTEM',
+
+  REPORTBUG = 'REPORTBUG',
+
+  REPORTDRIVER = 'REPORTDRIVER',
+}

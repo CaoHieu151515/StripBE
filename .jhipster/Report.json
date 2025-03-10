@@ -1,0 +1,40 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033704"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "reportID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "reportStatus",
+      "fieldType": "ReportStatus",
+      "fieldValues": "WAITING,DONE"
+    }
+  ],
+  "name": "Report",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "report",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "changelogDate": "20250303033657"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "stopLocaID",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "stopLoca",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "stopLocaTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "stopLocaStatus",
+      "fieldType": "String"
+    }
+  ],
+  "name": "TripStopLocation",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "trip",
+      "otherEntityRelationshipName": "tripStopLocation",
+      "relationshipName": "trip",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}
