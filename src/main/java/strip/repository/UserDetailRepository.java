@@ -1,7 +1,9 @@
 package strip.repository;
 
-import org.springframework.data.jpa.repository.*;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import strip.domain.User;
 import strip.domain.UserDetail;
 
 /**
@@ -9,4 +11,6 @@ import strip.domain.UserDetail;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {}
+public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
+    Optional<UserDetail> findByUser(User user);
+}

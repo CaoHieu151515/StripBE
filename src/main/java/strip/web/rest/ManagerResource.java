@@ -11,16 +11,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import strip.security.AuthoritiesConstants;
 import strip.service.UserService;
 import strip.service.UsermanageService;
-import strip.service.dto.AdminUserDTO;
 import strip.service.dto.UsermanageDTO;
+import strip.service.dto.UsermanageDetailsDTO;
 import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
@@ -46,14 +48,6 @@ public class ManagerResource {
     public ManagerResource(UserService userService, UsermanageService usermanageService) {
         this.userService = userService;
         this.usermanageService = usermanageService;
-    }
-
-    @GetMapping("/account")
-    public AdminUserDTO getAccount() {
-        return userService
-            .getUserWithAuthorities()
-            .map(AdminUserDTO::new)
-            .orElseThrow(() -> new ManagerResourceException("User could not be found"));
     }
 
     @GetMapping("/GetAllUsers")
@@ -84,9 +78,10 @@ public class ManagerResource {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UsermanageDTO> getUserById(@PathVariable Long id) {
-        UsermanageDTO user = usermanageService.getUserById(id);
-        return ResponseEntity.ok(user);
+    @GetMapping("/details/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<UsermanageDetailsDTO> getManagerDetailsById(@PathVariable Long id) {
+        log.debug("REST request to get detailed Manager information: {}", id);
+        return usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

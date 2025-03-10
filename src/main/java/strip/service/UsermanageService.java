@@ -8,11 +8,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserDetail;
+import strip.repository.DriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.service.dto.UsermanageDTO;
+import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.mapper.UsermanageMapper;
 
 @Service
@@ -22,11 +25,18 @@ public class UsermanageService {
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UsermanageMapper usermanageMapper;
+    private final DriverRepository driverRepository;
 
-    public UsermanageService(UserRepository userRepository, UserDetailRepository userDetailRepository, UsermanageMapper usermanageMapper) {
+    public UsermanageService(
+        UserRepository userRepository,
+        UserDetailRepository userDetailRepository,
+        UsermanageMapper usermanageMapper,
+        DriverRepository driverRepository
+    ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
         this.usermanageMapper = usermanageMapper;
+        this.driverRepository = driverRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -75,5 +85,15 @@ public class UsermanageService {
             .collect(Collectors.toList());
 
         return new PageImpl<>(filteredUsers, pageable, filteredUsers.size()); // Trả về Page<UsermanageDTO>
+    }
+
+    public Optional<UsermanageDetailsDTO> getUserDetailsById(Long id) {
+        return userRepository
+            .findById(id)
+            .map(user -> {
+                Optional<UserDetail> userDetail = userDetailRepository.findByUser(user);
+                Optional<Driver> driver = driverRepository.findByUser(user);
+                return new UsermanageDetailsDTO(user, userDetail.orElse(null), driver.orElse(null));
+            });
     }
 }
