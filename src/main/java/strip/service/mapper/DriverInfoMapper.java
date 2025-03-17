@@ -6,6 +6,7 @@ import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.Vehicle;
+import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
 
@@ -19,6 +20,7 @@ public interface DriverInfoMapper {
     @Mapping(source = "userDetail.gender", target = "gender")
     @Mapping(source = "userDetail.address", target = "address")
     @Mapping(source = "userDetail.dob", target = "dob")
+    @Mapping(source = "driver.driverLicense", target = "driverLicense")
     @Mapping(source = "driver.identityCardFaceUp", target = "identityCardFaceUp")
     @Mapping(source = "driver.identityCardFacedown", target = "identityCardFaceDown")
     @Mapping(target = "vehicles", ignore = true) // Vehicles sẽ được set thủ công sau
@@ -36,4 +38,15 @@ public interface DriverInfoMapper {
     @Mapping(source = "vehicle.vehicleBrand", target = "vehicleBrand")
     @Mapping(source = "vehicle.status", target = "status")
     DriverVehicleDTO toDriverVehicleDTO(Vehicle vehicle);
+
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.firstName", target = "firstName")
+    @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(source = "user.email", target = "email")
+    @Mapping(source = "userDetail.phone", target = "phone")
+    @Mapping(source = "driver.identityCardFaceUp", target = "identityCardFaceUp")
+    @Mapping(source = "driver.identityCardFacedown", target = "identityCardFaceDown")
+    @Mapping(source = "driver.driverLicense", target = "driverLicense")
+    @Mapping(source = "vehicle", target = "vehicle")
+    ConfirmingVehicleDTO toConfirmingVehicleDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle);
 }

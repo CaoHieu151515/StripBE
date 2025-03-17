@@ -11,7 +11,8 @@ enum VehicleType {
 
 enum VehicleStatus{
   ACTIVE, //XE PHẢI ACTIVE MỚI CHỌN XE ĐỂ ĐI ĐƯỢC
-  CONFIRMING
+  CONFIRMING,
+  CANCEL
 }
 
 enum TripStatus {

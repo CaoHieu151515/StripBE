@@ -1,54 +1,43 @@
 package strip.service.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.util.Set;
 
-public class DriverInfoDTO implements Serializable {
+public class ConfirmingVehicleDTO implements Serializable {
 
     private Long userId;
     private String firstName;
     private String lastName;
     private String phone;
-    private String address;
-    private String gender;
-    private Instant dob;
     private String email;
-    private byte[] driverLicense;
     private byte[] identityCardFaceUp;
     private byte[] identityCardFaceDown;
-    private Set<DriverVehicleDTO> vehicles;
+    private byte[] driverLicense;
+    private DriverVehicleDTO vehicle; // Chỉ chứa một phương tiện
 
-    public DriverInfoDTO() {
+    public ConfirmingVehicleDTO() {
         // Default constructor
     }
 
-    public DriverInfoDTO(
+    public ConfirmingVehicleDTO(
         Long userId,
         String firstName,
         String lastName,
         String phone,
-        String address,
-        String gender,
-        Instant dob,
         String email,
-        byte[] driverLicense,
         byte[] identityCardFaceUp,
         byte[] identityCardFaceDown,
-        Set<DriverVehicleDTO> vehicles
+        byte[] driverLicense,
+        DriverVehicleDTO vehicle
     ) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
-        this.address = address;
-        this.gender = gender;
-        this.dob = dob;
         this.email = email;
-        this.driverLicense = driverLicense;
         this.identityCardFaceUp = identityCardFaceUp;
         this.identityCardFaceDown = identityCardFaceDown;
-        this.vehicles = vehicles;
+        this.driverLicense = driverLicense;
+        this.vehicle = vehicle;
     }
 
     // Getters & Setters
@@ -84,30 +73,6 @@ public class DriverInfoDTO implements Serializable {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Instant getDob() {
-        return dob;
-    }
-
-    public void setDob(Instant dob) {
-        this.dob = dob;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -132,19 +97,19 @@ public class DriverInfoDTO implements Serializable {
         this.identityCardFaceDown = identityCardFaceDown;
     }
 
-    public Set<DriverVehicleDTO> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(Set<DriverVehicleDTO> vehicles) {
-        this.vehicles = vehicles;
-    }
-
     public byte[] getDriverLicense() {
         return driverLicense;
     }
 
     public void setDriverLicense(byte[] driverLicense) {
         this.driverLicense = driverLicense;
+    }
+
+    public DriverVehicleDTO getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(DriverVehicleDTO vehicle) {
+        this.vehicle = vehicle;
     }
 }

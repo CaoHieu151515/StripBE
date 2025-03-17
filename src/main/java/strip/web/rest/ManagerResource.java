@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.security.AuthoritiesConstants;
 import strip.service.UserService;
 import strip.service.UsermanageService;
+import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
@@ -91,5 +94,31 @@ public class ManagerResource {
     public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable String username) {
         Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUsername(username);
         return driverInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/vehicles/pending-approval")
+    // @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.STAFF + "\")")
+    public ResponseEntity<List<ConfirmingVehicleDTO>> getAllPendingApprovalVehicles() {
+        log.debug("REST request to get all vehicles pending approval (CONFIRMING)");
+        List<ConfirmingVehicleDTO> vehicles = usermanageService.getAllConfirmingVehicles();
+        return ResponseEntity.ok().body(vehicles);
+    }
+
+    @PutMapping("/vehicles/{vehicleId}/approve")
+    public ResponseEntity<String> approveVehicle(@PathVariable UUID vehicleId) {
+        boolean success = usermanageService.approveVehicle(vehicleId);
+        if (success) {
+            return ResponseEntity.ok("Vehicle approved successfully.");
+        }
+        return ResponseEntity.badRequest().body("Vehicle not found.");
+    }
+
+    @PutMapping("/vehicles/{vehicleId}/reject")
+    public ResponseEntity<String> rejectVehicle(@PathVariable UUID vehicleId) {
+        boolean success = usermanageService.rejectVehicle(vehicleId);
+        if (success) {
+            return ResponseEntity.ok("Vehicle rejected successfully.");
+        }
+        return ResponseEntity.badRequest().body("Vehicle not found.");
     }
 }

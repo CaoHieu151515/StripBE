@@ -3,7 +3,8 @@
     "VehicleStatus": {
       "null": "",
       "ACTIVE": "ACTIVE",
-      "CONFIRMING": "CONFIRMING"
+      "CONFIRMING": "CONFIRMING",
+      "CANCEL": "CANCEL"
     }
   }
 }

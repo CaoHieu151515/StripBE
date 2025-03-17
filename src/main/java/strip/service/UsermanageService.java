@@ -3,7 +3,10 @@ package strip.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserDetail;
+import strip.domain.Vehicle;
+import strip.domain.enumeration.VehicleStatus;
 import strip.repository.DriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
+import strip.repository.VehicleRepository;
+import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.UsermanageDTO;
@@ -26,24 +33,31 @@ import strip.service.mapper.UsermanageMapper;
 @Transactional
 public class UsermanageService {
 
+    private final Logger log = LoggerFactory.getLogger(PaymentService.class);
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UsermanageMapper usermanageMapper;
     private final DriverRepository driverRepository;
     private final DriverInfoMapper driverInfoMapper;
+    private final VehicleService vehicleService;
+    private final VehicleRepository vehicleRepository;
 
     public UsermanageService(
         UserRepository userRepository,
         UserDetailRepository userDetailRepository,
         UsermanageMapper usermanageMapper,
         DriverRepository driverRepository,
-        DriverInfoMapper driverInfoMapper
+        DriverInfoMapper driverInfoMapper,
+        VehicleService vehicleService,
+        VehicleRepository vehicleRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
         this.usermanageMapper = usermanageMapper;
         this.driverRepository = driverRepository;
         this.driverInfoMapper = driverInfoMapper;
+        this.vehicleService = vehicleService;
+        this.vehicleRepository = vehicleRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -128,5 +142,41 @@ public class UsermanageService {
         }
 
         return Optional.empty();
+    }
+
+    public List<ConfirmingVehicleDTO> getAllConfirmingVehicles() {
+        List<Vehicle> confirmingVehicles = vehicleRepository.findByStatus(VehicleStatus.CONFIRMING);
+
+        return confirmingVehicles
+            .stream()
+            .map(vehicle -> {
+                User user = vehicle.getDriver().getUser();
+                UserDetail userDetail = userDetailRepository.findById(user.getId()).orElse(null);
+                Driver driver = vehicle.getDriver();
+                return driverInfoMapper.toConfirmingVehicleDTO(user, userDetail, driver, vehicle);
+            })
+            .collect(Collectors.toList());
+    }
+
+    public boolean approveVehicle(UUID vehicleId) {
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findByVehicleID(vehicleId);
+        if (vehicleOpt.isPresent()) {
+            Vehicle vehicle = vehicleOpt.get();
+            vehicle.setStatus(VehicleStatus.ACTIVE);
+            vehicleRepository.save(vehicle);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rejectVehicle(UUID vehicleId) {
+        Optional<Vehicle> vehicleOpt = vehicleRepository.findByVehicleID(vehicleId);
+        if (vehicleOpt.isPresent()) {
+            Vehicle vehicle = vehicleOpt.get();
+            vehicle.setStatus(VehicleStatus.CANCEL);
+            vehicleRepository.save(vehicle);
+            return true;
+        }
+        return false;
     }
 }
