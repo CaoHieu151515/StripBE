@@ -317,11 +317,7 @@ class PaymentResourceIT {
         Payment partialUpdatedPayment = new Payment();
         partialUpdatedPayment.setId(payment.getId());
 
-        partialUpdatedPayment
-            .paymentID(UPDATED_PAYMENT_ID)
-            .amount(UPDATED_AMOUNT)
-            .paymentDate(UPDATED_PAYMENT_DATE)
-            .transactionId(UPDATED_TRANSACTION_ID);
+        partialUpdatedPayment.paymentID(UPDATED_PAYMENT_ID).amount(UPDATED_AMOUNT).transactionId(UPDATED_TRANSACTION_ID);
 
         restPaymentMockMvc
             .perform(

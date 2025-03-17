@@ -1,0 +1,46 @@
+{
+  "annotations": {
+    "changelogDate": "20250317024432"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "purchaseDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "expirationDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "packagePrice",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "active",
+      "fieldType": "Boolean"
+    }
+  ],
+  "name": "DriverPackageSubscription",
+  "relationships": [
+    {
+      "otherEntityName": "driver",
+      "otherEntityRelationshipName": "driverPackageSubscription",
+      "relationshipName": "driver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "packageDriver",
+      "otherEntityRelationshipName": "driverPackageSubscription",
+      "relationshipName": "packageDriver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no"
+}

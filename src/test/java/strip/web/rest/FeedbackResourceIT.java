@@ -320,7 +320,10 @@ class FeedbackResourceIT {
         Feedback partialUpdatedFeedback = new Feedback();
         partialUpdatedFeedback.setId(feedback.getId());
 
-        partialUpdatedFeedback.feedbackID(UPDATED_FEEDBACK_ID).feedbackRating(UPDATED_FEEDBACK_RATING);
+        partialUpdatedFeedback
+            .feedbackID(UPDATED_FEEDBACK_ID)
+            .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION)
+            .feedbackStatus(UPDATED_FEEDBACK_STATUS);
 
         restFeedbackMockMvc
             .perform(

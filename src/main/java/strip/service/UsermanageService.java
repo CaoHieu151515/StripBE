@@ -2,6 +2,7 @@ package strip.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,8 +15,11 @@ import strip.domain.UserDetail;
 import strip.repository.DriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
+import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
+import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.UsermanageMapper;
 
 @Service
@@ -26,17 +30,20 @@ public class UsermanageService {
     private final UserDetailRepository userDetailRepository;
     private final UsermanageMapper usermanageMapper;
     private final DriverRepository driverRepository;
+    private final DriverInfoMapper driverInfoMapper;
 
     public UsermanageService(
         UserRepository userRepository,
         UserDetailRepository userDetailRepository,
         UsermanageMapper usermanageMapper,
-        DriverRepository driverRepository
+        DriverRepository driverRepository,
+        DriverInfoMapper driverInfoMapper
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
         this.usermanageMapper = usermanageMapper;
         this.driverRepository = driverRepository;
+        this.driverInfoMapper = driverInfoMapper;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -95,5 +102,31 @@ public class UsermanageService {
                 Optional<Driver> driver = driverRepository.findByUser(user);
                 return new UsermanageDetailsDTO(user, userDetail.orElse(null), driver.orElse(null));
             });
+    }
+
+    public Optional<DriverInfoDTO> getDriverDetailsByUsername(String username) {
+        Optional<User> user = userRepository.findOneByLogin(username);
+
+        if (user.isPresent()) {
+            Optional<UserDetail> userDetail = userDetailRepository.findById(user.get().getId());
+            Optional<Driver> driver = driverRepository.findById(user.get().getId());
+
+            if (driver.isPresent()) {
+                DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user.get(), userDetail.orElse(null), driver.get());
+
+                // Lấy danh sách phương tiện của driver và ánh xạ sang DTO
+                Set<DriverVehicleDTO> vehicleDTOs = driver
+                    .get()
+                    .getVehicles()
+                    .stream()
+                    .map(driverInfoMapper::toDriverVehicleDTO)
+                    .collect(Collectors.toSet());
+
+                dto.setVehicles(vehicleDTOs);
+                return Optional.of(dto);
+            }
+        }
+
+        return Optional.empty();
     }
 }

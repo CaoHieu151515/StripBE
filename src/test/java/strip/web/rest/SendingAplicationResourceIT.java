@@ -301,7 +301,7 @@ class SendingAplicationResourceIT {
         SendingAplication partialUpdatedSendingAplication = new SendingAplication();
         partialUpdatedSendingAplication.setId(sendingAplication.getId());
 
-        partialUpdatedSendingAplication.apliID(UPDATED_APLI_ID).sendApplicationType(UPDATED_SEND_APPLICATION_TYPE).content(UPDATED_CONTENT);
+        partialUpdatedSendingAplication.apliID(UPDATED_APLI_ID).img(UPDATED_IMG).imgContentType(UPDATED_IMG_CONTENT_TYPE);
 
         restSendingAplicationMockMvc
             .perform(

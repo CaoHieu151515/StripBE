@@ -53,7 +53,10 @@ public class Feedback implements Serializable {
     private Trip trip;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "user", "vehicles", "trips", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "user", "vehicles", "trips", "feedbacks", "ratings", "driverPackageSubscriptions" },
+        allowSetters = true
+    )
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)

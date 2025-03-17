@@ -51,6 +51,11 @@ public class PackageDriver implements Serializable {
     @JsonIgnoreProperties(value = { "user", "packageDriver", "walletTransactions" }, allowSetters = true)
     private Set<Payment> payments = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "packageDriver")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "driver", "packageDriver" }, allowSetters = true)
+    private Set<DriverPackageSubscription> driverPackageSubscriptions = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -172,6 +177,37 @@ public class PackageDriver implements Serializable {
     public PackageDriver removePayment(Payment payment) {
         this.payments.remove(payment);
         payment.setPackageDriver(null);
+        return this;
+    }
+
+    public Set<DriverPackageSubscription> getDriverPackageSubscriptions() {
+        return this.driverPackageSubscriptions;
+    }
+
+    public void setDriverPackageSubscriptions(Set<DriverPackageSubscription> driverPackageSubscriptions) {
+        if (this.driverPackageSubscriptions != null) {
+            this.driverPackageSubscriptions.forEach(i -> i.setPackageDriver(null));
+        }
+        if (driverPackageSubscriptions != null) {
+            driverPackageSubscriptions.forEach(i -> i.setPackageDriver(this));
+        }
+        this.driverPackageSubscriptions = driverPackageSubscriptions;
+    }
+
+    public PackageDriver driverPackageSubscriptions(Set<DriverPackageSubscription> driverPackageSubscriptions) {
+        this.setDriverPackageSubscriptions(driverPackageSubscriptions);
+        return this;
+    }
+
+    public PackageDriver addDriverPackageSubscription(DriverPackageSubscription driverPackageSubscription) {
+        this.driverPackageSubscriptions.add(driverPackageSubscription);
+        driverPackageSubscription.setPackageDriver(this);
+        return this;
+    }
+
+    public PackageDriver removeDriverPackageSubscription(DriverPackageSubscription driverPackageSubscription) {
+        this.driverPackageSubscriptions.remove(driverPackageSubscription);
+        driverPackageSubscription.setPackageDriver(null);
         return this;
     }
 

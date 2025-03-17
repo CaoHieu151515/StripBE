@@ -39,6 +39,13 @@
       "relationshipName": "payment",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "driverPackageSubscription",
+      "otherEntityRelationshipName": "packageDriver",
+      "relationshipName": "driverPackageSubscription",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no",

@@ -3,6 +3,7 @@ package strip.web.rest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.security.AuthoritiesConstants;
 import strip.service.UserService;
 import strip.service.UsermanageService;
+import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import tech.jhipster.web.util.PaginationUtil;
@@ -83,5 +85,11 @@ public class ManagerResource {
     public ResponseEntity<UsermanageDetailsDTO> getManagerDetailsById(@PathVariable Long id) {
         log.debug("REST request to get detailed Manager information: {}", id);
         return usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/driver/username/{username}")
+    public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable String username) {
+        Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUsername(username);
+        return driverInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

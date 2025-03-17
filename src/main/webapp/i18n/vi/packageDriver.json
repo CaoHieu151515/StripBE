@@ -24,7 +24,8 @@
       "description": "Description",
       "time": "Time",
       "bonus": "Bonus",
-      "payment": "Payment"
+      "payment": "Payment",
+      "driverPackageSubscription": "Driver Package Subscription"
     }
   }
 }

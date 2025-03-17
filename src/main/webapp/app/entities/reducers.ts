@@ -16,6 +16,7 @@ import sendingAplication from 'app/entities/sending-aplication/sending-aplicatio
 import userWallet from 'app/entities/user-wallet/user-wallet.reducer';
 import userDetail from 'app/entities/user-detail/user-detail.reducer';
 import requestTrip from 'app/entities/request-trip/request-trip.reducer';
+import driverPackageSubscription from 'app/entities/driver-package-subscription/driver-package-subscription.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -37,6 +38,7 @@ const entitiesReducers = {
   userWallet,
   userDetail,
   requestTrip,
+  driverPackageSubscription,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };
 

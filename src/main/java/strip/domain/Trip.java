@@ -79,7 +79,10 @@ public class Trip implements Serializable {
     private Vehicle vehicle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "user", "vehicles", "trips", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "user", "vehicles", "trips", "feedbacks", "ratings", "driverPackageSubscriptions" },
+        allowSetters = true
+    )
     private Driver driver;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")

@@ -375,13 +375,7 @@ class DriverResourceIT {
         Driver partialUpdatedDriver = new Driver();
         partialUpdatedDriver.setId(driver.getId());
 
-        partialUpdatedDriver
-            .usedtoDriver(UPDATED_USEDTO_DRIVER)
-            .expirationDate(UPDATED_EXPIRATION_DATE)
-            .driverStatus(UPDATED_DRIVER_STATUS)
-            .driverPoint(UPDATED_DRIVER_POINT)
-            .driverLicense(UPDATED_DRIVER_LICENSE)
-            .driverLicenseContentType(UPDATED_DRIVER_LICENSE_CONTENT_TYPE);
+        partialUpdatedDriver.expirationDate(UPDATED_EXPIRATION_DATE).driverStatus(UPDATED_DRIVER_STATUS).driverPoint(UPDATED_DRIVER_POINT);
 
         restDriverMockMvc
             .perform(

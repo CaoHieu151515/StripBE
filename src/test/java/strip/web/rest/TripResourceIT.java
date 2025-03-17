@@ -382,11 +382,13 @@ class TripResourceIT {
         partialUpdatedTrip.setId(trip.getId());
 
         partialUpdatedTrip
-            .tripID(UPDATED_TRIP_ID)
+            .tripImg(UPDATED_TRIP_IMG)
+            .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
-            .endDate(UPDATED_END_DATE)
-            .startLocation(UPDATED_START_LOCATION)
-            .cancelReason(UPDATED_CANCEL_REASON);
+            .startDate(UPDATED_START_DATE)
+            .currentSeat(UPDATED_CURRENT_SEAT)
+            .endLocation(UPDATED_END_LOCATION)
+            .description(UPDATED_DESCRIPTION);
 
         restTripMockMvc
             .perform(

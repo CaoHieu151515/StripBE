@@ -298,7 +298,7 @@ class SystemTempWalletResourceIT {
         SystemTempWallet partialUpdatedSystemTempWallet = new SystemTempWallet();
         partialUpdatedSystemTempWallet.setId(systemTempWallet.getId());
 
-        partialUpdatedSystemTempWallet.before(UPDATED_BEFORE).current(UPDATED_CURRENT);
+        partialUpdatedSystemTempWallet.mobifyDate(UPDATED_MOBIFY_DATE);
 
         restSystemTempWalletMockMvc
             .perform(

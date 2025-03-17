@@ -391,14 +391,13 @@ class VehicleResourceIT {
         partialUpdatedVehicle.setId(vehicle.getId());
 
         partialUpdatedVehicle
-            .vehicleType(UPDATED_VEHICLE_TYPE)
+            .vehicleID(UPDATED_VEHICLE_ID)
             .vehicleImage(UPDATED_VEHICLE_IMAGE)
             .vehicleImageContentType(UPDATED_VEHICLE_IMAGE_CONTENT_TYPE)
+            .carregistration(UPDATED_CARREGISTRATION)
+            .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
-            .carInsurance(UPDATED_CAR_INSURANCE)
-            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
-            .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleBrand(UPDATED_VEHICLE_BRAND);
 
         restVehicleMockMvc

@@ -412,16 +412,13 @@ class RequestTripResourceIT {
 
         partialUpdatedRequestTrip
             .requestTripID(UPDATED_REQUEST_TRIP_ID)
-            .startLoca(UPDATED_START_LOCA)
-            .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
+            .endLoca(UPDATED_END_LOCA)
             .luggageImg(UPDATED_LUGGAGE_IMG)
             .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
-            .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)
             .type(UPDATED_TYPE)
-            .status(UPDATED_STATUS)
-            .pickUpTime(UPDATED_PICK_UP_TIME)
-            .checkOutTIme(UPDATED_CHECK_OUT_T_IME)
-            .appliedAt(UPDATED_APPLIED_AT);
+            .endTime(UPDATED_END_TIME)
+            .checkIn(UPDATED_CHECK_IN)
+            .checkInTime(UPDATED_CHECK_IN_TIME);
 
         restRequestTripMockMvc
             .perform(

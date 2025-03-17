@@ -308,7 +308,7 @@ class WalletTransactionResourceIT {
         WalletTransaction partialUpdatedWalletTransaction = new WalletTransaction();
         partialUpdatedWalletTransaction.setId(walletTransaction.getId());
 
-        partialUpdatedWalletTransaction.transID(UPDATED_TRANS_ID).amount(UPDATED_AMOUNT).date(UPDATED_DATE);
+        partialUpdatedWalletTransaction.amount(UPDATED_AMOUNT).date(UPDATED_DATE);
 
         restWalletTransactionMockMvc
             .perform(

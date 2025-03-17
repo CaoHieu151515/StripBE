@@ -1,0 +1,29 @@
+{
+  "sTripBeApp": {
+    "driverPackageSubscription": {
+      "home": {
+        "title": "Driver Package Subscriptions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Driver Package Subscription",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Driver Package Subscription",
+        "notFound": "No Driver Package Subscriptions found"
+      },
+      "created": "Một Driver Package Subscription mới được tạo với định danh {{ param }}",
+      "updated": "Một Driver Package Subscription cập nhật với định danh {{ param }}",
+      "deleted": "Một Driver Package Subscription đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Driver Package Subscription {{ id }}?"
+      },
+      "detail": {
+        "title": "Driver Package Subscription"
+      },
+      "id": "Id",
+      "purchaseDate": "Purchase Date",
+      "expirationDate": "Expiration Date",
+      "packagePrice": "Package Price",
+      "active": "Active",
+      "driver": "Driver",
+      "packageDriver": "Package Driver"
+    }
+  }
+}

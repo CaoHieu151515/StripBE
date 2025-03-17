@@ -250,6 +250,14 @@ entity UserDetail{
     dob Instant
 }
 
+entity DriverPackageSubscription {
+  id UUID,
+  purchaseDate Instant,
+  expirationDate Instant,
+  packagePrice Double,
+  active Boolean
+}
+
 relationship OneToOne {
   UserDetail to User with builtInEntity,
   Driver to User with builtInEntity,
@@ -278,7 +286,9 @@ relationship ManyToOne {
   WalletTransaction to Payment,
   SendingAplication to User with builtInEntity,
   WalletTransaction to UserWallet,
-  WalletTransaction to SystemTempWallet
+  WalletTransaction to SystemTempWallet,
+  DriverPackageSubscription to Driver,
+  DriverPackageSubscription to PackageDriver
 
 }
 

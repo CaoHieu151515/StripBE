@@ -84,6 +84,13 @@
       "relationshipName": "rating",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "driverPackageSubscription",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "driverPackageSubscription",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no",

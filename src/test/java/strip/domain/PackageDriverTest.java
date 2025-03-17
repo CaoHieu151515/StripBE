@@ -1,6 +1,7 @@
 package strip.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static strip.domain.DriverPackageSubscriptionTestSamples.*;
 import static strip.domain.PackageDriverTestSamples.*;
 import static strip.domain.PaymentTestSamples.*;
 
@@ -45,5 +46,27 @@ class PackageDriverTest {
         packageDriver.setPayments(new HashSet<>());
         assertThat(packageDriver.getPayments()).doesNotContain(paymentBack);
         assertThat(paymentBack.getPackageDriver()).isNull();
+    }
+
+    @Test
+    void driverPackageSubscriptionTest() {
+        PackageDriver packageDriver = getPackageDriverRandomSampleGenerator();
+        DriverPackageSubscription driverPackageSubscriptionBack = getDriverPackageSubscriptionRandomSampleGenerator();
+
+        packageDriver.addDriverPackageSubscription(driverPackageSubscriptionBack);
+        assertThat(packageDriver.getDriverPackageSubscriptions()).containsOnly(driverPackageSubscriptionBack);
+        assertThat(driverPackageSubscriptionBack.getPackageDriver()).isEqualTo(packageDriver);
+
+        packageDriver.removeDriverPackageSubscription(driverPackageSubscriptionBack);
+        assertThat(packageDriver.getDriverPackageSubscriptions()).doesNotContain(driverPackageSubscriptionBack);
+        assertThat(driverPackageSubscriptionBack.getPackageDriver()).isNull();
+
+        packageDriver.driverPackageSubscriptions(new HashSet<>(Set.of(driverPackageSubscriptionBack)));
+        assertThat(packageDriver.getDriverPackageSubscriptions()).containsOnly(driverPackageSubscriptionBack);
+        assertThat(driverPackageSubscriptionBack.getPackageDriver()).isEqualTo(packageDriver);
+
+        packageDriver.setDriverPackageSubscriptions(new HashSet<>());
+        assertThat(packageDriver.getDriverPackageSubscriptions()).doesNotContain(driverPackageSubscriptionBack);
+        assertThat(driverPackageSubscriptionBack.getPackageDriver()).isNull();
     }
 }

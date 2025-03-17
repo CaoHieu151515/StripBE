@@ -87,6 +87,9 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.Vehicle.class.getName() + ".trips");
             createCache(cm, strip.domain.Trip.class.getName() + ".requestTrips");
             createCache(cm, strip.domain.RequestTrip.class.getName());
+            createCache(cm, strip.domain.Driver.class.getName() + ".driverPackageSubscriptions");
+            createCache(cm, strip.domain.PackageDriver.class.getName() + ".driverPackageSubscriptions");
+            createCache(cm, strip.domain.DriverPackageSubscription.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

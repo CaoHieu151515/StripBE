@@ -31,7 +31,8 @@
       "vehicle": "Vehicle",
       "trip": "Trip",
       "feedback": "Feedback",
-      "rating": "Rating"
+      "rating": "Rating",
+      "driverPackageSubscription": "Driver Package Subscription"
     }
   }
 }

@@ -50,7 +50,7 @@ public class Payment implements Serializable {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "payments" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "payments", "driverPackageSubscriptions" }, allowSetters = true)
     private PackageDriver packageDriver;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "payment")

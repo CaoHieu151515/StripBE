@@ -25,7 +25,8 @@
         "sendingAplication": "Sending Aplication",
         "userWallet": "User Wallet",
         "userDetail": "User Detail",
-        "requestTrip": "Request Trip"
+        "requestTrip": "Request Trip",
+        "driverPackageSubscription": "Driver Package Subscription"
       },
       "account": {
         "main": "Tài khoản",
