@@ -3,10 +3,12 @@ package strip.service.dto;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
+import java.util.UUID;
 
 public class DriverInfoDTO implements Serializable {
 
     private Long userId;
+    private UUID driverId;
     private String firstName;
     private String lastName;
     private String phone;
@@ -25,6 +27,7 @@ public class DriverInfoDTO implements Serializable {
 
     public DriverInfoDTO(
         Long userId,
+        UUID driverId,
         String firstName,
         String lastName,
         String phone,
@@ -38,6 +41,7 @@ public class DriverInfoDTO implements Serializable {
         Set<DriverVehicleDTO> vehicles
     ) {
         this.userId = userId;
+        this.driverId = driverId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -58,6 +62,14 @@ public class DriverInfoDTO implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public UUID getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(UUID driverId) {
+        this.driverId = driverId;
     }
 
     public String getFirstName() {

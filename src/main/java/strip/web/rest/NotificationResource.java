@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -12,7 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.repository.NotificationRepository;
 import strip.service.NotificationService;
@@ -52,6 +61,8 @@ public class NotificationResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new notificationDTO, or with status {@code 400 (Bad Request)} if the notification has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+
+    @Hidden
     @PostMapping("")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) throws URISyntaxException {
         log.debug("REST request to save Notification : {}", notificationDTO);
@@ -74,6 +85,7 @@ public class NotificationResource {
      * or with status {@code 500 (Internal Server Error)} if the notificationDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<NotificationDTO> updateNotification(
         @PathVariable(value = "id", required = false) final Long id,
@@ -108,6 +120,7 @@ public class NotificationResource {
      * or with status {@code 500 (Internal Server Error)} if the notificationDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<NotificationDTO> partialUpdateNotification(
         @PathVariable(value = "id", required = false) final Long id,
@@ -139,6 +152,7 @@ public class NotificationResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of notifications in body.
      */
+    @Hidden
     @GetMapping("")
     public ResponseEntity<List<NotificationDTO>> getAllNotifications(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of Notifications");
@@ -153,6 +167,7 @@ public class NotificationResource {
      * @param id the id of the notificationDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the notificationDTO, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<NotificationDTO> getNotification(@PathVariable("id") Long id) {
         log.debug("REST request to get Notification : {}", id);
@@ -166,6 +181,7 @@ public class NotificationResource {
      * @param id the id of the notificationDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotification(@PathVariable("id") Long id) {
         log.debug("REST request to delete Notification : {}", id);

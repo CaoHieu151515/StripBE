@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -10,7 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import strip.domain.SystemTempWallet;
 import strip.repository.SystemTempWalletRepository;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -45,6 +54,7 @@ public class SystemTempWalletResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new systemTempWallet, or with status {@code 400 (Bad Request)} if the systemTempWallet has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<SystemTempWallet> createSystemTempWallet(@RequestBody SystemTempWallet systemTempWallet)
         throws URISyntaxException {
@@ -68,6 +78,7 @@ public class SystemTempWalletResource {
      * or with status {@code 500 (Internal Server Error)} if the systemTempWallet couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<SystemTempWallet> updateSystemTempWallet(
         @PathVariable(value = "id", required = false) final Long id,
@@ -102,6 +113,7 @@ public class SystemTempWalletResource {
      * or with status {@code 500 (Internal Server Error)} if the systemTempWallet couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<SystemTempWallet> partialUpdateSystemTempWallet(
         @PathVariable(value = "id", required = false) final Long id,
@@ -153,6 +165,7 @@ public class SystemTempWalletResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of systemTempWallets in body.
      */
+    @Hidden
     @GetMapping("")
     public List<SystemTempWallet> getAllSystemTempWallets() {
         log.debug("REST request to get all SystemTempWallets");
@@ -165,6 +178,7 @@ public class SystemTempWalletResource {
      * @param id the id of the systemTempWallet to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the systemTempWallet, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<SystemTempWallet> getSystemTempWallet(@PathVariable("id") Long id) {
         log.debug("REST request to get SystemTempWallet : {}", id);
@@ -178,6 +192,7 @@ public class SystemTempWalletResource {
      * @param id the id of the systemTempWallet to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSystemTempWallet(@PathVariable("id") Long id) {
         log.debug("REST request to delete SystemTempWallet : {}", id);

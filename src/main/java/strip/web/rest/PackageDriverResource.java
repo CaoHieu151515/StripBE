@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -12,7 +13,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.repository.PackageDriverRepository;
 import strip.service.PackageDriverService;
@@ -52,6 +61,7 @@ public class PackageDriverResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new packageDriverDTO, or with status {@code 400 (Bad Request)} if the packageDriver has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<PackageDriverDTO> createPackageDriver(@RequestBody PackageDriverDTO packageDriverDTO) throws URISyntaxException {
         log.debug("REST request to save PackageDriver : {}", packageDriverDTO);
@@ -74,6 +84,7 @@ public class PackageDriverResource {
      * or with status {@code 500 (Internal Server Error)} if the packageDriverDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<PackageDriverDTO> updatePackageDriver(
         @PathVariable(value = "id", required = false) final Long id,
@@ -108,6 +119,7 @@ public class PackageDriverResource {
      * or with status {@code 500 (Internal Server Error)} if the packageDriverDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<PackageDriverDTO> partialUpdatePackageDriver(
         @PathVariable(value = "id", required = false) final Long id,
@@ -139,6 +151,7 @@ public class PackageDriverResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of packageDrivers in body.
      */
+    @Hidden
     @GetMapping("")
     public ResponseEntity<List<PackageDriverDTO>> getAllPackageDrivers(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
         log.debug("REST request to get a page of PackageDrivers");
@@ -153,6 +166,7 @@ public class PackageDriverResource {
      * @param id the id of the packageDriverDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the packageDriverDTO, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<PackageDriverDTO> getPackageDriver(@PathVariable("id") Long id) {
         log.debug("REST request to get PackageDriver : {}", id);
@@ -166,6 +180,7 @@ public class PackageDriverResource {
      * @param id the id of the packageDriverDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePackageDriver(@PathVariable("id") Long id) {
         log.debug("REST request to delete PackageDriver : {}", id);

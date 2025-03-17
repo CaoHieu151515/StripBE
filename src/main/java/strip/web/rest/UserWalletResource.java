@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -10,7 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import strip.domain.UserWallet;
 import strip.repository.UserWalletRepository;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -45,6 +54,7 @@ public class UserWalletResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new userWallet, or with status {@code 400 (Bad Request)} if the userWallet has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<UserWallet> createUserWallet(@RequestBody UserWallet userWallet) throws URISyntaxException {
         log.debug("REST request to save UserWallet : {}", userWallet);
@@ -67,6 +77,7 @@ public class UserWalletResource {
      * or with status {@code 500 (Internal Server Error)} if the userWallet couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<UserWallet> updateUserWallet(
         @PathVariable(value = "id", required = false) final Long id,
@@ -101,6 +112,7 @@ public class UserWalletResource {
      * or with status {@code 500 (Internal Server Error)} if the userWallet couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<UserWallet> partialUpdateUserWallet(
         @PathVariable(value = "id", required = false) final Long id,
@@ -152,6 +164,7 @@ public class UserWalletResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of userWallets in body.
      */
+    @Hidden
     @GetMapping("")
     public List<UserWallet> getAllUserWallets() {
         log.debug("REST request to get all UserWallets");
@@ -164,6 +177,7 @@ public class UserWalletResource {
      * @param id the id of the userWallet to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the userWallet, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<UserWallet> getUserWallet(@PathVariable("id") Long id) {
         log.debug("REST request to get UserWallet : {}", id);
@@ -177,6 +191,7 @@ public class UserWalletResource {
      * @param id the id of the userWallet to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserWallet(@PathVariable("id") Long id) {
         log.debug("REST request to delete UserWallet : {}", id);

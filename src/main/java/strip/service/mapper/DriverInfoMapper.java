@@ -13,6 +13,7 @@ import strip.service.dto.DriverVehicleDTO;
 @Mapper(componentModel = "spring")
 public interface DriverInfoMapper {
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "driver.driverID", target = "driverId")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.email", target = "email")

@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -10,7 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import strip.domain.SendingAplication;
 import strip.repository.SendingAplicationRepository;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -45,6 +54,7 @@ public class SendingAplicationResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new sendingAplication, or with status {@code 400 (Bad Request)} if the sendingAplication has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<SendingAplication> createSendingAplication(@RequestBody SendingAplication sendingAplication)
         throws URISyntaxException {
@@ -68,6 +78,7 @@ public class SendingAplicationResource {
      * or with status {@code 500 (Internal Server Error)} if the sendingAplication couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<SendingAplication> updateSendingAplication(
         @PathVariable(value = "id", required = false) final Long id,
@@ -102,6 +113,7 @@ public class SendingAplicationResource {
      * or with status {@code 500 (Internal Server Error)} if the sendingAplication couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<SendingAplication> partialUpdateSendingAplication(
         @PathVariable(value = "id", required = false) final Long id,
@@ -153,6 +165,7 @@ public class SendingAplicationResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of sendingAplications in body.
      */
+    @Hidden
     @GetMapping("")
     public List<SendingAplication> getAllSendingAplications() {
         log.debug("REST request to get all SendingAplications");
@@ -165,6 +178,7 @@ public class SendingAplicationResource {
      * @param id the id of the sendingAplication to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the sendingAplication, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<SendingAplication> getSendingAplication(@PathVariable("id") Long id) {
         log.debug("REST request to get SendingAplication : {}", id);
@@ -178,6 +192,7 @@ public class SendingAplicationResource {
      * @param id the id of the sendingAplication to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSendingAplication(@PathVariable("id") Long id) {
         log.debug("REST request to delete SendingAplication : {}", id);
