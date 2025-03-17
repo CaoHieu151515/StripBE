@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +21,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import strip.security.AuthoritiesConstants;
 import strip.service.UserService;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.UsermanageDTO;
-import strip.service.dto.UsermanageDetailsDTO;
 import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
@@ -84,14 +81,14 @@ public class ManagerResource {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
     }
 
-    @GetMapping("/details/{id}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<UsermanageDetailsDTO> getManagerDetailsById(@PathVariable Long id) {
-        log.debug("REST request to get detailed Manager information: {}", id);
-        return usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    // @GetMapping("/details/{id}")
+    // @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    // public ResponseEntity<UsermanageDetailsDTO> getManagerDetailsById(@PathVariable Long id) {
+    //     log.debug("REST request to get detailed Manager information: {}", id);
+    //     return usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 
-    @GetMapping("/driver/username/{username}")
+    @GetMapping("/driver/details/{username}")
     public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable String username) {
         Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUsername(username);
         return driverInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -105,7 +102,7 @@ public class ManagerResource {
         return ResponseEntity.ok().body(vehicles);
     }
 
-    @PutMapping("/vehicles/{vehicleId}/approve")
+    @PutMapping("/vehicles/confirming/{vehicleId}/approve")
     public ResponseEntity<String> approveVehicle(@PathVariable UUID vehicleId) {
         boolean success = usermanageService.approveVehicle(vehicleId);
         if (success) {
@@ -114,7 +111,7 @@ public class ManagerResource {
         return ResponseEntity.badRequest().body("Vehicle not found.");
     }
 
-    @PutMapping("/vehicles/{vehicleId}/reject")
+    @PutMapping("/vehicles/confirming/{vehicleId}/reject")
     public ResponseEntity<String> rejectVehicle(@PathVariable UUID vehicleId) {
         boolean success = usermanageService.rejectVehicle(vehicleId);
         if (success) {
@@ -129,14 +126,14 @@ public class ManagerResource {
         return ResponseEntity.ok(confirmingDrivers);
     }
 
-    @PatchMapping("/drivers/{driverId}/approve")
+    @PatchMapping("/drivers/confirming/{driverId}/approve")
     public ResponseEntity<Void> approveDriver(@PathVariable UUID driverId) {
         log.debug("REST request to approve driver {}", driverId);
         usermanageService.approveDriver(driverId);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/drivers/{driverId}/reject")
+    @PatchMapping("/drivers/confirming/{driverId}/reject")
     public ResponseEntity<Void> rejectDriver(@PathVariable UUID driverId) {
         log.debug("REST request to reject driver {}", driverId);
         usermanageService.rejectDriver(driverId);
