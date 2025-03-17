@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.security.AuthoritiesConstants;
 import strip.service.UserService;
 import strip.service.UsermanageService;
-import strip.service.dto.ConfirmingVehicleDTO;
+import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
@@ -98,9 +99,9 @@ public class ManagerResource {
 
     @GetMapping("/vehicles/pending-approval")
     // @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.STAFF + "\")")
-    public ResponseEntity<List<ConfirmingVehicleDTO>> getAllPendingApprovalVehicles() {
+    public ResponseEntity<List<ConfirmingVehicleDriverDTO>> getAllPendingApprovalVehicles() {
         log.debug("REST request to get all vehicles pending approval (CONFIRMING)");
-        List<ConfirmingVehicleDTO> vehicles = usermanageService.getAllConfirmingVehicles();
+        List<ConfirmingVehicleDriverDTO> vehicles = usermanageService.getAllConfirmingVehicles();
         return ResponseEntity.ok().body(vehicles);
     }
 
@@ -120,5 +121,25 @@ public class ManagerResource {
             return ResponseEntity.ok("Vehicle rejected successfully.");
         }
         return ResponseEntity.badRequest().body("Vehicle not found.");
+    }
+
+    @GetMapping("/drivers/confirming/getAll")
+    public ResponseEntity<List<ConfirmingVehicleDriverDTO>> getConfirmingDrivers() {
+        List<ConfirmingVehicleDriverDTO> confirmingDrivers = usermanageService.getConfirmingDrivers();
+        return ResponseEntity.ok(confirmingDrivers);
+    }
+
+    @PatchMapping("/drivers/{driverId}/approve")
+    public ResponseEntity<Void> approveDriver(@PathVariable UUID driverId) {
+        log.debug("REST request to approve driver {}", driverId);
+        usermanageService.approveDriver(driverId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/drivers/{driverId}/reject")
+    public ResponseEntity<Void> rejectDriver(@PathVariable UUID driverId) {
+        log.debug("REST request to reject driver {}", driverId);
+        usermanageService.rejectDriver(driverId);
+        return ResponseEntity.ok().build();
     }
 }

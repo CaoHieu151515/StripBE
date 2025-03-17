@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import strip.domain.Driver;
 import strip.domain.Vehicle;
 import strip.domain.enumeration.VehicleStatus;
 
@@ -17,4 +18,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     List<Vehicle> findByStatus(VehicleStatus vehicleStatus);
 
     Optional<Vehicle> findByVehicleID(UUID vehicleID);
+
+    Optional<Vehicle> findFirstByDriverAndStatus(Driver driver, VehicleStatus status);
+
+    Optional<Vehicle> findFirstByDriver_DriverIDAndStatus(UUID driverId, VehicleStatus status);
 }

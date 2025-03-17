@@ -1,5 +1,7 @@
 package strip.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,12 +18,13 @@ import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.Vehicle;
+import strip.domain.enumeration.DriverStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.repository.DriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.VehicleRepository;
-import strip.service.dto.ConfirmingVehicleDTO;
+import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.UsermanageDTO;
@@ -33,7 +36,7 @@ import strip.service.mapper.UsermanageMapper;
 @Transactional
 public class UsermanageService {
 
-    private final Logger log = LoggerFactory.getLogger(PaymentService.class);
+    private final Logger log = LoggerFactory.getLogger(UsermanageService.class);
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UsermanageMapper usermanageMapper;
@@ -144,7 +147,7 @@ public class UsermanageService {
         return Optional.empty();
     }
 
-    public List<ConfirmingVehicleDTO> getAllConfirmingVehicles() {
+    public List<ConfirmingVehicleDriverDTO> getAllConfirmingVehicles() {
         List<Vehicle> confirmingVehicles = vehicleRepository.findByStatus(VehicleStatus.CONFIRMING);
 
         return confirmingVehicles
@@ -173,10 +176,91 @@ public class UsermanageService {
         Optional<Vehicle> vehicleOpt = vehicleRepository.findByVehicleID(vehicleId);
         if (vehicleOpt.isPresent()) {
             Vehicle vehicle = vehicleOpt.get();
-            vehicle.setStatus(VehicleStatus.CANCEL);
+            vehicle.setStatus(VehicleStatus.REJECTED);
             vehicleRepository.save(vehicle);
             return true;
         }
         return false;
+    }
+
+    public List<ConfirmingVehicleDriverDTO> getConfirmingDrivers() {
+        List<ConfirmingVehicleDriverDTO> confirmingDrivers = new ArrayList<>();
+
+        List<Driver> drivers = driverRepository.findByUsedtoDriverFalseAndDriverStatus(DriverStatus.CONFIRMING);
+        log.debug("Found {} drivers with status CONFIRMING", drivers.size());
+        for (Driver driver : drivers) {
+            Optional<User> user = userRepository.findById(driver.getUser().getId());
+            Optional<UserDetail> userDetail = userDetailRepository.findByUserId(driver.getUser().getId());
+            Optional<Vehicle> vehicle = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
+                driver.getDriverID(),
+                VehicleStatus.CONFIRMING
+            );
+            if (user.isPresent() && vehicle.isPresent()) {
+                ConfirmingVehicleDriverDTO dto = driverInfoMapper.toConfirmingVehicleDTO(
+                    user.get(),
+                    userDetail.orElse(null),
+                    driver,
+                    vehicle.get()
+                );
+                confirmingDrivers.add(dto);
+            }
+        }
+        return confirmingDrivers;
+    }
+
+    @Transactional
+    public void approveDriver(UUID driverId) {
+        Optional<Driver> driverOptional = driverRepository.findByDriverID(driverId);
+
+        if (driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+            log.debug("Approving driver: {}", driverId);
+
+            // Tìm xe đầu tiên có trạng thái CONFIRMING
+            Optional<Vehicle> vehicleOptional = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
+                driver.getDriverID(),
+                VehicleStatus.CONFIRMING
+            );
+
+            // Cập nhật trạng thái tài xế và xe
+            driver.setDriverStatus(DriverStatus.ACTIVE);
+            driver.setUsedtoDriver(true);
+            vehicleOptional.ifPresent(vehicle -> {
+                vehicle.setStatus(VehicleStatus.ACTIVE);
+                vehicleRepository.save(vehicle);
+            });
+
+            driverRepository.save(driver);
+            log.debug("Driver {} approved successfully", driverId);
+        } else {
+            throw new EntityNotFoundException("Driver not found with ID: " + driverId);
+        }
+    }
+
+    @Transactional
+    public void rejectDriver(UUID driverId) {
+        Optional<Driver> driverOptional = driverRepository.findByDriverID(driverId);
+        if (driverOptional.isPresent()) {
+            Driver driver = driverOptional.get();
+            log.debug("Rejecting driver: {}", driverId);
+
+            // Tìm xe đầu tiên có trạng thái CONFIRMING
+            Optional<Vehicle> vehicleOptional = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
+                driver.getDriverID(),
+                VehicleStatus.CONFIRMING
+            );
+
+            // Cập nhật trạng thái tài xế và xe
+            driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+            vehicleOptional.ifPresent(vehicle -> {
+                vehicle.setStatus(VehicleStatus.REJECTED);
+                vehicleRepository.save(vehicle);
+            });
+
+            driverRepository.save(driver);
+            log.debug("Driver {} rejected successfully", driverId);
+        } else {
+            throw new EntityNotFoundException("Driver not found with ID: " + driverId);
+        }
     }
 }

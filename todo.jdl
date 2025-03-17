@@ -1,7 +1,8 @@
 enum DriverStatus {
   ACTIVE,
   BANNED,
-  NOT_DRIVER
+  NOT_DRIVER,
+  CONFIRMING
 }
 
 enum VehicleType {
@@ -12,7 +13,7 @@ enum VehicleType {
 enum VehicleStatus{
   ACTIVE, //XE PHẢI ACTIVE MỚI CHỌN XE ĐỂ ĐI ĐƯỢC
   CONFIRMING,
-  CANCEL
+  REJECTED
 }
 
 enum TripStatus {

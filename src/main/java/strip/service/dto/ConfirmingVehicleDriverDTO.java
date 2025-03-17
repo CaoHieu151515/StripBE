@@ -1,10 +1,12 @@
 package strip.service.dto;
 
 import java.io.Serializable;
+import java.util.UUID;
 
-public class ConfirmingVehicleDTO implements Serializable {
+public class ConfirmingVehicleDriverDTO implements Serializable {
 
     private Long userId;
+    private UUID driverId;
     private String firstName;
     private String lastName;
     private String phone;
@@ -14,12 +16,13 @@ public class ConfirmingVehicleDTO implements Serializable {
     private byte[] driverLicense;
     private DriverVehicleDTO vehicle; // Chỉ chứa một phương tiện
 
-    public ConfirmingVehicleDTO() {
+    public ConfirmingVehicleDriverDTO() {
         // Default constructor
     }
 
-    public ConfirmingVehicleDTO(
+    public ConfirmingVehicleDriverDTO(
         Long userId,
+        UUID driverId,
         String firstName,
         String lastName,
         String phone,
@@ -30,6 +33,7 @@ public class ConfirmingVehicleDTO implements Serializable {
         DriverVehicleDTO vehicle
     ) {
         this.userId = userId;
+        this.driverId = driverId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
@@ -47,6 +51,14 @@ public class ConfirmingVehicleDTO implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public UUID getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(UUID driverId) {
+        this.driverId = driverId;
     }
 
     public String getFirstName() {

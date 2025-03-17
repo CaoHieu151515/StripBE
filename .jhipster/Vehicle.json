@@ -53,7 +53,7 @@
     {
       "fieldName": "status",
       "fieldType": "VehicleStatus",
-      "fieldValues": "ACTIVE,CONFIRMING,CANCEL"
+      "fieldValues": "ACTIVE,CONFIRMING,REJECTED"
     }
   ],
   "name": "Vehicle",

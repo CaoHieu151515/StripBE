@@ -3,5 +3,5 @@ export enum VehicleStatus {
 
   CONFIRMING = 'CONFIRMING',
 
-  CANCEL = 'CANCEL',
+  REJECTED = 'REJECTED',
 }

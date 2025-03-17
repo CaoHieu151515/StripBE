@@ -20,7 +20,7 @@
     {
       "fieldName": "driverStatus",
       "fieldType": "DriverStatus",
-      "fieldValues": "ACTIVE,BANNED,NOT_DRIVER"
+      "fieldValues": "ACTIVE,BANNED,NOT_DRIVER,CONFIRMING"
     },
     {
       "fieldName": "driverPoint",

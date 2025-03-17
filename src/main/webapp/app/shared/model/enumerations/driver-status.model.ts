@@ -4,4 +4,6 @@ export enum DriverStatus {
   BANNED = 'BANNED',
 
   NOT_DRIVER = 'NOT_DRIVER',
+
+  CONFIRMING = 'CONFIRMING',
 }

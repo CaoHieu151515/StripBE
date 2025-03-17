@@ -6,7 +6,7 @@ import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.Vehicle;
-import strip.service.dto.ConfirmingVehicleDTO;
+import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
 
@@ -44,9 +44,10 @@ public interface DriverInfoMapper {
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "userDetail.phone", target = "phone")
+    @Mapping(source = "driver.driverID", target = "driverId")
     @Mapping(source = "driver.identityCardFaceUp", target = "identityCardFaceUp")
     @Mapping(source = "driver.identityCardFacedown", target = "identityCardFaceDown")
     @Mapping(source = "driver.driverLicense", target = "driverLicense")
     @Mapping(source = "vehicle", target = "vehicle")
-    ConfirmingVehicleDTO toConfirmingVehicleDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle);
+    ConfirmingVehicleDriverDTO toConfirmingVehicleDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle);
 }

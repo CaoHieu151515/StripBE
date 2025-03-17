@@ -7,4 +7,5 @@ public enum DriverStatus {
     ACTIVE,
     BANNED,
     NOT_DRIVER,
+    CONFIRMING,
 }

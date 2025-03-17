@@ -13,4 +13,5 @@ import strip.domain.UserDetail;
 @Repository
 public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
     Optional<UserDetail> findByUser(User user);
+    Optional<UserDetail> findByUserId(Long userId);
 }
