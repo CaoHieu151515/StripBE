@@ -49,6 +49,11 @@
     {
       "fieldName": "vehicleBrand",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "VehicleStatus",
+      "fieldValues": "ACTIVE,CONFIRMING"
     }
   ],
   "name": "Vehicle",

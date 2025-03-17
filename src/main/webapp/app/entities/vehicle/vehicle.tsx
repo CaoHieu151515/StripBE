@@ -153,6 +153,10 @@ export const Vehicle = () => {
                   <Translate contentKey="sTripBeApp.vehicle.vehicleBrand">Vehicle Brand</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('vehicleBrand')} />
                 </th>
+                <th className="hand" onClick={sort('status')}>
+                  <Translate contentKey="sTripBeApp.vehicle.status">Status</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
+                </th>
                 <th>
                   <Translate contentKey="sTripBeApp.vehicle.driver">Driver</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -235,6 +239,9 @@ export const Vehicle = () => {
                   <td>{vehicle.numberOfSeats}</td>
                   <td>{vehicle.vehicleColor}</td>
                   <td>{vehicle.vehicleBrand}</td>
+                  <td>
+                    <Translate contentKey={`sTripBeApp.VehicleStatus.${vehicle.status}`} />
+                  </td>
                   <td>{vehicle.driver ? <Link to={`/driver/${vehicle.driver.id}`}>{vehicle.driver.id}</Link> : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

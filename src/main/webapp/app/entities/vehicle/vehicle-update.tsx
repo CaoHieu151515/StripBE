@@ -12,6 +12,7 @@ import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
 import { IVehicle } from 'app/shared/model/vehicle.model';
 import { VehicleType } from 'app/shared/model/enumerations/vehicle-type.model';
+import { VehicleStatus } from 'app/shared/model/enumerations/vehicle-status.model';
 import { getEntity, updateEntity, createEntity, reset } from './vehicle.reducer';
 
 export const VehicleUpdate = () => {
@@ -28,6 +29,7 @@ export const VehicleUpdate = () => {
   const updating = useAppSelector(state => state.vehicle.updating);
   const updateSuccess = useAppSelector(state => state.vehicle.updateSuccess);
   const vehicleTypeValues = Object.keys(VehicleType);
+  const vehicleStatusValues = Object.keys(VehicleStatus);
 
   const handleClose = () => {
     navigate('/vehicle' + location.search);
@@ -76,6 +78,7 @@ export const VehicleUpdate = () => {
       ? {}
       : {
           vehicleType: 'CAR',
+          status: 'ACTIVE',
           ...vehicleEntity,
           driver: vehicleEntity?.driver?.id,
         };
@@ -181,6 +184,19 @@ export const VehicleUpdate = () => {
                 data-cy="vehicleBrand"
                 type="text"
               />
+              <ValidatedField
+                label={translate('sTripBeApp.vehicle.status')}
+                id="vehicle-status"
+                name="status"
+                data-cy="status"
+                type="select"
+              >
+                {vehicleStatusValues.map(vehicleStatus => (
+                  <option value={vehicleStatus} key={vehicleStatus}>
+                    {translate('sTripBeApp.VehicleStatus.' + vehicleStatus)}
+                  </option>
+                ))}
+              </ValidatedField>
               <ValidatedField
                 id="vehicle-driver"
                 name="driver"

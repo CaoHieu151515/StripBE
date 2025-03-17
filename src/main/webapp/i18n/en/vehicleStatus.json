@@ -1,0 +1,9 @@
+{
+  "sTripBeApp": {
+    "VehicleStatus": {
+      "null": "",
+      "ACTIVE": "ACTIVE",
+      "CONFIRMING": "CONFIRMING"
+    }
+  }
+}

@@ -28,6 +28,7 @@
       "numberOfSeats": "Number Of Seats",
       "vehicleColor": "Vehicle Color",
       "vehicleBrand": "Vehicle Brand",
+      "status": "Status",
       "driver": "Driver",
       "trip": "Trip"
     }

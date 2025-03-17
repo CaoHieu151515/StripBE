@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import strip.IntegrationTest;
 import strip.domain.Vehicle;
+import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.VehicleType;
 import strip.repository.VehicleRepository;
 import strip.service.dto.VehicleDTO;
@@ -75,6 +76,9 @@ class VehicleResourceIT {
     private static final String DEFAULT_VEHICLE_BRAND = "AAAAAAAAAA";
     private static final String UPDATED_VEHICLE_BRAND = "BBBBBBBBBB";
 
+    private static final VehicleStatus DEFAULT_STATUS = VehicleStatus.ACTIVE;
+    private static final VehicleStatus UPDATED_STATUS = VehicleStatus.CONFIRMING;
+
     private static final String ENTITY_API_URL = "/api/vehicles";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -121,7 +125,8 @@ class VehicleResourceIT {
             .vehicleNumber(DEFAULT_VEHICLE_NUMBER)
             .numberOfSeats(DEFAULT_NUMBER_OF_SEATS)
             .vehicleColor(DEFAULT_VEHICLE_COLOR)
-            .vehicleBrand(DEFAULT_VEHICLE_BRAND);
+            .vehicleBrand(DEFAULT_VEHICLE_BRAND)
+            .status(DEFAULT_STATUS);
         return vehicle;
     }
 
@@ -146,7 +151,8 @@ class VehicleResourceIT {
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleBrand(UPDATED_VEHICLE_BRAND)
+            .status(UPDATED_STATUS);
         return vehicle;
     }
 
@@ -238,7 +244,8 @@ class VehicleResourceIT {
             .andExpect(jsonPath("$.[*].vehicleNumber").value(hasItem(DEFAULT_VEHICLE_NUMBER)))
             .andExpect(jsonPath("$.[*].numberOfSeats").value(hasItem(DEFAULT_NUMBER_OF_SEATS)))
             .andExpect(jsonPath("$.[*].vehicleColor").value(hasItem(DEFAULT_VEHICLE_COLOR)))
-            .andExpect(jsonPath("$.[*].vehicleBrand").value(hasItem(DEFAULT_VEHICLE_BRAND)));
+            .andExpect(jsonPath("$.[*].vehicleBrand").value(hasItem(DEFAULT_VEHICLE_BRAND)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
     @Test
@@ -268,7 +275,8 @@ class VehicleResourceIT {
             .andExpect(jsonPath("$.vehicleNumber").value(DEFAULT_VEHICLE_NUMBER))
             .andExpect(jsonPath("$.numberOfSeats").value(DEFAULT_NUMBER_OF_SEATS))
             .andExpect(jsonPath("$.vehicleColor").value(DEFAULT_VEHICLE_COLOR))
-            .andExpect(jsonPath("$.vehicleBrand").value(DEFAULT_VEHICLE_BRAND));
+            .andExpect(jsonPath("$.vehicleBrand").value(DEFAULT_VEHICLE_BRAND))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
     @Test
@@ -304,7 +312,8 @@ class VehicleResourceIT {
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleBrand(UPDATED_VEHICLE_BRAND)
+            .status(UPDATED_STATUS);
         VehicleDTO vehicleDTO = vehicleMapper.toDto(updatedVehicle);
 
         restVehicleMockMvc
@@ -398,7 +407,8 @@ class VehicleResourceIT {
             .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
             .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
             .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleBrand(UPDATED_VEHICLE_BRAND)
+            .status(UPDATED_STATUS);
 
         restVehicleMockMvc
             .perform(
@@ -440,7 +450,8 @@ class VehicleResourceIT {
             .vehicleNumber(UPDATED_VEHICLE_NUMBER)
             .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
             .vehicleColor(UPDATED_VEHICLE_COLOR)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleBrand(UPDATED_VEHICLE_BRAND)
+            .status(UPDATED_STATUS);
 
         restVehicleMockMvc
             .perform(

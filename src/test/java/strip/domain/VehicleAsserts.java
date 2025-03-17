@@ -85,7 +85,8 @@ public class VehicleAsserts {
             .satisfies(e -> assertThat(e.getVehicleNumber()).as("check vehicleNumber").isEqualTo(actual.getVehicleNumber()))
             .satisfies(e -> assertThat(e.getNumberOfSeats()).as("check numberOfSeats").isEqualTo(actual.getNumberOfSeats()))
             .satisfies(e -> assertThat(e.getVehicleColor()).as("check vehicleColor").isEqualTo(actual.getVehicleColor()))
-            .satisfies(e -> assertThat(e.getVehicleBrand()).as("check vehicleBrand").isEqualTo(actual.getVehicleBrand()));
+            .satisfies(e -> assertThat(e.getVehicleBrand()).as("check vehicleBrand").isEqualTo(actual.getVehicleBrand()))
+            .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()));
     }
 
     /**

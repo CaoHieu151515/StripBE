@@ -9,6 +9,11 @@ enum VehicleType {
   BIKE
 }
 
+enum VehicleStatus{
+  ACTIVE, //XE PHẢI ACTIVE MỚI CHỌN XE ĐỂ ĐI ĐƯỢC
+  CONFIRMING
+}
+
 enum TripStatus {
   UPCOMING,
   CONFIRMING,
@@ -106,7 +111,8 @@ entity Vehicle {
   vehicleNumber String,
   numberOfSeats Integer,
   vehicleColor String,
-  vehicleBrand String
+  vehicleBrand String,
+  status VehicleStatus
 }
 
 entity Trip {

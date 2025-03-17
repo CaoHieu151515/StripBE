@@ -144,6 +144,12 @@ export const VehicleDetail = () => {
           </dt>
           <dd>{vehicleEntity.vehicleBrand}</dd>
           <dt>
+            <span id="status">
+              <Translate contentKey="sTripBeApp.vehicle.status">Status</Translate>
+            </span>
+          </dt>
+          <dd>{vehicleEntity.status}</dd>
+          <dt>
             <Translate contentKey="sTripBeApp.vehicle.driver">Driver</Translate>
           </dt>
           <dd>{vehicleEntity.driver ? vehicleEntity.driver.id : ''}</dd>

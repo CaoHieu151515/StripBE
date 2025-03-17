@@ -1,5 +1,6 @@
 import { IDriver } from 'app/shared/model/driver.model';
 import { VehicleType } from 'app/shared/model/enumerations/vehicle-type.model';
+import { VehicleStatus } from 'app/shared/model/enumerations/vehicle-status.model';
 
 export interface IVehicle {
   id?: number;
@@ -17,6 +18,7 @@ export interface IVehicle {
   numberOfSeats?: number | null;
   vehicleColor?: string | null;
   vehicleBrand?: string | null;
+  status?: keyof typeof VehicleStatus | null;
   driver?: IDriver | null;
 }
 

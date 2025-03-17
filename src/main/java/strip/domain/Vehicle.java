@@ -10,6 +10,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.VehicleType;
 
 /**
@@ -75,6 +76,10 @@ public class Vehicle implements Serializable {
 
     @Column(name = "vehicle_brand")
     private String vehicleBrand;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private VehicleStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
@@ -288,6 +293,19 @@ public class Vehicle implements Serializable {
         this.vehicleBrand = vehicleBrand;
     }
 
+    public VehicleStatus getStatus() {
+        return this.status;
+    }
+
+    public Vehicle status(VehicleStatus status) {
+        this.setStatus(status);
+        return this;
+    }
+
+    public void setStatus(VehicleStatus status) {
+        this.status = status;
+    }
+
     public Driver getDriver() {
         return this.driver;
     }
@@ -370,6 +388,7 @@ public class Vehicle implements Serializable {
             ", numberOfSeats=" + getNumberOfSeats() +
             ", vehicleColor='" + getVehicleColor() + "'" +
             ", vehicleBrand='" + getVehicleBrand() + "'" +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

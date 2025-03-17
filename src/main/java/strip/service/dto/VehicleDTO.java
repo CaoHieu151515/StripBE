@@ -4,6 +4,7 @@ import jakarta.persistence.Lob;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.VehicleType;
 
 /**
@@ -45,6 +46,8 @@ public class VehicleDTO implements Serializable {
     private String vehicleColor;
 
     private String vehicleBrand;
+
+    private VehicleStatus status;
 
     private DriverDTO driver;
 
@@ -168,6 +171,14 @@ public class VehicleDTO implements Serializable {
         this.vehicleBrand = vehicleBrand;
     }
 
+    public VehicleStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VehicleStatus status) {
+        this.status = status;
+    }
+
     public DriverDTO getDriver() {
         return driver;
     }
@@ -212,6 +223,7 @@ public class VehicleDTO implements Serializable {
             ", numberOfSeats=" + getNumberOfSeats() +
             ", vehicleColor='" + getVehicleColor() + "'" +
             ", vehicleBrand='" + getVehicleBrand() + "'" +
+            ", status='" + getStatus() + "'" +
             ", driver=" + getDriver() +
             "}";
     }
