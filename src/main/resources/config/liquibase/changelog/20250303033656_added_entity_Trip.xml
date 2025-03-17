@@ -35,6 +35,9 @@
             <column name="end_date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
+            <column name="current_seat" type="integer">
+                <constraints nullable="true" />
+            </column>
             <column name="start_location" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -89,6 +92,7 @@
             <column name="max_seat" type="numeric"/>
             <column name="start_date" type="date"/>
             <column name="end_date" type="date"/>
+            <column name="current_seat" type="numeric"/>
             <column name="start_location" type="string"/>
             <column name="end_location" type="string"/>
             <column name="description" type="string"/>

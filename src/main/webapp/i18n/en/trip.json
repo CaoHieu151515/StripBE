@@ -24,6 +24,7 @@
       "maxSeat": "Max Seat",
       "startDate": "Start Date",
       "endDate": "End Date",
+      "currentSeat": "Current Seat",
       "startLocation": "Start Location",
       "endLocation": "End Location",
       "description": "Description",
@@ -32,10 +33,11 @@
       "tripStatus": "Trip Status",
       "vehicle": "Vehicle",
       "driver": "Driver",
-      "passenger": "Passenger",
+      "requestTrip": "Request Trip",
       "tripStopLocation": "Trip Stop Location",
       "feedback": "Feedback",
-      "rating": "Rating"
+      "rating": "Rating",
+      "passenger": "Passenger"
     }
   }
 }

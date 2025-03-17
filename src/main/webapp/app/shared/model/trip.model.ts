@@ -12,6 +12,7 @@ export interface ITrip {
   maxSeat?: number | null;
   startDate?: dayjs.Dayjs | null;
   endDate?: dayjs.Dayjs | null;
+  currentSeat?: number | null;
   startLocation?: string | null;
   endLocation?: string | null;
   description?: string | null;

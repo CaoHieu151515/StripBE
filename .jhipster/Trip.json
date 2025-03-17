@@ -31,6 +31,10 @@
       "fieldType": "Instant"
     },
     {
+      "fieldName": "currentSeat",
+      "fieldType": "Integer"
+    },
+    {
       "fieldName": "startLocation",
       "fieldType": "String"
     },
@@ -53,7 +57,7 @@
     {
       "fieldName": "tripStatus",
       "fieldType": "TripStatus",
-      "fieldValues": "UPCOMING,CONFIRMING,ON_GOING,DONE,CANCEL"
+      "fieldValues": "UPCOMING,CONFIRMING,ON_GOING,DONE,RESEND,CANCEL"
     }
   ],
   "name": "Trip",
@@ -74,9 +78,9 @@
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "passenger",
+      "otherEntityName": "requestTrip",
       "otherEntityRelationshipName": "trip",
-      "relationshipName": "passenger",
+      "relationshipName": "requestTrip",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },

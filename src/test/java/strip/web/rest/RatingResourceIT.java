@@ -291,8 +291,6 @@ class RatingResourceIT {
         Rating partialUpdatedRating = new Rating();
         partialUpdatedRating.setId(rating.getId());
 
-        partialUpdatedRating.ratingTime(UPDATED_RATING_TIME).ratingType(UPDATED_RATING_TYPE);
-
         restRatingMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedRating.getId())

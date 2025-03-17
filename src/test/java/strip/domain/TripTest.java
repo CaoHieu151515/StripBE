@@ -5,6 +5,7 @@ import static strip.domain.DriverTestSamples.*;
 import static strip.domain.FeedbackTestSamples.*;
 import static strip.domain.PassengerTestSamples.*;
 import static strip.domain.RatingTestSamples.*;
+import static strip.domain.RequestTripTestSamples.*;
 import static strip.domain.TripStopLocationTestSamples.*;
 import static strip.domain.TripTestSamples.*;
 import static strip.domain.VehicleTestSamples.*;
@@ -55,25 +56,25 @@ class TripTest {
     }
 
     @Test
-    void passengerTest() {
+    void requestTripTest() {
         Trip trip = getTripRandomSampleGenerator();
-        Passenger passengerBack = getPassengerRandomSampleGenerator();
+        RequestTrip requestTripBack = getRequestTripRandomSampleGenerator();
 
-        trip.addPassenger(passengerBack);
-        assertThat(trip.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getTrip()).isEqualTo(trip);
+        trip.addRequestTrip(requestTripBack);
+        assertThat(trip.getRequestTrips()).containsOnly(requestTripBack);
+        assertThat(requestTripBack.getTrip()).isEqualTo(trip);
 
-        trip.removePassenger(passengerBack);
-        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getTrip()).isNull();
+        trip.removeRequestTrip(requestTripBack);
+        assertThat(trip.getRequestTrips()).doesNotContain(requestTripBack);
+        assertThat(requestTripBack.getTrip()).isNull();
 
-        trip.passengers(new HashSet<>(Set.of(passengerBack)));
-        assertThat(trip.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getTrip()).isEqualTo(trip);
+        trip.requestTrips(new HashSet<>(Set.of(requestTripBack)));
+        assertThat(trip.getRequestTrips()).containsOnly(requestTripBack);
+        assertThat(requestTripBack.getTrip()).isEqualTo(trip);
 
-        trip.setPassengers(new HashSet<>());
-        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getTrip()).isNull();
+        trip.setRequestTrips(new HashSet<>());
+        assertThat(trip.getRequestTrips()).doesNotContain(requestTripBack);
+        assertThat(requestTripBack.getTrip()).isNull();
     }
 
     @Test
@@ -140,5 +141,27 @@ class TripTest {
         trip.setRatings(new HashSet<>());
         assertThat(trip.getRatings()).doesNotContain(ratingBack);
         assertThat(ratingBack.getTrip()).isNull();
+    }
+
+    @Test
+    void passengerTest() {
+        Trip trip = getTripRandomSampleGenerator();
+        Passenger passengerBack = getPassengerRandomSampleGenerator();
+
+        trip.addPassenger(passengerBack);
+        assertThat(trip.getPassengers()).containsOnly(passengerBack);
+        assertThat(passengerBack.getTrip()).isEqualTo(trip);
+
+        trip.removePassenger(passengerBack);
+        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
+        assertThat(passengerBack.getTrip()).isNull();
+
+        trip.passengers(new HashSet<>(Set.of(passengerBack)));
+        assertThat(trip.getPassengers()).containsOnly(passengerBack);
+        assertThat(passengerBack.getTrip()).isEqualTo(trip);
+
+        trip.setPassengers(new HashSet<>());
+        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
+        assertThat(passengerBack.getTrip()).isNull();
     }
 }

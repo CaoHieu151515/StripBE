@@ -24,7 +24,8 @@
         "walletTransaction": "Wallet Transaction",
         "sendingAplication": "Sending Aplication",
         "userWallet": "User Wallet",
-        "userDetail": "User Detail"
+        "userDetail": "User Detail",
+        "requestTrip": "Request Trip"
       },
       "account": {
         "main": "Tài khoản",

@@ -308,6 +308,8 @@ class TripStopLocationResourceIT {
         TripStopLocation partialUpdatedTripStopLocation = new TripStopLocation();
         partialUpdatedTripStopLocation.setId(tripStopLocation.getId());
 
+        partialUpdatedTripStopLocation.stopLocaTime(UPDATED_STOP_LOCA_TIME);
+
         restTripStopLocationMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTripStopLocation.getId())

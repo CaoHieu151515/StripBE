@@ -85,6 +85,8 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.UserDetail.class.getName());
             createCache(cm, "otpCache");
             createCache(cm, strip.domain.Vehicle.class.getName() + ".trips");
+            createCache(cm, strip.domain.Trip.class.getName() + ".requestTrips");
+            createCache(cm, strip.domain.RequestTrip.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

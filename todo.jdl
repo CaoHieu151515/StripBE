@@ -14,6 +14,7 @@ enum TripStatus {
   CONFIRMING,
   ON_GOING,
   DONE,
+  RESEND,
   CANCEL
 }
 
@@ -115,6 +116,7 @@ entity Trip {
   maxSeat Integer,
   startDate Instant,
   endDate Instant,
+  currentSeat Integer,
   startLocation String,
   endLocation String,
   description String,
@@ -130,8 +132,8 @@ entity TripStopLocation {
   stopLocaStatus String
 }
 
-entity Passenger {
-  passengerID UUID,
+entity RequestTrip {
+  requestTripID UUID,
   startLoca String,
   endLoca String,
   amountApproveFee Double,
@@ -258,8 +260,8 @@ relationship ManyToOne {
   Vehicle to Driver,
   Trip to Vehicle,
   Trip to Driver,
-  Passenger to Trip,
-  Passenger to User with builtInEntity,
+  RequestTrip to Trip,
+  RequestTrip to User with builtInEntity,
   TripStopLocation to Trip,
   Feedback to Trip,
   Feedback to Driver,
@@ -280,6 +282,6 @@ relationship ManyToOne {
 
 }
 
-paginate Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with pagination
-service Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with serviceClass
-dto Driver, Vehicle, Trip, TripStopLocation, Passenger, Feedback, PackageDriver, Payment, Notification, Report with mapstruct
+paginate Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with pagination
+service Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with serviceClass
+dto Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with mapstruct

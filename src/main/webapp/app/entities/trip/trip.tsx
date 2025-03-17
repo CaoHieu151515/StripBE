@@ -138,6 +138,10 @@ export const Trip = () => {
                   <Translate contentKey="sTripBeApp.trip.endDate">End Date</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('endDate')} />
                 </th>
+                <th className="hand" onClick={sort('currentSeat')}>
+                  <Translate contentKey="sTripBeApp.trip.currentSeat">Current Seat</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('currentSeat')} />
+                </th>
                 <th className="hand" onClick={sort('startLocation')}>
                   <Translate contentKey="sTripBeApp.trip.startLocation">Start Location</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('startLocation')} />
@@ -199,6 +203,7 @@ export const Trip = () => {
                   <td>{trip.maxSeat}</td>
                   <td>{trip.startDate ? <TextFormat type="date" value={trip.startDate} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{trip.endDate ? <TextFormat type="date" value={trip.endDate} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{trip.currentSeat}</td>
                   <td>{trip.startLocation}</td>
                   <td>{trip.endLocation}</td>
                   <td>{trip.description}</td>

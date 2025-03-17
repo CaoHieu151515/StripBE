@@ -20,6 +20,7 @@ import WalletTransaction from './wallet-transaction';
 import SendingAplication from './sending-aplication';
 import UserWallet from './user-wallet';
 import UserDetail from './user-detail';
+import RequestTrip from './request-trip';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -44,6 +45,7 @@ export default () => {
         <Route path="sending-aplication/*" element={<SendingAplication />} />
         <Route path="user-wallet/*" element={<UserWallet />} />
         <Route path="user-detail/*" element={<UserDetail />} />
+        <Route path="request-trip/*" element={<RequestTrip />} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>

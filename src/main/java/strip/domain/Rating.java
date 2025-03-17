@@ -42,7 +42,10 @@ public class Rating implements Serializable {
     private RatingType ratingType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "vehicle", "driver", "passengers", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "ratings", "passengers" },
+        allowSetters = true
+    )
     private Trip trip;
 
     @ManyToOne(fetch = FetchType.LAZY)

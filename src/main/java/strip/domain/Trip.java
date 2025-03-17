@@ -52,6 +52,9 @@ public class Trip implements Serializable {
     @Column(name = "end_date")
     private Instant endDate;
 
+    @Column(name = "current_seat")
+    private Integer currentSeat;
+
     @Column(name = "start_location")
     private String startLocation;
 
@@ -82,7 +85,7 @@ public class Trip implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "trip", "user" }, allowSetters = true)
-    private Set<Passenger> passengers = new HashSet<>();
+    private Set<RequestTrip> requestTrips = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -98,6 +101,11 @@ public class Trip implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
     private Set<Rating> ratings = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "trip", "user" }, allowSetters = true)
+    private Set<Passenger> passengers = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -205,6 +213,19 @@ public class Trip implements Serializable {
         this.endDate = endDate;
     }
 
+    public Integer getCurrentSeat() {
+        return this.currentSeat;
+    }
+
+    public Trip currentSeat(Integer currentSeat) {
+        this.setCurrentSeat(currentSeat);
+        return this;
+    }
+
+    public void setCurrentSeat(Integer currentSeat) {
+        this.currentSeat = currentSeat;
+    }
+
     public String getStartLocation() {
         return this.startLocation;
     }
@@ -309,34 +330,34 @@ public class Trip implements Serializable {
         return this;
     }
 
-    public Set<Passenger> getPassengers() {
-        return this.passengers;
+    public Set<RequestTrip> getRequestTrips() {
+        return this.requestTrips;
     }
 
-    public void setPassengers(Set<Passenger> passengers) {
-        if (this.passengers != null) {
-            this.passengers.forEach(i -> i.setTrip(null));
+    public void setRequestTrips(Set<RequestTrip> requestTrips) {
+        if (this.requestTrips != null) {
+            this.requestTrips.forEach(i -> i.setTrip(null));
         }
-        if (passengers != null) {
-            passengers.forEach(i -> i.setTrip(this));
+        if (requestTrips != null) {
+            requestTrips.forEach(i -> i.setTrip(this));
         }
-        this.passengers = passengers;
+        this.requestTrips = requestTrips;
     }
 
-    public Trip passengers(Set<Passenger> passengers) {
-        this.setPassengers(passengers);
+    public Trip requestTrips(Set<RequestTrip> requestTrips) {
+        this.setRequestTrips(requestTrips);
         return this;
     }
 
-    public Trip addPassenger(Passenger passenger) {
-        this.passengers.add(passenger);
-        passenger.setTrip(this);
+    public Trip addRequestTrip(RequestTrip requestTrip) {
+        this.requestTrips.add(requestTrip);
+        requestTrip.setTrip(this);
         return this;
     }
 
-    public Trip removePassenger(Passenger passenger) {
-        this.passengers.remove(passenger);
-        passenger.setTrip(null);
+    public Trip removeRequestTrip(RequestTrip requestTrip) {
+        this.requestTrips.remove(requestTrip);
+        requestTrip.setTrip(null);
         return this;
     }
 
@@ -433,6 +454,37 @@ public class Trip implements Serializable {
         return this;
     }
 
+    public Set<Passenger> getPassengers() {
+        return this.passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        if (this.passengers != null) {
+            this.passengers.forEach(i -> i.setTrip(null));
+        }
+        if (passengers != null) {
+            passengers.forEach(i -> i.setTrip(this));
+        }
+        this.passengers = passengers;
+    }
+
+    public Trip passengers(Set<Passenger> passengers) {
+        this.setPassengers(passengers);
+        return this;
+    }
+
+    public Trip addPassenger(Passenger passenger) {
+        this.passengers.add(passenger);
+        passenger.setTrip(this);
+        return this;
+    }
+
+    public Trip removePassenger(Passenger passenger) {
+        this.passengers.remove(passenger);
+        passenger.setTrip(null);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -464,6 +516,7 @@ public class Trip implements Serializable {
             ", maxSeat=" + getMaxSeat() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", currentSeat=" + getCurrentSeat() +
             ", startLocation='" + getStartLocation() + "'" +
             ", endLocation='" + getEndLocation() + "'" +
             ", description='" + getDescription() + "'" +

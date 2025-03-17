@@ -1,0 +1,40 @@
+{
+  "sTripBeApp": {
+    "requestTrip": {
+      "home": {
+        "title": "Request Trips",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Request Trip",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Request Trip",
+        "notFound": "No Request Trips found"
+      },
+      "created": "Một Request Trip mới được tạo với định danh {{ param }}",
+      "updated": "Một Request Trip cập nhật với định danh {{ param }}",
+      "deleted": "Một Request Trip đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Request Trip {{ id }}?"
+      },
+      "detail": {
+        "title": "Request Trip"
+      },
+      "id": "ID",
+      "requestTripID": "Request Trip ID",
+      "startLoca": "Start Loca",
+      "endLoca": "End Loca",
+      "amountApproveFee": "Amount Approve Fee",
+      "luggageImg": "Luggage Img",
+      "luggageDescription": "Luggage Description",
+      "type": "Type",
+      "status": "Status",
+      "pickUpTime": "Pick Up Time",
+      "endTime": "End Time",
+      "checkIn": "Check In",
+      "checkInTime": "Check In Time",
+      "checkOut": "Check Out",
+      "checkOutTIme": "Check Out T Ime",
+      "appliedAt": "Applied At",
+      "trip": "Trip",
+      "user": "User"
+    }
+  }
+}

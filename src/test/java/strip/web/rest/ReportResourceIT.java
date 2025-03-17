@@ -305,7 +305,7 @@ class ReportResourceIT {
         Report partialUpdatedReport = new Report();
         partialUpdatedReport.setId(report.getId());
 
-        partialUpdatedReport.date(UPDATED_DATE).content(UPDATED_CONTENT).reportStatus(UPDATED_REPORT_STATUS);
+        partialUpdatedReport.reportID(UPDATED_REPORT_ID).date(UPDATED_DATE).content(UPDATED_CONTENT);
 
         restReportMockMvc
             .perform(

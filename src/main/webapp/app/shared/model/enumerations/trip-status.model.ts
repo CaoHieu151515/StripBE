@@ -7,5 +7,7 @@ export enum TripStatus {
 
   DONE = 'DONE',
 
+  RESEND = 'RESEND',
+
   CANCEL = 'CANCEL',
 }

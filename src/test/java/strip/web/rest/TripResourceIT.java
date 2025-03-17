@@ -59,6 +59,9 @@ class TripResourceIT {
     private static final Instant DEFAULT_END_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_END_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
+    private static final Integer DEFAULT_CURRENT_SEAT = 1;
+    private static final Integer UPDATED_CURRENT_SEAT = 2;
+
     private static final String DEFAULT_START_LOCATION = "AAAAAAAAAA";
     private static final String UPDATED_START_LOCATION = "BBBBBBBBBB";
 
@@ -117,6 +120,7 @@ class TripResourceIT {
             .maxSeat(DEFAULT_MAX_SEAT)
             .startDate(DEFAULT_START_DATE)
             .endDate(DEFAULT_END_DATE)
+            .currentSeat(DEFAULT_CURRENT_SEAT)
             .startLocation(DEFAULT_START_LOCATION)
             .endLocation(DEFAULT_END_LOCATION)
             .description(DEFAULT_DESCRIPTION)
@@ -141,6 +145,7 @@ class TripResourceIT {
             .maxSeat(UPDATED_MAX_SEAT)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
+            .currentSeat(UPDATED_CURRENT_SEAT)
             .startLocation(UPDATED_START_LOCATION)
             .endLocation(UPDATED_END_LOCATION)
             .description(UPDATED_DESCRIPTION)
@@ -224,6 +229,7 @@ class TripResourceIT {
             .andExpect(jsonPath("$.[*].maxSeat").value(hasItem(DEFAULT_MAX_SEAT)))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
+            .andExpect(jsonPath("$.[*].currentSeat").value(hasItem(DEFAULT_CURRENT_SEAT)))
             .andExpect(jsonPath("$.[*].startLocation").value(hasItem(DEFAULT_START_LOCATION)))
             .andExpect(jsonPath("$.[*].endLocation").value(hasItem(DEFAULT_END_LOCATION)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
@@ -251,6 +257,7 @@ class TripResourceIT {
             .andExpect(jsonPath("$.maxSeat").value(DEFAULT_MAX_SEAT))
             .andExpect(jsonPath("$.startDate").value(DEFAULT_START_DATE.toString()))
             .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()))
+            .andExpect(jsonPath("$.currentSeat").value(DEFAULT_CURRENT_SEAT))
             .andExpect(jsonPath("$.startLocation").value(DEFAULT_START_LOCATION))
             .andExpect(jsonPath("$.endLocation").value(DEFAULT_END_LOCATION))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
@@ -286,6 +293,7 @@ class TripResourceIT {
             .maxSeat(UPDATED_MAX_SEAT)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
+            .currentSeat(UPDATED_CURRENT_SEAT)
             .startLocation(UPDATED_START_LOCATION)
             .endLocation(UPDATED_END_LOCATION)
             .description(UPDATED_DESCRIPTION)
@@ -374,10 +382,10 @@ class TripResourceIT {
         partialUpdatedTrip.setId(trip.getId());
 
         partialUpdatedTrip
+            .tripID(UPDATED_TRIP_ID)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
-            .maxSeat(UPDATED_MAX_SEAT)
+            .endDate(UPDATED_END_DATE)
             .startLocation(UPDATED_START_LOCATION)
-            .endLocation(UPDATED_END_LOCATION)
             .cancelReason(UPDATED_CANCEL_REASON);
 
         restTripMockMvc
@@ -414,6 +422,7 @@ class TripResourceIT {
             .maxSeat(UPDATED_MAX_SEAT)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
+            .currentSeat(UPDATED_CURRENT_SEAT)
             .startLocation(UPDATED_START_LOCATION)
             .endLocation(UPDATED_END_LOCATION)
             .description(UPDATED_DESCRIPTION)

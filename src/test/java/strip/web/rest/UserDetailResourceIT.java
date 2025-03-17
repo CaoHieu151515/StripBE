@@ -316,7 +316,7 @@ class UserDetailResourceIT {
         UserDetail partialUpdatedUserDetail = new UserDetail();
         partialUpdatedUserDetail.setId(userDetail.getId());
 
-        partialUpdatedUserDetail.userimage(UPDATED_USERIMAGE).userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE).dob(UPDATED_DOB);
+        partialUpdatedUserDetail.gender(UPDATED_GENDER);
 
         restUserDetailMockMvc
             .perform(

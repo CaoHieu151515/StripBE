@@ -30,6 +30,8 @@ public class TripDTO implements Serializable {
 
     private Instant endDate;
 
+    private Integer currentSeat;
+
     private String startLocation;
 
     private String endLocation;
@@ -108,6 +110,14 @@ public class TripDTO implements Serializable {
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
+    }
+
+    public Integer getCurrentSeat() {
+        return currentSeat;
+    }
+
+    public void setCurrentSeat(Integer currentSeat) {
+        this.currentSeat = currentSeat;
     }
 
     public String getStartLocation() {
@@ -206,6 +216,7 @@ public class TripDTO implements Serializable {
             ", maxSeat=" + getMaxSeat() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
+            ", currentSeat=" + getCurrentSeat() +
             ", startLocation='" + getStartLocation() + "'" +
             ", endLocation='" + getEndLocation() + "'" +
             ", description='" + getDescription() + "'" +

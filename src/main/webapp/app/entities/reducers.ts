@@ -15,6 +15,7 @@ import walletTransaction from 'app/entities/wallet-transaction/wallet-transactio
 import sendingAplication from 'app/entities/sending-aplication/sending-aplication.reducer';
 import userWallet from 'app/entities/user-wallet/user-wallet.reducer';
 import userDetail from 'app/entities/user-detail/user-detail.reducer';
+import requestTrip from 'app/entities/request-trip/request-trip.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -35,6 +36,7 @@ const entitiesReducers = {
   sendingAplication,
   userWallet,
   userDetail,
+  requestTrip,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };
 

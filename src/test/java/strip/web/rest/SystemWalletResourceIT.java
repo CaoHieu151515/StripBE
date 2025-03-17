@@ -306,8 +306,6 @@ class SystemWalletResourceIT {
         SystemWallet partialUpdatedSystemWallet = new SystemWallet();
         partialUpdatedSystemWallet.setId(systemWallet.getId());
 
-        partialUpdatedSystemWallet.systemWalletID(UPDATED_SYSTEM_WALLET_ID).mobifyDate(UPDATED_MOBIFY_DATE);
-
         restSystemWalletMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedSystemWallet.getId())

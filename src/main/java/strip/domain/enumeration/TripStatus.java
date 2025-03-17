@@ -8,5 +8,6 @@ public enum TripStatus {
     CONFIRMING,
     ON_GOING,
     DONE,
+    RESEND,
     CANCEL,
 }

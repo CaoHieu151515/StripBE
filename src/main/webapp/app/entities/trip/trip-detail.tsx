@@ -82,6 +82,12 @@ export const TripDetail = () => {
           </dt>
           <dd>{tripEntity.endDate ? <TextFormat value={tripEntity.endDate} type="date" format={APP_DATE_FORMAT} /> : null}</dd>
           <dt>
+            <span id="currentSeat">
+              <Translate contentKey="sTripBeApp.trip.currentSeat">Current Seat</Translate>
+            </span>
+          </dt>
+          <dd>{tripEntity.currentSeat}</dd>
+          <dt>
             <span id="startLocation">
               <Translate contentKey="sTripBeApp.trip.startLocation">Start Location</Translate>
             </span>

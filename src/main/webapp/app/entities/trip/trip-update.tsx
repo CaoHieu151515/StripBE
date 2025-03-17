@@ -66,6 +66,9 @@ export const TripUpdate = () => {
     }
     values.startDate = convertDateTimeToServer(values.startDate);
     values.endDate = convertDateTimeToServer(values.endDate);
+    if (values.currentSeat !== undefined && typeof values.currentSeat !== 'number') {
+      values.currentSeat = Number(values.currentSeat);
+    }
 
     const entity = {
       ...tripEntity,
@@ -152,6 +155,13 @@ export const TripUpdate = () => {
                 data-cy="endDate"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.currentSeat')}
+                id="trip-currentSeat"
+                name="currentSeat"
+                data-cy="currentSeat"
+                type="text"
               />
               <ValidatedField
                 label={translate('sTripBeApp.trip.startLocation')}
