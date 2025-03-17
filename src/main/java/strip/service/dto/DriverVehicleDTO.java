@@ -15,6 +15,7 @@ public class DriverVehicleDTO implements Serializable {
     private Integer numberOfSeats;
     private String vehicleColor;
     private String vehicleBrand;
+    private String status; // 🆕 Thêm trạng thái vào DTO
 
     public DriverVehicleDTO() {
         // Default constructor
@@ -30,7 +31,8 @@ public class DriverVehicleDTO implements Serializable {
         String vehicleNumber,
         Integer numberOfSeats,
         String vehicleColor,
-        String vehicleBrand
+        String vehicleBrand,
+        String status // 🆕 Thêm trạng thái vào constructor
     ) {
         this.vehicleId = vehicleId;
         this.vehicleType = vehicleType;
@@ -42,6 +44,7 @@ public class DriverVehicleDTO implements Serializable {
         this.numberOfSeats = numberOfSeats;
         this.vehicleColor = vehicleColor;
         this.vehicleBrand = vehicleBrand;
+        this.status = status;
     }
 
     // Getters & Setters
@@ -123,5 +126,13 @@ public class DriverVehicleDTO implements Serializable {
 
     public void setVehicleBrand(String vehicleBrand) {
         this.vehicleBrand = vehicleBrand;
+    }
+
+    public String getStatus() { // 🆕 Getter cho status
+        return status;
+    }
+
+    public void setStatus(String status) { // 🆕 Setter cho status
+        this.status = status;
     }
 }

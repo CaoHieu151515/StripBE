@@ -34,5 +34,6 @@ public interface DriverInfoMapper {
     @Mapping(source = "vehicle.numberOfSeats", target = "numberOfSeats")
     @Mapping(source = "vehicle.vehicleColor", target = "vehicleColor")
     @Mapping(source = "vehicle.vehicleBrand", target = "vehicleBrand")
+    @Mapping(source = "vehicle.status", target = "status")
     DriverVehicleDTO toDriverVehicleDTO(Vehicle vehicle);
 }
