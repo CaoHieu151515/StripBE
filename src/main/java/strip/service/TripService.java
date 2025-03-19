@@ -19,7 +19,7 @@ import strip.service.mapper.TripMapper;
 @Transactional
 public class TripService {
 
-    private final Logger log = LoggerFactory.getLogger(TripService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TripService.class);
 
     private final TripRepository tripRepository;
 
@@ -37,7 +37,7 @@ public class TripService {
      * @return the persisted entity.
      */
     public TripDTO save(TripDTO tripDTO) {
-        log.debug("Request to save Trip : {}", tripDTO);
+        LOG.debug("Request to save Trip : {}", tripDTO);
         Trip trip = tripMapper.toEntity(tripDTO);
         trip = tripRepository.save(trip);
         return tripMapper.toDto(trip);
@@ -50,7 +50,7 @@ public class TripService {
      * @return the persisted entity.
      */
     public TripDTO update(TripDTO tripDTO) {
-        log.debug("Request to update Trip : {}", tripDTO);
+        LOG.debug("Request to update Trip : {}", tripDTO);
         Trip trip = tripMapper.toEntity(tripDTO);
         trip = tripRepository.save(trip);
         return tripMapper.toDto(trip);
@@ -63,7 +63,7 @@ public class TripService {
      * @return the persisted entity.
      */
     public Optional<TripDTO> partialUpdate(TripDTO tripDTO) {
-        log.debug("Request to partially update Trip : {}", tripDTO);
+        LOG.debug("Request to partially update Trip : {}", tripDTO);
 
         return tripRepository
             .findById(tripDTO.getId())
@@ -84,7 +84,7 @@ public class TripService {
      */
     @Transactional(readOnly = true)
     public Page<TripDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Trips");
+        LOG.debug("Request to get all Trips");
         return tripRepository.findAll(pageable).map(tripMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class TripService {
      */
     @Transactional(readOnly = true)
     public Optional<TripDTO> findOne(Long id) {
-        log.debug("Request to get Trip : {}", id);
+        LOG.debug("Request to get Trip : {}", id);
         return tripRepository.findById(id).map(tripMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class TripService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Trip : {}", id);
+        LOG.debug("Request to delete Trip : {}", id);
         tripRepository.deleteById(id);
     }
 }

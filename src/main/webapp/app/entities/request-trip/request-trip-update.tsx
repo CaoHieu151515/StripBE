@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm, ValidatedBlobField } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITrip } from 'app/shared/model/trip.model';
 import { getEntities as getTrips } from 'app/entities/trip/trip.reducer';
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IRequestTrip } from 'app/shared/model/request-trip.model';
 import { PassengerType } from 'app/shared/model/enumerations/passenger-type.model';
 import { PassengerStatus } from 'app/shared/model/enumerations/passenger-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './request-trip.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './request-trip.reducer';
 
 export const RequestTripUpdate = () => {
   const dispatch = useAppDispatch();
@@ -35,7 +31,7 @@ export const RequestTripUpdate = () => {
   const passengerStatusValues = Object.keys(PassengerStatus);
 
   const handleClose = () => {
-    navigate('/request-trip' + location.search);
+    navigate(`/request-trip${location.search}`);
   };
 
   useEffect(() => {
@@ -55,7 +51,6 @@ export const RequestTripUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -181,7 +176,7 @@ export const RequestTripUpdate = () => {
               >
                 {passengerTypeValues.map(passengerType => (
                   <option value={passengerType} key={passengerType}>
-                    {translate('sTripBeApp.PassengerType.' + passengerType)}
+                    {translate(`sTripBeApp.PassengerType.${passengerType}`)}
                   </option>
                 ))}
               </ValidatedField>
@@ -194,7 +189,7 @@ export const RequestTripUpdate = () => {
               >
                 {passengerStatusValues.map(passengerStatus => (
                   <option value={passengerStatus} key={passengerStatus}>
-                    {translate('sTripBeApp.PassengerStatus.' + passengerStatus)}
+                    {translate(`sTripBeApp.PassengerStatus.${passengerStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

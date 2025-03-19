@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm, ValidatedBlobField } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IVehicle } from 'app/shared/model/vehicle.model';
 import { getEntities as getVehicles } from 'app/entities/vehicle/vehicle.reducer';
-import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
-import { ITrip } from 'app/shared/model/trip.model';
 import { TripStatus } from 'app/shared/model/enumerations/trip-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './trip.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './trip.reducer';
 
 export const TripUpdate = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +29,7 @@ export const TripUpdate = () => {
   const tripStatusValues = Object.keys(TripStatus);
 
   const handleClose = () => {
-    navigate('/trip' + location.search);
+    navigate(`/trip${location.search}`);
   };
 
   useEffect(() => {
@@ -53,7 +49,6 @@ export const TripUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -207,7 +202,7 @@ export const TripUpdate = () => {
               >
                 {tripStatusValues.map(tripStatus => (
                   <option value={tripStatus} key={tripStatus}>
-                    {translate('sTripBeApp.TripStatus.' + tripStatus)}
+                    {translate(`sTripBeApp.TripStatus.${tripStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

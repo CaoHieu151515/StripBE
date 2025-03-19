@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IPackageDriver } from 'app/shared/model/package-driver.model';
 import { getEntities as getPackageDrivers } from 'app/entities/package-driver/package-driver.reducer';
-import { IPayment } from 'app/shared/model/payment.model';
 import { PaymentStatus } from 'app/shared/model/enumerations/payment-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './payment.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './payment.reducer';
 
 export const PaymentUpdate = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +29,7 @@ export const PaymentUpdate = () => {
   const paymentStatusValues = Object.keys(PaymentStatus);
 
   const handleClose = () => {
-    navigate('/payment' + location.search);
+    navigate(`/payment${location.search}`);
   };
 
   useEffect(() => {
@@ -53,7 +49,6 @@ export const PaymentUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -146,7 +141,7 @@ export const PaymentUpdate = () => {
               >
                 {paymentStatusValues.map(paymentStatus => (
                   <option value={paymentStatus} key={paymentStatus}>
-                    {translate('sTripBeApp.PaymentStatus.' + paymentStatus)}
+                    {translate(`sTripBeApp.PaymentStatus.${paymentStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

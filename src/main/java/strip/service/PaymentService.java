@@ -19,7 +19,7 @@ import strip.service.mapper.PaymentMapper;
 @Transactional
 public class PaymentService {
 
-    private final Logger log = LoggerFactory.getLogger(PaymentService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PaymentService.class);
 
     private final PaymentRepository paymentRepository;
 
@@ -37,7 +37,7 @@ public class PaymentService {
      * @return the persisted entity.
      */
     public PaymentDTO save(PaymentDTO paymentDTO) {
-        log.debug("Request to save Payment : {}", paymentDTO);
+        LOG.debug("Request to save Payment : {}", paymentDTO);
         Payment payment = paymentMapper.toEntity(paymentDTO);
         payment = paymentRepository.save(payment);
         return paymentMapper.toDto(payment);
@@ -50,7 +50,7 @@ public class PaymentService {
      * @return the persisted entity.
      */
     public PaymentDTO update(PaymentDTO paymentDTO) {
-        log.debug("Request to update Payment : {}", paymentDTO);
+        LOG.debug("Request to update Payment : {}", paymentDTO);
         Payment payment = paymentMapper.toEntity(paymentDTO);
         payment = paymentRepository.save(payment);
         return paymentMapper.toDto(payment);
@@ -63,7 +63,7 @@ public class PaymentService {
      * @return the persisted entity.
      */
     public Optional<PaymentDTO> partialUpdate(PaymentDTO paymentDTO) {
-        log.debug("Request to partially update Payment : {}", paymentDTO);
+        LOG.debug("Request to partially update Payment : {}", paymentDTO);
 
         return paymentRepository
             .findById(paymentDTO.getId())
@@ -84,7 +84,7 @@ public class PaymentService {
      */
     @Transactional(readOnly = true)
     public Page<PaymentDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Payments");
+        LOG.debug("Request to get all Payments");
         return paymentRepository.findAll(pageable).map(paymentMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class PaymentService {
      */
     @Transactional(readOnly = true)
     public Optional<PaymentDTO> findOne(Long id) {
-        log.debug("Request to get Payment : {}", id);
+        LOG.debug("Request to get Payment : {}", id);
         return paymentRepository.findById(id).map(paymentMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class PaymentService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Payment : {}", id);
+        LOG.debug("Request to delete Payment : {}", id);
         paymentRepository.deleteById(id);
     }
 }

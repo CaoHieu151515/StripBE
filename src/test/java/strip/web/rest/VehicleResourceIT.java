@@ -110,8 +110,8 @@ class VehicleResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Vehicle createEntity(EntityManager em) {
-        Vehicle vehicle = new Vehicle()
+    public static Vehicle createEntity() {
+        return new Vehicle()
             .vehicleID(DEFAULT_VEHICLE_ID)
             .vehicleType(DEFAULT_VEHICLE_TYPE)
             .vehicleImage(DEFAULT_VEHICLE_IMAGE)
@@ -127,7 +127,6 @@ class VehicleResourceIT {
             .vehicleColor(DEFAULT_VEHICLE_COLOR)
             .vehicleBrand(DEFAULT_VEHICLE_BRAND)
             .status(DEFAULT_STATUS);
-        return vehicle;
     }
 
     /**
@@ -136,8 +135,8 @@ class VehicleResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Vehicle createUpdatedEntity(EntityManager em) {
-        Vehicle vehicle = new Vehicle()
+    public static Vehicle createUpdatedEntity() {
+        return new Vehicle()
             .vehicleID(UPDATED_VEHICLE_ID)
             .vehicleType(UPDATED_VEHICLE_TYPE)
             .vehicleImage(UPDATED_VEHICLE_IMAGE)
@@ -153,12 +152,11 @@ class VehicleResourceIT {
             .vehicleColor(UPDATED_VEHICLE_COLOR)
             .vehicleBrand(UPDATED_VEHICLE_BRAND)
             .status(UPDATED_STATUS);
-        return vehicle;
     }
 
     @BeforeEach
     public void initTest() {
-        vehicle = createEntity(em);
+        vehicle = createEntity();
     }
 
     @AfterEach
@@ -401,14 +399,11 @@ class VehicleResourceIT {
 
         partialUpdatedVehicle
             .vehicleID(UPDATED_VEHICLE_ID)
+            .vehicleType(UPDATED_VEHICLE_TYPE)
             .vehicleImage(UPDATED_VEHICLE_IMAGE)
             .vehicleImageContentType(UPDATED_VEHICLE_IMAGE_CONTENT_TYPE)
-            .carregistration(UPDATED_CARREGISTRATION)
-            .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
-            .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
-            .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND)
-            .status(UPDATED_STATUS);
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE);
 
         restVehicleMockMvc
             .perform(

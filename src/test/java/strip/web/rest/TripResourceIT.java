@@ -111,8 +111,8 @@ class TripResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Trip createEntity(EntityManager em) {
-        Trip trip = new Trip()
+    public static Trip createEntity() {
+        return new Trip()
             .tripID(DEFAULT_TRIP_ID)
             .tripImg(DEFAULT_TRIP_IMG)
             .tripImgContentType(DEFAULT_TRIP_IMG_CONTENT_TYPE)
@@ -127,7 +127,6 @@ class TripResourceIT {
             .condition(DEFAULT_CONDITION)
             .cancelReason(DEFAULT_CANCEL_REASON)
             .tripStatus(DEFAULT_TRIP_STATUS);
-        return trip;
     }
 
     /**
@@ -136,8 +135,8 @@ class TripResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Trip createUpdatedEntity(EntityManager em) {
-        Trip trip = new Trip()
+    public static Trip createUpdatedEntity() {
+        return new Trip()
             .tripID(UPDATED_TRIP_ID)
             .tripImg(UPDATED_TRIP_IMG)
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
@@ -152,12 +151,11 @@ class TripResourceIT {
             .condition(UPDATED_CONDITION)
             .cancelReason(UPDATED_CANCEL_REASON)
             .tripStatus(UPDATED_TRIP_STATUS);
-        return trip;
     }
 
     @BeforeEach
     public void initTest() {
-        trip = createEntity(em);
+        trip = createEntity();
     }
 
     @AfterEach
@@ -225,7 +223,7 @@ class TripResourceIT {
             .andExpect(jsonPath("$.[*].tripID").value(hasItem(DEFAULT_TRIP_ID.toString())))
             .andExpect(jsonPath("$.[*].tripImgContentType").value(hasItem(DEFAULT_TRIP_IMG_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].tripImg").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_TRIP_IMG))))
-            .andExpect(jsonPath("$.[*].pricePerSeat").value(hasItem(DEFAULT_PRICE_PER_SEAT.doubleValue())))
+            .andExpect(jsonPath("$.[*].pricePerSeat").value(hasItem(DEFAULT_PRICE_PER_SEAT)))
             .andExpect(jsonPath("$.[*].maxSeat").value(hasItem(DEFAULT_MAX_SEAT)))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
@@ -253,7 +251,7 @@ class TripResourceIT {
             .andExpect(jsonPath("$.tripID").value(DEFAULT_TRIP_ID.toString()))
             .andExpect(jsonPath("$.tripImgContentType").value(DEFAULT_TRIP_IMG_CONTENT_TYPE))
             .andExpect(jsonPath("$.tripImg").value(Base64.getEncoder().encodeToString(DEFAULT_TRIP_IMG)))
-            .andExpect(jsonPath("$.pricePerSeat").value(DEFAULT_PRICE_PER_SEAT.doubleValue()))
+            .andExpect(jsonPath("$.pricePerSeat").value(DEFAULT_PRICE_PER_SEAT))
             .andExpect(jsonPath("$.maxSeat").value(DEFAULT_MAX_SEAT))
             .andExpect(jsonPath("$.startDate").value(DEFAULT_START_DATE.toString()))
             .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()))
@@ -385,10 +383,10 @@ class TripResourceIT {
             .tripImg(UPDATED_TRIP_IMG)
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
+            .maxSeat(UPDATED_MAX_SEAT)
             .startDate(UPDATED_START_DATE)
-            .currentSeat(UPDATED_CURRENT_SEAT)
-            .endLocation(UPDATED_END_LOCATION)
-            .description(UPDATED_DESCRIPTION);
+            .description(UPDATED_DESCRIPTION)
+            .tripStatus(UPDATED_TRIP_STATUS);
 
         restTripMockMvc
             .perform(

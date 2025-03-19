@@ -80,13 +80,12 @@ class TripStopLocationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static TripStopLocation createEntity(EntityManager em) {
-        TripStopLocation tripStopLocation = new TripStopLocation()
+    public static TripStopLocation createEntity() {
+        return new TripStopLocation()
             .stopLocaID(DEFAULT_STOP_LOCA_ID)
             .stopLoca(DEFAULT_STOP_LOCA)
             .stopLocaTime(DEFAULT_STOP_LOCA_TIME)
             .stopLocaStatus(DEFAULT_STOP_LOCA_STATUS);
-        return tripStopLocation;
     }
 
     /**
@@ -95,18 +94,17 @@ class TripStopLocationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static TripStopLocation createUpdatedEntity(EntityManager em) {
-        TripStopLocation tripStopLocation = new TripStopLocation()
+    public static TripStopLocation createUpdatedEntity() {
+        return new TripStopLocation()
             .stopLocaID(UPDATED_STOP_LOCA_ID)
             .stopLoca(UPDATED_STOP_LOCA)
             .stopLocaTime(UPDATED_STOP_LOCA_TIME)
             .stopLocaStatus(UPDATED_STOP_LOCA_STATUS);
-        return tripStopLocation;
     }
 
     @BeforeEach
     public void initTest() {
-        tripStopLocation = createEntity(em);
+        tripStopLocation = createEntity();
     }
 
     @AfterEach

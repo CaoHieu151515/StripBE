@@ -1,23 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITrip } from 'app/shared/model/trip.model';
 import { getEntities as getTrips } from 'app/entities/trip/trip.reducer';
-import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IFeedback } from 'app/shared/model/feedback.model';
 import { FeedbackType } from 'app/shared/model/enumerations/feedback-type.model';
 import { FeedbackStatus } from 'app/shared/model/enumerations/feedback-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './feedback.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './feedback.reducer';
 
 export const FeedbackUpdate = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +32,7 @@ export const FeedbackUpdate = () => {
   const feedbackStatusValues = Object.keys(FeedbackStatus);
 
   const handleClose = () => {
-    navigate('/feedback' + location.search);
+    navigate(`/feedback${location.search}`);
   };
 
   useEffect(() => {
@@ -59,7 +53,6 @@ export const FeedbackUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -136,7 +129,7 @@ export const FeedbackUpdate = () => {
               >
                 {feedbackTypeValues.map(feedbackType => (
                   <option value={feedbackType} key={feedbackType}>
-                    {translate('sTripBeApp.FeedbackType.' + feedbackType)}
+                    {translate(`sTripBeApp.FeedbackType.${feedbackType}`)}
                   </option>
                 ))}
               </ValidatedField>
@@ -163,7 +156,7 @@ export const FeedbackUpdate = () => {
               >
                 {feedbackStatusValues.map(feedbackStatus => (
                   <option value={feedbackStatus} key={feedbackStatus}>
-                    {translate('sTripBeApp.FeedbackStatus.' + feedbackStatus)}
+                    {translate(`sTripBeApp.FeedbackStatus.${feedbackStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

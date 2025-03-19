@@ -28,6 +28,11 @@
     {
       "fieldName": "bonus",
       "fieldType": "Integer"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "PackageDriverStatus",
+      "fieldValues": "ACTIVE,EXPIRED,CANCEL"
     }
   ],
   "name": "PackageDriver",

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './trip.reducer';
+import { deleteEntity, getEntity } from './trip.reducer';
 
 export const TripDeleteDialog = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +25,7 @@ export const TripDeleteDialog = () => {
   const updateSuccess = useAppSelector(state => state.trip.updateSuccess);
 
   const handleClose = () => {
-    navigate('/trip' + pageLocation.search);
+    navigate(`/trip${pageLocation.search}`);
   };
 
   useEffect(() => {

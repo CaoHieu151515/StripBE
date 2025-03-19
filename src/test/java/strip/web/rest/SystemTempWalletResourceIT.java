@@ -78,14 +78,13 @@ class SystemTempWalletResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static SystemTempWallet createEntity(EntityManager em) {
-        SystemTempWallet systemTempWallet = new SystemTempWallet()
+    public static SystemTempWallet createEntity() {
+        return new SystemTempWallet()
             .systemWalletID(DEFAULT_SYSTEM_WALLET_ID)
             .before(DEFAULT_BEFORE)
             .amount(DEFAULT_AMOUNT)
             .current(DEFAULT_CURRENT)
             .mobifyDate(DEFAULT_MOBIFY_DATE);
-        return systemTempWallet;
     }
 
     /**
@@ -94,19 +93,18 @@ class SystemTempWalletResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static SystemTempWallet createUpdatedEntity(EntityManager em) {
-        SystemTempWallet systemTempWallet = new SystemTempWallet()
+    public static SystemTempWallet createUpdatedEntity() {
+        return new SystemTempWallet()
             .systemWalletID(UPDATED_SYSTEM_WALLET_ID)
             .before(UPDATED_BEFORE)
             .amount(UPDATED_AMOUNT)
             .current(UPDATED_CURRENT)
             .mobifyDate(UPDATED_MOBIFY_DATE);
-        return systemTempWallet;
     }
 
     @BeforeEach
     public void initTest() {
-        systemTempWallet = createEntity(em);
+        systemTempWallet = createEntity();
     }
 
     @AfterEach
@@ -169,9 +167,9 @@ class SystemTempWalletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(systemTempWallet.getId().intValue())))
             .andExpect(jsonPath("$.[*].systemWalletID").value(hasItem(DEFAULT_SYSTEM_WALLET_ID.toString())))
-            .andExpect(jsonPath("$.[*].before").value(hasItem(DEFAULT_BEFORE.doubleValue())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
-            .andExpect(jsonPath("$.[*].current").value(hasItem(DEFAULT_CURRENT.doubleValue())))
+            .andExpect(jsonPath("$.[*].before").value(hasItem(DEFAULT_BEFORE)))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT)))
+            .andExpect(jsonPath("$.[*].current").value(hasItem(DEFAULT_CURRENT)))
             .andExpect(jsonPath("$.[*].mobifyDate").value(hasItem(DEFAULT_MOBIFY_DATE.toString())));
     }
 
@@ -188,9 +186,9 @@ class SystemTempWalletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(systemTempWallet.getId().intValue()))
             .andExpect(jsonPath("$.systemWalletID").value(DEFAULT_SYSTEM_WALLET_ID.toString()))
-            .andExpect(jsonPath("$.before").value(DEFAULT_BEFORE.doubleValue()))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))
-            .andExpect(jsonPath("$.current").value(DEFAULT_CURRENT.doubleValue()))
+            .andExpect(jsonPath("$.before").value(DEFAULT_BEFORE))
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT))
+            .andExpect(jsonPath("$.current").value(DEFAULT_CURRENT))
             .andExpect(jsonPath("$.mobifyDate").value(DEFAULT_MOBIFY_DATE.toString()));
     }
 
@@ -298,7 +296,7 @@ class SystemTempWalletResourceIT {
         SystemTempWallet partialUpdatedSystemTempWallet = new SystemTempWallet();
         partialUpdatedSystemTempWallet.setId(systemTempWallet.getId());
 
-        partialUpdatedSystemTempWallet.mobifyDate(UPDATED_MOBIFY_DATE);
+        partialUpdatedSystemTempWallet.amount(UPDATED_AMOUNT).current(UPDATED_CURRENT);
 
         restSystemTempWalletMockMvc
             .perform(

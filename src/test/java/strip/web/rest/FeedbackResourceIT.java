@@ -87,14 +87,13 @@ class FeedbackResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Feedback createEntity(EntityManager em) {
-        Feedback feedback = new Feedback()
+    public static Feedback createEntity() {
+        return new Feedback()
             .feedbackID(DEFAULT_FEEDBACK_ID)
             .feedbackType(DEFAULT_FEEDBACK_TYPE)
             .feedbackDescription(DEFAULT_FEEDBACK_DESCRIPTION)
             .feedbackRating(DEFAULT_FEEDBACK_RATING)
             .feedbackStatus(DEFAULT_FEEDBACK_STATUS);
-        return feedback;
     }
 
     /**
@@ -103,19 +102,18 @@ class FeedbackResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Feedback createUpdatedEntity(EntityManager em) {
-        Feedback feedback = new Feedback()
+    public static Feedback createUpdatedEntity() {
+        return new Feedback()
             .feedbackID(UPDATED_FEEDBACK_ID)
             .feedbackType(UPDATED_FEEDBACK_TYPE)
             .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION)
             .feedbackRating(UPDATED_FEEDBACK_RATING)
             .feedbackStatus(UPDATED_FEEDBACK_STATUS);
-        return feedback;
     }
 
     @BeforeEach
     public void initTest() {
-        feedback = createEntity(em);
+        feedback = createEntity();
     }
 
     @AfterEach
@@ -322,8 +320,8 @@ class FeedbackResourceIT {
 
         partialUpdatedFeedback
             .feedbackID(UPDATED_FEEDBACK_ID)
-            .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION)
-            .feedbackStatus(UPDATED_FEEDBACK_STATUS);
+            .feedbackType(UPDATED_FEEDBACK_TYPE)
+            .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION);
 
         restFeedbackMockMvc
             .perform(

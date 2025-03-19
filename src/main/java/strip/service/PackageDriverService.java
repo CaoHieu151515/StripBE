@@ -19,7 +19,7 @@ import strip.service.mapper.PackageDriverMapper;
 @Transactional
 public class PackageDriverService {
 
-    private final Logger log = LoggerFactory.getLogger(PackageDriverService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PackageDriverService.class);
 
     private final PackageDriverRepository packageDriverRepository;
 
@@ -37,7 +37,7 @@ public class PackageDriverService {
      * @return the persisted entity.
      */
     public PackageDriverDTO save(PackageDriverDTO packageDriverDTO) {
-        log.debug("Request to save PackageDriver : {}", packageDriverDTO);
+        LOG.debug("Request to save PackageDriver : {}", packageDriverDTO);
         PackageDriver packageDriver = packageDriverMapper.toEntity(packageDriverDTO);
         packageDriver = packageDriverRepository.save(packageDriver);
         return packageDriverMapper.toDto(packageDriver);
@@ -50,7 +50,7 @@ public class PackageDriverService {
      * @return the persisted entity.
      */
     public PackageDriverDTO update(PackageDriverDTO packageDriverDTO) {
-        log.debug("Request to update PackageDriver : {}", packageDriverDTO);
+        LOG.debug("Request to update PackageDriver : {}", packageDriverDTO);
         PackageDriver packageDriver = packageDriverMapper.toEntity(packageDriverDTO);
         packageDriver = packageDriverRepository.save(packageDriver);
         return packageDriverMapper.toDto(packageDriver);
@@ -63,7 +63,7 @@ public class PackageDriverService {
      * @return the persisted entity.
      */
     public Optional<PackageDriverDTO> partialUpdate(PackageDriverDTO packageDriverDTO) {
-        log.debug("Request to partially update PackageDriver : {}", packageDriverDTO);
+        LOG.debug("Request to partially update PackageDriver : {}", packageDriverDTO);
 
         return packageDriverRepository
             .findById(packageDriverDTO.getId())
@@ -84,7 +84,7 @@ public class PackageDriverService {
      */
     @Transactional(readOnly = true)
     public Page<PackageDriverDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all PackageDrivers");
+        LOG.debug("Request to get all PackageDrivers");
         return packageDriverRepository.findAll(pageable).map(packageDriverMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class PackageDriverService {
      */
     @Transactional(readOnly = true)
     public Optional<PackageDriverDTO> findOne(Long id) {
-        log.debug("Request to get PackageDriver : {}", id);
+        LOG.debug("Request to get PackageDriver : {}", id);
         return packageDriverRepository.findById(id).map(packageDriverMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class PackageDriverService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete PackageDriver : {}", id);
+        LOG.debug("Request to delete PackageDriver : {}", id);
         packageDriverRepository.deleteById(id);
     }
 }

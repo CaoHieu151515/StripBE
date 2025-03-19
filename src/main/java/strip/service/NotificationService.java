@@ -19,7 +19,7 @@ import strip.service.mapper.NotificationMapper;
 @Transactional
 public class NotificationService {
 
-    private final Logger log = LoggerFactory.getLogger(NotificationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationRepository notificationRepository;
 
@@ -37,7 +37,7 @@ public class NotificationService {
      * @return the persisted entity.
      */
     public NotificationDTO save(NotificationDTO notificationDTO) {
-        log.debug("Request to save Notification : {}", notificationDTO);
+        LOG.debug("Request to save Notification : {}", notificationDTO);
         Notification notification = notificationMapper.toEntity(notificationDTO);
         notification = notificationRepository.save(notification);
         return notificationMapper.toDto(notification);
@@ -50,7 +50,7 @@ public class NotificationService {
      * @return the persisted entity.
      */
     public NotificationDTO update(NotificationDTO notificationDTO) {
-        log.debug("Request to update Notification : {}", notificationDTO);
+        LOG.debug("Request to update Notification : {}", notificationDTO);
         Notification notification = notificationMapper.toEntity(notificationDTO);
         notification = notificationRepository.save(notification);
         return notificationMapper.toDto(notification);
@@ -63,7 +63,7 @@ public class NotificationService {
      * @return the persisted entity.
      */
     public Optional<NotificationDTO> partialUpdate(NotificationDTO notificationDTO) {
-        log.debug("Request to partially update Notification : {}", notificationDTO);
+        LOG.debug("Request to partially update Notification : {}", notificationDTO);
 
         return notificationRepository
             .findById(notificationDTO.getId())
@@ -84,7 +84,7 @@ public class NotificationService {
      */
     @Transactional(readOnly = true)
     public Page<NotificationDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Notifications");
+        LOG.debug("Request to get all Notifications");
         return notificationRepository.findAll(pageable).map(notificationMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class NotificationService {
      */
     @Transactional(readOnly = true)
     public Optional<NotificationDTO> findOne(Long id) {
-        log.debug("Request to get Notification : {}", id);
+        LOG.debug("Request to get Notification : {}", id);
         return notificationRepository.findById(id).map(notificationMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class NotificationService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Notification : {}", id);
+        LOG.debug("Request to delete Notification : {}", id);
         notificationRepository.deleteById(id);
     }
 }

@@ -10,18 +10,17 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './driver-package-subscription.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<IDriverPackageSubscription> = {
@@ -210,7 +209,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_DRIVERPACKAGESUBSCRIPTION actions', async () => {
-      const arg = { id: '1361f429-3817-4123-8ee3-fdf8943310b2' };
+      const arg = { id: 'cb612f36-0b7c-4277-a24f-5fc5698bd771' };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -220,7 +219,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_DRIVERPACKAGESUBSCRIPTION actions', async () => {
-      const arg = { id: '1361f429-3817-4123-8ee3-fdf8943310b2' };
+      const arg = { id: 'cb612f36-0b7c-4277-a24f-5fc5698bd771' };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

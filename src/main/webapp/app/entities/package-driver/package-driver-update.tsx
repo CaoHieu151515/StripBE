@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IPackageDriver } from 'app/shared/model/package-driver.model';
-import { getEntity, updateEntity, createEntity, reset } from './package-driver.reducer';
+import { PackageDriverStatus } from 'app/shared/model/enumerations/package-driver-status.model';
+import { createEntity, getEntity, reset, updateEntity } from './package-driver.reducer';
 
 export const PackageDriverUpdate = () => {
   const dispatch = useAppDispatch();
@@ -23,9 +21,10 @@ export const PackageDriverUpdate = () => {
   const loading = useAppSelector(state => state.packageDriver.loading);
   const updating = useAppSelector(state => state.packageDriver.updating);
   const updateSuccess = useAppSelector(state => state.packageDriver.updateSuccess);
+  const packageDriverStatusValues = Object.keys(PackageDriverStatus);
 
   const handleClose = () => {
-    navigate('/package-driver' + location.search);
+    navigate(`/package-driver${location.search}`);
   };
 
   useEffect(() => {
@@ -42,7 +41,6 @@ export const PackageDriverUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -73,6 +71,7 @@ export const PackageDriverUpdate = () => {
     isNew
       ? {}
       : {
+          status: 'ACTIVE',
           ...packageDriverEntity,
         };
 
@@ -143,6 +142,19 @@ export const PackageDriverUpdate = () => {
                 data-cy="bonus"
                 type="text"
               />
+              <ValidatedField
+                label={translate('sTripBeApp.packageDriver.status')}
+                id="package-driver-status"
+                name="status"
+                data-cy="status"
+                type="select"
+              >
+                {packageDriverStatusValues.map(packageDriverStatus => (
+                  <option value={packageDriverStatus} key={packageDriverStatus}>
+                    {translate(`sTripBeApp.PackageDriverStatus.${packageDriverStatus}`)}
+                  </option>
+                ))}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/package-driver" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

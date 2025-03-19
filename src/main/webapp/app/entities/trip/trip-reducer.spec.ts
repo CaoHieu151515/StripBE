@@ -5,15 +5,14 @@ import sinon from 'sinon';
 
 import { EntityState } from 'app/shared/reducers/reducer.utils';
 import { ITrip, defaultValue } from 'app/shared/model/trip.model';
-import reducer, { createEntity, deleteEntity, getEntities, getEntity, updateEntity, partialUpdateEntity, reset } from './trip.reducer';
+import reducer, { createEntity, deleteEntity, getEntities, getEntity, partialUpdateEntity, reset, updateEntity } from './trip.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<ITrip> = {
@@ -204,7 +203,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_TRIP actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 3008 };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -214,7 +213,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_TRIP actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 3008 };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

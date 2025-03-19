@@ -77,9 +77,8 @@ class NotificationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Notification createEntity(EntityManager em) {
-        Notification notification = new Notification().date(DEFAULT_DATE).content(DEFAULT_CONTENT);
-        return notification;
+    public static Notification createEntity() {
+        return new Notification().date(DEFAULT_DATE).content(DEFAULT_CONTENT);
     }
 
     /**
@@ -88,14 +87,13 @@ class NotificationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Notification createUpdatedEntity(EntityManager em) {
-        Notification notification = new Notification().date(UPDATED_DATE).content(UPDATED_CONTENT);
-        return notification;
+    public static Notification createUpdatedEntity() {
+        return new Notification().date(UPDATED_DATE).content(UPDATED_CONTENT);
     }
 
     @BeforeEach
     public void initTest() {
-        notification = createEntity(em);
+        notification = createEntity();
     }
 
     @AfterEach

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -67,6 +67,12 @@ export const PackageDriverDetail = () => {
             </span>
           </dt>
           <dd>{packageDriverEntity.bonus}</dd>
+          <dt>
+            <span id="status">
+              <Translate contentKey="sTripBeApp.packageDriver.status">Status</Translate>
+            </span>
+          </dt>
+          <dd>{packageDriverEntity.status}</dd>
         </dl>
         <Button tag={Link} to="/package-driver" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

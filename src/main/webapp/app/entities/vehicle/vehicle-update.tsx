@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm, ValidatedBlobField } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
-import { IVehicle } from 'app/shared/model/vehicle.model';
 import { VehicleType } from 'app/shared/model/enumerations/vehicle-type.model';
 import { VehicleStatus } from 'app/shared/model/enumerations/vehicle-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './vehicle.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './vehicle.reducer';
 
 export const VehicleUpdate = () => {
   const dispatch = useAppDispatch();
@@ -32,7 +28,7 @@ export const VehicleUpdate = () => {
   const vehicleStatusValues = Object.keys(VehicleStatus);
 
   const handleClose = () => {
-    navigate('/vehicle' + location.search);
+    navigate(`/vehicle${location.search}`);
   };
 
   useEffect(() => {
@@ -51,7 +47,6 @@ export const VehicleUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -124,7 +119,7 @@ export const VehicleUpdate = () => {
               >
                 {vehicleTypeValues.map(vehicleType => (
                   <option value={vehicleType} key={vehicleType}>
-                    {translate('sTripBeApp.VehicleType.' + vehicleType)}
+                    {translate(`sTripBeApp.VehicleType.${vehicleType}`)}
                   </option>
                 ))}
               </ValidatedField>
@@ -193,7 +188,7 @@ export const VehicleUpdate = () => {
               >
                 {vehicleStatusValues.map(vehicleStatus => (
                   <option value={vehicleStatus} key={vehicleStatus}>
-                    {translate('sTripBeApp.VehicleStatus.' + vehicleStatus)}
+                    {translate(`sTripBeApp.VehicleStatus.${vehicleStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

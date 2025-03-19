@@ -19,7 +19,7 @@ import strip.service.mapper.DriverMapper;
 @Transactional
 public class DriverService {
 
-    private final Logger log = LoggerFactory.getLogger(DriverService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DriverService.class);
 
     private final DriverRepository driverRepository;
 
@@ -37,7 +37,7 @@ public class DriverService {
      * @return the persisted entity.
      */
     public DriverDTO save(DriverDTO driverDTO) {
-        log.debug("Request to save Driver : {}", driverDTO);
+        LOG.debug("Request to save Driver : {}", driverDTO);
         Driver driver = driverMapper.toEntity(driverDTO);
         driver = driverRepository.save(driver);
         return driverMapper.toDto(driver);
@@ -50,7 +50,7 @@ public class DriverService {
      * @return the persisted entity.
      */
     public DriverDTO update(DriverDTO driverDTO) {
-        log.debug("Request to update Driver : {}", driverDTO);
+        LOG.debug("Request to update Driver : {}", driverDTO);
         Driver driver = driverMapper.toEntity(driverDTO);
         driver = driverRepository.save(driver);
         return driverMapper.toDto(driver);
@@ -63,7 +63,7 @@ public class DriverService {
      * @return the persisted entity.
      */
     public Optional<DriverDTO> partialUpdate(DriverDTO driverDTO) {
-        log.debug("Request to partially update Driver : {}", driverDTO);
+        LOG.debug("Request to partially update Driver : {}", driverDTO);
 
         return driverRepository
             .findById(driverDTO.getId())
@@ -84,7 +84,7 @@ public class DriverService {
      */
     @Transactional(readOnly = true)
     public Page<DriverDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Drivers");
+        LOG.debug("Request to get all Drivers");
         return driverRepository.findAll(pageable).map(driverMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class DriverService {
      */
     @Transactional(readOnly = true)
     public Optional<DriverDTO> findOne(Long id) {
-        log.debug("Request to get Driver : {}", id);
+        LOG.debug("Request to get Driver : {}", id);
         return driverRepository.findById(id).map(driverMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class DriverService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Driver : {}", id);
+        LOG.debug("Request to delete Driver : {}", id);
         driverRepository.deleteById(id);
     }
 }

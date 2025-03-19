@@ -11,8 +11,7 @@
     },
     {
       "fieldName": "tripImg",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "pricePerSeat",

@@ -10,8 +10,7 @@
     },
     {
       "fieldName": "userimage",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "phone",
