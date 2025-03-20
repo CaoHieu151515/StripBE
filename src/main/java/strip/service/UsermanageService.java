@@ -290,4 +290,13 @@ public class UsermanageService {
         packageDriver = packageDriverRepository.save(packageDriver);
         return packageDriverMapper.toDto(packageDriver);
     }
+
+    public Optional<PackageDriver> expirePackage(UUID packageId) {
+        return packageDriverRepository
+            .findByPackageID(packageId)
+            .map(packageDriver -> {
+                packageDriver.setStatus(PackageDriverStatus.EXPIRED);
+                return packageDriverRepository.save(packageDriver);
+            });
+    }
 }

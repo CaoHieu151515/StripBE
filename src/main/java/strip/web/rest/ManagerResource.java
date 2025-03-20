@@ -157,4 +157,10 @@ public class ManagerResource {
         PackageDriverDTO result = usermanageService.createPackage(packageDriverDTO);
         return ResponseEntity.created(new URI("/api/manager/packages/" + result.getPackageID())).body(result);
     }
+
+    @PatchMapping("/package/{driverid}/expire")
+    public ResponseEntity<PackageDriver> expirePackage(@PathVariable UUID driverid) {
+        Optional<PackageDriver> updatedPackage = usermanageService.expirePackage(driverid);
+        return updatedPackage.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
