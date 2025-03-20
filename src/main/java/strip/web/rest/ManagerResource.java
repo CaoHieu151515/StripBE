@@ -1,5 +1,7 @@
 package strip.web.rest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,15 +18,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import strip.domain.PackageDriver;
 import strip.service.UserService;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.UsermanageDTO;
 import tech.jhipster.web.util.PaginationUtil;
 
@@ -138,5 +144,17 @@ public class ManagerResource {
         log.debug("REST request to reject driver {}", driverId);
         usermanageService.rejectDriver(driverId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/packages/getAllPackage")
+    public ResponseEntity<List<PackageDriverDTO>> getActivePackages() {
+        List<PackageDriverDTO> activePackages = usermanageService.getActivePackages();
+        return ResponseEntity.ok(activePackages);
+    }
+
+    @PostMapping("/packages/createPackage")
+    public ResponseEntity<PackageDriverDTO> createPackage(@RequestBody PackageDriverDTO packageDriverDTO) throws URISyntaxException {
+        PackageDriverDTO result = usermanageService.createPackage(packageDriverDTO);
+        return ResponseEntity.created(new URI("/api/manager/packages/" + result.getPackageID())).body(result);
     }
 }

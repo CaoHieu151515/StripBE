@@ -15,21 +15,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Driver;
+import strip.domain.PackageDriver;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.Vehicle;
 import strip.domain.enumeration.DriverStatus;
+import strip.domain.enumeration.PackageDriverStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.repository.DriverRepository;
+import strip.repository.PackageDriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.VehicleRepository;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
+import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.mapper.DriverInfoMapper;
+import strip.service.mapper.PackageDriverMapper;
 import strip.service.mapper.UsermanageMapper;
 
 @Service
@@ -44,6 +49,8 @@ public class UsermanageService {
     private final DriverInfoMapper driverInfoMapper;
     private final VehicleService vehicleService;
     private final VehicleRepository vehicleRepository;
+    private final PackageDriverRepository packageDriverRepository;
+    private final PackageDriverMapper packageDriverMapper;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -52,7 +59,9 @@ public class UsermanageService {
         DriverRepository driverRepository,
         DriverInfoMapper driverInfoMapper,
         VehicleService vehicleService,
-        VehicleRepository vehicleRepository
+        VehicleRepository vehicleRepository,
+        PackageDriverRepository packageDriverRepository,
+        PackageDriverMapper packageDriverMapper
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -61,6 +70,8 @@ public class UsermanageService {
         this.driverInfoMapper = driverInfoMapper;
         this.vehicleService = vehicleService;
         this.vehicleRepository = vehicleRepository;
+        this.packageDriverRepository = packageDriverRepository;
+        this.packageDriverMapper = packageDriverMapper;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -262,5 +273,21 @@ public class UsermanageService {
         } else {
             throw new EntityNotFoundException("Driver not found with ID: " + driverId);
         }
+    }
+
+    public List<PackageDriverDTO> getActivePackages() {
+        return packageDriverRepository
+            .findByStatus(PackageDriverStatus.ACTIVE)
+            .stream()
+            .map(packageDriverMapper::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public PackageDriverDTO createPackage(PackageDriverDTO packageDriverDTO) {
+        PackageDriver packageDriver = packageDriverMapper.toEntity(packageDriverDTO);
+        packageDriver.setPackageID(UUID.randomUUID());
+        packageDriver.setStatus(PackageDriverStatus.ACTIVE);
+        packageDriver = packageDriverRepository.save(packageDriver);
+        return packageDriverMapper.toDto(packageDriver);
     }
 }

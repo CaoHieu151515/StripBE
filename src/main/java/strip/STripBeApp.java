@@ -115,8 +115,8 @@ public class STripBeApp {
 
             ----------------------------------------------------------
             \tApplication '{}' is running! Access URLs:
-            \tLocal: \t\t{}://localhost:{}{}
-            \tExternal: \t{}://{}:{}{}
+            \tLocal: \t\t{}://localhost:{}{}admin/docs
+            \tExternal: \t{}://{}:{}{}admin/docs
             \tProfile(s): \t{}
             ----------------------------------------------------------""",
             applicationName,
