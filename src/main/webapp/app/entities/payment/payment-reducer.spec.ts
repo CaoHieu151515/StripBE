@@ -5,15 +5,14 @@ import sinon from 'sinon';
 
 import { EntityState } from 'app/shared/reducers/reducer.utils';
 import { IPayment, defaultValue } from 'app/shared/model/payment.model';
-import reducer, { createEntity, deleteEntity, getEntities, getEntity, updateEntity, partialUpdateEntity, reset } from './payment.reducer';
+import reducer, { createEntity, deleteEntity, getEntities, getEntity, partialUpdateEntity, reset, updateEntity } from './payment.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<IPayment> = {
@@ -204,7 +203,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_PAYMENT actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 31232 };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -214,7 +213,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_PAYMENT actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 31232 };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

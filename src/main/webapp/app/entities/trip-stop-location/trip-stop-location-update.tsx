@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITrip } from 'app/shared/model/trip.model';
 import { getEntities as getTrips } from 'app/entities/trip/trip.reducer';
-import { ITripStopLocation } from 'app/shared/model/trip-stop-location.model';
-import { getEntity, updateEntity, createEntity, reset } from './trip-stop-location.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './trip-stop-location.reducer';
 
 export const TripStopLocationUpdate = () => {
   const dispatch = useAppDispatch();
@@ -28,7 +25,7 @@ export const TripStopLocationUpdate = () => {
   const updateSuccess = useAppSelector(state => state.tripStopLocation.updateSuccess);
 
   const handleClose = () => {
-    navigate('/trip-stop-location' + location.search);
+    navigate(`/trip-stop-location${location.search}`);
   };
 
   useEffect(() => {
@@ -47,7 +44,6 @@ export const TripStopLocationUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);

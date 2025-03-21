@@ -82,14 +82,13 @@ class UserWalletResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static UserWallet createEntity(EntityManager em) {
-        UserWallet userWallet = new UserWallet()
+    public static UserWallet createEntity() {
+        return new UserWallet()
             .userWallet(DEFAULT_USER_WALLET)
             .before(DEFAULT_BEFORE)
             .amount(DEFAULT_AMOUNT)
             .current(DEFAULT_CURRENT)
             .mobifyDate(DEFAULT_MOBIFY_DATE);
-        return userWallet;
     }
 
     /**
@@ -98,19 +97,18 @@ class UserWalletResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static UserWallet createUpdatedEntity(EntityManager em) {
-        UserWallet userWallet = new UserWallet()
+    public static UserWallet createUpdatedEntity() {
+        return new UserWallet()
             .userWallet(UPDATED_USER_WALLET)
             .before(UPDATED_BEFORE)
             .amount(UPDATED_AMOUNT)
             .current(UPDATED_CURRENT)
             .mobifyDate(UPDATED_MOBIFY_DATE);
-        return userWallet;
     }
 
     @BeforeEach
     public void initTest() {
-        userWallet = createEntity(em);
+        userWallet = createEntity();
     }
 
     @AfterEach
@@ -173,9 +171,9 @@ class UserWalletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(userWallet.getId().intValue())))
             .andExpect(jsonPath("$.[*].userWallet").value(hasItem(DEFAULT_USER_WALLET.toString())))
-            .andExpect(jsonPath("$.[*].before").value(hasItem(DEFAULT_BEFORE.doubleValue())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
-            .andExpect(jsonPath("$.[*].current").value(hasItem(DEFAULT_CURRENT.doubleValue())))
+            .andExpect(jsonPath("$.[*].before").value(hasItem(DEFAULT_BEFORE)))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT)))
+            .andExpect(jsonPath("$.[*].current").value(hasItem(DEFAULT_CURRENT)))
             .andExpect(jsonPath("$.[*].mobifyDate").value(hasItem(DEFAULT_MOBIFY_DATE.toString())));
     }
 
@@ -192,9 +190,9 @@ class UserWalletResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(userWallet.getId().intValue()))
             .andExpect(jsonPath("$.userWallet").value(DEFAULT_USER_WALLET.toString()))
-            .andExpect(jsonPath("$.before").value(DEFAULT_BEFORE.doubleValue()))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))
-            .andExpect(jsonPath("$.current").value(DEFAULT_CURRENT.doubleValue()))
+            .andExpect(jsonPath("$.before").value(DEFAULT_BEFORE))
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT))
+            .andExpect(jsonPath("$.current").value(DEFAULT_CURRENT))
             .andExpect(jsonPath("$.mobifyDate").value(DEFAULT_MOBIFY_DATE.toString()));
     }
 
@@ -300,7 +298,11 @@ class UserWalletResourceIT {
         UserWallet partialUpdatedUserWallet = new UserWallet();
         partialUpdatedUserWallet.setId(userWallet.getId());
 
-        partialUpdatedUserWallet.userWallet(UPDATED_USER_WALLET).current(UPDATED_CURRENT).mobifyDate(UPDATED_MOBIFY_DATE);
+        partialUpdatedUserWallet
+            .userWallet(UPDATED_USER_WALLET)
+            .amount(UPDATED_AMOUNT)
+            .current(UPDATED_CURRENT)
+            .mobifyDate(UPDATED_MOBIFY_DATE);
 
         restUserWalletMockMvc
             .perform(

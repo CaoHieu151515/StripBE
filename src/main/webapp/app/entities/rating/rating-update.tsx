@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ITrip } from 'app/shared/model/trip.model';
 import { getEntities as getTrips } from 'app/entities/trip/trip.reducer';
-import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IRating } from 'app/shared/model/rating.model';
 import { RatingType } from 'app/shared/model/enumerations/rating-type.model';
-import { getEntity, updateEntity, createEntity, reset } from './rating.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './rating.reducer';
 
 export const RatingUpdate = () => {
   const dispatch = useAppDispatch();
@@ -57,7 +52,6 @@ export const RatingUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -152,7 +146,7 @@ export const RatingUpdate = () => {
               >
                 {ratingTypeValues.map(ratingType => (
                   <option value={ratingType} key={ratingType}>
-                    {translate('sTripBeApp.RatingType.' + ratingType)}
+                    {translate(`sTripBeApp.RatingType.${ratingType}`)}
                   </option>
                 ))}
               </ValidatedField>

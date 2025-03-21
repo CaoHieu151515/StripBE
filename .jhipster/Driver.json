@@ -32,18 +32,15 @@
     },
     {
       "fieldName": "driverLicense",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "identityCardFaceUp",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "identityCardFacedown",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     }
   ],
   "name": "Driver",

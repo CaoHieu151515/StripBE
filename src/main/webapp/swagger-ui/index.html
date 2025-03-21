@@ -17,23 +17,37 @@
     <script src="./axios.min.js"></script>
 
     <script type="text/javascript">
-      const AlwaysEnableTryItOutPlugin = function (system) {
-        return {
-          components: {
-            TryItOutButton: () => null,
-          },
-        };
-      };
-
-      const getBearerToken = () => {
-        var authToken = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
+      /**
+       * 🛠 Lấy token từ localStorage/sessionStorage
+       */
+      function getBearerToken() {
+        let authToken = localStorage.getItem('jhi-authenticationToken') || sessionStorage.getItem('jhi-authenticationToken');
         if (authToken) {
-          authToken = JSON.parse(authToken);
-          return `Bearer ${authToken}`;
+          try {
+            return `Bearer ${JSON.parse(authToken)}`;
+          } catch (e) {
+            return `Bearer ${authToken}`;
+          }
         }
         return null;
-      };
+      }
 
+      /**
+       * 🔥 Cập nhật token vào Swagger UI (Authorize Button)
+       */
+      function updateSwaggerAuth() {
+        const token = getBearerToken();
+        if (token) {
+          console.log('🔑 Gán token vào Swagger UI:', token);
+          window.ui.preauthorizeApiKey('Authorization', token);
+        } else {
+          console.warn('⚠️ Không tìm thấy JWT token, API có thể bị từ chối.');
+        }
+      }
+
+      /**
+       * 🛠 Tạo Axios Config có JWT
+       */
       function createAxiosConfig(serverBaseUri) {
         return {
           timeout: 5000,
@@ -42,40 +56,43 @@
         };
       }
 
+      /**
+       * 🔥 Luôn chèn JWT vào request API
+       */
+      function requestInterceptor(req) {
+        const token = getBearerToken();
+        if (token) {
+          req.headers['Authorization'] = token;
+          console.log(`📡 Gửi request với token: ${token}`);
+        } else {
+          console.warn('❌ Không có JWT, request không có Authorization header.');
+        }
+        return req;
+      }
+
+      /**
+       * 🛠 Lấy danh sách API Swagger
+       */
       async function fetchUrls(serverBaseUri, axiosConfig, baseUrl) {
         let urls;
-
-        if (!urls || urls.length === 0) {
+        try {
           const response = await axios.get('/management/jhiopenapigroups', axiosConfig);
           if (Array.isArray(response.data)) {
             urls = response.data.map(({ group, description }) => ({ name: description, url: `${serverBaseUri}${baseUrl}/${group}` }));
           } else {
             urls = [{ name: 'default', url: `${serverBaseUri}${baseUrl}` }];
           }
+        } catch (error) {
+          console.error('❌ Lỗi khi tải danh sách Swagger URLs:', error);
+          urls = [{ name: 'default', url: `${serverBaseUri}${baseUrl}` }];
         }
-        console.log(`Swagger urls`, urls);
-
         return urls;
       }
 
-      function sortUrls(urls) {
-        if (!urls) return urls;
-
-        urls.sort((a, b) => compareUrls(a.name.toLowerCase(), b.name.toLowerCase()));
-
-        return urls;
-      }
-
-      function compareUrls(nameA, nameB) {
-        if (nameA.includes('(default)')) return -1;
-        if (nameB.includes('(default)')) return 1;
-        if (nameA.includes('(management)')) return -1;
-        if (nameB.includes('(management)')) return 1;
-        return nameA.localeCompare(nameB);
-      }
-
+      /**
+       * 🛠 Khởi tạo Swagger UI với JWT token
+       */
       function initializeSwaggerUI(urls, baseUrl) {
-        // Build a system
         var ui = SwaggerUIBundle({
           urls: urls,
           url: baseUrl,
@@ -85,30 +102,36 @@
           layout: 'StandaloneLayout',
           withCredentials: true,
           presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-          plugins: [SwaggerUIBundle.plugins.DownloadUrl, AlwaysEnableTryItOutPlugin],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
           tryItOutEnabled: true,
-          requestInterceptor: function (req) {
-            req.headers['Authorization'] = getBearerToken();
-            // Remove the sample Swagger UI request body if present
-            if (req.method === 'GET' && req.body === '{"additionalProp1":"string","additionalProp2":"string","additionalProp3":"string"}') {
-              req.body = undefined;
-            }
-            return req;
-          },
+          requestInterceptor: requestInterceptor, // 🔥 Luôn gán JWT vào request
         });
 
         window.ui = ui;
+
+        // Gán JWT token ngay khi khởi tạo Swagger UI
+        setTimeout(updateSwaggerAuth, 1500);
       }
 
+      /**
+       * 🚀 Chạy khi tải trang
+       */
       window.onload = async function () {
         const baseUrl = 'v3/api-docs';
         const serverBaseUri = document.baseURI.replace('swagger-ui/', '');
         const axiosConfig = createAxiosConfig(serverBaseUri);
         const urls = await fetchUrls(serverBaseUri, axiosConfig, baseUrl);
-        const sortedUrls = sortUrls(urls);
 
-        initializeSwaggerUI(sortedUrls, baseUrl);
+        initializeSwaggerUI(urls, baseUrl);
       };
+
+      // 🎯 Lắng nghe thay đổi trong localStorage để cập nhật JWT
+      window.addEventListener('storage', event => {
+        if (event.key === 'jhi-authenticationToken') {
+          console.log('🆕 Token đã thay đổi, cập nhật Swagger UI.');
+          updateSwaggerAuth();
+        }
+      });
     </script>
   </body>
 </html>

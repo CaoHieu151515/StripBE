@@ -88,8 +88,8 @@ class UserDetailResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static UserDetail createEntity(EntityManager em) {
-        UserDetail userDetail = new UserDetail()
+    public static UserDetail createEntity() {
+        return new UserDetail()
             .appUserDetail(DEFAULT_APP_USER_DETAIL)
             .userimage(DEFAULT_USERIMAGE)
             .userimageContentType(DEFAULT_USERIMAGE_CONTENT_TYPE)
@@ -97,7 +97,6 @@ class UserDetailResourceIT {
             .gender(DEFAULT_GENDER)
             .address(DEFAULT_ADDRESS)
             .dob(DEFAULT_DOB);
-        return userDetail;
     }
 
     /**
@@ -106,8 +105,8 @@ class UserDetailResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static UserDetail createUpdatedEntity(EntityManager em) {
-        UserDetail userDetail = new UserDetail()
+    public static UserDetail createUpdatedEntity() {
+        return new UserDetail()
             .appUserDetail(UPDATED_APP_USER_DETAIL)
             .userimage(UPDATED_USERIMAGE)
             .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE)
@@ -115,12 +114,11 @@ class UserDetailResourceIT {
             .gender(UPDATED_GENDER)
             .address(UPDATED_ADDRESS)
             .dob(UPDATED_DOB);
-        return userDetail;
     }
 
     @BeforeEach
     public void initTest() {
-        userDetail = createEntity(em);
+        userDetail = createEntity();
     }
 
     @AfterEach
@@ -316,7 +314,7 @@ class UserDetailResourceIT {
         UserDetail partialUpdatedUserDetail = new UserDetail();
         partialUpdatedUserDetail.setId(userDetail.getId());
 
-        partialUpdatedUserDetail.gender(UPDATED_GENDER);
+        partialUpdatedUserDetail.dob(UPDATED_DOB);
 
         restUserDetailMockMvc
             .perform(

@@ -3,6 +3,7 @@ package strip.service.dto;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+import strip.domain.enumeration.PackageDriverStatus;
 
 /**
  * A DTO for the {@link strip.domain.PackageDriver} entity.
@@ -23,6 +24,8 @@ public class PackageDriverDTO implements Serializable {
     private Integer time;
 
     private Integer bonus;
+
+    private PackageDriverStatus status;
 
     public Long getId() {
         return id;
@@ -80,6 +83,14 @@ public class PackageDriverDTO implements Serializable {
         this.bonus = bonus;
     }
 
+    public PackageDriverStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PackageDriverStatus status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -112,6 +123,7 @@ public class PackageDriverDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", time=" + getTime() +
             ", bonus=" + getBonus() +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

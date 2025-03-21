@@ -19,7 +19,7 @@ import strip.service.mapper.TripStopLocationMapper;
 @Transactional
 public class TripStopLocationService {
 
-    private final Logger log = LoggerFactory.getLogger(TripStopLocationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TripStopLocationService.class);
 
     private final TripStopLocationRepository tripStopLocationRepository;
 
@@ -37,7 +37,7 @@ public class TripStopLocationService {
      * @return the persisted entity.
      */
     public TripStopLocationDTO save(TripStopLocationDTO tripStopLocationDTO) {
-        log.debug("Request to save TripStopLocation : {}", tripStopLocationDTO);
+        LOG.debug("Request to save TripStopLocation : {}", tripStopLocationDTO);
         TripStopLocation tripStopLocation = tripStopLocationMapper.toEntity(tripStopLocationDTO);
         tripStopLocation = tripStopLocationRepository.save(tripStopLocation);
         return tripStopLocationMapper.toDto(tripStopLocation);
@@ -50,7 +50,7 @@ public class TripStopLocationService {
      * @return the persisted entity.
      */
     public TripStopLocationDTO update(TripStopLocationDTO tripStopLocationDTO) {
-        log.debug("Request to update TripStopLocation : {}", tripStopLocationDTO);
+        LOG.debug("Request to update TripStopLocation : {}", tripStopLocationDTO);
         TripStopLocation tripStopLocation = tripStopLocationMapper.toEntity(tripStopLocationDTO);
         tripStopLocation = tripStopLocationRepository.save(tripStopLocation);
         return tripStopLocationMapper.toDto(tripStopLocation);
@@ -63,7 +63,7 @@ public class TripStopLocationService {
      * @return the persisted entity.
      */
     public Optional<TripStopLocationDTO> partialUpdate(TripStopLocationDTO tripStopLocationDTO) {
-        log.debug("Request to partially update TripStopLocation : {}", tripStopLocationDTO);
+        LOG.debug("Request to partially update TripStopLocation : {}", tripStopLocationDTO);
 
         return tripStopLocationRepository
             .findById(tripStopLocationDTO.getId())
@@ -84,7 +84,7 @@ public class TripStopLocationService {
      */
     @Transactional(readOnly = true)
     public Page<TripStopLocationDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all TripStopLocations");
+        LOG.debug("Request to get all TripStopLocations");
         return tripStopLocationRepository.findAll(pageable).map(tripStopLocationMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class TripStopLocationService {
      */
     @Transactional(readOnly = true)
     public Optional<TripStopLocationDTO> findOne(Long id) {
-        log.debug("Request to get TripStopLocation : {}", id);
+        LOG.debug("Request to get TripStopLocation : {}", id);
         return tripStopLocationRepository.findById(id).map(tripStopLocationMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class TripStopLocationService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete TripStopLocation : {}", id);
+        LOG.debug("Request to delete TripStopLocation : {}", id);
         tripStopLocationRepository.deleteById(id);
     }
 }

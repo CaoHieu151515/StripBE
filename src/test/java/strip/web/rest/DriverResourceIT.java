@@ -107,8 +107,8 @@ class DriverResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Driver createEntity(EntityManager em) {
-        Driver driver = new Driver()
+    public static Driver createEntity() {
+        return new Driver()
             .driverID(DEFAULT_DRIVER_ID)
             .usedtoDriver(DEFAULT_USEDTO_DRIVER)
             .expirationDate(DEFAULT_EXPIRATION_DATE)
@@ -121,7 +121,6 @@ class DriverResourceIT {
             .identityCardFaceUpContentType(DEFAULT_IDENTITY_CARD_FACE_UP_CONTENT_TYPE)
             .identityCardFacedown(DEFAULT_IDENTITY_CARD_FACEDOWN)
             .identityCardFacedownContentType(DEFAULT_IDENTITY_CARD_FACEDOWN_CONTENT_TYPE);
-        return driver;
     }
 
     /**
@@ -130,8 +129,8 @@ class DriverResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Driver createUpdatedEntity(EntityManager em) {
-        Driver driver = new Driver()
+    public static Driver createUpdatedEntity() {
+        return new Driver()
             .driverID(UPDATED_DRIVER_ID)
             .usedtoDriver(UPDATED_USEDTO_DRIVER)
             .expirationDate(UPDATED_EXPIRATION_DATE)
@@ -144,12 +143,11 @@ class DriverResourceIT {
             .identityCardFaceUpContentType(UPDATED_IDENTITY_CARD_FACE_UP_CONTENT_TYPE)
             .identityCardFacedown(UPDATED_IDENTITY_CARD_FACEDOWN)
             .identityCardFacedownContentType(UPDATED_IDENTITY_CARD_FACEDOWN_CONTENT_TYPE);
-        return driver;
     }
 
     @BeforeEach
     public void initTest() {
-        driver = createEntity(em);
+        driver = createEntity();
     }
 
     @AfterEach
@@ -215,7 +213,7 @@ class DriverResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(driver.getId().intValue())))
             .andExpect(jsonPath("$.[*].driverID").value(hasItem(DEFAULT_DRIVER_ID.toString())))
-            .andExpect(jsonPath("$.[*].usedtoDriver").value(hasItem(DEFAULT_USEDTO_DRIVER.booleanValue())))
+            .andExpect(jsonPath("$.[*].usedtoDriver").value(hasItem(DEFAULT_USEDTO_DRIVER)))
             .andExpect(jsonPath("$.[*].expirationDate").value(hasItem(DEFAULT_EXPIRATION_DATE.toString())))
             .andExpect(jsonPath("$.[*].driverStatus").value(hasItem(DEFAULT_DRIVER_STATUS.toString())))
             .andExpect(jsonPath("$.[*].driverPoint").value(hasItem(DEFAULT_DRIVER_POINT)))
@@ -245,7 +243,7 @@ class DriverResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(driver.getId().intValue()))
             .andExpect(jsonPath("$.driverID").value(DEFAULT_DRIVER_ID.toString()))
-            .andExpect(jsonPath("$.usedtoDriver").value(DEFAULT_USEDTO_DRIVER.booleanValue()))
+            .andExpect(jsonPath("$.usedtoDriver").value(DEFAULT_USEDTO_DRIVER))
             .andExpect(jsonPath("$.expirationDate").value(DEFAULT_EXPIRATION_DATE.toString()))
             .andExpect(jsonPath("$.driverStatus").value(DEFAULT_DRIVER_STATUS.toString()))
             .andExpect(jsonPath("$.driverPoint").value(DEFAULT_DRIVER_POINT))
@@ -375,7 +373,7 @@ class DriverResourceIT {
         Driver partialUpdatedDriver = new Driver();
         partialUpdatedDriver.setId(driver.getId());
 
-        partialUpdatedDriver.expirationDate(UPDATED_EXPIRATION_DATE).driverStatus(UPDATED_DRIVER_STATUS).driverPoint(UPDATED_DRIVER_POINT);
+        partialUpdatedDriver.usedtoDriver(UPDATED_USEDTO_DRIVER).expirationDate(UPDATED_EXPIRATION_DATE).bannedDay(UPDATED_BANNED_DAY);
 
         restDriverMockMvc
             .perform(

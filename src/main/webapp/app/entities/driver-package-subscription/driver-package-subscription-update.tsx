@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IDriver } from 'app/shared/model/driver.model';
 import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
-import { IPackageDriver } from 'app/shared/model/package-driver.model';
 import { getEntities as getPackageDrivers } from 'app/entities/package-driver/package-driver.reducer';
-import { IDriverPackageSubscription } from 'app/shared/model/driver-package-subscription.model';
-import { getEntity, updateEntity, createEntity, reset } from './driver-package-subscription.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './driver-package-subscription.reducer';
 
 export const DriverPackageSubscriptionUpdate = () => {
   const dispatch = useAppDispatch();
@@ -51,7 +47,6 @@ export const DriverPackageSubscriptionUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     values.purchaseDate = convertDateTimeToServer(values.purchaseDate);
     values.expirationDate = convertDateTimeToServer(values.expirationDate);

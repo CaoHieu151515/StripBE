@@ -19,7 +19,7 @@ import strip.service.mapper.RequestTripMapper;
 @Transactional
 public class RequestTripService {
 
-    private final Logger log = LoggerFactory.getLogger(RequestTripService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RequestTripService.class);
 
     private final RequestTripRepository requestTripRepository;
 
@@ -37,7 +37,7 @@ public class RequestTripService {
      * @return the persisted entity.
      */
     public RequestTripDTO save(RequestTripDTO requestTripDTO) {
-        log.debug("Request to save RequestTrip : {}", requestTripDTO);
+        LOG.debug("Request to save RequestTrip : {}", requestTripDTO);
         RequestTrip requestTrip = requestTripMapper.toEntity(requestTripDTO);
         requestTrip = requestTripRepository.save(requestTrip);
         return requestTripMapper.toDto(requestTrip);
@@ -50,7 +50,7 @@ public class RequestTripService {
      * @return the persisted entity.
      */
     public RequestTripDTO update(RequestTripDTO requestTripDTO) {
-        log.debug("Request to update RequestTrip : {}", requestTripDTO);
+        LOG.debug("Request to update RequestTrip : {}", requestTripDTO);
         RequestTrip requestTrip = requestTripMapper.toEntity(requestTripDTO);
         requestTrip = requestTripRepository.save(requestTrip);
         return requestTripMapper.toDto(requestTrip);
@@ -63,7 +63,7 @@ public class RequestTripService {
      * @return the persisted entity.
      */
     public Optional<RequestTripDTO> partialUpdate(RequestTripDTO requestTripDTO) {
-        log.debug("Request to partially update RequestTrip : {}", requestTripDTO);
+        LOG.debug("Request to partially update RequestTrip : {}", requestTripDTO);
 
         return requestTripRepository
             .findById(requestTripDTO.getId())
@@ -84,7 +84,7 @@ public class RequestTripService {
      */
     @Transactional(readOnly = true)
     public Page<RequestTripDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all RequestTrips");
+        LOG.debug("Request to get all RequestTrips");
         return requestTripRepository.findAll(pageable).map(requestTripMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class RequestTripService {
      */
     @Transactional(readOnly = true)
     public Optional<RequestTripDTO> findOne(Long id) {
-        log.debug("Request to get RequestTrip : {}", id);
+        LOG.debug("Request to get RequestTrip : {}", id);
         return requestTripRepository.findById(id).map(requestTripMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class RequestTripService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete RequestTrip : {}", id);
+        LOG.debug("Request to delete RequestTrip : {}", id);
         requestTripRepository.deleteById(id);
     }
 }

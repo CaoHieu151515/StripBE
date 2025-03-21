@@ -19,7 +19,7 @@ import strip.service.mapper.ReportMapper;
 @Transactional
 public class ReportService {
 
-    private final Logger log = LoggerFactory.getLogger(ReportService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReportService.class);
 
     private final ReportRepository reportRepository;
 
@@ -37,7 +37,7 @@ public class ReportService {
      * @return the persisted entity.
      */
     public ReportDTO save(ReportDTO reportDTO) {
-        log.debug("Request to save Report : {}", reportDTO);
+        LOG.debug("Request to save Report : {}", reportDTO);
         Report report = reportMapper.toEntity(reportDTO);
         report = reportRepository.save(report);
         return reportMapper.toDto(report);
@@ -50,7 +50,7 @@ public class ReportService {
      * @return the persisted entity.
      */
     public ReportDTO update(ReportDTO reportDTO) {
-        log.debug("Request to update Report : {}", reportDTO);
+        LOG.debug("Request to update Report : {}", reportDTO);
         Report report = reportMapper.toEntity(reportDTO);
         report = reportRepository.save(report);
         return reportMapper.toDto(report);
@@ -63,7 +63,7 @@ public class ReportService {
      * @return the persisted entity.
      */
     public Optional<ReportDTO> partialUpdate(ReportDTO reportDTO) {
-        log.debug("Request to partially update Report : {}", reportDTO);
+        LOG.debug("Request to partially update Report : {}", reportDTO);
 
         return reportRepository
             .findById(reportDTO.getId())
@@ -84,7 +84,7 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public Page<ReportDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Reports");
+        LOG.debug("Request to get all Reports");
         return reportRepository.findAll(pageable).map(reportMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public Optional<ReportDTO> findOne(Long id) {
-        log.debug("Request to get Report : {}", id);
+        LOG.debug("Request to get Report : {}", id);
         return reportRepository.findById(id).map(reportMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class ReportService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Report : {}", id);
+        LOG.debug("Request to delete Report : {}", id);
         reportRepository.deleteById(id);
     }
 }

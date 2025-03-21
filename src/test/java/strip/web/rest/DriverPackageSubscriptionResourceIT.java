@@ -70,13 +70,12 @@ class DriverPackageSubscriptionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static DriverPackageSubscription createEntity(EntityManager em) {
-        DriverPackageSubscription driverPackageSubscription = new DriverPackageSubscription()
+    public static DriverPackageSubscription createEntity() {
+        return new DriverPackageSubscription()
             .purchaseDate(DEFAULT_PURCHASE_DATE)
             .expirationDate(DEFAULT_EXPIRATION_DATE)
             .packagePrice(DEFAULT_PACKAGE_PRICE)
             .active(DEFAULT_ACTIVE);
-        return driverPackageSubscription;
     }
 
     /**
@@ -85,18 +84,17 @@ class DriverPackageSubscriptionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static DriverPackageSubscription createUpdatedEntity(EntityManager em) {
-        DriverPackageSubscription driverPackageSubscription = new DriverPackageSubscription()
+    public static DriverPackageSubscription createUpdatedEntity() {
+        return new DriverPackageSubscription()
             .purchaseDate(UPDATED_PURCHASE_DATE)
             .expirationDate(UPDATED_EXPIRATION_DATE)
             .packagePrice(UPDATED_PACKAGE_PRICE)
             .active(UPDATED_ACTIVE);
-        return driverPackageSubscription;
     }
 
     @BeforeEach
     public void initTest() {
-        driverPackageSubscription = createEntity(em);
+        driverPackageSubscription = createEntity();
     }
 
     @AfterEach
@@ -165,8 +163,8 @@ class DriverPackageSubscriptionResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(driverPackageSubscription.getId().toString())))
             .andExpect(jsonPath("$.[*].purchaseDate").value(hasItem(DEFAULT_PURCHASE_DATE.toString())))
             .andExpect(jsonPath("$.[*].expirationDate").value(hasItem(DEFAULT_EXPIRATION_DATE.toString())))
-            .andExpect(jsonPath("$.[*].packagePrice").value(hasItem(DEFAULT_PACKAGE_PRICE.doubleValue())))
-            .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
+            .andExpect(jsonPath("$.[*].packagePrice").value(hasItem(DEFAULT_PACKAGE_PRICE)))
+            .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE)));
     }
 
     @Test
@@ -183,8 +181,8 @@ class DriverPackageSubscriptionResourceIT {
             .andExpect(jsonPath("$.id").value(driverPackageSubscription.getId().toString()))
             .andExpect(jsonPath("$.purchaseDate").value(DEFAULT_PURCHASE_DATE.toString()))
             .andExpect(jsonPath("$.expirationDate").value(DEFAULT_EXPIRATION_DATE.toString()))
-            .andExpect(jsonPath("$.packagePrice").value(DEFAULT_PACKAGE_PRICE.doubleValue()))
-            .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE.booleanValue()));
+            .andExpect(jsonPath("$.packagePrice").value(DEFAULT_PACKAGE_PRICE))
+            .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE));
     }
 
     @Test
@@ -292,10 +290,7 @@ class DriverPackageSubscriptionResourceIT {
         DriverPackageSubscription partialUpdatedDriverPackageSubscription = new DriverPackageSubscription();
         partialUpdatedDriverPackageSubscription.setId(driverPackageSubscription.getId());
 
-        partialUpdatedDriverPackageSubscription
-            .purchaseDate(UPDATED_PURCHASE_DATE)
-            .expirationDate(UPDATED_EXPIRATION_DATE)
-            .active(UPDATED_ACTIVE);
+        partialUpdatedDriverPackageSubscription.purchaseDate(UPDATED_PURCHASE_DATE);
 
         restDriverPackageSubscriptionMockMvc
             .perform(

@@ -80,13 +80,12 @@ class RatingResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Rating createEntity(EntityManager em) {
-        Rating rating = new Rating()
+    public static Rating createEntity() {
+        return new Rating()
             .ratingID(DEFAULT_RATING_ID)
             .ratingTime(DEFAULT_RATING_TIME)
             .ratingDriver(DEFAULT_RATING_DRIVER)
             .ratingType(DEFAULT_RATING_TYPE);
-        return rating;
     }
 
     /**
@@ -95,18 +94,17 @@ class RatingResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Rating createUpdatedEntity(EntityManager em) {
-        Rating rating = new Rating()
+    public static Rating createUpdatedEntity() {
+        return new Rating()
             .ratingID(UPDATED_RATING_ID)
             .ratingTime(UPDATED_RATING_TIME)
             .ratingDriver(UPDATED_RATING_DRIVER)
             .ratingType(UPDATED_RATING_TYPE);
-        return rating;
     }
 
     @BeforeEach
     public void initTest() {
-        rating = createEntity(em);
+        rating = createEntity();
     }
 
     @AfterEach
@@ -291,7 +289,7 @@ class RatingResourceIT {
         Rating partialUpdatedRating = new Rating();
         partialUpdatedRating.setId(rating.getId());
 
-        partialUpdatedRating.ratingID(UPDATED_RATING_ID).ratingDriver(UPDATED_RATING_DRIVER);
+        partialUpdatedRating.ratingID(UPDATED_RATING_ID).ratingTime(UPDATED_RATING_TIME).ratingType(UPDATED_RATING_TYPE);
 
         restRatingMockMvc
             .perform(

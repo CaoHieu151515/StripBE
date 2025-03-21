@@ -122,8 +122,8 @@ class RequestTripResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static RequestTrip createEntity(EntityManager em) {
-        RequestTrip requestTrip = new RequestTrip()
+    public static RequestTrip createEntity() {
+        return new RequestTrip()
             .requestTripID(DEFAULT_REQUEST_TRIP_ID)
             .startLoca(DEFAULT_START_LOCA)
             .endLoca(DEFAULT_END_LOCA)
@@ -140,7 +140,6 @@ class RequestTripResourceIT {
             .checkOut(DEFAULT_CHECK_OUT)
             .checkOutTIme(DEFAULT_CHECK_OUT_T_IME)
             .appliedAt(DEFAULT_APPLIED_AT);
-        return requestTrip;
     }
 
     /**
@@ -149,8 +148,8 @@ class RequestTripResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static RequestTrip createUpdatedEntity(EntityManager em) {
-        RequestTrip requestTrip = new RequestTrip()
+    public static RequestTrip createUpdatedEntity() {
+        return new RequestTrip()
             .requestTripID(UPDATED_REQUEST_TRIP_ID)
             .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
@@ -167,12 +166,11 @@ class RequestTripResourceIT {
             .checkOut(UPDATED_CHECK_OUT)
             .checkOutTIme(UPDATED_CHECK_OUT_T_IME)
             .appliedAt(UPDATED_APPLIED_AT);
-        return requestTrip;
     }
 
     @BeforeEach
     public void initTest() {
-        requestTrip = createEntity(em);
+        requestTrip = createEntity();
     }
 
     @AfterEach
@@ -240,7 +238,7 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.[*].requestTripID").value(hasItem(DEFAULT_REQUEST_TRIP_ID.toString())))
             .andExpect(jsonPath("$.[*].startLoca").value(hasItem(DEFAULT_START_LOCA)))
             .andExpect(jsonPath("$.[*].endLoca").value(hasItem(DEFAULT_END_LOCA)))
-            .andExpect(jsonPath("$.[*].amountApproveFee").value(hasItem(DEFAULT_AMOUNT_APPROVE_FEE.doubleValue())))
+            .andExpect(jsonPath("$.[*].amountApproveFee").value(hasItem(DEFAULT_AMOUNT_APPROVE_FEE)))
             .andExpect(jsonPath("$.[*].luggageImgContentType").value(hasItem(DEFAULT_LUGGAGE_IMG_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].luggageImg").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_LUGGAGE_IMG))))
             .andExpect(jsonPath("$.[*].luggageDescription").value(hasItem(DEFAULT_LUGGAGE_DESCRIPTION)))
@@ -248,9 +246,9 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].pickUpTime").value(hasItem(DEFAULT_PICK_UP_TIME.toString())))
             .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())))
-            .andExpect(jsonPath("$.[*].checkIn").value(hasItem(DEFAULT_CHECK_IN.booleanValue())))
+            .andExpect(jsonPath("$.[*].checkIn").value(hasItem(DEFAULT_CHECK_IN)))
             .andExpect(jsonPath("$.[*].checkInTime").value(hasItem(DEFAULT_CHECK_IN_TIME.toString())))
-            .andExpect(jsonPath("$.[*].checkOut").value(hasItem(DEFAULT_CHECK_OUT.booleanValue())))
+            .andExpect(jsonPath("$.[*].checkOut").value(hasItem(DEFAULT_CHECK_OUT)))
             .andExpect(jsonPath("$.[*].checkOutTIme").value(hasItem(DEFAULT_CHECK_OUT_T_IME.toString())))
             .andExpect(jsonPath("$.[*].appliedAt").value(hasItem(DEFAULT_APPLIED_AT.toString())));
     }
@@ -270,7 +268,7 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.requestTripID").value(DEFAULT_REQUEST_TRIP_ID.toString()))
             .andExpect(jsonPath("$.startLoca").value(DEFAULT_START_LOCA))
             .andExpect(jsonPath("$.endLoca").value(DEFAULT_END_LOCA))
-            .andExpect(jsonPath("$.amountApproveFee").value(DEFAULT_AMOUNT_APPROVE_FEE.doubleValue()))
+            .andExpect(jsonPath("$.amountApproveFee").value(DEFAULT_AMOUNT_APPROVE_FEE))
             .andExpect(jsonPath("$.luggageImgContentType").value(DEFAULT_LUGGAGE_IMG_CONTENT_TYPE))
             .andExpect(jsonPath("$.luggageImg").value(Base64.getEncoder().encodeToString(DEFAULT_LUGGAGE_IMG)))
             .andExpect(jsonPath("$.luggageDescription").value(DEFAULT_LUGGAGE_DESCRIPTION))
@@ -278,9 +276,9 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.pickUpTime").value(DEFAULT_PICK_UP_TIME.toString()))
             .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()))
-            .andExpect(jsonPath("$.checkIn").value(DEFAULT_CHECK_IN.booleanValue()))
+            .andExpect(jsonPath("$.checkIn").value(DEFAULT_CHECK_IN))
             .andExpect(jsonPath("$.checkInTime").value(DEFAULT_CHECK_IN_TIME.toString()))
-            .andExpect(jsonPath("$.checkOut").value(DEFAULT_CHECK_OUT.booleanValue()))
+            .andExpect(jsonPath("$.checkOut").value(DEFAULT_CHECK_OUT))
             .andExpect(jsonPath("$.checkOutTIme").value(DEFAULT_CHECK_OUT_T_IME.toString()))
             .andExpect(jsonPath("$.appliedAt").value(DEFAULT_APPLIED_AT.toString()));
     }
@@ -412,13 +410,14 @@ class RequestTripResourceIT {
 
         partialUpdatedRequestTrip
             .requestTripID(UPDATED_REQUEST_TRIP_ID)
+            .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
-            .luggageImg(UPDATED_LUGGAGE_IMG)
-            .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
-            .type(UPDATED_TYPE)
+            .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
+            .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)
+            .pickUpTime(UPDATED_PICK_UP_TIME)
             .endTime(UPDATED_END_TIME)
             .checkIn(UPDATED_CHECK_IN)
-            .checkInTime(UPDATED_CHECK_IN_TIME);
+            .checkOutTIme(UPDATED_CHECK_OUT_T_IME);
 
         restRequestTripMockMvc
             .perform(

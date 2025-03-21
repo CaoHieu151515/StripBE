@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { IReport } from 'app/shared/model/report.model';
 import { ReportStatus } from 'app/shared/model/enumerations/report-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './report.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './report.reducer';
 
 export const ReportUpdate = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +27,7 @@ export const ReportUpdate = () => {
   const reportStatusValues = Object.keys(ReportStatus);
 
   const handleClose = () => {
-    navigate('/report' + location.search);
+    navigate(`/report${location.search}`);
   };
 
   useEffect(() => {
@@ -49,7 +46,6 @@ export const ReportUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -137,7 +133,7 @@ export const ReportUpdate = () => {
               >
                 {reportStatusValues.map(reportStatus => (
                   <option value={reportStatus} key={reportStatus}>
-                    {translate('sTripBeApp.ReportStatus.' + reportStatus)}
+                    {translate(`sTripBeApp.ReportStatus.${reportStatus}`)}
                   </option>
                 ))}
               </ValidatedField>

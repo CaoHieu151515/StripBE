@@ -42,9 +42,9 @@ public class DriverPackageSubscriptionAsserts {
         DriverPackageSubscription expected,
         DriverPackageSubscription actual
     ) {
-        assertThat(expected)
+        assertThat(actual)
             .as("Verify DriverPackageSubscription auto generated properties")
-            .satisfies(e -> assertThat(e.getId()).as("check id").isEqualTo(actual.getId()));
+            .satisfies(a -> assertThat(a.getId()).as("check id").isEqualTo(expected.getId()));
     }
 
     /**
@@ -57,12 +57,12 @@ public class DriverPackageSubscriptionAsserts {
         DriverPackageSubscription expected,
         DriverPackageSubscription actual
     ) {
-        assertThat(expected)
+        assertThat(actual)
             .as("Verify DriverPackageSubscription relevant properties")
-            .satisfies(e -> assertThat(e.getPurchaseDate()).as("check purchaseDate").isEqualTo(actual.getPurchaseDate()))
-            .satisfies(e -> assertThat(e.getExpirationDate()).as("check expirationDate").isEqualTo(actual.getExpirationDate()))
-            .satisfies(e -> assertThat(e.getPackagePrice()).as("check packagePrice").isEqualTo(actual.getPackagePrice()))
-            .satisfies(e -> assertThat(e.getActive()).as("check active").isEqualTo(actual.getActive()));
+            .satisfies(a -> assertThat(a.getPurchaseDate()).as("check purchaseDate").isEqualTo(expected.getPurchaseDate()))
+            .satisfies(a -> assertThat(a.getExpirationDate()).as("check expirationDate").isEqualTo(expected.getExpirationDate()))
+            .satisfies(a -> assertThat(a.getPackagePrice()).as("check packagePrice").isEqualTo(expected.getPackagePrice()))
+            .satisfies(a -> assertThat(a.getActive()).as("check active").isEqualTo(expected.getActive()));
     }
 
     /**
@@ -75,9 +75,9 @@ public class DriverPackageSubscriptionAsserts {
         DriverPackageSubscription expected,
         DriverPackageSubscription actual
     ) {
-        assertThat(expected)
+        assertThat(actual)
             .as("Verify DriverPackageSubscription relationships")
-            .satisfies(e -> assertThat(e.getDriver()).as("check driver").isEqualTo(actual.getDriver()))
-            .satisfies(e -> assertThat(e.getPackageDriver()).as("check packageDriver").isEqualTo(actual.getPackageDriver()));
+            .satisfies(a -> assertThat(a.getDriver()).as("check driver").isEqualTo(expected.getDriver()))
+            .satisfies(a -> assertThat(a.getPackageDriver()).as("check packageDriver").isEqualTo(expected.getPackageDriver()));
     }
 }

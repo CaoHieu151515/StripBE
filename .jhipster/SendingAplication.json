@@ -19,8 +19,7 @@
     },
     {
       "fieldName": "img",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     }
   ],
   "name": "SendingAplication",

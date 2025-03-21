@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import strip.IntegrationTest;
 import strip.domain.PackageDriver;
+import strip.domain.enumeration.PackageDriverStatus;
 import strip.repository.PackageDriverRepository;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.mapper.PackageDriverMapper;
@@ -52,6 +53,9 @@ class PackageDriverResourceIT {
 
     private static final Integer DEFAULT_BONUS = 1;
     private static final Integer UPDATED_BONUS = 2;
+
+    private static final PackageDriverStatus DEFAULT_STATUS = PackageDriverStatus.ACTIVE;
+    private static final PackageDriverStatus UPDATED_STATUS = PackageDriverStatus.EXPIRED;
 
     private static final String ENTITY_API_URL = "/api/package-drivers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -84,15 +88,15 @@ class PackageDriverResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static PackageDriver createEntity(EntityManager em) {
-        PackageDriver packageDriver = new PackageDriver()
+    public static PackageDriver createEntity() {
+        return new PackageDriver()
             .packageID(DEFAULT_PACKAGE_ID)
             .price(DEFAULT_PRICE)
             .name(DEFAULT_NAME)
             .description(DEFAULT_DESCRIPTION)
             .time(DEFAULT_TIME)
-            .bonus(DEFAULT_BONUS);
-        return packageDriver;
+            .bonus(DEFAULT_BONUS)
+            .status(DEFAULT_STATUS);
     }
 
     /**
@@ -101,20 +105,20 @@ class PackageDriverResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static PackageDriver createUpdatedEntity(EntityManager em) {
-        PackageDriver packageDriver = new PackageDriver()
+    public static PackageDriver createUpdatedEntity() {
+        return new PackageDriver()
             .packageID(UPDATED_PACKAGE_ID)
             .price(UPDATED_PRICE)
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .time(UPDATED_TIME)
-            .bonus(UPDATED_BONUS);
-        return packageDriver;
+            .bonus(UPDATED_BONUS)
+            .status(UPDATED_STATUS);
     }
 
     @BeforeEach
     public void initTest() {
-        packageDriver = createEntity(em);
+        packageDriver = createEntity();
     }
 
     @AfterEach
@@ -180,11 +184,12 @@ class PackageDriverResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(packageDriver.getId().intValue())))
             .andExpect(jsonPath("$.[*].packageID").value(hasItem(DEFAULT_PACKAGE_ID.toString())))
-            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.doubleValue())))
+            .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE)))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].time").value(hasItem(DEFAULT_TIME)))
-            .andExpect(jsonPath("$.[*].bonus").value(hasItem(DEFAULT_BONUS)));
+            .andExpect(jsonPath("$.[*].bonus").value(hasItem(DEFAULT_BONUS)))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())));
     }
 
     @Test
@@ -200,11 +205,12 @@ class PackageDriverResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(packageDriver.getId().intValue()))
             .andExpect(jsonPath("$.packageID").value(DEFAULT_PACKAGE_ID.toString()))
-            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.doubleValue()))
+            .andExpect(jsonPath("$.price").value(DEFAULT_PRICE))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.time").value(DEFAULT_TIME))
-            .andExpect(jsonPath("$.bonus").value(DEFAULT_BONUS));
+            .andExpect(jsonPath("$.bonus").value(DEFAULT_BONUS))
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()));
     }
 
     @Test
@@ -232,7 +238,8 @@ class PackageDriverResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .time(UPDATED_TIME)
-            .bonus(UPDATED_BONUS);
+            .bonus(UPDATED_BONUS)
+            .status(UPDATED_STATUS);
         PackageDriverDTO packageDriverDTO = packageDriverMapper.toDto(updatedPackageDriver);
 
         restPackageDriverMockMvc
@@ -322,7 +329,12 @@ class PackageDriverResourceIT {
         PackageDriver partialUpdatedPackageDriver = new PackageDriver();
         partialUpdatedPackageDriver.setId(packageDriver.getId());
 
-        partialUpdatedPackageDriver.price(UPDATED_PRICE).name(UPDATED_NAME).description(UPDATED_DESCRIPTION).time(UPDATED_TIME);
+        partialUpdatedPackageDriver
+            .price(UPDATED_PRICE)
+            .name(UPDATED_NAME)
+            .description(UPDATED_DESCRIPTION)
+            .time(UPDATED_TIME)
+            .status(UPDATED_STATUS);
 
         restPackageDriverMockMvc
             .perform(
@@ -359,7 +371,8 @@ class PackageDriverResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .time(UPDATED_TIME)
-            .bonus(UPDATED_BONUS);
+            .bonus(UPDATED_BONUS)
+            .status(UPDATED_STATUS);
 
         restPackageDriverMockMvc
             .perform(

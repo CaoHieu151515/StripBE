@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { getEntity, deleteEntity } from './feedback.reducer';
+import { deleteEntity, getEntity } from './feedback.reducer';
 
 export const FeedbackDeleteDialog = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +25,7 @@ export const FeedbackDeleteDialog = () => {
   const updateSuccess = useAppSelector(state => state.feedback.updateSuccess);
 
   const handleClose = () => {
-    navigate('/feedback' + pageLocation.search);
+    navigate(`/feedback${pageLocation.search}`);
   };
 
   useEffect(() => {

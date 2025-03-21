@@ -88,14 +88,13 @@ class PaymentResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Payment createEntity(EntityManager em) {
-        Payment payment = new Payment()
+    public static Payment createEntity() {
+        return new Payment()
             .paymentID(DEFAULT_PAYMENT_ID)
             .amount(DEFAULT_AMOUNT)
             .paymentDate(DEFAULT_PAYMENT_DATE)
             .paymentStatus(DEFAULT_PAYMENT_STATUS)
             .transactionId(DEFAULT_TRANSACTION_ID);
-        return payment;
     }
 
     /**
@@ -104,19 +103,18 @@ class PaymentResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Payment createUpdatedEntity(EntityManager em) {
-        Payment payment = new Payment()
+    public static Payment createUpdatedEntity() {
+        return new Payment()
             .paymentID(UPDATED_PAYMENT_ID)
             .amount(UPDATED_AMOUNT)
             .paymentDate(UPDATED_PAYMENT_DATE)
             .paymentStatus(UPDATED_PAYMENT_STATUS)
             .transactionId(UPDATED_TRANSACTION_ID);
-        return payment;
     }
 
     @BeforeEach
     public void initTest() {
-        payment = createEntity(em);
+        payment = createEntity();
     }
 
     @AfterEach
@@ -182,7 +180,7 @@ class PaymentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(payment.getId().intValue())))
             .andExpect(jsonPath("$.[*].paymentID").value(hasItem(DEFAULT_PAYMENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT)))
             .andExpect(jsonPath("$.[*].paymentDate").value(hasItem(DEFAULT_PAYMENT_DATE.toString())))
             .andExpect(jsonPath("$.[*].paymentStatus").value(hasItem(DEFAULT_PAYMENT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].transactionId").value(hasItem(DEFAULT_TRANSACTION_ID)));
@@ -201,7 +199,7 @@ class PaymentResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(payment.getId().intValue()))
             .andExpect(jsonPath("$.paymentID").value(DEFAULT_PAYMENT_ID.toString()))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT))
             .andExpect(jsonPath("$.paymentDate").value(DEFAULT_PAYMENT_DATE.toString()))
             .andExpect(jsonPath("$.paymentStatus").value(DEFAULT_PAYMENT_STATUS.toString()))
             .andExpect(jsonPath("$.transactionId").value(DEFAULT_TRANSACTION_ID));
@@ -317,7 +315,11 @@ class PaymentResourceIT {
         Payment partialUpdatedPayment = new Payment();
         partialUpdatedPayment.setId(payment.getId());
 
-        partialUpdatedPayment.paymentID(UPDATED_PAYMENT_ID).amount(UPDATED_AMOUNT).transactionId(UPDATED_TRANSACTION_ID);
+        partialUpdatedPayment
+            .paymentID(UPDATED_PAYMENT_ID)
+            .paymentDate(UPDATED_PAYMENT_DATE)
+            .paymentStatus(UPDATED_PAYMENT_STATUS)
+            .transactionId(UPDATED_TRANSACTION_ID);
 
         restPaymentMockMvc
             .perform(

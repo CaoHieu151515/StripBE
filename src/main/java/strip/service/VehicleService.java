@@ -19,7 +19,7 @@ import strip.service.mapper.VehicleMapper;
 @Transactional
 public class VehicleService {
 
-    private final Logger log = LoggerFactory.getLogger(VehicleService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VehicleService.class);
 
     private final VehicleRepository vehicleRepository;
 
@@ -37,7 +37,7 @@ public class VehicleService {
      * @return the persisted entity.
      */
     public VehicleDTO save(VehicleDTO vehicleDTO) {
-        log.debug("Request to save Vehicle : {}", vehicleDTO);
+        LOG.debug("Request to save Vehicle : {}", vehicleDTO);
         Vehicle vehicle = vehicleMapper.toEntity(vehicleDTO);
         vehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.toDto(vehicle);
@@ -50,7 +50,7 @@ public class VehicleService {
      * @return the persisted entity.
      */
     public VehicleDTO update(VehicleDTO vehicleDTO) {
-        log.debug("Request to update Vehicle : {}", vehicleDTO);
+        LOG.debug("Request to update Vehicle : {}", vehicleDTO);
         Vehicle vehicle = vehicleMapper.toEntity(vehicleDTO);
         vehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.toDto(vehicle);
@@ -63,7 +63,7 @@ public class VehicleService {
      * @return the persisted entity.
      */
     public Optional<VehicleDTO> partialUpdate(VehicleDTO vehicleDTO) {
-        log.debug("Request to partially update Vehicle : {}", vehicleDTO);
+        LOG.debug("Request to partially update Vehicle : {}", vehicleDTO);
 
         return vehicleRepository
             .findById(vehicleDTO.getId())
@@ -84,7 +84,7 @@ public class VehicleService {
      */
     @Transactional(readOnly = true)
     public Page<VehicleDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Vehicles");
+        LOG.debug("Request to get all Vehicles");
         return vehicleRepository.findAll(pageable).map(vehicleMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class VehicleService {
      */
     @Transactional(readOnly = true)
     public Optional<VehicleDTO> findOne(Long id) {
-        log.debug("Request to get Vehicle : {}", id);
+        LOG.debug("Request to get Vehicle : {}", id);
         return vehicleRepository.findById(id).map(vehicleMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class VehicleService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Vehicle : {}", id);
+        LOG.debug("Request to delete Vehicle : {}", id);
         vehicleRepository.deleteById(id);
     }
 }

@@ -5,15 +5,14 @@ import sinon from 'sinon';
 
 import { EntityState } from 'app/shared/reducers/reducer.utils';
 import { IRating, defaultValue } from 'app/shared/model/rating.model';
-import reducer, { createEntity, deleteEntity, getEntities, getEntity, updateEntity, partialUpdateEntity, reset } from './rating.reducer';
+import reducer, { createEntity, deleteEntity, getEntities, getEntity, partialUpdateEntity, reset, updateEntity } from './rating.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<IRating> = {
@@ -202,7 +201,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_RATING actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 11888 };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -212,7 +211,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_RATING actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 11888 };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

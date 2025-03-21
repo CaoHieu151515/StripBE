@@ -83,15 +83,14 @@ class WalletTransactionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static WalletTransaction createEntity(EntityManager em) {
-        WalletTransaction walletTransaction = new WalletTransaction()
+    public static WalletTransaction createEntity() {
+        return new WalletTransaction()
             .transID(DEFAULT_TRANS_ID)
             .amount(DEFAULT_AMOUNT)
             .date(DEFAULT_DATE)
             .walletType(DEFAULT_WALLET_TYPE)
             .transStatus(DEFAULT_TRANS_STATUS)
             .transactionThirdPartyID(DEFAULT_TRANSACTION_THIRD_PARTY_ID);
-        return walletTransaction;
     }
 
     /**
@@ -100,20 +99,19 @@ class WalletTransactionResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static WalletTransaction createUpdatedEntity(EntityManager em) {
-        WalletTransaction walletTransaction = new WalletTransaction()
+    public static WalletTransaction createUpdatedEntity() {
+        return new WalletTransaction()
             .transID(UPDATED_TRANS_ID)
             .amount(UPDATED_AMOUNT)
             .date(UPDATED_DATE)
             .walletType(UPDATED_WALLET_TYPE)
             .transStatus(UPDATED_TRANS_STATUS)
             .transactionThirdPartyID(UPDATED_TRANSACTION_THIRD_PARTY_ID);
-        return walletTransaction;
     }
 
     @BeforeEach
     public void initTest() {
-        walletTransaction = createEntity(em);
+        walletTransaction = createEntity();
     }
 
     @AfterEach
@@ -176,7 +174,7 @@ class WalletTransactionResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(walletTransaction.getId().intValue())))
             .andExpect(jsonPath("$.[*].transID").value(hasItem(DEFAULT_TRANS_ID.toString())))
-            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT)))
             .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
             .andExpect(jsonPath("$.[*].walletType").value(hasItem(DEFAULT_WALLET_TYPE.toString())))
             .andExpect(jsonPath("$.[*].transStatus").value(hasItem(DEFAULT_TRANS_STATUS.toString())))
@@ -196,7 +194,7 @@ class WalletTransactionResourceIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(walletTransaction.getId().intValue()))
             .andExpect(jsonPath("$.transID").value(DEFAULT_TRANS_ID.toString()))
-            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))
+            .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT))
             .andExpect(jsonPath("$.date").value(DEFAULT_DATE.toString()))
             .andExpect(jsonPath("$.walletType").value(DEFAULT_WALLET_TYPE.toString()))
             .andExpect(jsonPath("$.transStatus").value(DEFAULT_TRANS_STATUS.toString()))
@@ -308,7 +306,7 @@ class WalletTransactionResourceIT {
         WalletTransaction partialUpdatedWalletTransaction = new WalletTransaction();
         partialUpdatedWalletTransaction.setId(walletTransaction.getId());
 
-        partialUpdatedWalletTransaction.amount(UPDATED_AMOUNT).date(UPDATED_DATE);
+        partialUpdatedWalletTransaction.amount(UPDATED_AMOUNT);
 
         restWalletTransactionMockMvc
             .perform(

@@ -1,0 +1,10 @@
+{
+  "sTripBeApp": {
+    "PackageDriverStatus": {
+      "null": "",
+      "ACTIVE": "ACTIVE",
+      "EXPIRED": "EXPIRED",
+      "CANCEL": "CANCEL"
+    }
+  }
+}

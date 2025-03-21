@@ -90,6 +90,12 @@ enum WalletTransactionType{
 
 }
 
+enum PackageDriverStatus{
+    ACTIVE,
+    EXPIRED,
+    CANCEL
+}
+
 entity Driver {
   driverID UUID,
   usedtoDriver Boolean,
@@ -179,7 +185,8 @@ entity PackageDriver {
   name String,
   description String,
   time Integer,
-  bonus Integer
+  bonus Integer,
+  status PackageDriverStatus
 }
 
 entity Payment {

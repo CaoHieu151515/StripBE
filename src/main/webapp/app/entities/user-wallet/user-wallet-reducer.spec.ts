@@ -10,18 +10,17 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './user-wallet.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<IUserWallet> = {
@@ -210,7 +209,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_USERWALLET actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 6166 };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -220,7 +219,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_USERWALLET actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 6166 };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

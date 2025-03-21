@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, getPaginationState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { JhiItemCount, JhiPagination, Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortUp, faSortDown } from '@fortawesome/free-solid-svg-icons';
+import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
@@ -84,9 +84,8 @@ export const PackageDriver = () => {
     const order = paginationState.order;
     if (sortFieldName !== fieldName) {
       return faSort;
-    } else {
-      return order === ASC ? faSortUp : faSortDown;
     }
+    return order === ASC ? faSortUp : faSortDown;
   };
 
   return (
@@ -137,6 +136,10 @@ export const PackageDriver = () => {
                   <Translate contentKey="sTripBeApp.packageDriver.bonus">Bonus</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('bonus')} />
                 </th>
+                <th className="hand" onClick={sort('status')}>
+                  <Translate contentKey="sTripBeApp.packageDriver.status">Status</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -154,6 +157,9 @@ export const PackageDriver = () => {
                   <td>{packageDriver.description}</td>
                   <td>{packageDriver.time}</td>
                   <td>{packageDriver.bonus}</td>
+                  <td>
+                    <Translate contentKey={`sTripBeApp.PackageDriverStatus.${packageDriver.status}`} />
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/package-driver/${packageDriver.id}`} color="info" size="sm" data-cy="entityDetailsButton">

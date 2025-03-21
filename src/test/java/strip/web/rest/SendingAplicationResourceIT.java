@@ -81,14 +81,13 @@ class SendingAplicationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static SendingAplication createEntity(EntityManager em) {
-        SendingAplication sendingAplication = new SendingAplication()
+    public static SendingAplication createEntity() {
+        return new SendingAplication()
             .apliID(DEFAULT_APLI_ID)
             .sendApplicationType(DEFAULT_SEND_APPLICATION_TYPE)
             .content(DEFAULT_CONTENT)
             .img(DEFAULT_IMG)
             .imgContentType(DEFAULT_IMG_CONTENT_TYPE);
-        return sendingAplication;
     }
 
     /**
@@ -97,19 +96,18 @@ class SendingAplicationResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static SendingAplication createUpdatedEntity(EntityManager em) {
-        SendingAplication sendingAplication = new SendingAplication()
+    public static SendingAplication createUpdatedEntity() {
+        return new SendingAplication()
             .apliID(UPDATED_APLI_ID)
             .sendApplicationType(UPDATED_SEND_APPLICATION_TYPE)
             .content(UPDATED_CONTENT)
             .img(UPDATED_IMG)
             .imgContentType(UPDATED_IMG_CONTENT_TYPE);
-        return sendingAplication;
     }
 
     @BeforeEach
     public void initTest() {
-        sendingAplication = createEntity(em);
+        sendingAplication = createEntity();
     }
 
     @AfterEach
@@ -301,7 +299,11 @@ class SendingAplicationResourceIT {
         SendingAplication partialUpdatedSendingAplication = new SendingAplication();
         partialUpdatedSendingAplication.setId(sendingAplication.getId());
 
-        partialUpdatedSendingAplication.apliID(UPDATED_APLI_ID).img(UPDATED_IMG).imgContentType(UPDATED_IMG_CONTENT_TYPE);
+        partialUpdatedSendingAplication
+            .apliID(UPDATED_APLI_ID)
+            .content(UPDATED_CONTENT)
+            .img(UPDATED_IMG)
+            .imgContentType(UPDATED_IMG_CONTENT_TYPE);
 
         restSendingAplicationMockMvc
             .perform(

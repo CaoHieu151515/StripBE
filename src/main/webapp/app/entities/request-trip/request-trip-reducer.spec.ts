@@ -10,18 +10,17 @@ import reducer, {
   deleteEntity,
   getEntities,
   getEntity,
-  updateEntity,
   partialUpdateEntity,
   reset,
+  updateEntity,
 } from './request-trip.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
     if (element instanceof Array) {
       return element.length === 0;
-    } else {
-      return Object.keys(element).length === 0;
     }
+    return Object.keys(element).length === 0;
   }
 
   const initialState: EntityState<IRequestTrip> = {
@@ -212,7 +211,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches CREATE_REQUESTTRIP actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 18367 };
 
       const result = await createEntity(arg)(dispatch, getState, extra);
 
@@ -222,7 +221,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('dispatches UPDATE_REQUESTTRIP actions', async () => {
-      const arg = { id: 456 };
+      const arg = { id: 18367 };
 
       const result = await updateEntity(arg)(dispatch, getState, extra);
 

@@ -10,6 +10,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import strip.domain.enumeration.PackageDriverStatus;
 
 /**
  * A PackageDriver.
@@ -45,6 +46,10 @@ public class PackageDriver implements Serializable {
 
     @Column(name = "bonus")
     private Integer bonus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private PackageDriverStatus status;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "packageDriver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -149,6 +154,19 @@ public class PackageDriver implements Serializable {
         this.bonus = bonus;
     }
 
+    public PackageDriverStatus getStatus() {
+        return this.status;
+    }
+
+    public PackageDriver status(PackageDriverStatus status) {
+        this.setStatus(status);
+        return this;
+    }
+
+    public void setStatus(PackageDriverStatus status) {
+        this.status = status;
+    }
+
     public Set<Payment> getPayments() {
         return this.payments;
     }
@@ -241,6 +259,7 @@ public class PackageDriver implements Serializable {
             ", description='" + getDescription() + "'" +
             ", time=" + getTime() +
             ", bonus=" + getBonus() +
+            ", status='" + getStatus() + "'" +
             "}";
     }
 }

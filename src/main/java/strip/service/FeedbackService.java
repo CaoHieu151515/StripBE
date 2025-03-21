@@ -19,7 +19,7 @@ import strip.service.mapper.FeedbackMapper;
 @Transactional
 public class FeedbackService {
 
-    private final Logger log = LoggerFactory.getLogger(FeedbackService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FeedbackService.class);
 
     private final FeedbackRepository feedbackRepository;
 
@@ -37,7 +37,7 @@ public class FeedbackService {
      * @return the persisted entity.
      */
     public FeedbackDTO save(FeedbackDTO feedbackDTO) {
-        log.debug("Request to save Feedback : {}", feedbackDTO);
+        LOG.debug("Request to save Feedback : {}", feedbackDTO);
         Feedback feedback = feedbackMapper.toEntity(feedbackDTO);
         feedback = feedbackRepository.save(feedback);
         return feedbackMapper.toDto(feedback);
@@ -50,7 +50,7 @@ public class FeedbackService {
      * @return the persisted entity.
      */
     public FeedbackDTO update(FeedbackDTO feedbackDTO) {
-        log.debug("Request to update Feedback : {}", feedbackDTO);
+        LOG.debug("Request to update Feedback : {}", feedbackDTO);
         Feedback feedback = feedbackMapper.toEntity(feedbackDTO);
         feedback = feedbackRepository.save(feedback);
         return feedbackMapper.toDto(feedback);
@@ -63,7 +63,7 @@ public class FeedbackService {
      * @return the persisted entity.
      */
     public Optional<FeedbackDTO> partialUpdate(FeedbackDTO feedbackDTO) {
-        log.debug("Request to partially update Feedback : {}", feedbackDTO);
+        LOG.debug("Request to partially update Feedback : {}", feedbackDTO);
 
         return feedbackRepository
             .findById(feedbackDTO.getId())
@@ -84,7 +84,7 @@ public class FeedbackService {
      */
     @Transactional(readOnly = true)
     public Page<FeedbackDTO> findAll(Pageable pageable) {
-        log.debug("Request to get all Feedbacks");
+        LOG.debug("Request to get all Feedbacks");
         return feedbackRepository.findAll(pageable).map(feedbackMapper::toDto);
     }
 
@@ -96,7 +96,7 @@ public class FeedbackService {
      */
     @Transactional(readOnly = true)
     public Optional<FeedbackDTO> findOne(Long id) {
-        log.debug("Request to get Feedback : {}", id);
+        LOG.debug("Request to get Feedback : {}", id);
         return feedbackRepository.findById(id).map(feedbackMapper::toDto);
     }
 
@@ -106,7 +106,7 @@ public class FeedbackService {
      * @param id the id of the entity.
      */
     public void delete(Long id) {
-        log.debug("Request to delete Feedback : {}", id);
+        LOG.debug("Request to delete Feedback : {}", id);
         feedbackRepository.deleteById(id);
     }
 }

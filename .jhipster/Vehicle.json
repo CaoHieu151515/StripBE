@@ -16,23 +16,19 @@
     },
     {
       "fieldName": "vehicleImage",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "carregistration",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "vehicleInspectionCertificate",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "carInsurance",
-      "fieldType": "byte[]",
-      "fieldTypeBlobContent": "any"
+      "fieldType": "Blob"
     },
     {
       "fieldName": "vehicleNumber",

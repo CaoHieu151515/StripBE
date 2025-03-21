@@ -85,13 +85,8 @@ class ReportResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Report createEntity(EntityManager em) {
-        Report report = new Report()
-            .reportID(DEFAULT_REPORT_ID)
-            .date(DEFAULT_DATE)
-            .content(DEFAULT_CONTENT)
-            .reportStatus(DEFAULT_REPORT_STATUS);
-        return report;
+    public static Report createEntity() {
+        return new Report().reportID(DEFAULT_REPORT_ID).date(DEFAULT_DATE).content(DEFAULT_CONTENT).reportStatus(DEFAULT_REPORT_STATUS);
     }
 
     /**
@@ -100,18 +95,13 @@ class ReportResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Report createUpdatedEntity(EntityManager em) {
-        Report report = new Report()
-            .reportID(UPDATED_REPORT_ID)
-            .date(UPDATED_DATE)
-            .content(UPDATED_CONTENT)
-            .reportStatus(UPDATED_REPORT_STATUS);
-        return report;
+    public static Report createUpdatedEntity() {
+        return new Report().reportID(UPDATED_REPORT_ID).date(UPDATED_DATE).content(UPDATED_CONTENT).reportStatus(UPDATED_REPORT_STATUS);
     }
 
     @BeforeEach
     public void initTest() {
-        report = createEntity(em);
+        report = createEntity();
     }
 
     @AfterEach
@@ -305,7 +295,7 @@ class ReportResourceIT {
         Report partialUpdatedReport = new Report();
         partialUpdatedReport.setId(report.getId());
 
-        partialUpdatedReport.reportID(UPDATED_REPORT_ID).content(UPDATED_CONTENT).reportStatus(UPDATED_REPORT_STATUS);
+        partialUpdatedReport.reportID(UPDATED_REPORT_ID).date(UPDATED_DATE);
 
         restReportMockMvc
             .perform(

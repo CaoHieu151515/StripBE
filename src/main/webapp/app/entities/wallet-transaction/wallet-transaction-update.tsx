@@ -1,25 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
-import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
+import { Button, Col, Row } from 'reactstrap';
+import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { ISystemWallet } from 'app/shared/model/system-wallet.model';
 import { getEntities as getSystemWallets } from 'app/entities/system-wallet/system-wallet.reducer';
-import { IPayment } from 'app/shared/model/payment.model';
 import { getEntities as getPayments } from 'app/entities/payment/payment.reducer';
-import { IUserWallet } from 'app/shared/model/user-wallet.model';
 import { getEntities as getUserWallets } from 'app/entities/user-wallet/user-wallet.reducer';
-import { ISystemTempWallet } from 'app/shared/model/system-temp-wallet.model';
 import { getEntities as getSystemTempWallets } from 'app/entities/system-temp-wallet/system-temp-wallet.reducer';
-import { IWalletTransaction } from 'app/shared/model/wallet-transaction.model';
 import { WalletTransactionType } from 'app/shared/model/enumerations/wallet-transaction-type.model';
 import { TransactionStatus } from 'app/shared/model/enumerations/transaction-status.model';
-import { getEntity, updateEntity, createEntity, reset } from './wallet-transaction.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './wallet-transaction.reducer';
 
 export const WalletTransactionUpdate = () => {
   const dispatch = useAppDispatch();
@@ -63,7 +57,6 @@ export const WalletTransactionUpdate = () => {
     }
   }, [updateSuccess]);
 
-  // eslint-disable-next-line complexity
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
@@ -161,7 +154,7 @@ export const WalletTransactionUpdate = () => {
               >
                 {walletTransactionTypeValues.map(walletTransactionType => (
                   <option value={walletTransactionType} key={walletTransactionType}>
-                    {translate('sTripBeApp.WalletTransactionType.' + walletTransactionType)}
+                    {translate(`sTripBeApp.WalletTransactionType.${walletTransactionType}`)}
                   </option>
                 ))}
               </ValidatedField>
@@ -174,7 +167,7 @@ export const WalletTransactionUpdate = () => {
               >
                 {transactionStatusValues.map(transactionStatus => (
                   <option value={transactionStatus} key={transactionStatus}>
-                    {translate('sTripBeApp.TransactionStatus.' + transactionStatus)}
+                    {translate(`sTripBeApp.TransactionStatus.${transactionStatus}`)}
                   </option>
                 ))}
               </ValidatedField>
