@@ -46,12 +46,7 @@ public class SecurityConfiguration {
             .headers(
                 headers ->
                     headers
-                        .contentSecurityPolicy(
-                            csp ->
-                                csp
-                                    .policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy())
-                                    .policyDirectives("default-src 'self'; connect-src 'self' https://stripbe-production.up.railway.app")
-                        )
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
                         .frameOptions(FrameOptionsConfig::sameOrigin)
                         .referrerPolicy(
                             referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
