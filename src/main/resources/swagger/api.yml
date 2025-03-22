@@ -4,11 +4,11 @@ openapi: '3.0.1'
 info:
   title: 'sTripBe'
   version: 0.0.1
-# servers:
-#   - url: http://localhost:8080/api
-#     description: Development server
-#   - url: https://stripbe-production.up.railway.app
-#     description: Development server with TLS Profile
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+  - url: https://stripbe-production.up.railway.app
+    description: Development server with TLS Profile
 paths: {}
 components:
   responses:
