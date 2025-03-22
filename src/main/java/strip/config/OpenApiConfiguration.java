@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,9 @@ import tech.jhipster.config.apidoc.customizer.JHipsterOpenApiCustomizer;
 public class OpenApiConfiguration {
 
     public static final String API_FIRST_PACKAGE = "strip.web.api";
+
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
 
     @Bean
     @ConditionalOnMissingBean(name = "apiFirstGroupedOpenAPI")
@@ -39,9 +43,10 @@ public class OpenApiConfiguration {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        String serverUrl = activeProfile.contains("prod") ? "https://stripbe-production.up.railway.app" : "http://localhost:8080";
+
         return new OpenAPI()
             .info(new Info().title("S-Trip API").version("v1").description("API documentation for S-Trip"))
-            .addServersItem(new Server().url("https://stripbe-production.up.railway.app")); // 👈 Đặt URL đúng của
-        // bạn ở đây
+            .addServersItem(new Server().url(serverUrl));
     }
 }
