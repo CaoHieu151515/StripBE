@@ -17,7 +17,7 @@ import tech.jhipster.config.apidoc.customizer.JHipsterOpenApiCustomizer;
 
 @Configuration
 // @Profile(JHipsterConstants.SPRING_PROFILE_API_DOCS)
-@Profile({ "dev", "prod" })
+// @Profile({ "dev", "prod" })
 public class OpenApiConfiguration {
 
     public static final String API_FIRST_PACKAGE = "strip.web.api";
