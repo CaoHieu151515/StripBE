@@ -22,10 +22,12 @@ import strip.config.Constants;
 import strip.domain.Authority;
 import strip.domain.User;
 import strip.repository.AuthorityRepository;
+import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.security.AuthoritiesConstants;
 import strip.security.SecurityUtils;
 import strip.service.dto.AdminUserDTO;
+import strip.service.dto.CurrentUserDTO;
 import strip.service.dto.UserDTO;
 import tech.jhipster.security.RandomUtil;
 
@@ -46,6 +48,8 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final UserDetailRepository userDetailRepository;
+
     private final OtpCacheService otpCacheService;
 
     public UserService(
@@ -53,13 +57,15 @@ public class UserService {
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
-        OtpCacheService otpCacheService
+        OtpCacheService otpCacheService,
+        UserDetailRepository userDetailRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.otpCacheService = otpCacheService;
+        this.userDetailRepository = userDetailRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -306,7 +312,8 @@ public class UserService {
     }
 
     /**
-     * Update basic information (first name, last name, email, language) for the current user.
+     * Update basic information (first name, last name, email, language) for the
+     * current user.
      *
      * @param firstName first name of user.
      * @param lastName  last name of user.
@@ -385,6 +392,7 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)
@@ -406,5 +414,29 @@ public class UserService {
             otp.append(random.nextInt(10)); // Chỉ số
         }
         return otp.toString();
+    }
+
+    public Optional<CurrentUserDTO> getCurrentUserInfo() {
+        return SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .map(user -> {
+                CurrentUserDTO dto = new CurrentUserDTO();
+                dto.setLogin(user.getLogin());
+                dto.setEmail(user.getEmail());
+                dto.setFirstName(user.getFirstName());
+                dto.setLastName(user.getLastName());
+
+                userDetailRepository
+                    .findById(user.getId())
+                    .ifPresent(detail -> {
+                        dto.setPhone(detail.getPhone());
+                        dto.setGender(detail.getGender());
+                        dto.setAddress(detail.getAddress());
+                        dto.setDob(detail.getDob());
+                        dto.setUserImage(detail.getUserimage());
+                    });
+
+                return dto;
+            });
     }
 }
