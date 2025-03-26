@@ -105,11 +105,6 @@ public class Trip implements Serializable {
     @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
     private Set<Rating> ratings = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "trip", "user" }, allowSetters = true)
-    private Set<Passenger> passengers = new HashSet<>();
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -454,37 +449,6 @@ public class Trip implements Serializable {
     public Trip removeRating(Rating rating) {
         this.ratings.remove(rating);
         rating.setTrip(null);
-        return this;
-    }
-
-    public Set<Passenger> getPassengers() {
-        return this.passengers;
-    }
-
-    public void setPassengers(Set<Passenger> passengers) {
-        if (this.passengers != null) {
-            this.passengers.forEach(i -> i.setTrip(null));
-        }
-        if (passengers != null) {
-            passengers.forEach(i -> i.setTrip(this));
-        }
-        this.passengers = passengers;
-    }
-
-    public Trip passengers(Set<Passenger> passengers) {
-        this.setPassengers(passengers);
-        return this;
-    }
-
-    public Trip addPassenger(Passenger passenger) {
-        this.passengers.add(passenger);
-        passenger.setTrip(this);
-        return this;
-    }
-
-    public Trip removePassenger(Passenger passenger) {
-        this.passengers.remove(passenger);
-        passenger.setTrip(null);
         return this;
     }
 

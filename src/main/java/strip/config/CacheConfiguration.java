@@ -65,7 +65,6 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.Trip.class.getName() + ".feedbacks");
             createCache(cm, strip.domain.Trip.class.getName() + ".ratings");
             createCache(cm, strip.domain.TripStopLocation.class.getName());
-            createCache(cm, strip.domain.Passenger.class.getName());
             createCache(cm, strip.domain.Feedback.class.getName());
             createCache(cm, strip.domain.Rating.class.getName());
             createCache(cm, strip.domain.PackageDriver.class.getName());

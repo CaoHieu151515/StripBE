@@ -15,7 +15,6 @@
     <include file="config/liquibase/changelog/20250303033655_added_entity_Vehicle.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033656_added_entity_Trip.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033657_added_entity_TripStopLocation.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250303033658_added_entity_Passenger.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033659_added_entity_Feedback.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033700_added_entity_Rating.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033701_added_entity_PackageDriver.xml" relativeToChangelogFile="false"/>
