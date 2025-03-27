@@ -21,7 +21,6 @@
       "Vehicle",
       "Trip",
       "TripStopLocation",
-      "Passenger",
       "Feedback",
       "Rating",
       "PackageDriver",

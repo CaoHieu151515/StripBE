@@ -47,10 +47,10 @@ liquibase {
       logLevel "debug"
       classpath "src/main/resources/"
     }
-
     diffLog {
       driver "com.mysql.cj.jdbc.Driver"
-      url "jdbc:mysql://hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true"
+      referenceDriver "liquibase.ext.hibernate.database.connection.HibernateDriver"
+      url "jdbc:mysql://hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false"
       username "root"
       password "OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT"
       changelogFile project.ext.diffChangelogFile

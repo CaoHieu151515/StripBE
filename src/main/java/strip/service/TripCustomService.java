@@ -258,17 +258,35 @@ public class TripCustomService {
 
         Trip trip = request.getTrip();
         if (trip == null) {
-            throw new RuntimeException("Yêu cầu chưa gắn vào chuyến đi nào");
+            throw new RuntimeException("Yêu cầu chưa gắn với chuyến đi nào");
         }
 
+        // ✅ Tính tổng số ghế đã được BOOKED
+        int totalBookedSeats = trip
+            .getRequestTrips()
+            .stream()
+            .filter(r -> r.getStatus() == PassengerStatus.BOOKED)
+            .mapToInt(RequestTrip::getNumberofSeats)
+            .sum();
+
+        int seatsLeft = trip.getMaxSeat() - totalBookedSeats;
+
+        // ✅ Kiểm tra xem ghế của request này có hợp lệ không
+        if (request.getNumberofSeats() > seatsLeft) {
+            throw new RuntimeException("Không đủ số ghế trống để duyệt yêu cầu này");
+        }
+
+        // ✅ Cập nhật trạng thái và thông tin
         request.setStatus(PassengerStatus.BOOKED);
         request.setCheckIn(false);
         request.setCheckOut(false);
         request.setAppliedAt(Instant.now());
 
+        // ✅ Đảm bảo liên kết giữa trip và requestTrip
         trip.addRequestTrip(request);
 
-        tripRepository.save(trip);
+        // ✅ Lưu lại
+        requestTripRepository.save(request);
         return request;
     }
 
