@@ -22,6 +22,10 @@
       "fieldType": "Double"
     },
     {
+      "fieldName": "numberofSeats",
+      "fieldType": "Integer"
+    },
+    {
       "fieldName": "luggageImg",
       "fieldType": "Blob"
     },
@@ -37,7 +41,7 @@
     {
       "fieldName": "status",
       "fieldType": "PassengerStatus",
-      "fieldValues": "WATING,BOOKED,DONE,EMPTY,CANCEL"
+      "fieldValues": "WAITING,BOOKED,DONE,EMPTY,CANCEL,REJECTED"
     },
     {
       "fieldName": "pickUpTime",

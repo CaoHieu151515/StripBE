@@ -18,26 +18,47 @@ if (!project.hasProperty("runList")) {
 }
 
 liquibase {
+  // activities {
+  //   main {
+  //     driver "com.mysql.cj.jdbc.Driver"
+  //     url "jdbc:mysql://localhost:3306/sTripBe"
+  //     username "root"
+  //     changelogFile "src/main/resources/config/liquibase/master.xml"
+  //     logLevel "debug"
+  //     classpath "src/main/resources/"
+  //   }
+  //   diffLog {
+  //     driver "com.mysql.cj.jdbc.Driver"
+  //     url "jdbc:mysql://localhost:3306/sTripBe"
+  //     username "root"
+  //     changelogFile project.ext.diffChangelogFile
+  //     referenceUrl "hibernate:spring:strip.domain?dialect=org.hibernate.dialect.MySQL8Dialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
+  //     logLevel "debug"
+  //     classpath "$buildDir/classes/java/main"
+  //   }
+  // }
   activities {
     main {
       driver "com.mysql.cj.jdbc.Driver"
-      url "jdbc:mysql://localhost:3306/sTripBe"
+      url "jdbc:mysql://hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true"
       username "root"
+      password "OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT"
       changelogFile "src/main/resources/config/liquibase/master.xml"
       logLevel "debug"
       classpath "src/main/resources/"
     }
+
     diffLog {
       driver "com.mysql.cj.jdbc.Driver"
-      url "jdbc:mysql://localhost:3306/sTripBe"
+      url "jdbc:mysql://hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true"
       username "root"
+      password "OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT"
       changelogFile project.ext.diffChangelogFile
       referenceUrl "hibernate:spring:strip.domain?dialect=org.hibernate.dialect.MySQL8Dialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
       logLevel "debug"
       classpath "$buildDir/classes/java/main"
     }
   }
-
   runList = project.ext.runList
 }
 

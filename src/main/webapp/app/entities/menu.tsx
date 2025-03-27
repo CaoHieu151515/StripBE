@@ -64,6 +64,9 @@ const EntitiesMenu = () => {
       <MenuItem icon="asterisk" to="/driver-package-subscription">
         <Translate contentKey="global.menu.entities.driverPackageSubscription" />
       </MenuItem>
+      <MenuItem icon="asterisk" to="/wallet-deposit">
+        <Translate contentKey="global.menu.entities.walletDeposit" />
+      </MenuItem>
       {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
     </>
   );

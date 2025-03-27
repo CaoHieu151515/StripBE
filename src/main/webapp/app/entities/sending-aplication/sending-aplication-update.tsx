@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { AplicationType } from 'app/shared/model/enumerations/aplication-type.model';
+import { ApplicationType } from 'app/shared/model/enumerations/application-type.model';
 import { createEntity, getEntity, reset, updateEntity } from './sending-aplication.reducer';
 
 export const SendingAplicationUpdate = () => {
@@ -23,7 +23,7 @@ export const SendingAplicationUpdate = () => {
   const loading = useAppSelector(state => state.sendingAplication.loading);
   const updating = useAppSelector(state => state.sendingAplication.updating);
   const updateSuccess = useAppSelector(state => state.sendingAplication.updateSuccess);
-  const aplicationTypeValues = Object.keys(AplicationType);
+  const applicationTypeValues = Object.keys(ApplicationType);
 
   const handleClose = () => {
     navigate('/sending-aplication');
@@ -111,9 +111,9 @@ export const SendingAplicationUpdate = () => {
                 data-cy="sendApplicationType"
                 type="select"
               >
-                {aplicationTypeValues.map(aplicationType => (
-                  <option value={aplicationType} key={aplicationType}>
-                    {translate(`sTripBeApp.AplicationType.${aplicationType}`)}
+                {applicationTypeValues.map(applicationType => (
+                  <option value={applicationType} key={applicationType}>
+                    {translate(`sTripBeApp.ApplicationType.${applicationType}`)}
                   </option>
                 ))}
               </ValidatedField>

@@ -305,8 +305,8 @@ class SystemWalletResourceIT {
         partialUpdatedSystemWallet.setId(systemWallet.getId());
 
         partialUpdatedSystemWallet
+            .systemWalletID(UPDATED_SYSTEM_WALLET_ID)
             .before(UPDATED_BEFORE)
-            .amount(UPDATED_AMOUNT)
             .current(UPDATED_CURRENT)
             .blockAmount(UPDATED_BLOCK_AMOUNT)
             .mobifyDate(UPDATED_MOBIFY_DATE);

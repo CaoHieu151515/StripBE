@@ -2,6 +2,7 @@ package strip.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.UserWalletTestSamples.*;
+import static strip.domain.WalletDepositTestSamples.*;
 import static strip.domain.WalletTransactionTestSamples.*;
 
 import java.util.HashSet;
@@ -45,5 +46,27 @@ class UserWalletTest {
         userWallet.setWalletTransactions(new HashSet<>());
         assertThat(userWallet.getWalletTransactions()).doesNotContain(walletTransactionBack);
         assertThat(walletTransactionBack.getUserWallet()).isNull();
+    }
+
+    @Test
+    void walletDepositTest() {
+        UserWallet userWallet = getUserWalletRandomSampleGenerator();
+        WalletDeposit walletDepositBack = getWalletDepositRandomSampleGenerator();
+
+        userWallet.addWalletDeposit(walletDepositBack);
+        assertThat(userWallet.getWalletDeposits()).containsOnly(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isEqualTo(userWallet);
+
+        userWallet.removeWalletDeposit(walletDepositBack);
+        assertThat(userWallet.getWalletDeposits()).doesNotContain(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isNull();
+
+        userWallet.walletDeposits(new HashSet<>(Set.of(walletDepositBack)));
+        assertThat(userWallet.getWalletDeposits()).containsOnly(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isEqualTo(userWallet);
+
+        userWallet.setWalletDeposits(new HashSet<>());
+        assertThat(userWallet.getWalletDeposits()).doesNotContain(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isNull();
     }
 }

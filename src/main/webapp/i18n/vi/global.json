@@ -26,7 +26,8 @@
         "userWallet": "User Wallet",
         "userDetail": "User Detail",
         "requestTrip": "Request Trip",
-        "driverPackageSubscription": "Driver Package Subscription"
+        "driverPackageSubscription": "Driver Package Subscription",
+        "walletDeposit": "Wallet Deposit"
       },
       "account": {
         "main": "Tài khoản",

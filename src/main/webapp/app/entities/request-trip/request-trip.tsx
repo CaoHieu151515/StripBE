@@ -129,6 +129,10 @@ export const RequestTrip = () => {
                   <Translate contentKey="sTripBeApp.requestTrip.amountApproveFee">Amount Approve Fee</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('amountApproveFee')} />
                 </th>
+                <th className="hand" onClick={sort('numberofSeats')}>
+                  <Translate contentKey="sTripBeApp.requestTrip.numberofSeats">Numberof Seats</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('numberofSeats')} />
+                </th>
                 <th className="hand" onClick={sort('luggageImg')}>
                   <Translate contentKey="sTripBeApp.requestTrip.luggageImg">Luggage Img</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('luggageImg')} />
@@ -194,6 +198,7 @@ export const RequestTrip = () => {
                   <td>{requestTrip.startLoca}</td>
                   <td>{requestTrip.endLoca}</td>
                   <td>{requestTrip.amountApproveFee}</td>
+                  <td>{requestTrip.numberofSeats}</td>
                   <td>
                     {requestTrip.luggageImg ? (
                       <div>

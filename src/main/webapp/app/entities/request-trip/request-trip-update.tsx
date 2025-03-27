@@ -58,6 +58,9 @@ export const RequestTripUpdate = () => {
     if (values.amountApproveFee !== undefined && typeof values.amountApproveFee !== 'number') {
       values.amountApproveFee = Number(values.amountApproveFee);
     }
+    if (values.numberofSeats !== undefined && typeof values.numberofSeats !== 'number') {
+      values.numberofSeats = Number(values.numberofSeats);
+    }
     values.pickUpTime = convertDateTimeToServer(values.pickUpTime);
     values.endTime = convertDateTimeToServer(values.endTime);
     values.checkInTime = convertDateTimeToServer(values.checkInTime);
@@ -89,7 +92,7 @@ export const RequestTripUpdate = () => {
         }
       : {
           type: 'LUGGAGE',
-          status: 'WATING',
+          status: 'WAITING',
           ...requestTripEntity,
           pickUpTime: convertDateTimeFromServer(requestTripEntity.pickUpTime),
           endTime: convertDateTimeFromServer(requestTripEntity.endTime),
@@ -151,6 +154,13 @@ export const RequestTripUpdate = () => {
                 id="request-trip-amountApproveFee"
                 name="amountApproveFee"
                 data-cy="amountApproveFee"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.requestTrip.numberofSeats')}
+                id="request-trip-numberofSeats"
+                name="numberofSeats"
+                data-cy="numberofSeats"
                 type="text"
               />
               <ValidatedBlobField

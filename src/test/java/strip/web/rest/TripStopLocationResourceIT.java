@@ -306,11 +306,7 @@ class TripStopLocationResourceIT {
         TripStopLocation partialUpdatedTripStopLocation = new TripStopLocation();
         partialUpdatedTripStopLocation.setId(tripStopLocation.getId());
 
-        partialUpdatedTripStopLocation
-            .stopLocaID(UPDATED_STOP_LOCA_ID)
-            .stopLoca(UPDATED_STOP_LOCA)
-            .stopLocaTime(UPDATED_STOP_LOCA_TIME)
-            .stopLocaStatus(UPDATED_STOP_LOCA_STATUS);
+        partialUpdatedTripStopLocation.stopLocaID(UPDATED_STOP_LOCA_ID);
 
         restTripStopLocationMockMvc
             .perform(

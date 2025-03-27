@@ -51,6 +51,7 @@ public class RequestTripAsserts {
             .satisfies(a -> assertThat(a.getStartLoca()).as("check startLoca").isEqualTo(expected.getStartLoca()))
             .satisfies(a -> assertThat(a.getEndLoca()).as("check endLoca").isEqualTo(expected.getEndLoca()))
             .satisfies(a -> assertThat(a.getAmountApproveFee()).as("check amountApproveFee").isEqualTo(expected.getAmountApproveFee()))
+            .satisfies(a -> assertThat(a.getNumberofSeats()).as("check numberofSeats").isEqualTo(expected.getNumberofSeats()))
             .satisfies(a -> assertThat(a.getLuggageImg()).as("check luggageImg").isEqualTo(expected.getLuggageImg()))
             .satisfies(
                 a ->

@@ -10,7 +10,7 @@
     },
     {
       "fieldName": "sendApplicationType",
-      "fieldType": "AplicationType",
+      "fieldType": "ApplicationType",
       "fieldValues": "FEEDBACKSYSTEM,REPORTBUG,REPORTDRIVER"
     },
     {

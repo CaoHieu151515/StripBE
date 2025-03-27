@@ -63,18 +63,6 @@ idea {
     }
 }
 
-liquibase {
-    activities {
-        main {
-            changeLogFile 'src/main/resources/config/liquibase/master.xml'
-            url 'jdbc:mysql://localhost:3306/sTripBe'
-            username 'root'
-            password '123456'
-            driver 'com.mysql.cj.jdbc.Driver'
-            referenceUrl 'hibernate:spring:strip.domain'
-        }
-    }
-}
 
 eclipse {
     sourceSets {

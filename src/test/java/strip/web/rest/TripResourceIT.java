@@ -382,11 +382,10 @@ class TripResourceIT {
         partialUpdatedTrip
             .tripImg(UPDATED_TRIP_IMG)
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
-            .pricePerSeat(UPDATED_PRICE_PER_SEAT)
             .maxSeat(UPDATED_MAX_SEAT)
-            .startDate(UPDATED_START_DATE)
+            .startLocation(UPDATED_START_LOCATION)
             .description(UPDATED_DESCRIPTION)
-            .tripStatus(UPDATED_TRIP_STATUS);
+            .condition(UPDATED_CONDITION);
 
         restTripMockMvc
             .perform(

@@ -41,6 +41,13 @@
       "relationshipName": "walletTransaction",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "walletDeposit",
+      "otherEntityRelationshipName": "userWallet",
+      "relationshipName": "walletDeposit",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no"

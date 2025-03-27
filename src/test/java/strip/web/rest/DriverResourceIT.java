@@ -373,7 +373,13 @@ class DriverResourceIT {
         Driver partialUpdatedDriver = new Driver();
         partialUpdatedDriver.setId(driver.getId());
 
-        partialUpdatedDriver.usedtoDriver(UPDATED_USEDTO_DRIVER).expirationDate(UPDATED_EXPIRATION_DATE).bannedDay(UPDATED_BANNED_DAY);
+        partialUpdatedDriver
+            .driverID(UPDATED_DRIVER_ID)
+            .usedtoDriver(UPDATED_USEDTO_DRIVER)
+            .driverStatus(UPDATED_DRIVER_STATUS)
+            .driverPoint(UPDATED_DRIVER_POINT)
+            .identityCardFacedown(UPDATED_IDENTITY_CARD_FACEDOWN)
+            .identityCardFacedownContentType(UPDATED_IDENTITY_CARD_FACEDOWN_CONTENT_TYPE);
 
         restDriverMockMvc
             .perform(

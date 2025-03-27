@@ -124,7 +124,7 @@ export const SendingAplication = () => {
                   </td>
                   <td>{sendingAplication.apliID}</td>
                   <td>
-                    <Translate contentKey={`sTripBeApp.AplicationType.${sendingAplication.sendApplicationType}`} />
+                    <Translate contentKey={`sTripBeApp.ApplicationType.${sendingAplication.sendApplicationType}`} />
                   </td>
                   <td>{sendingAplication.content}</td>
                   <td>

@@ -1,5 +1,5 @@
 export enum PassengerStatus {
-  WATING = 'WATING',
+  WAITING = 'WAITING',
 
   BOOKED = 'BOOKED',
 
@@ -8,4 +8,6 @@ export enum PassengerStatus {
   EMPTY = 'EMPTY',
 
   CANCEL = 'CANCEL',
+
+  REJECTED = 'REJECTED',
 }

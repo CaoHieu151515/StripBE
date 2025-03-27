@@ -10,6 +10,7 @@ export interface IRequestTrip {
   startLoca?: string | null;
   endLoca?: string | null;
   amountApproveFee?: number | null;
+  numberofSeats?: number | null;
   luggageImgContentType?: string | null;
   luggageImg?: string | null;
   luggageDescription?: string | null;

@@ -321,7 +321,8 @@ class FeedbackResourceIT {
         partialUpdatedFeedback
             .feedbackID(UPDATED_FEEDBACK_ID)
             .feedbackType(UPDATED_FEEDBACK_TYPE)
-            .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION);
+            .feedbackDescription(UPDATED_FEEDBACK_DESCRIPTION)
+            .feedbackStatus(UPDATED_FEEDBACK_STATUS);
 
         restFeedbackMockMvc
             .perform(

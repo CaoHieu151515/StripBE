@@ -57,6 +57,12 @@ export const RequestTripDetail = () => {
           </dt>
           <dd>{requestTripEntity.amountApproveFee}</dd>
           <dt>
+            <span id="numberofSeats">
+              <Translate contentKey="sTripBeApp.requestTrip.numberofSeats">Numberof Seats</Translate>
+            </span>
+          </dt>
+          <dd>{requestTripEntity.numberofSeats}</dd>
+          <dt>
             <span id="luggageImg">
               <Translate contentKey="sTripBeApp.requestTrip.luggageImg">Luggage Img</Translate>
             </span>

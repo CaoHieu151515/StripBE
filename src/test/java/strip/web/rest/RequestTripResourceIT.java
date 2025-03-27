@@ -53,6 +53,9 @@ class RequestTripResourceIT {
     private static final Double DEFAULT_AMOUNT_APPROVE_FEE = 1D;
     private static final Double UPDATED_AMOUNT_APPROVE_FEE = 2D;
 
+    private static final Integer DEFAULT_NUMBEROF_SEATS = 1;
+    private static final Integer UPDATED_NUMBEROF_SEATS = 2;
+
     private static final byte[] DEFAULT_LUGGAGE_IMG = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_LUGGAGE_IMG = TestUtil.createByteArray(1, "1");
     private static final String DEFAULT_LUGGAGE_IMG_CONTENT_TYPE = "image/jpg";
@@ -64,7 +67,7 @@ class RequestTripResourceIT {
     private static final PassengerType DEFAULT_TYPE = PassengerType.LUGGAGE;
     private static final PassengerType UPDATED_TYPE = PassengerType.PASSENGER;
 
-    private static final PassengerStatus DEFAULT_STATUS = PassengerStatus.WATING;
+    private static final PassengerStatus DEFAULT_STATUS = PassengerStatus.WAITING;
     private static final PassengerStatus UPDATED_STATUS = PassengerStatus.BOOKED;
 
     private static final Instant DEFAULT_PICK_UP_TIME = Instant.ofEpochMilli(0L);
@@ -128,6 +131,7 @@ class RequestTripResourceIT {
             .startLoca(DEFAULT_START_LOCA)
             .endLoca(DEFAULT_END_LOCA)
             .amountApproveFee(DEFAULT_AMOUNT_APPROVE_FEE)
+            .numberofSeats(DEFAULT_NUMBEROF_SEATS)
             .luggageImg(DEFAULT_LUGGAGE_IMG)
             .luggageImgContentType(DEFAULT_LUGGAGE_IMG_CONTENT_TYPE)
             .luggageDescription(DEFAULT_LUGGAGE_DESCRIPTION)
@@ -154,6 +158,7 @@ class RequestTripResourceIT {
             .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
             .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
+            .numberofSeats(UPDATED_NUMBEROF_SEATS)
             .luggageImg(UPDATED_LUGGAGE_IMG)
             .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
             .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)
@@ -239,6 +244,7 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.[*].startLoca").value(hasItem(DEFAULT_START_LOCA)))
             .andExpect(jsonPath("$.[*].endLoca").value(hasItem(DEFAULT_END_LOCA)))
             .andExpect(jsonPath("$.[*].amountApproveFee").value(hasItem(DEFAULT_AMOUNT_APPROVE_FEE)))
+            .andExpect(jsonPath("$.[*].numberofSeats").value(hasItem(DEFAULT_NUMBEROF_SEATS)))
             .andExpect(jsonPath("$.[*].luggageImgContentType").value(hasItem(DEFAULT_LUGGAGE_IMG_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].luggageImg").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_LUGGAGE_IMG))))
             .andExpect(jsonPath("$.[*].luggageDescription").value(hasItem(DEFAULT_LUGGAGE_DESCRIPTION)))
@@ -269,6 +275,7 @@ class RequestTripResourceIT {
             .andExpect(jsonPath("$.startLoca").value(DEFAULT_START_LOCA))
             .andExpect(jsonPath("$.endLoca").value(DEFAULT_END_LOCA))
             .andExpect(jsonPath("$.amountApproveFee").value(DEFAULT_AMOUNT_APPROVE_FEE))
+            .andExpect(jsonPath("$.numberofSeats").value(DEFAULT_NUMBEROF_SEATS))
             .andExpect(jsonPath("$.luggageImgContentType").value(DEFAULT_LUGGAGE_IMG_CONTENT_TYPE))
             .andExpect(jsonPath("$.luggageImg").value(Base64.getEncoder().encodeToString(DEFAULT_LUGGAGE_IMG)))
             .andExpect(jsonPath("$.luggageDescription").value(DEFAULT_LUGGAGE_DESCRIPTION))
@@ -307,6 +314,7 @@ class RequestTripResourceIT {
             .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
             .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
+            .numberofSeats(UPDATED_NUMBEROF_SEATS)
             .luggageImg(UPDATED_LUGGAGE_IMG)
             .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
             .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)
@@ -409,14 +417,16 @@ class RequestTripResourceIT {
         partialUpdatedRequestTrip.setId(requestTrip.getId());
 
         partialUpdatedRequestTrip
-            .requestTripID(UPDATED_REQUEST_TRIP_ID)
             .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
             .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
-            .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)
+            .luggageImg(UPDATED_LUGGAGE_IMG)
+            .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
+            .type(UPDATED_TYPE)
+            .status(UPDATED_STATUS)
             .pickUpTime(UPDATED_PICK_UP_TIME)
-            .endTime(UPDATED_END_TIME)
             .checkIn(UPDATED_CHECK_IN)
+            .checkOut(UPDATED_CHECK_OUT)
             .checkOutTIme(UPDATED_CHECK_OUT_T_IME);
 
         restRequestTripMockMvc
@@ -453,6 +463,7 @@ class RequestTripResourceIT {
             .startLoca(UPDATED_START_LOCA)
             .endLoca(UPDATED_END_LOCA)
             .amountApproveFee(UPDATED_AMOUNT_APPROVE_FEE)
+            .numberofSeats(UPDATED_NUMBEROF_SEATS)
             .luggageImg(UPDATED_LUGGAGE_IMG)
             .luggageImgContentType(UPDATED_LUGGAGE_IMG_CONTENT_TYPE)
             .luggageDescription(UPDATED_LUGGAGE_DESCRIPTION)

@@ -22,6 +22,7 @@ import UserWallet from './user-wallet';
 import UserDetail from './user-detail';
 import RequestTrip from './request-trip';
 import DriverPackageSubscription from './driver-package-subscription';
+import WalletDeposit from './wallet-deposit';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -48,6 +49,7 @@ export default () => {
         <Route path="user-detail/*" element={<UserDetail />} />
         <Route path="request-trip/*" element={<RequestTrip />} />
         <Route path="driver-package-subscription/*" element={<DriverPackageSubscription />} />
+        <Route path="wallet-deposit/*" element={<WalletDeposit />} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>

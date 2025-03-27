@@ -41,6 +41,9 @@ public class RequestTrip implements Serializable {
     @Column(name = "amount_approve_fee")
     private Double amountApproveFee;
 
+    @Column(name = "numberof_seats")
+    private Integer numberofSeats;
+
     @Lob
     @Column(name = "luggage_img")
     private byte[] luggageImg;
@@ -155,6 +158,19 @@ public class RequestTrip implements Serializable {
 
     public void setAmountApproveFee(Double amountApproveFee) {
         this.amountApproveFee = amountApproveFee;
+    }
+
+    public Integer getNumberofSeats() {
+        return this.numberofSeats;
+    }
+
+    public RequestTrip numberofSeats(Integer numberofSeats) {
+        this.setNumberofSeats(numberofSeats);
+        return this;
+    }
+
+    public void setNumberofSeats(Integer numberofSeats) {
+        this.numberofSeats = numberofSeats;
     }
 
     public byte[] getLuggageImg() {
@@ -367,6 +383,7 @@ public class RequestTrip implements Serializable {
             ", startLoca='" + getStartLoca() + "'" +
             ", endLoca='" + getEndLoca() + "'" +
             ", amountApproveFee=" + getAmountApproveFee() +
+            ", numberofSeats=" + getNumberofSeats() +
             ", luggageImg='" + getLuggageImg() + "'" +
             ", luggageImgContentType='" + getLuggageImgContentType() + "'" +
             ", luggageDescription='" + getLuggageDescription() + "'" +

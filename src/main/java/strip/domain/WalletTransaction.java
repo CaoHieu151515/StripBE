@@ -58,7 +58,7 @@ public class WalletTransaction implements Serializable {
     private Payment payment;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "user", "walletTransactions" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "walletTransactions", "walletDeposits" }, allowSetters = true)
     private UserWallet userWallet;
 
     @ManyToOne(fetch = FetchType.LAZY)

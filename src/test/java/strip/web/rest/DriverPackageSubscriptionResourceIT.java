@@ -290,7 +290,7 @@ class DriverPackageSubscriptionResourceIT {
         DriverPackageSubscription partialUpdatedDriverPackageSubscription = new DriverPackageSubscription();
         partialUpdatedDriverPackageSubscription.setId(driverPackageSubscription.getId());
 
-        partialUpdatedDriverPackageSubscription.purchaseDate(UPDATED_PURCHASE_DATE);
+        partialUpdatedDriverPackageSubscription.packagePrice(UPDATED_PACKAGE_PRICE);
 
         restDriverPackageSubscriptionMockMvc
             .perform(

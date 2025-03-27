@@ -298,11 +298,7 @@ class UserWalletResourceIT {
         UserWallet partialUpdatedUserWallet = new UserWallet();
         partialUpdatedUserWallet.setId(userWallet.getId());
 
-        partialUpdatedUserWallet
-            .userWallet(UPDATED_USER_WALLET)
-            .amount(UPDATED_AMOUNT)
-            .current(UPDATED_CURRENT)
-            .mobifyDate(UPDATED_MOBIFY_DATE);
+        partialUpdatedUserWallet.userWallet(UPDATED_USER_WALLET).before(UPDATED_BEFORE);
 
         restUserWalletMockMvc
             .perform(

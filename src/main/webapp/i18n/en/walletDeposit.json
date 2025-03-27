@@ -1,0 +1,30 @@
+{
+  "sTripBeApp": {
+    "walletDeposit": {
+      "home": {
+        "title": "Wallet Deposits",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Wallet Deposit",
+        "createOrEditLabel": "Create or edit a Wallet Deposit",
+        "notFound": "No Wallet Deposits found"
+      },
+      "created": "A new Wallet Deposit is created with identifier {{ param }}",
+      "updated": "A Wallet Deposit is updated with identifier {{ param }}",
+      "deleted": "A Wallet Deposit is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Wallet Deposit {{ id }}?"
+      },
+      "detail": {
+        "title": "Wallet Deposit"
+      },
+      "id": "Id",
+      "bankNumber": "Bank Number",
+      "nameOfBank": "Name Of Bank",
+      "bank": "Bank",
+      "amount": "Amount",
+      "date": "Date",
+      "status": "Status",
+      "userWallet": "User Wallet"
+    }
+  }
+}

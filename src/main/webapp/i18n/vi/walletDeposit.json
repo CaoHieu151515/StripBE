@@ -1,0 +1,30 @@
+{
+  "sTripBeApp": {
+    "walletDeposit": {
+      "home": {
+        "title": "Wallet Deposits",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Wallet Deposit",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Wallet Deposit",
+        "notFound": "No Wallet Deposits found"
+      },
+      "created": "Một Wallet Deposit mới được tạo với định danh {{ param }}",
+      "updated": "Một Wallet Deposit cập nhật với định danh {{ param }}",
+      "deleted": "Một Wallet Deposit đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Wallet Deposit {{ id }}?"
+      },
+      "detail": {
+        "title": "Wallet Deposit"
+      },
+      "id": "Id",
+      "bankNumber": "Bank Number",
+      "nameOfBank": "Name Of Bank",
+      "bank": "Bank",
+      "amount": "Amount",
+      "date": "Date",
+      "status": "Status",
+      "userWallet": "User Wallet"
+    }
+  }
+}

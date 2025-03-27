@@ -24,7 +24,8 @@
       "current": "Current",
       "mobifyDate": "Mobify Date",
       "user": "User",
-      "walletTransaction": "Wallet Transaction"
+      "walletTransaction": "Wallet Transaction",
+      "walletDeposit": "Wallet Deposit"
     }
   }
 }

@@ -24,6 +24,8 @@ public class RequestTripDTO implements Serializable {
 
     private Double amountApproveFee;
 
+    private Integer numberofSeats;
+
     @Lob
     private byte[] luggageImg;
 
@@ -91,6 +93,14 @@ public class RequestTripDTO implements Serializable {
 
     public void setAmountApproveFee(Double amountApproveFee) {
         this.amountApproveFee = amountApproveFee;
+    }
+
+    public Integer getNumberofSeats() {
+        return numberofSeats;
+    }
+
+    public void setNumberofSeats(Integer numberofSeats) {
+        this.numberofSeats = numberofSeats;
     }
 
     public byte[] getLuggageImg() {
@@ -235,6 +245,7 @@ public class RequestTripDTO implements Serializable {
             ", startLoca='" + getStartLoca() + "'" +
             ", endLoca='" + getEndLoca() + "'" +
             ", amountApproveFee=" + getAmountApproveFee() +
+            ", numberofSeats=" + getNumberofSeats() +
             ", luggageImg='" + getLuggageImg() + "'" +
             ", luggageDescription='" + getLuggageDescription() + "'" +
             ", type='" + getType() + "'" +

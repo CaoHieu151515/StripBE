@@ -399,11 +399,10 @@ class VehicleResourceIT {
 
         partialUpdatedVehicle
             .vehicleID(UPDATED_VEHICLE_ID)
-            .vehicleType(UPDATED_VEHICLE_TYPE)
-            .vehicleImage(UPDATED_VEHICLE_IMAGE)
-            .vehicleImageContentType(UPDATED_VEHICLE_IMAGE_CONTENT_TYPE)
-            .carInsurance(UPDATED_CAR_INSURANCE)
-            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE);
+            .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
+            .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
+            .vehicleNumber(UPDATED_VEHICLE_NUMBER)
+            .vehicleBrand(UPDATED_VEHICLE_BRAND);
 
         restVehicleMockMvc
             .perform(

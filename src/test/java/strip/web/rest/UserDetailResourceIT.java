@@ -314,7 +314,11 @@ class UserDetailResourceIT {
         UserDetail partialUpdatedUserDetail = new UserDetail();
         partialUpdatedUserDetail.setId(userDetail.getId());
 
-        partialUpdatedUserDetail.dob(UPDATED_DOB);
+        partialUpdatedUserDetail
+            .userimage(UPDATED_USERIMAGE)
+            .userimageContentType(UPDATED_USERIMAGE_CONTENT_TYPE)
+            .phone(UPDATED_PHONE)
+            .address(UPDATED_ADDRESS);
 
         restUserDetailMockMvc
             .perform(

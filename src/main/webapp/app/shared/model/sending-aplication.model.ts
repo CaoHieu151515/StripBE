@@ -1,10 +1,10 @@
 import { IUser } from 'app/shared/model/user.model';
-import { AplicationType } from 'app/shared/model/enumerations/aplication-type.model';
+import { ApplicationType } from 'app/shared/model/enumerations/application-type.model';
 
 export interface ISendingAplication {
   id?: number;
   apliID?: string | null;
-  sendApplicationType?: keyof typeof AplicationType | null;
+  sendApplicationType?: keyof typeof ApplicationType | null;
   content?: string | null;
   imgContentType?: string | null;
   img?: string | null;

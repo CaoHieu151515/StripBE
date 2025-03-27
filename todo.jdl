@@ -67,7 +67,7 @@ enum ReportStatus {
   DONE
 }
 
-enum AplicationType{
+enum ApplicationType {
 	FEEDBACKSYSTEM,
     REPORTBUG,
     REPORTDRIVER
@@ -156,7 +156,7 @@ entity RequestTrip {
   startLoca String,
   endLoca String,
   amountApproveFee Double,
-  numberofSeats Interger,
+  numberofSeats Integer,
   luggageImg Blob,
   luggageDescription String,
   type PassengerType,
@@ -166,7 +166,7 @@ entity RequestTrip {
   checkIn Boolean,
   checkInTime Instant,
   checkOut Boolean,
-  checkOutTIme Instant,
+  checkOutTIme  Instant,
   appliedAt Instant
 }
 
@@ -247,7 +247,7 @@ entity WalletTransaction
 
 entity SendingAplication{
 	apliID UUID,
-    sendApplicationType AplicationType,
+    sendApplicationType ApplicationType,
     content String,
 	img Blob
 
@@ -261,6 +261,17 @@ entity UserWallet{
     mobifyDate Instant
 
 }
+
+entity WalletDeposit {
+  id UUID,
+  bankNumber String,
+  nameOfBank String,
+  bank String,
+  amount Double,
+  date Instant,
+  status PaymentStatus
+}
+
 
 entity UserDetail{
 	appUserDetail UUID,
@@ -279,11 +290,14 @@ entity DriverPackageSubscription {
   active Boolean
 }
 
+
 relationship OneToOne {
   UserDetail to User with builtInEntity,
   Driver to User with builtInEntity,
   UserWallet to User with builtInEntity
 }
+
+
 
 relationship ManyToOne {
   Vehicle to Driver,
@@ -302,11 +316,11 @@ relationship ManyToOne {
   Payment to PackageDriver,
   Notification to User with builtInEntity,
   Report to User with builtInEntity,
-  Report to User with builtInEntity,
   WalletTransaction to SystemWallet,
   WalletTransaction to Payment,
   SendingAplication to User with builtInEntity,
   WalletTransaction to UserWallet,
+  WalletDeposit to UserWallet,
   WalletTransaction to SystemTempWallet,
   DriverPackageSubscription to Driver,
   DriverPackageSubscription to PackageDriver

@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import strip.IntegrationTest;
 import strip.domain.SendingAplication;
-import strip.domain.enumeration.AplicationType;
+import strip.domain.enumeration.ApplicationType;
 import strip.repository.SendingAplicationRepository;
 import strip.repository.UserRepository;
 
@@ -39,8 +39,8 @@ class SendingAplicationResourceIT {
     private static final UUID DEFAULT_APLI_ID = UUID.randomUUID();
     private static final UUID UPDATED_APLI_ID = UUID.randomUUID();
 
-    private static final AplicationType DEFAULT_SEND_APPLICATION_TYPE = AplicationType.FEEDBACKSYSTEM;
-    private static final AplicationType UPDATED_SEND_APPLICATION_TYPE = AplicationType.REPORTBUG;
+    private static final ApplicationType DEFAULT_SEND_APPLICATION_TYPE = ApplicationType.FEEDBACKSYSTEM;
+    private static final ApplicationType UPDATED_SEND_APPLICATION_TYPE = ApplicationType.REPORTBUG;
 
     private static final String DEFAULT_CONTENT = "AAAAAAAAAA";
     private static final String UPDATED_CONTENT = "BBBBBBBBBB";
@@ -301,7 +301,7 @@ class SendingAplicationResourceIT {
 
         partialUpdatedSendingAplication
             .apliID(UPDATED_APLI_ID)
-            .content(UPDATED_CONTENT)
+            .sendApplicationType(UPDATED_SEND_APPLICATION_TYPE)
             .img(UPDATED_IMG)
             .imgContentType(UPDATED_IMG_CONTENT_TYPE);
 

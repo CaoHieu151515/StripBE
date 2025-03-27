@@ -7,7 +7,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import strip.domain.enumeration.AplicationType;
+import strip.domain.enumeration.ApplicationType;
 
 /**
  * A SendingAplication.
@@ -31,7 +31,7 @@ public class SendingAplication implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "send_application_type")
-    private AplicationType sendApplicationType;
+    private ApplicationType sendApplicationType;
 
     @Column(name = "content")
     private String content;
@@ -74,16 +74,16 @@ public class SendingAplication implements Serializable {
         this.apliID = apliID;
     }
 
-    public AplicationType getSendApplicationType() {
+    public ApplicationType getSendApplicationType() {
         return this.sendApplicationType;
     }
 
-    public SendingAplication sendApplicationType(AplicationType sendApplicationType) {
+    public SendingAplication sendApplicationType(ApplicationType sendApplicationType) {
         this.setSendApplicationType(sendApplicationType);
         return this;
     }
 
-    public void setSendApplicationType(AplicationType sendApplicationType) {
+    public void setSendApplicationType(ApplicationType sendApplicationType) {
         this.sendApplicationType = sendApplicationType;
     }
 

@@ -26,6 +26,9 @@
             <column name="amount_approve_fee" type="double">
                 <constraints nullable="true" />
             </column>
+            <column name="numberof_seats" type="integer">
+                <constraints nullable="true" />
+            </column>
             <column name="luggage_img" type="${blobType}">
                 <constraints nullable="true" />
             </column>
@@ -98,6 +101,7 @@
             <column name="start_loca" type="string"/>
             <column name="end_loca" type="string"/>
             <column name="amount_approve_fee" type="numeric"/>
+            <column name="numberof_seats" type="numeric"/>
             <column name="luggage_img" type="blob"/>
             <column name="luggage_img_content_type" type="string"/>
             <column name="luggage_description" type="string"/>
