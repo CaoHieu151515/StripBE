@@ -12,11 +12,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
+    private final Trip trip = new Trip();
 
     // jhipster-needle-application-properties-property
 
     public Liquibase getLiquibase() {
         return liquibase;
+    }
+
+    public Trip getTrip() {
+        return trip;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -31,6 +36,46 @@ public class ApplicationProperties {
 
         public void setAsyncStart(Boolean asyncStart) {
             this.asyncStart = asyncStart;
+        }
+    }
+
+    public static class Trip {
+
+        private final Fee fee = new Fee();
+
+        public Fee getFee() {
+            return fee;
+        }
+
+        public static class Fee {
+
+            private double driverCreate;
+            private double driverDone;
+            private double passengerApprove;
+
+            public double getDriverCreate() {
+                return driverCreate;
+            }
+
+            public void setDriverCreate(double driverCreate) {
+                this.driverCreate = driverCreate;
+            }
+
+            public double getDriverDone() {
+                return driverDone;
+            }
+
+            public void setDriverDone(double driverDone) {
+                this.driverDone = driverDone;
+            }
+
+            public double getPassengerApprove() {
+                return passengerApprove;
+            }
+
+            public void setPassengerApprove(double passengerApprove) {
+                this.passengerApprove = passengerApprove;
+            }
         }
     }
     // jhipster-needle-application-properties-property-class

@@ -217,4 +217,9 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  trip:
+    fee:
+      driver-create: 0.1
+      driver-done: 0.05
+      passenger-approve: 0.15

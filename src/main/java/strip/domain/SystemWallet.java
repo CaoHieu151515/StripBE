@@ -176,6 +176,11 @@ public class SystemWallet implements Serializable {
         return this;
     }
 
+    public void increaseCurrent(Double amount) {
+        if (this.current == null) this.current = 0.0;
+        this.current += amount;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override

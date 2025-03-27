@@ -4,9 +4,10 @@ package strip.domain.enumeration;
  * The PassengerStatus enumeration.
  */
 public enum PassengerStatus {
-    WATING,
+    WAITING,
     BOOKED,
     DONE,
     EMPTY,
     CANCEL,
+    REJECTED,
 }

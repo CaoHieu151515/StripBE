@@ -11,6 +11,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import strip.domain.enumeration.TransactionStatus;
+import strip.domain.enumeration.WalletTransactionType;
 
 /**
  * A UserWallet.
@@ -48,7 +50,7 @@ public class UserWallet implements Serializable {
     @JoinColumn(unique = true)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userWallet")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userWallet", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "systemWallet", "payment", "userWallet", "systemTempWallet" }, allowSetters = true)
     private Set<WalletTransaction> walletTransactions = new HashSet<>();
@@ -177,7 +179,99 @@ public class UserWallet implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public UserWallet addWalletTransactionAndUpdateBalance(WalletTransaction transaction) {
+        if (transaction == null) return this;
+
+        transaction.setUserWallet(this);
+        this.walletTransactions.add(transaction);
+
+        if (transaction.getTransStatus() == TransactionStatus.SUCCESS) {
+            double amount = transaction.getAmount() != null ? transaction.getAmount() : 0.0;
+            WalletTransactionType type = transaction.getWalletType();
+
+            if (this.current == null) {
+                this.current = 0.0;
+            }
+
+            // Những loại giao dịch trừ tiền từ ví người dùng
+            switch (type) {
+                case WITHDRAW:
+                    this.current -= amount;
+                    break;
+                case DRIVER_CREATE_TRIP_FEE:
+                    this.current -= amount;
+                    break;
+                case DRIVER_DONE_TRIP_FEE:
+                    this.current -= amount;
+                    break;
+                case PASSENGER_APPROVE_FEE:
+                    this.current -= amount;
+                    break;
+                case DRIVER_BUY_PACKAGE:
+                    this.current -= amount;
+                    break;
+                // Những loại giao dịch cộng tiền vào ví người dùng
+                case DEPOSIT:
+                    this.current += amount;
+                    break;
+                case REFUND:
+                    this.current += amount;
+                    break;
+                case DRIVER_DONE_TRIP_REFUND:
+                    this.current += amount;
+                    break;
+                // Những loại hệ thống thu, không tác động ví user
+                case SYSTEM_GAIN_CREATE_TRIP_FEE:
+                    this.current += amount;
+                    break;
+                case SYSTEM_GAIN_PASSENGER_APPROVE_FEE:
+                    this.current += amount;
+                    break;
+                case SYSTEM_GAIN_DONE_TRIP_FEE:
+                    this.current += amount;
+                    break;
+                case SYSTEM_GAIN_PACKAGE_FEE:
+                    this.current += amount;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        this.mobifyDate = Instant.now();
+        return this;
+    }
+
+    public void recalculateBalance() {
+        double newCurrent = 0.0;
+
+        for (WalletTransaction tx : walletTransactions) {
+            if (tx.getTransStatus() != TransactionStatus.SUCCESS || tx.getWalletType() == null) continue;
+
+            double amount = tx.getAmount() != null ? tx.getAmount() : 0.0;
+
+            switch (tx.getWalletType()) {
+                case DEPOSIT:
+                case REFUND:
+                case DRIVER_DONE_TRIP_REFUND:
+                    newCurrent += amount;
+                    break;
+                case WITHDRAW:
+                case DRIVER_CREATE_TRIP_FEE:
+                case DRIVER_DONE_TRIP_FEE:
+                case PASSENGER_APPROVE_FEE:
+                    newCurrent -= amount;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        this.current = newCurrent;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -192,7 +286,8 @@ public class UserWallet implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -200,12 +295,12 @@ public class UserWallet implements Serializable {
     @Override
     public String toString() {
         return "UserWallet{" +
-            "id=" + getId() +
-            ", userWallet='" + getUserWallet() + "'" +
-            ", before=" + getBefore() +
-            ", amount=" + getAmount() +
-            ", current=" + getCurrent() +
-            ", mobifyDate='" + getMobifyDate() + "'" +
-            "}";
+                "id=" + getId() +
+                ", userWallet='" + getUserWallet() + "'" +
+                ", before=" + getBefore() +
+                ", amount=" + getAmount() +
+                ", current=" + getCurrent() +
+                ", mobifyDate='" + getMobifyDate() + "'" +
+                "}";
     }
 }

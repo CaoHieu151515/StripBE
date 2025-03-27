@@ -85,7 +85,7 @@ public class Trip implements Serializable {
     )
     private Driver driver;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "trip", "user" }, allowSetters = true)
     private Set<RequestTrip> requestTrips = new HashSet<>();
