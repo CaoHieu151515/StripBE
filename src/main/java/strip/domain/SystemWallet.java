@@ -11,6 +11,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import strip.domain.enumeration.TransactionStatus;
+import strip.domain.enumeration.WalletTransactionType;
 
 /**
  * A SystemWallet.
@@ -47,7 +49,7 @@ public class SystemWallet implements Serializable {
     @Column(name = "mobify_date")
     private Instant mobifyDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "systemWallet")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "systemWallet", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "systemWallet", "payment", "userWallet", "systemTempWallet" }, allowSetters = true)
     private Set<WalletTransaction> walletTransactions = new HashSet<>();
@@ -179,6 +181,51 @@ public class SystemWallet implements Serializable {
     public void increaseCurrent(Double amount) {
         if (this.current == null) this.current = 0.0;
         this.current += amount;
+    }
+
+    public SystemWallet addWalletTransactionAndUpdateBalance(WalletTransaction transaction) {
+        if (transaction == null || transaction.getTransStatus() != TransactionStatus.SUCCESS) {
+            return this;
+        }
+
+        transaction.setSystemWallet(this);
+        this.walletTransactions.add(transaction);
+
+        double amount = transaction.getAmount() != null ? transaction.getAmount() : 0.0;
+        WalletTransactionType type = transaction.getWalletType();
+
+        if (this.current == null) {
+            this.current = 0.0;
+        }
+
+        // ✅ Lưu lại số dư trước giao dịch
+        this.before = this.current;
+
+        switch (type) {
+            case SYSTEM_GAIN_CREATE_TRIP_FEE:
+                this.current += amount;
+                break;
+            case SYSTEM_GAIN_PASSENGER_APPROVE_FEE:
+                this.current += amount;
+                break;
+            case SYSTEM_GAIN_DONE_TRIP_FEE:
+                this.current += amount;
+                break;
+            case SYSTEM_GAIN_PACKAGE_FEE:
+                this.current += amount;
+                break;
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP:
+                this.current -= amount;
+                break;
+            case SYSTEM_REFUND_TO_PASSENGER:
+                this.current -= amount;
+            default:
+                // ❗Nếu type không liên quan hệ thống → không tác động số dư
+                break;
+        }
+
+        this.mobifyDate = transaction.getDate() != null ? transaction.getDate() : Instant.now();
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

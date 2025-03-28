@@ -1,5 +1,6 @@
 package strip.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,4 +21,6 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     List<Driver> findByUsedtoDriverFalseAndDriverStatus(DriverStatus driverStatus);
 
     Optional<Driver> findByDriverID(UUID driverID);
+
+    List<Driver> findAllByDriverStatusAndExpirationDateBefore(DriverStatus status, Instant time);
 }

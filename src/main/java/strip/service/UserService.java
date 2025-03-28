@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +22,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.config.Constants;
 import strip.domain.Authority;
+import strip.domain.Driver;
 import strip.domain.User;
+import strip.domain.UserDetail;
+import strip.domain.UserWallet;
+import strip.domain.enumeration.DriverStatus;
 import strip.repository.AuthorityRepository;
+import strip.repository.DriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
+import strip.repository.UserWalletRepository;
 import strip.security.AuthoritiesConstants;
 import strip.security.SecurityUtils;
 import strip.service.dto.AdminUserDTO;
@@ -52,13 +60,19 @@ public class UserService {
 
     private final OtpCacheService otpCacheService;
 
+    private final DriverRepository driverRepository;
+
+    private final UserWalletRepository userWalletRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager,
         OtpCacheService otpCacheService,
-        UserDetailRepository userDetailRepository
+        UserDetailRepository userDetailRepository,
+        DriverRepository driverRepository,
+        UserWalletRepository userWalletRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -66,6 +80,8 @@ public class UserService {
         this.cacheManager = cacheManager;
         this.otpCacheService = otpCacheService;
         this.userDetailRepository = userDetailRepository;
+        this.driverRepository = driverRepository;
+        this.userWalletRepository = userWalletRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -167,24 +183,26 @@ public class UserService {
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
 
-        newUser.setLogin(login); // Gán mã 9 ký tự làm login
+        newUser.setLogin(login);
         newUser.setEmail(userDTO.getEmail().toLowerCase());
         newUser.setPassword(encryptedPassword);
         newUser.setFirstName(userDTO.getFirstName());
         newUser.setLastName(userDTO.getLastName());
         newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
-        // Mặc định tài khoản chưa kích hoạt
         newUser.setActivated(true);
         newUser.setActivationKey(null);
 
-        // Gán quyền mặc định cho người dùng
+        // Gán quyền mặc định
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.PASSENGER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
 
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
+
+        // 👉 Khởi tạo các entity liên quan
+        initializeUserData(newUser);
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -438,5 +456,34 @@ public class UserService {
 
                 return dto;
             });
+    }
+
+    @Transactional
+    public void initializeUserData(User user) {
+        // UserDetail
+        UserDetail detail = new UserDetail();
+        detail.setAppUserDetail(UUID.randomUUID());
+        detail.setUser(user);
+        userDetailRepository.save(detail);
+
+        // UserWallet
+        UserWallet wallet = new UserWallet();
+        wallet.setUserWallet(UUID.randomUUID());
+        wallet.setUser(user);
+        wallet.setBefore(0.0);
+        wallet.setAmount(0.0);
+        wallet.setCurrent(0.0);
+        wallet.setMobifyDate(Instant.now());
+        userWalletRepository.save(wallet);
+
+        // Driver (mặc định là NOT_DRIVER)
+        Driver driver = new Driver();
+        driver.setDriverID(UUID.randomUUID());
+        driver.setUser(user);
+        driver.setDriverPoint(14);
+        driver.setUsedtoDriver(false);
+        driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+        driver.setDriverPoint(0);
+        driverRepository.save(driver);
     }
 }

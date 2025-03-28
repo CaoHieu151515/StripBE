@@ -16,4 +16,6 @@ public enum WalletTransactionType {
     SYSTEM_GAIN_DONE_TRIP_FEE, // Số tiền hệ thống nhận sau khi chuyến hoàn thành
     DRIVER_BUY_PACKAGE, // tài xế mua package
     SYSTEM_GAIN_PACKAGE_FEE, // Tiền hệ thống nhận khi driver mua package
+    SYSTEM_REFUND_TO_DRIVER_DONE_TRIP,
+    SYSTEM_REFUND_TO_PASSENGER,
 }

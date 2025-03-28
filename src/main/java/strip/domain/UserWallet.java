@@ -182,6 +182,7 @@ public class UserWallet implements Serializable {
     public UserWallet addWalletTransactionAndUpdateBalance(WalletTransaction transaction) {
         if (transaction == null) return this;
 
+        boolean isDebit = false;
         transaction.setUserWallet(this);
         this.walletTransactions.add(transaction);
 
@@ -189,26 +190,33 @@ public class UserWallet implements Serializable {
             double amount = transaction.getAmount() != null ? transaction.getAmount() : 0.0;
             WalletTransactionType type = transaction.getWalletType();
 
+            System.out.println("Giao dịch: " + transaction.getWalletType() + ", amount: " + transaction.getAmount());
             if (this.current == null) {
                 this.current = 0.0;
             }
 
+            this.before = this.current;
             // Những loại giao dịch trừ tiền từ ví người dùng
             switch (type) {
                 case WITHDRAW:
                     this.current -= amount;
+                    isDebit = true;
                     break;
                 case DRIVER_CREATE_TRIP_FEE:
                     this.current -= amount;
+                    isDebit = true;
                     break;
                 case DRIVER_DONE_TRIP_FEE:
                     this.current -= amount;
+                    isDebit = true;
                     break;
                 case PASSENGER_APPROVE_FEE:
                     this.current -= amount;
+                    isDebit = true;
                     break;
                 case DRIVER_BUY_PACKAGE:
                     this.current -= amount;
+                    isDebit = true;
                     break;
                 // Những loại giao dịch cộng tiền vào ví người dùng
                 case DEPOSIT:
@@ -220,22 +228,11 @@ public class UserWallet implements Serializable {
                 case DRIVER_DONE_TRIP_REFUND:
                     this.current += amount;
                     break;
-                // Những loại hệ thống thu, không tác động ví user
-                case SYSTEM_GAIN_CREATE_TRIP_FEE:
-                    this.current += amount;
-                    break;
-                case SYSTEM_GAIN_PASSENGER_APPROVE_FEE:
-                    this.current += amount;
-                    break;
-                case SYSTEM_GAIN_DONE_TRIP_FEE:
-                    this.current += amount;
-                    break;
-                case SYSTEM_GAIN_PACKAGE_FEE:
-                    this.current += amount;
-                    break;
                 default:
                     break;
             }
+
+            this.amount = isDebit ? -amount : amount;
         }
 
         this.mobifyDate = Instant.now();

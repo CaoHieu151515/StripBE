@@ -148,11 +148,10 @@ public class TripCustomService {
         userTx.setDate(Instant.now());
         userTx.setWalletType(WalletTransactionType.DRIVER_CREATE_TRIP_FEE);
         userTx.setTransStatus(TransactionStatus.SUCCESS);
-        userTx.setTransactionThirdPartyID("TRIP_" + trip.getTripID());
+        userTx.setTransactionThirdPartyID(null);
         userTx.setUserWallet(userWallet);
         userWallet.addWalletTransactionAndUpdateBalance(userTx);
         userWalletRepository.save(userWallet);
-        walletTransactionRepository.save(userTx);
 
         WalletTransaction systemTx = new WalletTransaction();
         systemTx.setTransID(UUID.randomUUID());
@@ -160,17 +159,10 @@ public class TripCustomService {
         systemTx.setDate(Instant.now());
         systemTx.setWalletType(WalletTransactionType.SYSTEM_GAIN_CREATE_TRIP_FEE);
         systemTx.setTransStatus(TransactionStatus.SUCCESS);
-        systemTx.setTransactionThirdPartyID("TRIP_" + trip.getTripID());
+        systemTx.setTransactionThirdPartyID(null);
         systemTx.setSystemWallet(systemWallet);
-
-        double before = systemWallet.getCurrent() != null ? systemWallet.getCurrent() : 0.0;
-        systemWallet.setBefore(before);
-        systemWallet.setAmount(fee);
-        systemWallet.increaseCurrent(fee);
-        systemWallet.setMobifyDate(Instant.now());
-
+        systemWallet.addWalletTransactionAndUpdateBalance(systemTx);
         systemWalletRepository.save(systemWallet);
-        walletTransactionRepository.save(systemTx);
     }
 
     private SystemWallet createInitialSystemWallet() {

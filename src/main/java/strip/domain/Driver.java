@@ -94,7 +94,7 @@ public class Driver implements Serializable {
     @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
     private Set<Rating> ratings = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
+    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "driver", "packageDriver" }, allowSetters = true)
     private Set<DriverPackageSubscription> driverPackageSubscriptions = new HashSet<>();

@@ -17,4 +17,6 @@ public interface PackageDriverRepository extends JpaRepository<PackageDriver, Lo
     List<PackageDriver> findByStatus(PackageDriverStatus status);
 
     Optional<PackageDriver> findByPackageID(UUID packageID);
+
+    List<PackageDriver> findAllByStatus(PackageDriverStatus status);
 }

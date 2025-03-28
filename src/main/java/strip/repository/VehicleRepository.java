@@ -22,4 +22,8 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     Optional<Vehicle> findFirstByDriverAndStatus(Driver driver, VehicleStatus status);
 
     Optional<Vehicle> findFirstByDriver_DriverIDAndStatus(UUID driverId, VehicleStatus status);
+
+    Optional<Vehicle> findByDriver(Driver driver);
+
+    List<Vehicle> findAllByDriver(Driver driver);
 }
