@@ -2,40 +2,56 @@ package strip.service.dto;
 
 import java.io.Serializable;
 import java.util.UUID;
+import strip.domain.enumeration.VehicleStatus;
+import strip.domain.enumeration.VehicleType;
 
-public class DriverVehicleDTO implements Serializable {
+public class ConfirmingVehicleDTO implements Serializable {
 
-    private UUID vehicleId;
-    private String vehicleType;
+    private Long id;
 
-    // ✅ Dùng URL thay vì byte[]
+    private UUID vehicleID;
+
+    private VehicleType vehicleType;
+
+    // ✅ URL thay cho byte[]
     private String vehicleImageUrl;
-    private String carRegistrationUrl;
+    private String carregistrationUrl;
     private String vehicleInspectionCertificateUrl;
     private String carInsuranceUrl;
 
     private String vehicleNumber;
+
     private Integer numberOfSeats;
+
     private String vehicleColor;
+
     private String vehicleBrand;
 
-    private String status; // trạng thái: ACTIVE, CONFIRMING...
+    private VehicleStatus status;
 
     // --- Getters & Setters ---
 
-    public UUID getVehicleId() {
-        return vehicleId;
+    public Long getId() {
+        return id;
     }
 
-    public void setVehicleId(UUID vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getVehicleType() {
+    public UUID getVehicleID() {
+        return vehicleID;
+    }
+
+    public void setVehicleID(UUID vehicleID) {
+        this.vehicleID = vehicleID;
+    }
+
+    public VehicleType getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
+    public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
@@ -47,12 +63,12 @@ public class DriverVehicleDTO implements Serializable {
         this.vehicleImageUrl = vehicleImageUrl;
     }
 
-    public String getCarRegistrationUrl() {
-        return carRegistrationUrl;
+    public String getCarregistrationUrl() {
+        return carregistrationUrl;
     }
 
-    public void setCarRegistrationUrl(String carRegistrationUrl) {
-        this.carRegistrationUrl = carRegistrationUrl;
+    public void setCarregistrationUrl(String carregistrationUrl) {
+        this.carregistrationUrl = carregistrationUrl;
     }
 
     public String getVehicleInspectionCertificateUrl() {
@@ -103,11 +119,11 @@ public class DriverVehicleDTO implements Serializable {
         this.vehicleBrand = vehicleBrand;
     }
 
-    public String getStatus() {
+    public VehicleStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(VehicleStatus status) {
         this.status = status;
     }
 }

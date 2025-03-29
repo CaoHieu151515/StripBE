@@ -16,46 +16,15 @@ public class DriverInfoDTO implements Serializable {
     private String gender;
     private Instant dob;
     private String email;
-    private byte[] driverLicense;
-    private byte[] identityCardFaceUp;
-    private byte[] identityCardFaceDown;
+
+    // ✅ Đổi byte[] -> URL
+    private String driverLicenseUrl;
+    private String identityCardFaceUpUrl;
+    private String identityCardFaceDownUrl;
+
+    // ✅ Danh sách phương tiện
     private Set<DriverVehicleDTO> vehicles;
 
-    public DriverInfoDTO() {
-        // Default constructor
-    }
-
-    public DriverInfoDTO(
-        Long userId,
-        UUID driverId,
-        String firstName,
-        String lastName,
-        String phone,
-        String address,
-        String gender,
-        Instant dob,
-        String email,
-        byte[] driverLicense,
-        byte[] identityCardFaceUp,
-        byte[] identityCardFaceDown,
-        Set<DriverVehicleDTO> vehicles
-    ) {
-        this.userId = userId;
-        this.driverId = driverId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.address = address;
-        this.gender = gender;
-        this.dob = dob;
-        this.email = email;
-        this.driverLicense = driverLicense;
-        this.identityCardFaceUp = identityCardFaceUp;
-        this.identityCardFaceDown = identityCardFaceDown;
-        this.vehicles = vehicles;
-    }
-
-    // Getters & Setters
     public Long getUserId() {
         return userId;
     }
@@ -128,20 +97,28 @@ public class DriverInfoDTO implements Serializable {
         this.email = email;
     }
 
-    public byte[] getIdentityCardFaceUp() {
-        return identityCardFaceUp;
+    public String getDriverLicenseUrl() {
+        return driverLicenseUrl;
     }
 
-    public void setIdentityCardFaceUp(byte[] identityCardFaceUp) {
-        this.identityCardFaceUp = identityCardFaceUp;
+    public void setDriverLicenseUrl(String driverLicenseUrl) {
+        this.driverLicenseUrl = driverLicenseUrl;
     }
 
-    public byte[] getIdentityCardFaceDown() {
-        return identityCardFaceDown;
+    public String getIdentityCardFaceUpUrl() {
+        return identityCardFaceUpUrl;
     }
 
-    public void setIdentityCardFaceDown(byte[] identityCardFaceDown) {
-        this.identityCardFaceDown = identityCardFaceDown;
+    public void setIdentityCardFaceUpUrl(String identityCardFaceUpUrl) {
+        this.identityCardFaceUpUrl = identityCardFaceUpUrl;
+    }
+
+    public String getIdentityCardFaceDownUrl() {
+        return identityCardFaceDownUrl;
+    }
+
+    public void setIdentityCardFaceDownUrl(String identityCardFaceDownUrl) {
+        this.identityCardFaceDownUrl = identityCardFaceDownUrl;
     }
 
     public Set<DriverVehicleDTO> getVehicles() {
@@ -151,12 +128,6 @@ public class DriverInfoDTO implements Serializable {
     public void setVehicles(Set<DriverVehicleDTO> vehicles) {
         this.vehicles = vehicles;
     }
+    // Getters & Setters
 
-    public byte[] getDriverLicense() {
-        return driverLicense;
-    }
-
-    public void setDriverLicense(byte[] driverLicense) {
-        this.driverLicense = driverLicense;
-    }
 }

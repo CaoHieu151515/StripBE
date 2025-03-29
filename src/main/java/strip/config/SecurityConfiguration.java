@@ -81,6 +81,8 @@ public class SecurityConfiguration {
                     .requestMatchers(mvc.pattern("/api/account/reset-password/finish")).permitAll()
                     .requestMatchers(mvc.pattern("/api/mobile/user/reset-password/init")).permitAll()
                     .requestMatchers(mvc.pattern("/api/mobile/user/reset-password/finish")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/mobile/trips/image/**")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/images/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/manager/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/admin/docs")).permitAll()
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)

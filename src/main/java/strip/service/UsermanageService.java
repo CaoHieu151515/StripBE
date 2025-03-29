@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.Driver;
 import strip.domain.PackageDriver;
 import strip.domain.User;
@@ -27,6 +28,7 @@ import strip.repository.PackageDriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.VehicleRepository;
+import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
@@ -35,7 +37,6 @@ import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.PackageDriverMapper;
-import strip.service.mapper.UsermanageMapper;
 
 @Service
 @Transactional
@@ -44,10 +45,8 @@ public class UsermanageService {
     private final Logger log = LoggerFactory.getLogger(UsermanageService.class);
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
-    private final UsermanageMapper usermanageMapper;
     private final DriverRepository driverRepository;
     private final DriverInfoMapper driverInfoMapper;
-    private final VehicleService vehicleService;
     private final VehicleRepository vehicleRepository;
     private final PackageDriverRepository packageDriverRepository;
     private final PackageDriverMapper packageDriverMapper;
@@ -55,7 +54,6 @@ public class UsermanageService {
     public UsermanageService(
         UserRepository userRepository,
         UserDetailRepository userDetailRepository,
-        UsermanageMapper usermanageMapper,
         DriverRepository driverRepository,
         DriverInfoMapper driverInfoMapper,
         VehicleService vehicleService,
@@ -65,10 +63,8 @@ public class UsermanageService {
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
-        this.usermanageMapper = usermanageMapper;
         this.driverRepository = driverRepository;
         this.driverInfoMapper = driverInfoMapper;
-        this.vehicleService = vehicleService;
         this.vehicleRepository = vehicleRepository;
         this.packageDriverRepository = packageDriverRepository;
         this.packageDriverMapper = packageDriverMapper;
@@ -133,21 +129,41 @@ public class UsermanageService {
     }
 
     public Optional<DriverInfoDTO> getDriverDetailsByUsername(String username) {
-        Optional<User> user = userRepository.findOneByLogin(username);
+        Optional<User> userOpt = userRepository.findOneByLogin(username);
 
-        if (user.isPresent()) {
-            Optional<UserDetail> userDetail = userDetailRepository.findById(user.get().getId());
-            Optional<Driver> driver = driverRepository.findById(user.get().getId());
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Optional<UserDetail> userDetailOpt = userDetailRepository.findById(user.getId());
+            Optional<Driver> driverOpt = driverRepository.findById(user.getId());
 
-            if (driver.isPresent()) {
-                DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user.get(), userDetail.orElse(null), driver.get());
+            if (driverOpt.isPresent()) {
+                Driver driver = driverOpt.get();
+                UserDetail userDetail = userDetailOpt.orElse(null);
 
-                // Lấy danh sách phương tiện của driver và ánh xạ sang DTO
+                // ✅ Map cơ bản
+                DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user, userDetail, driver);
+
+                // ✅ Gán URL ảnh cho driver
+                UUID driverId = driver.getDriverID();
+                dto.setDriverLicenseUrl(buildDriverLicenseUrl(driverId));
+                dto.setIdentityCardFaceUpUrl(buildIdentityCardFaceUpUrl(driverId));
+                dto.setIdentityCardFaceDownUrl(buildIdentityCardFaceDownUrl(driverId));
+
+                // ✅ Map các phương tiện và gán URL ảnh
                 Set<DriverVehicleDTO> vehicleDTOs = driver
-                    .get()
                     .getVehicles()
                     .stream()
-                    .map(driverInfoMapper::toDriverVehicleDTO)
+                    .map(vehicle -> {
+                        DriverVehicleDTO vdto = driverInfoMapper.toDriverVehicleDTO(vehicle);
+
+                        UUID vehicleId = vehicle.getVehicleID();
+                        vdto.setVehicleImageUrl(buildVehicleImageUrl(vehicleId));
+                        vdto.setCarRegistrationUrl(buildCarregistrationUrl(vehicleId));
+                        vdto.setVehicleInspectionCertificateUrl(buildInspectionCertificateUrl(vehicleId));
+                        vdto.setCarInsuranceUrl(buildCarInsuranceUrl(vehicleId));
+
+                        return vdto;
+                    })
                     .collect(Collectors.toSet());
 
                 dto.setVehicles(vehicleDTOs);
@@ -167,7 +183,8 @@ public class UsermanageService {
                 User user = vehicle.getDriver().getUser();
                 UserDetail userDetail = userDetailRepository.findById(user.getId()).orElse(null);
                 Driver driver = vehicle.getDriver();
-                return driverInfoMapper.toConfirmingVehicleDTO(user, userDetail, driver, vehicle);
+
+                return mapToConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
             })
             .collect(Collectors.toList());
     }
@@ -207,7 +224,7 @@ public class UsermanageService {
                 VehicleStatus.CONFIRMING
             );
             if (user.isPresent() && vehicle.isPresent()) {
-                ConfirmingVehicleDriverDTO dto = driverInfoMapper.toConfirmingVehicleDTO(
+                ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(
                     user.get(),
                     userDetail.orElse(null),
                     driver,
@@ -298,5 +315,85 @@ public class UsermanageService {
                 packageDriver.setStatus(PackageDriverStatus.EXPIRED);
                 return packageDriverRepository.save(packageDriver);
             });
+    }
+
+    private ConfirmingVehicleDriverDTO mapToConfirmingVehicleDriverDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle) {
+        ConfirmingVehicleDriverDTO dto = driverInfoMapper.toConfirmingVehicleDTO(user, userDetail, driver, vehicle);
+
+        UUID driverId = driver.getDriverID();
+        dto.setIdentityCardFaceUpUrl(buildIdentityCardFaceUpUrl(driverId));
+        dto.setIdentityCardFaceDownUrl(buildIdentityCardFaceDownUrl(driverId));
+        dto.setDriverLicenseUrl(buildDriverLicenseUrl(driverId));
+
+        ConfirmingVehicleDTO vehicleDTO = mapVehicleToConfirmingVehicleDTO(vehicle);
+        dto.setVehicle(vehicleDTO);
+
+        return dto;
+    }
+
+    private ConfirmingVehicleDTO mapVehicleToConfirmingVehicleDTO(Vehicle v) {
+        ConfirmingVehicleDTO dto = new ConfirmingVehicleDTO();
+
+        dto.setId(v.getId());
+        dto.setVehicleID(v.getVehicleID());
+        dto.setVehicleType(v.getVehicleType());
+        dto.setVehicleNumber(v.getVehicleNumber());
+        dto.setNumberOfSeats(v.getNumberOfSeats());
+        dto.setVehicleColor(v.getVehicleColor());
+        dto.setVehicleBrand(v.getVehicleBrand());
+        dto.setStatus(v.getStatus());
+
+        dto.setVehicleImageUrl(buildVehicleImageUrl(v.getVehicleID()));
+        dto.setCarregistrationUrl(buildCarregistrationUrl(v.getVehicleID()));
+        dto.setVehicleInspectionCertificateUrl(buildInspectionCertificateUrl(v.getVehicleID()));
+        dto.setCarInsuranceUrl(buildCarInsuranceUrl(v.getVehicleID()));
+
+        return dto;
+    }
+
+    public String buildDriverLicenseUrl(UUID driverId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/driver/license/")
+            .path(driverId.toString())
+            .toUriString();
+    }
+
+    public String buildIdentityCardFaceUpUrl(UUID driverId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/driver/identity-card-up/")
+            .path(driverId.toString())
+            .toUriString();
+    }
+
+    public String buildIdentityCardFaceDownUrl(UUID driverId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/driver/identity-card-down/")
+            .path(driverId.toString())
+            .toUriString();
+    }
+
+    public String buildVehicleImageUrl(UUID vehicleId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/images/vehicle/").path(vehicleId.toString()).toUriString();
+    }
+
+    public String buildCarregistrationUrl(UUID vehicleId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/vehicle/carregistration/")
+            .path(vehicleId.toString())
+            .toUriString();
+    }
+
+    public String buildInspectionCertificateUrl(UUID vehicleId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/vehicle/inspection/")
+            .path(vehicleId.toString())
+            .toUriString();
+    }
+
+    public String buildCarInsuranceUrl(UUID vehicleId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/vehicle/insurance/")
+            .path(vehicleId.toString())
+            .toUriString();
     }
 }

@@ -3,7 +3,6 @@ package strip.service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +34,7 @@ import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
 import strip.repository.WalletTransactionRepository;
 import strip.service.dto.UpdateUserProfileDTO;
+import strip.service.dto.UserDetailsCusDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
 
@@ -51,6 +51,7 @@ public class UserMobileService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final PackageDriverRepository packageDriverRepository;
     private final SystemWalletRepository systemWalletRepository;
+    private final ImageUrlService imageUrlService;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -61,7 +62,8 @@ public class UserMobileService {
         UserService userService,
         WalletTransactionRepository walletTransactionRepository,
         PackageDriverRepository packageDriverRepository,
-        SystemWalletRepository systemWalletRepository
+        SystemWalletRepository systemWalletRepository,
+        ImageUrlService imageUrlService
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -72,6 +74,7 @@ public class UserMobileService {
         this.walletTransactionRepository = walletTransactionRepository;
         this.packageDriverRepository = packageDriverRepository;
         this.systemWalletRepository = systemWalletRepository;
+        this.imageUrlService = imageUrlService;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -81,22 +84,42 @@ public class UserMobileService {
         }
 
         User user = optionalUser.get();
-        Optional<UserDetail> userDetail = userDetailRepository.findByUser(user);
+        Optional<UserDetail> userDetailOpt = userDetailRepository.findByUser(user);
         Optional<UserWallet> userWallet = userWalletRepository.findByUser(user);
-        Optional<Driver> driver = driverRepository.findByUser(user);
+        Optional<Driver> driverOpt = driverRepository.findByUser(user);
 
         Set<String> roles = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
 
-        List<Vehicle> vehicles = driver.map(vehicleRepository::findAllByDriver).orElse(Collections.emptyList());
+        // Get vehicles nếu có driver
+        List<Vehicle> vehicles = driverOpt.map(driver -> vehicleRepository.findAllByDriver(driver)).orElse(Collections.emptyList());
 
-        boolean isDriver = driver.isPresent() && driver.get().getDriverStatus() != DriverStatus.NOT_DRIVER;
+        boolean isDriver = driverOpt.isPresent() && driverOpt.get().getDriverStatus() != DriverStatus.NOT_DRIVER;
         boolean hasVehicle = !vehicles.isEmpty();
 
-        UserProfileDTO dto = new UserProfileDTO(user, userDetail.orElse(null), userWallet.orElse(null), driver.orElse(null), vehicles);
+        // ✅ Convert UserDetail → UserDetailsCusDTO
+        UserDetailsCusDTO userDetailsCusDTO = userDetailOpt
+            .map(userDetail -> {
+                UserDetailsCusDTO dto = new UserDetailsCusDTO();
+                dto.setAppUserDetail(userDetail.getAppUserDetail());
+                dto.setPhone(userDetail.getPhone());
+                dto.setGender(userDetail.getGender());
+                dto.setAddress(userDetail.getAddress());
+                dto.setDob(userDetail.getDob());
+                dto.setImageUrl(imageUrlService.buildUserAvatarUrl(userDetail.getAppUserDetail()));
+                return dto;
+            })
+            .orElse(null);
 
+        UserProfileDTO dto = new UserProfileDTO();
+        dto.setUser(user);
+        dto.setUserDetailsCusDTO(userDetailsCusDTO);
+        dto.setUserWallet(userWallet.orElse(null));
+        dto.setDriver(driverOpt.orElse(null));
+        dto.setVehicles(vehicles);
         dto.setDriver(isDriver);
         dto.setHasVehicle(hasVehicle);
         dto.setRoles(roles);
+
         return Optional.of(dto);
     }
 
@@ -116,8 +139,10 @@ public class UserMobileService {
         userDetail.setAddress(dto.getAddress());
         userDetail.setDob(dto.getDob());
         userDetail.setGender(dto.getGender());
+
         if (dto.getUserImage() != null) {
             userDetail.setUserimage(dto.getUserImage());
+            userDetail.setUserimageContentType(dto.getUserImageContentType());
         }
 
         userDetailRepository.save(userDetail);

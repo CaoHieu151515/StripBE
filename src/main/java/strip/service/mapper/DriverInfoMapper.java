@@ -21,23 +21,23 @@ public interface DriverInfoMapper {
     @Mapping(source = "userDetail.gender", target = "gender")
     @Mapping(source = "userDetail.address", target = "address")
     @Mapping(source = "userDetail.dob", target = "dob")
-    @Mapping(source = "driver.driverLicense", target = "driverLicense")
-    @Mapping(source = "driver.identityCardFaceUp", target = "identityCardFaceUp")
-    @Mapping(source = "driver.identityCardFacedown", target = "identityCardFaceDown")
-    @Mapping(target = "vehicles", ignore = true) // Vehicles sẽ được set thủ công sau
+    @Mapping(target = "driverLicenseUrl", ignore = true)
+    @Mapping(target = "identityCardFaceUpUrl", ignore = true)
+    @Mapping(target = "identityCardFaceDownUrl", ignore = true)
+    @Mapping(target = "vehicles", ignore = true)
     DriverInfoDTO toDriverInfoDTO(User user, UserDetail userDetail, Driver driver);
 
     @Mapping(source = "vehicle.vehicleID", target = "vehicleId")
     @Mapping(source = "vehicle.vehicleType", target = "vehicleType")
-    @Mapping(source = "vehicle.vehicleImage", target = "vehicleImage")
-    @Mapping(source = "vehicle.carregistration", target = "carRegistration")
-    @Mapping(source = "vehicle.vehicleInspectionCertificate", target = "vehicleInspectionCertificate")
-    @Mapping(source = "vehicle.carInsurance", target = "carInsurance")
     @Mapping(source = "vehicle.vehicleNumber", target = "vehicleNumber")
     @Mapping(source = "vehicle.numberOfSeats", target = "numberOfSeats")
     @Mapping(source = "vehicle.vehicleColor", target = "vehicleColor")
     @Mapping(source = "vehicle.vehicleBrand", target = "vehicleBrand")
     @Mapping(source = "vehicle.status", target = "status")
+    @Mapping(target = "vehicleImageUrl", ignore = true)
+    @Mapping(target = "carRegistrationUrl", ignore = true)
+    @Mapping(target = "vehicleInspectionCertificateUrl", ignore = true)
+    @Mapping(target = "carInsuranceUrl", ignore = true)
     DriverVehicleDTO toDriverVehicleDTO(Vehicle vehicle);
 
     @Mapping(source = "user.id", target = "userId")
@@ -46,9 +46,13 @@ public interface DriverInfoMapper {
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "userDetail.phone", target = "phone")
     @Mapping(source = "driver.driverID", target = "driverId")
-    @Mapping(source = "driver.identityCardFaceUp", target = "identityCardFaceUp")
-    @Mapping(source = "driver.identityCardFacedown", target = "identityCardFaceDown")
-    @Mapping(source = "driver.driverLicense", target = "driverLicense")
     @Mapping(source = "vehicle", target = "vehicle")
+    @Mapping(target = "identityCardFaceUpUrl", ignore = true)
+    @Mapping(target = "identityCardFaceDownUrl", ignore = true)
+    @Mapping(target = "driverLicenseUrl", ignore = true)
+    @Mapping(target = "vehicle.vehicleImageUrl", ignore = true)
+    @Mapping(target = "vehicle.carregistrationUrl", ignore = true)
+    @Mapping(target = "vehicle.vehicleInspectionCertificateUrl", ignore = true)
+    @Mapping(target = "vehicle.carInsuranceUrl", ignore = true)
     ConfirmingVehicleDriverDTO toConfirmingVehicleDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle);
 }

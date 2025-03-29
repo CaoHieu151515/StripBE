@@ -11,6 +11,7 @@ public class UpdateUserProfileDTO {
     private Instant dob;
     private String gender;
     private byte[] userImage;
+    private String userImageContentType;
 
     public String getFirstName() {
         return firstName;
@@ -66,5 +67,13 @@ public class UpdateUserProfileDTO {
 
     public void setUserImage(byte[] userImage) {
         this.userImage = userImage;
+    }
+
+    public String getUserImageContentType() {
+        return userImageContentType;
+    }
+
+    public void setUserImageContentType(String userImageContentType) {
+        this.userImageContentType = userImageContentType;
     }
 }

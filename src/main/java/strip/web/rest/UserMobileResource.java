@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import strip.domain.PackageDriver;
 import strip.domain.User;
-import strip.domain.UserWallet;
-import strip.repository.UserRepository;
 import strip.service.MailService;
 import strip.service.UserMobileService;
 import strip.service.UserService;
@@ -45,20 +43,12 @@ public class UserMobileResource {
 
     private final UserMobileService userMobileService;
 
-    private final UserRepository userRepository;
-
     private final UserService userService;
 
     private final MailService mailService;
 
-    public UserMobileResource(
-        UserMobileService userMobileService,
-        UserRepository userRepository,
-        UserService userService,
-        MailService mailService
-    ) {
+    public UserMobileResource(UserMobileService userMobileService, UserService userService, MailService mailService) {
         this.userMobileService = userMobileService;
-        this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
     }

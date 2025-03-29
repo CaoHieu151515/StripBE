@@ -5,13 +5,19 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.config.ApplicationProperties;
 import strip.domain.*;
 import strip.domain.enumeration.*;
 import strip.repository.*;
+import strip.service.dto.RequestTripCusDTO;
+import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
+import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 
@@ -22,7 +28,6 @@ public class TripCustomService {
     private final TripRepository tripRepository;
     private final DriverRepository driverRepository;
     private final UserWalletRepository userWalletRepository;
-    private final WalletTransactionRepository walletTransactionRepository;
     private final SystemWalletRepository systemWalletRepository;
     private final TripStopLocationRepository tripStopLocationRepository;
     private final VehicleRepository vehicleRepository;
@@ -33,7 +38,6 @@ public class TripCustomService {
         TripRepository tripRepository,
         DriverRepository driverRepository,
         UserWalletRepository userWalletRepository,
-        WalletTransactionRepository walletTransactionRepository,
         SystemWalletRepository systemWalletRepository,
         TripStopLocationRepository tripStopLocationRepository,
         VehicleRepository vehicleRepository,
@@ -43,7 +47,6 @@ public class TripCustomService {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
         this.userWalletRepository = userWalletRepository;
-        this.walletTransactionRepository = walletTransactionRepository;
         this.systemWalletRepository = systemWalletRepository;
         this.tripStopLocationRepository = tripStopLocationRepository;
         this.vehicleRepository = vehicleRepository;
@@ -176,8 +179,10 @@ public class TripCustomService {
         return systemWalletRepository.save(sw);
     }
 
-    public List<RequestTrip> findRequestsByTripId(UUID tripId) {
-        return requestTripRepository.findAllByTrip_TripID(tripId);
+    public List<RequestTripCusDTO> getRequestTripCusDTOsByTripId(UUID tripId) {
+        List<RequestTrip> requests = findRequestsByTripId(tripId);
+
+        return requests.stream().map(this::mapToRequestTripCusDTO).collect(Collectors.toList());
     }
 
     @Transactional
@@ -199,6 +204,10 @@ public class TripCustomService {
         }
     }
 
+    public List<RequestTrip> findRequestsByTripId(UUID tripId) {
+        return requestTripRepository.findAllByTrip_TripID(tripId);
+    }
+
     @Transactional
     public Trip updateTripInfo(UUID tripId, TripUpdateDTO dto) {
         Trip trip = tripRepository.findByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
@@ -215,8 +224,16 @@ public class TripCustomService {
         return tripRepository.save(trip);
     }
 
-    public Trip getFullTrip(UUID tripId) {
-        return tripRepository.findFullTripByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+    public TripCusDTO getFullTrip(UUID tripId) {
+        Trip trip = tripRepository.findFullTripByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+
+        TripCusDTO dto = buildTripBasicInfo(trip);
+        setTripImageUrl(dto, trip);
+        setDriverInfo(dto, trip);
+        setVehicleInfo(dto, trip);
+        setStopLocations(dto, trip);
+
+        return dto;
     }
 
     @Transactional
@@ -335,5 +352,137 @@ public class TripCustomService {
         request.setCheckOutTIme(Instant.now());
 
         return requestTripRepository.save(request);
+    }
+
+    public List<TripCardDTO> getAvailableTripsForPassenger() {
+        List<TripStatus> statuses = List.of(TripStatus.UPCOMING, TripStatus.CONFIRMING);
+        List<Trip> trips = tripRepository.findAvailableTrips(statuses);
+
+        return trips
+            .stream()
+            .map(trip -> {
+                TripCardDTO dto = new TripCardDTO();
+                dto.setTripID(trip.getTripID());
+                dto.setStartLocation(trip.getStartLocation());
+                dto.setEndLocation(trip.getEndLocation());
+                dto.setStartDate(trip.getStartDate());
+                dto.setPricePerSeat(trip.getPricePerSeat());
+                dto.setCurrentSeat(trip.getCurrentSeat());
+                dto.setMaxSeat(trip.getMaxSeat());
+                dto.setTripImgUrl(buildTripImageUrl(trip.getTripID()));
+
+                if (trip.getDriver() != null) {
+                    dto.setDriverName(trip.getDriver().getUser().getFirstName()); // hoặc "Ẩn danh"
+                }
+                if (trip.getVehicle() != null) {
+                    dto.setVehicleType(trip.getVehicle().getVehicleType());
+                }
+
+                return dto;
+            })
+            .collect(Collectors.toList());
+    }
+
+    private RequestTripCusDTO mapToRequestTripCusDTO(RequestTrip request) {
+        RequestTripCusDTO dto = new RequestTripCusDTO();
+
+        dto.setRequestTripID(request.getRequestTripID());
+        dto.setStartLoca(request.getStartLoca());
+        dto.setEndLoca(request.getEndLoca());
+        dto.setAmountApproveFee(request.getAmountApproveFee());
+        dto.setNumberofSeats(request.getNumberofSeats());
+        dto.setLuggageDescription(request.getLuggageDescription());
+        dto.setType(request.getType());
+        dto.setStatus(request.getStatus());
+        dto.setPickUpTime(request.getPickUpTime());
+        dto.setEndTime(request.getEndTime());
+        dto.setCheckIn(request.getCheckIn());
+        dto.setCheckInTime(request.getCheckInTime());
+        dto.setCheckOut(request.getCheckOut());
+        dto.setCheckOutTIme(request.getCheckOutTIme());
+        dto.setAppliedAt(request.getAppliedAt());
+
+        // ✅ URL ảnh hành lý (dùng cùng tiêu chuẩn với ImageResource)
+        dto.setLuggageImgUrl(buildLuggageImageUrl(request.getRequestTripID()));
+
+        return dto;
+    }
+
+    private TripCusDTO buildTripBasicInfo(Trip trip) {
+        TripCusDTO dto = new TripCusDTO();
+        dto.setTripID(trip.getTripID());
+        dto.setStartLocation(trip.getStartLocation());
+        dto.setEndLocation(trip.getEndLocation());
+        dto.setDescription(trip.getDescription());
+        dto.setCondition(trip.getCondition());
+        dto.setStartDate(trip.getStartDate());
+        dto.setEndDate(trip.getEndDate());
+        dto.setPricePerSeat(trip.getPricePerSeat());
+        dto.setMaxSeat(trip.getMaxSeat());
+        dto.setCurrentSeat(trip.getCurrentSeat());
+        dto.setTripStatus(trip.getTripStatus());
+        dto.setCancelReason(trip.getCancelReason());
+        return dto;
+    }
+
+    private void setDriverInfo(TripCusDTO dto, Trip trip) {
+        if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
+            dto.setDriverName(trip.getDriver().getUser().getFirstName());
+            dto.setDriverPhone(trip.getDriver().getUser().getEmail()); // hoặc userDetail.phone nếu có
+        }
+    }
+
+    private void setVehicleInfo(TripCusDTO dto, Trip trip) {
+        if (trip.getVehicle() != null) {
+            dto.setVehicleID(trip.getVehicle().getVehicleID());
+            dto.setVehicleType(trip.getVehicle().getVehicleType());
+            dto.setVehicleNumber(trip.getVehicle().getVehicleNumber());
+            dto.setNumberOfSeats(trip.getVehicle().getNumberOfSeats());
+            dto.setVehicleColor(trip.getVehicle().getVehicleColor());
+            dto.setVehicleBrand(trip.getVehicle().getVehicleBrand());
+
+            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/images/vehicle/")
+                .path(trip.getVehicle().getVehicleID().toString())
+                .toUriString();
+            dto.setVehicleImageUrl(imageUrl);
+        }
+    }
+
+    private void setStopLocations(TripCusDTO dto, Trip trip) {
+        if (trip.getTripStopLocations() != null) {
+            List<TripStopLocationDTO> stopDTOs = trip
+                .getTripStopLocations()
+                .stream()
+                .map(stop -> {
+                    TripStopLocationDTO s = new TripStopLocationDTO();
+                    s.setStopLoca(stop.getStopLoca());
+                    s.setStopLocaTime(stop.getStopLocaTime());
+                    s.setStopLocaStatus(stop.getStopLocaStatus());
+                    return s;
+                })
+                .toList();
+            dto.setStopLocations(stopDTOs);
+        }
+    }
+
+    private void setTripImageUrl(TripCusDTO dto, Trip trip) {
+        String url = buildTripImageUrl(trip.getTripID());
+        dto.setTripImgUrl(url);
+    }
+
+    public String buildLuggageImageUrl(UUID requestTripId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/request-trip/luggage/")
+            .path(requestTripId.toString())
+            .toUriString();
+    }
+
+    public String buildTripImageUrl(UUID tripId) {
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/images/trips/")
+            .path(tripId.toString())
+            .path("/cover")
+            .toUriString();
     }
 }

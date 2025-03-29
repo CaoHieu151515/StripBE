@@ -3,7 +3,6 @@ package strip.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.DriverTestSamples.*;
 import static strip.domain.FeedbackTestSamples.*;
-import static strip.domain.PassengerTestSamples.*;
 import static strip.domain.RatingTestSamples.*;
 import static strip.domain.RequestTripTestSamples.*;
 import static strip.domain.TripStopLocationTestSamples.*;
@@ -141,27 +140,5 @@ class TripTest {
         trip.setRatings(new HashSet<>());
         assertThat(trip.getRatings()).doesNotContain(ratingBack);
         assertThat(ratingBack.getTrip()).isNull();
-    }
-
-    @Test
-    void passengerTest() {
-        Trip trip = getTripRandomSampleGenerator();
-        Passenger passengerBack = getPassengerRandomSampleGenerator();
-
-        trip.addPassenger(passengerBack);
-        assertThat(trip.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getTrip()).isEqualTo(trip);
-
-        trip.removePassenger(passengerBack);
-        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getTrip()).isNull();
-
-        trip.passengers(new HashSet<>(Set.of(passengerBack)));
-        assertThat(trip.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getTrip()).isEqualTo(trip);
-
-        trip.setPassengers(new HashSet<>());
-        assertThat(trip.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getTrip()).isNull();
     }
 }

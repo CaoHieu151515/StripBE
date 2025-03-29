@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
-import strip.service.UserService;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
@@ -38,24 +37,15 @@ import tech.jhipster.web.util.PaginationUtil;
 @RequestMapping("/api/manager")
 public class ManagerResource {
 
-    private static class ManagerResourceException extends RuntimeException {
-
-        private ManagerResourceException(String message) {
-            super(message);
-        }
-    }
-
     private static final List<String> ALLOWED_ORDERED_PROPERTIES = Collections.unmodifiableList(
         Arrays.asList("id", "username", "firstName", "lastName", "email", "active", "gender", "phoneNumber")
     );
 
-    private final UserService userService;
     private final UsermanageService usermanageService;
 
     private final Logger log = LoggerFactory.getLogger(ManagerResource.class);
 
-    public ManagerResource(UserService userService, UsermanageService usermanageService) {
-        this.userService = userService;
+    public ManagerResource(UsermanageService usermanageService) {
         this.usermanageService = usermanageService;
     }
 

@@ -8,9 +8,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import strip.domain.RequestTrip;
 import strip.domain.Trip;
-import strip.security.SecurityUtils;
 import strip.service.TripCustomService;
+import strip.service.dto.RequestTripCusDTO;
+import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
+import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 
@@ -33,9 +35,9 @@ public class TripMobileResource {
     }
 
     @GetMapping("/{tripId}/requests/getall")
-    public ResponseEntity<List<RequestTrip>> getRequestsForTrip(@PathVariable UUID tripId) {
-        List<RequestTrip> requests = tripCustomService.findRequestsByTripId(tripId);
-        return ResponseEntity.ok(requests);
+    public ResponseEntity<List<RequestTripCusDTO>> getRequestsForTrip(@PathVariable UUID tripId) {
+        List<RequestTripCusDTO> dtos = tripCustomService.getRequestTripCusDTOsByTripId(tripId);
+        return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("/{tripId}/locations/update")
@@ -54,8 +56,8 @@ public class TripMobileResource {
     }
 
     @GetMapping("/{tripId}/trip/fulldetails")
-    public ResponseEntity<Trip> getFullTrip(@PathVariable UUID tripId) {
-        Trip trip = tripCustomService.getFullTrip(tripId);
+    public ResponseEntity<TripCusDTO> getFullTrip(@PathVariable UUID tripId) {
+        TripCusDTO trip = tripCustomService.getFullTrip(tripId);
         return ResponseEntity.ok(trip);
     }
 
@@ -85,5 +87,11 @@ public class TripMobileResource {
     @PutMapping("/request-trips/{requestTripId}/check-out")
     public ResponseEntity<RequestTrip> checkOut(@PathVariable UUID requestTripId) {
         return ResponseEntity.ok(tripCustomService.checkOut(requestTripId));
+    }
+
+    @GetMapping("/getAll/card")
+    public ResponseEntity<List<TripCardDTO>> getAvailableTripsForPassenger() {
+        List<TripCardDTO> tripCards = tripCustomService.getAvailableTripsForPassenger();
+        return ResponseEntity.ok(tripCards);
     }
 }

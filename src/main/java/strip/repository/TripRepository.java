@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import strip.domain.Trip;
+import strip.domain.enumeration.TripStatus;
 
 /**
  * Spring Data JPA repository for the Trip entity.
@@ -32,4 +33,7 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
         "WHERE t.tripID = :tripId"
     )
     Optional<Trip> findFullTripByTripID(@Param("tripId") UUID tripId);
+
+    @Query("SELECT t FROM Trip t WHERE t.tripStatus IN (:statuses) AND t.currentSeat < t.maxSeat ORDER BY t.startDate ASC")
+    List<Trip> findAvailableTrips(@Param("statuses") List<TripStatus> statuses);
 }
