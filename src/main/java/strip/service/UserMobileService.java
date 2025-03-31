@@ -20,9 +20,11 @@ import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.UserWallet;
 import strip.domain.Vehicle;
+import strip.domain.WalletDeposit;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.DriverStatus;
 import strip.domain.enumeration.PackageDriverStatus;
+import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.WalletTransactionType;
@@ -33,6 +35,7 @@ import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
+import strip.repository.WalletDepositRepository;
 import strip.repository.WalletTransactionRepository;
 import strip.security.SecurityUtils;
 import strip.service.dto.ConfirmingDriverDTO;
@@ -44,6 +47,7 @@ import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserDetailsCusDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
+import strip.service.dto.WithdrawRequestDTO;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -60,6 +64,7 @@ public class UserMobileService {
     private final PackageDriverRepository packageDriverRepository;
     private final SystemWalletRepository systemWalletRepository;
     private final ImageUrlService imageUrlService;
+    private final WalletDepositRepository walletDepositRepository;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -71,7 +76,8 @@ public class UserMobileService {
         WalletTransactionRepository walletTransactionRepository,
         PackageDriverRepository packageDriverRepository,
         SystemWalletRepository systemWalletRepository,
-        ImageUrlService imageUrlService
+        ImageUrlService imageUrlService,
+        WalletDepositRepository walletDepositRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -83,6 +89,7 @@ public class UserMobileService {
         this.packageDriverRepository = packageDriverRepository;
         this.systemWalletRepository = systemWalletRepository;
         this.imageUrlService = imageUrlService;
+        this.walletDepositRepository = walletDepositRepository;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -538,5 +545,49 @@ public class UserMobileService {
             // ✅ Nếu status = NOT_DRIVER và usedToDriver = false thì vẫn cho nộp đơn
         }
         // ✅ Nếu chưa có Driver record → cho nộp đơn
+    }
+
+    @Transactional
+    public void createWithdrawRequest(WithdrawRequestDTO dto) {
+        if (dto.getAmount() == null || dto.getAmount() <= 0) {
+            throw new BadRequestAlertException("Số tiền rút không hợp lệ", "wallet", "invalidAmount");
+        }
+
+        User user = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        UserWallet wallet = userWalletRepository
+            .findByUser(user)
+            .orElseThrow(() -> new BadRequestAlertException("Người dùng chưa có ví", "wallet", "notfound"));
+
+        if (wallet.getCurrent() == null || wallet.getCurrent() < dto.getAmount()) {
+            throw new BadRequestAlertException("Số dư không đủ", "wallet", "insufficientBalance");
+        }
+
+        // ✅ Tạo WalletDeposit
+        WalletDeposit deposit = new WalletDeposit();
+        deposit.setId(UUID.randomUUID());
+        deposit.setAmount(dto.getAmount());
+        deposit.setDate(Instant.now());
+        deposit.setStatus(PaymentStatus.PENDING);
+        deposit.setBank(dto.getBankName());
+        deposit.setBankNumber(dto.getBankNumber());
+        deposit.setNameOfBank(dto.getNameOfBank());
+        deposit.setUserWallet(wallet);
+
+        walletDepositRepository.save(deposit);
+
+        // ✅ Tạo WalletTransaction tương ứng
+        WalletTransaction trans = new WalletTransaction();
+        trans.setTransID(UUID.randomUUID());
+        trans.setAmount(dto.getAmount());
+        trans.setDate(Instant.now());
+        trans.setWalletType(WalletTransactionType.WITHDRAW);
+        trans.setTransStatus(TransactionStatus.SUCCESS);
+        trans.setUserWallet(wallet);
+
+        wallet.addWalletTransactionAndUpdateBalance(trans);
+        userWalletRepository.save(wallet); // cascade transaction
     }
 }

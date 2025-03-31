@@ -27,6 +27,7 @@ import strip.service.dto.PasswordChangeDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
+import strip.service.dto.WithdrawRequestDTO;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.vm.KeyAndPasswordVM;
 import strip.web.rest.vm.ManagedUserVM;
@@ -108,12 +109,6 @@ public class UserMobileResource {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/wallet/full")
-    public ResponseEntity<UserWalletWithTransactionsDTO> getFullWalletInfo() {
-        UserWalletWithTransactionsDTO dto = userMobileService.getWalletAndTransactions();
-        return ResponseEntity.ok(dto);
-    }
-
     @GetMapping("/view/allpackages")
     public ResponseEntity<List<PackageDriver>> getDriverPackages() {
         return ResponseEntity.ok(userMobileService.getAvailableDriverPackages());
@@ -137,5 +132,17 @@ public class UserMobileResource {
     public ResponseEntity<ConfirmingVehicleDriverDTO> getDriverApplication() {
         log.debug("📨 REST request to get existing driver application");
         return userMobileService.getDriverApplication().map(ResponseEntity::ok).orElse(ResponseEntity.ok(new ConfirmingVehicleDriverDTO())); // fallback nếu lỗi
+    }
+
+    @PostMapping("/wallet/withdraw")
+    public ResponseEntity<?> requestWithdraw(@RequestBody WithdrawRequestDTO dto) {
+        userMobileService.createWithdrawRequest(dto);
+        return ResponseEntity.ok("✅ Gửi yêu cầu rút tiền thành công!");
+    }
+
+    @GetMapping("/wallet/full")
+    public ResponseEntity<UserWalletWithTransactionsDTO> getFullWalletInfo() {
+        UserWalletWithTransactionsDTO dto = userMobileService.getWalletAndTransactions();
+        return ResponseEntity.ok(dto);
     }
 }

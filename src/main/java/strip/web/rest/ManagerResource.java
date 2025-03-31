@@ -31,6 +31,7 @@ import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.UsermanageDTO;
+import strip.service.dto.WithdrawalRequestManageDTO;
 import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
@@ -79,9 +80,12 @@ public class ManagerResource {
 
     // @GetMapping("/details/{id}")
     // @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    // public ResponseEntity<UsermanageDetailsDTO> getManagerDetailsById(@PathVariable Long id) {
-    //     log.debug("REST request to get detailed Manager information: {}", id);
-    //     return usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // public ResponseEntity<UsermanageDetailsDTO>
+    // getManagerDetailsById(@PathVariable Long id) {
+    // log.debug("REST request to get detailed Manager information: {}", id);
+    // return
+    // usermanageService.getUserDetailsById(id).map(ResponseEntity::ok).orElseGet(()
+    // -> ResponseEntity.notFound().build());
     // }
 
     @GetMapping("/driver/details/{username}")
@@ -152,5 +156,22 @@ public class ManagerResource {
     public ResponseEntity<PackageDriver> expirePackage(@PathVariable UUID driverid) {
         Optional<PackageDriver> updatedPackage = usermanageService.expirePackage(driverid);
         return updatedPackage.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/wallet/withdraw/pending")
+    public ResponseEntity<List<WithdrawalRequestManageDTO>> getPendingRequests() {
+        return ResponseEntity.ok(usermanageService.getPendingWithdrawalRequests());
+    }
+
+    @PutMapping("/wallet/withdraw/approve/{depositId}")
+    public ResponseEntity<Void> approveWithdrawal(@PathVariable UUID depositId) {
+        usermanageService.approveWithdrawal(depositId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/wallet/reject/{depositId}")
+    public ResponseEntity<Void> rejectWithdrawal(@PathVariable UUID depositId) {
+        usermanageService.rejectWithdrawal(depositId);
+        return ResponseEntity.noContent().build();
     }
 }

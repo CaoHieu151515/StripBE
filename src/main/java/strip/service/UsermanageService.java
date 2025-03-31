@@ -1,6 +1,7 @@
 package strip.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,15 +20,25 @@ import strip.domain.Driver;
 import strip.domain.PackageDriver;
 import strip.domain.User;
 import strip.domain.UserDetail;
+import strip.domain.UserWallet;
 import strip.domain.Vehicle;
+import strip.domain.WalletDeposit;
+import strip.domain.WalletTransaction;
 import strip.domain.enumeration.DriverStatus;
 import strip.domain.enumeration.PackageDriverStatus;
+import strip.domain.enumeration.PaymentStatus;
+import strip.domain.enumeration.PaymentStatus;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.VehicleStatus;
+import strip.domain.enumeration.VehicleStatus;
+import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
+import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
+import strip.repository.WalletDepositRepository;
 import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
@@ -35,8 +46,11 @@ import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
+import strip.service.dto.WithdrawalRequestManageDTO;
 import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.PackageDriverMapper;
+import strip.service.mapper.UsermanageMapper;
+import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -50,6 +64,9 @@ public class UsermanageService {
     private final VehicleRepository vehicleRepository;
     private final PackageDriverRepository packageDriverRepository;
     private final PackageDriverMapper packageDriverMapper;
+    private final WalletDepositRepository walletDepositRepository;
+    private final UsermanageMapper usermanageMapper;
+    private final UserWalletRepository userWalletRepository;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -59,7 +76,10 @@ public class UsermanageService {
         VehicleService vehicleService,
         VehicleRepository vehicleRepository,
         PackageDriverRepository packageDriverRepository,
-        PackageDriverMapper packageDriverMapper
+        PackageDriverMapper packageDriverMapper,
+        WalletDepositRepository walletDepositRepository,
+        UsermanageMapper usermanageMapper,
+        UserWalletRepository userWalletRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -68,6 +88,9 @@ public class UsermanageService {
         this.vehicleRepository = vehicleRepository;
         this.packageDriverRepository = packageDriverRepository;
         this.packageDriverMapper = packageDriverMapper;
+        this.walletDepositRepository = walletDepositRepository;
+        this.usermanageMapper = usermanageMapper;
+        this.userWalletRepository = userWalletRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -395,5 +418,58 @@ public class UsermanageService {
             .path("/api/images/vehicle/insurance/")
             .path(vehicleId.toString())
             .toUriString();
+    }
+
+    public List<WithdrawalRequestManageDTO> getPendingWithdrawalRequests() {
+        List<WalletDeposit> deposits = walletDepositRepository.findByStatus(PaymentStatus.PENDING);
+        return usermanageMapper.toWithdrawalRequestManageDTOs(deposits);
+    }
+
+    @Transactional
+    public void approveWithdrawal(UUID depositId) {
+        WalletDeposit deposit = walletDepositRepository
+            .findById(depositId)
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy yêu cầu rút tiền", "wallet", "notfound"));
+
+        if (deposit.getStatus() != PaymentStatus.PENDING) {
+            throw new BadRequestAlertException("Yêu cầu đã được xử lý rồi", "wallet", "alreadyProcessed");
+        }
+
+        deposit.setStatus(PaymentStatus.SUCCESS);
+
+        log.info("✅ Đã xác nhận rút tiền cho user: {}", deposit.getUserWallet().getUser().getLogin());
+    }
+
+    @Transactional
+    public void rejectWithdrawal(UUID depositId) {
+        WalletDeposit deposit = walletDepositRepository
+            .findById(depositId)
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy yêu cầu rút tiền", "wallet", "notfound"));
+
+        if (deposit.getStatus() != PaymentStatus.PENDING) {
+            throw new BadRequestAlertException("Yêu cầu đã được xử lý rồi", "wallet", "alreadyProcessed");
+        }
+
+        // ❌ Đánh dấu từ chối
+        deposit.setStatus(PaymentStatus.FAILED);
+
+        // 🔁 Tạo REFUND transaction để trả lại tiền cho user
+        WalletTransaction transaction = new WalletTransaction();
+        transaction.setTransID(UUID.randomUUID());
+        transaction.setAmount(deposit.getAmount());
+        transaction.setDate(Instant.now());
+        transaction.setWalletType(WalletTransactionType.REFUND);
+        transaction.setTransStatus(TransactionStatus.SUCCESS);
+
+        UserWallet userWallet = deposit.getUserWallet();
+
+        if (userWallet == null) {
+            throw new BadRequestAlertException("Không tìm thấy ví người dùng", "wallet", "missingWallet");
+        }
+
+        userWallet.addWalletTransactionAndUpdateBalance(transaction);
+        userWalletRepository.save(userWallet);
+
+        log.info("❌ Đã từ chối rút tiền và hoàn tiền lại cho user: {}", userWallet.getUser().getLogin());
     }
 }

@@ -13,6 +13,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.WalletTransactionType;
+import strip.web.rest.errors.BadRequestAlertException;
 
 /**
  * A UserWallet.
@@ -186,22 +187,24 @@ public class UserWallet implements Serializable {
         transaction.setUserWallet(this);
         this.walletTransactions.add(transaction);
 
+        // Kiểm tra trạng thái giao dịch là SUCCESS
         if (transaction.getTransStatus() == TransactionStatus.SUCCESS) {
             double amount = transaction.getAmount() != null ? transaction.getAmount() : 0.0;
             WalletTransactionType type = transaction.getWalletType();
 
             System.out.println("Giao dịch: " + transaction.getWalletType() + ", amount: " + transaction.getAmount());
+
             if (this.current == null) {
                 this.current = 0.0;
             }
 
             this.before = this.current;
-            // Những loại giao dịch trừ tiền từ ví người dùng
+
+            // Kiểm tra số dư đủ cho giao dịch rút tiền khi PENDING và WITHDRAW
+            if (type == WalletTransactionType.WITHDRAW && this.current < amount) {
+                throw new BadRequestAlertException("Số dư không đủ để rút tiền", "wallet", "insufficientBalance");
+            }
             switch (type) {
-                case WITHDRAW:
-                    this.current -= amount;
-                    isDebit = true;
-                    break;
                 case DRIVER_CREATE_TRIP_FEE:
                     this.current -= amount;
                     isDebit = true;
@@ -215,6 +218,10 @@ public class UserWallet implements Serializable {
                     isDebit = true;
                     break;
                 case DRIVER_BUY_PACKAGE:
+                    this.current -= amount;
+                    isDebit = true;
+                    break;
+                case WITHDRAW:
                     this.current -= amount;
                     isDebit = true;
                     break;

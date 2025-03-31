@@ -2,7 +2,6 @@ package strip.service.dto;
 
 import java.util.List;
 import java.util.Set;
-import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserWallet;
 
