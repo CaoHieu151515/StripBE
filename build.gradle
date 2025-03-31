@@ -182,6 +182,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-websocket"
     implementation "org.springframework.security:spring-security-messaging"
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+    implementation 'com.braintreepayments.gateway:braintree-java:3.24.0'
     // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

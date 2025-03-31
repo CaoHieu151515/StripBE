@@ -15,6 +15,7 @@ import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
 import { sendActivity } from 'app/config/websocket-middleware';
+// import BraintreeDropIn from 'app/modules/braintree/braintree-test';
 
 const loading = <div>loading ...</div>;
 
@@ -63,6 +64,7 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+        {/* <Route path="braintree-test" element={<BraintreeDropIn />} /> */}
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>
     </div>

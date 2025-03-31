@@ -13,7 +13,7 @@ public class CurrentUserDTO {
     private String gender;
     private String address;
     private Instant dob;
-    private byte[] userImage;
+    private String userImageUrl;
 
     public CurrentUserDTO() {
         // Default constructor
@@ -83,11 +83,11 @@ public class CurrentUserDTO {
         this.dob = dob;
     }
 
-    public byte[] getUserImage() {
-        return userImage;
+    public String getUserImageUrl() {
+        return userImageUrl;
     }
 
-    public void setUserImage(byte[] userImage) {
-        this.userImage = userImage;
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 }

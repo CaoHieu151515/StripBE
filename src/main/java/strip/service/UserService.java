@@ -63,6 +63,8 @@ public class UserService {
 
     private final UserWalletRepository userWalletRepository;
 
+    private final ImageUrlService imageUrlService;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
@@ -71,7 +73,8 @@ public class UserService {
         OtpCacheService otpCacheService,
         UserDetailRepository userDetailRepository,
         DriverRepository driverRepository,
-        UserWalletRepository userWalletRepository
+        UserWalletRepository userWalletRepository,
+        ImageUrlService imageUrlService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -81,6 +84,7 @@ public class UserService {
         this.userDetailRepository = userDetailRepository;
         this.driverRepository = driverRepository;
         this.userWalletRepository = userWalletRepository;
+        this.imageUrlService = imageUrlService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -450,7 +454,7 @@ public class UserService {
                         dto.setGender(detail.getGender());
                         dto.setAddress(detail.getAddress());
                         dto.setDob(detail.getDob());
-                        dto.setUserImage(detail.getUserimage());
+                        dto.setUserImageUrl(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
                     });
 
                 return dto;

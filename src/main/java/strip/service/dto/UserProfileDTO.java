@@ -5,15 +5,14 @@ import java.util.Set;
 import strip.domain.Driver;
 import strip.domain.User;
 import strip.domain.UserWallet;
-import strip.domain.Vehicle;
 
 public class UserProfileDTO {
 
     private User user;
     private UserDetailsCusDTO userDetailsCusDTO;
     private UserWallet userWallet;
-    private Driver driver;
-    private List<Vehicle> vehicles;
+    private DriverInfoDTO driver;
+    private List<DriverVehicleDTO> driverVehicleDTO;
     private boolean isDriver;
     private boolean hasVehicle;
     private Set<String> roles;
@@ -24,8 +23,8 @@ public class UserProfileDTO {
         User user,
         UserDetailsCusDTO userDetailsCusDTO,
         UserWallet userWallet,
-        Driver driver,
-        List<Vehicle> vehicles,
+        DriverInfoDTO driver,
+        List<DriverVehicleDTO> driverVehicleDTO,
         boolean isDriver,
         boolean hasVehicle,
         Set<String> roles
@@ -34,7 +33,7 @@ public class UserProfileDTO {
         this.userDetailsCusDTO = userDetailsCusDTO;
         this.userWallet = userWallet;
         this.driver = driver;
-        this.vehicles = vehicles;
+        this.driverVehicleDTO = driverVehicleDTO;
         this.isDriver = isDriver;
         this.hasVehicle = hasVehicle;
         this.roles = roles;
@@ -64,20 +63,12 @@ public class UserProfileDTO {
         this.userWallet = userWallet;
     }
 
-    public Driver getDriver() {
+    public DriverInfoDTO getDriver() {
         return driver;
     }
 
-    public void setDriver(Driver driver) {
+    public void setDriver(DriverInfoDTO driver) {
         this.driver = driver;
-    }
-
-    public List<Vehicle> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(List<Vehicle> vehicles) {
-        this.vehicles = vehicles;
     }
 
     public boolean isDriver() {
@@ -102,5 +93,13 @@ public class UserProfileDTO {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public List<DriverVehicleDTO> getDriverVehicleDTO() {
+        return driverVehicleDTO;
+    }
+
+    public void setDriverVehicleDTO(List<DriverVehicleDTO> driverVehicleDTO) {
+        this.driverVehicleDTO = driverVehicleDTO;
     }
 }
