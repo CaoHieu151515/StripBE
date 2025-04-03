@@ -1,11 +1,11 @@
-id;stop_loca_id;stop_loca;stop_loca_time;stop_loca_status
-1;fe5f65d0-6fd3-43db-90d1-677fb00f6042;aw wheel finally;2025-03-02T16:42:51;ack
-2;1f97a71d-7846-4ea4-80a5-eb4480341b95;when;2025-03-02T06:02:16;athwart phooey
-3;bfa533b8-b0e2-49b3-987a-3211a2adace4;mostly um however;2025-03-02T22:24:22;every hairy dreary
-4;ae2abf38-4bda-4443-8b74-5be1fef4e3ac;huzzah stark;2025-03-02T20:28:02;maestro really apropos
-5;3a6b31b9-f532-471b-9269-fa989ff16f00;break misread;2025-03-02T11:31:16;travel
-6;25db82de-960b-4709-8660-5dcf6442edf9;yum whole hm;2025-03-02T05:44:19;brr gadzooks and
-7;fd71e572-a340-4b87-acb4-a9bd51273f74;gleaming;2025-03-02T04:59:12;brr gee
-8;0bc49a01-b105-42b8-9579-b2935f7ffc05;farmer pfft;2025-03-02T22:59:00;inasmuch
-9;2e23e211-2c42-436c-93aa-823a38b6d6da;longingly;2025-03-02T12:00:49;serve
-10;89e026de-1672-44f6-8bd5-ebd67f24710b;dead hm;2025-03-02T06:03:56;politely prioritize for
+id;stop_loca_id;stop_loca;stoploca_position;estimated_time;estimated_km;stop_loca_time;stop_loca_status
+1;fe5f65d0-6fd3-43db-90d1-677fb00f6042;aw wheel finally;17883;1426;21264.95;2025-03-03T03:00:10;next mysteriously repeatedly
+2;5eb44803-41b9-4522-87ed-30ab1826153a;procurement;32144;21818;10323.85;2025-03-02T08:41:54;patiently
+3;b387a321-1a2a-4dac-9e47-e76b3e08c219;fatal;9609;25655;25127.75;2025-03-02T07:23:03;reproachfully poor sweatshop
+4;2abf384b-da44-43b7-b45b-e1fef4e3ac3a;between rotten maestro;12681;15803;15630.45;2025-03-02T18:41:44;who
+5;d23a6b31-b9f5-4327-81b2-69fa989ff16f;dulcimer;8102;2942;26235.57;2025-03-02T05:42:36;sheathe anti transparency
+6;960b7096-605d-4cf6-9442-edf91d97d4c6;zesty busily;29185;28701;3884.18;2025-03-02T11:26:12;across
+7;9da9daf8-60fd-471e-a572-a340b87cb4a9;internalise marten till;14152;266;17358.78;2025-03-02T20:14:22;gee behold
+8;1b1052b8-579b-4293-85f7-ffc0548c63ff;pfft;26443;10219;19243.89;2025-03-02T23:55:57;even scope duh
+9;a823a38b-6d6d-4a43-be01-f4575437e2f0;pish heartache;23472;26811;12104.21;2025-03-03T01:57:28;monthly flu uh-huh
+10;563551fc-962f-419b-910e-6aa0a4c4c3f2;than;29072;6520;13158.46;2025-03-02T17:44:55;huzzah yowza

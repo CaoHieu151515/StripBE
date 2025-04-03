@@ -48,6 +48,15 @@ export const TripStopLocationUpdate = () => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
     }
+    if (values.stoplocaPosition !== undefined && typeof values.stoplocaPosition !== 'number') {
+      values.stoplocaPosition = Number(values.stoplocaPosition);
+    }
+    if (values.estimatedTime !== undefined && typeof values.estimatedTime !== 'number') {
+      values.estimatedTime = Number(values.estimatedTime);
+    }
+    if (values.estimatedKM !== undefined && typeof values.estimatedKM !== 'number') {
+      values.estimatedKM = Number(values.estimatedKM);
+    }
     values.stopLocaTime = convertDateTimeToServer(values.stopLocaTime);
 
     const entity = {
@@ -111,6 +120,27 @@ export const TripStopLocationUpdate = () => {
                 id="trip-stop-location-stopLoca"
                 name="stopLoca"
                 data-cy="stopLoca"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.tripStopLocation.stoplocaPosition')}
+                id="trip-stop-location-stoplocaPosition"
+                name="stoplocaPosition"
+                data-cy="stoplocaPosition"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.tripStopLocation.estimatedTime')}
+                id="trip-stop-location-estimatedTime"
+                name="estimatedTime"
+                data-cy="estimatedTime"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.tripStopLocation.estimatedKM')}
+                id="trip-stop-location-estimatedKM"
+                name="estimatedKM"
+                data-cy="estimatedKM"
                 type="text"
               />
               <ValidatedField

@@ -1,0 +1,30 @@
+{
+  "sTripBeApp": {
+    "driverPointHistory": {
+      "home": {
+        "title": "Driver Point Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Driver Point History",
+        "createOrEditLabel": "Create or edit a Driver Point History",
+        "notFound": "No Driver Point Histories found"
+      },
+      "created": "A new Driver Point History is created with identifier {{ param }}",
+      "updated": "A Driver Point History is updated with identifier {{ param }}",
+      "deleted": "A Driver Point History is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Driver Point History {{ id }}?"
+      },
+      "detail": {
+        "title": "Driver Point History"
+      },
+      "id": "ID",
+      "pointId": "Point Id",
+      "point": "Point",
+      "reason": "Reason",
+      "date": "Date",
+      "status": "Status",
+      "driver": "Driver",
+      "userDetail": "User Detail"
+    }
+  }
+}

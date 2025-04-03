@@ -20,6 +20,9 @@
       "id": "ID",
       "stopLocaID": "Stop Loca ID",
       "stopLoca": "Stop Loca",
+      "stoplocaPosition": "Stoploca Position",
+      "estimatedTime": "Estimated Time",
+      "estimatedKM": "Estimated KM",
       "stopLocaTime": "Stop Loca Time",
       "stopLocaStatus": "Stop Loca Status",
       "trip": "Trip"

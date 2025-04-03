@@ -5,6 +5,7 @@ package strip.domain.enumeration;
  */
 public enum VehicleStatus {
     ACTIVE,
+    INACTIVE,
     CONFIRMING,
     REJECTED,
 }

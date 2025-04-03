@@ -329,7 +329,7 @@ class PackageDriverResourceIT {
         PackageDriver partialUpdatedPackageDriver = new PackageDriver();
         partialUpdatedPackageDriver.setId(packageDriver.getId());
 
-        partialUpdatedPackageDriver.description(UPDATED_DESCRIPTION).time(UPDATED_TIME);
+        partialUpdatedPackageDriver.price(UPDATED_PRICE).description(UPDATED_DESCRIPTION).bonus(UPDATED_BONUS);
 
         restPackageDriverMockMvc
             .perform(

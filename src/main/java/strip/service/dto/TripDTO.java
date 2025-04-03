@@ -26,6 +26,10 @@ public class TripDTO implements Serializable {
 
     private Integer maxSeat;
 
+    private Integer totalTime;
+
+    private Double totalDistance;
+
     private Instant startDate;
 
     private Instant endDate;
@@ -94,6 +98,22 @@ public class TripDTO implements Serializable {
 
     public void setMaxSeat(Integer maxSeat) {
         this.maxSeat = maxSeat;
+    }
+
+    public Integer getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(Integer totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public Instant getStartDate() {
@@ -214,6 +234,8 @@ public class TripDTO implements Serializable {
             ", tripImg='" + getTripImg() + "'" +
             ", pricePerSeat=" + getPricePerSeat() +
             ", maxSeat=" + getMaxSeat() +
+            ", totalTime=" + getTotalTime() +
+            ", totalDistance=" + getTotalDistance() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
             ", currentSeat=" + getCurrentSeat() +

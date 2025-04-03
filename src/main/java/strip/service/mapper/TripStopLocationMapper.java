@@ -18,12 +18,4 @@ public interface TripStopLocationMapper extends EntityMapper<TripStopLocationDTO
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     TripDTO toDtoTripId(Trip trip);
-    // @Mapping(target = "trip", source = "trip", qualifiedByName = "tripId")
-    // TripStopLocationDTO toDtoNoTrip(TripStopLocation s);
-
-    // @Named("toDtoTripIdIgnore")
-    // @BeanMapping(ignoreByDefault = true)
-    // @Mapping(target = "id", source = "id")
-    // TripDTO toDtoTripIdIgnore(Trip trip);
-
 }

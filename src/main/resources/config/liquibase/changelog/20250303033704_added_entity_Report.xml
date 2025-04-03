@@ -17,6 +17,9 @@
             <column name="report_id" type="${uuidType}">
                 <constraints nullable="true" />
             </column>
+            <column name="report_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
@@ -24,6 +27,12 @@
                 <constraints nullable="true" />
             </column>
             <column name="report_status" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="trip_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="driver_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
@@ -52,6 +61,7 @@
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
             <column name="report_id" type="string"/>
+            <column name="report_type" type="string"/>
             <column name="date" type="date"/>
             <column name="content" type="string"/>
             <column name="report_status" type="string"/>

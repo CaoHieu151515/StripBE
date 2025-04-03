@@ -17,6 +17,12 @@ public class TripStopLocationDTO implements Serializable {
 
     private String stopLoca;
 
+    private Integer stoplocaPosition;
+
+    private Integer estimatedTime;
+
+    private Double estimatedKM;
+
     private Instant stopLocaTime;
 
     private String stopLocaStatus;
@@ -45,6 +51,30 @@ public class TripStopLocationDTO implements Serializable {
 
     public void setStopLoca(String stopLoca) {
         this.stopLoca = stopLoca;
+    }
+
+    public Integer getStoplocaPosition() {
+        return stoplocaPosition;
+    }
+
+    public void setStoplocaPosition(Integer stoplocaPosition) {
+        this.stoplocaPosition = stoplocaPosition;
+    }
+
+    public Integer getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public void setEstimatedTime(Integer estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public Double getEstimatedKM() {
+        return estimatedKM;
+    }
+
+    public void setEstimatedKM(Double estimatedKM) {
+        this.estimatedKM = estimatedKM;
     }
 
     public Instant getStopLocaTime() {
@@ -99,6 +129,9 @@ public class TripStopLocationDTO implements Serializable {
             "id=" + getId() +
             ", stopLocaID='" + getStopLocaID() + "'" +
             ", stopLoca='" + getStopLoca() + "'" +
+            ", stoplocaPosition=" + getStoplocaPosition() +
+            ", estimatedTime=" + getEstimatedTime() +
+            ", estimatedKM=" + getEstimatedKM() +
             ", stopLocaTime='" + getStopLocaTime() + "'" +
             ", stopLocaStatus='" + getStopLocaStatus() + "'" +
             ", trip=" + getTrip() +

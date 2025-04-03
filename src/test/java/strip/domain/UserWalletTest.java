@@ -47,4 +47,26 @@ class UserWalletTest {
         assertThat(userWallet.getWalletTransactions()).doesNotContain(walletTransactionBack);
         assertThat(walletTransactionBack.getUserWallet()).isNull();
     }
+
+    @Test
+    void walletDepositTest() {
+        UserWallet userWallet = getUserWalletRandomSampleGenerator();
+        WalletDeposit walletDepositBack = getWalletDepositRandomSampleGenerator();
+
+        userWallet.addWalletDeposit(walletDepositBack);
+        assertThat(userWallet.getWalletDeposits()).containsOnly(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isEqualTo(userWallet);
+
+        userWallet.removeWalletDeposit(walletDepositBack);
+        assertThat(userWallet.getWalletDeposits()).doesNotContain(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isNull();
+
+        userWallet.walletDeposits(new HashSet<>(Set.of(walletDepositBack)));
+        assertThat(userWallet.getWalletDeposits()).containsOnly(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isEqualTo(userWallet);
+
+        userWallet.setWalletDeposits(new HashSet<>());
+        assertThat(userWallet.getWalletDeposits()).doesNotContain(walletDepositBack);
+        assertThat(walletDepositBack.getUserWallet()).isNull();
+    }
 }

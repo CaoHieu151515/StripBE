@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.DriverTestSamples.*;
 import static strip.domain.FeedbackTestSamples.*;
 import static strip.domain.RatingTestSamples.*;
+import static strip.domain.ReportTestSamples.*;
 import static strip.domain.RequestTripTestSamples.*;
 import static strip.domain.TripStopLocationTestSamples.*;
 import static strip.domain.TripTestSamples.*;
@@ -118,6 +119,28 @@ class TripTest {
         trip.setFeedbacks(new HashSet<>());
         assertThat(trip.getFeedbacks()).doesNotContain(feedbackBack);
         assertThat(feedbackBack.getTrip()).isNull();
+    }
+
+    @Test
+    void reportTest() {
+        Trip trip = getTripRandomSampleGenerator();
+        Report reportBack = getReportRandomSampleGenerator();
+
+        trip.addReport(reportBack);
+        assertThat(trip.getReports()).containsOnly(reportBack);
+        assertThat(reportBack.getTrip()).isEqualTo(trip);
+
+        trip.removeReport(reportBack);
+        assertThat(trip.getReports()).doesNotContain(reportBack);
+        assertThat(reportBack.getTrip()).isNull();
+
+        trip.reports(new HashSet<>(Set.of(reportBack)));
+        assertThat(trip.getReports()).containsOnly(reportBack);
+        assertThat(reportBack.getTrip()).isEqualTo(trip);
+
+        trip.setReports(new HashSet<>());
+        assertThat(trip.getReports()).doesNotContain(reportBack);
+        assertThat(reportBack.getTrip()).isNull();
     }
 
     @Test

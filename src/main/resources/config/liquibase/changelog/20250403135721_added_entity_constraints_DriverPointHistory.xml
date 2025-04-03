@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity DriverPointHistory.
+    -->
+    <changeSet id="20250403135721-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="driver_id"
+                                 baseTableName="driver_point_history"
+                                 constraintName="fk_driver_point_history__driver_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="driver"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="user_detail_id"
+                                 baseTableName="driver_point_history"
+                                 constraintName="fk_driver_point_history__user_detail_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user_detail"
+                                 />
+    </changeSet>
+</databaseChangeLog>

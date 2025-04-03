@@ -54,6 +54,8 @@ public class TripAsserts {
             )
             .satisfies(a -> assertThat(a.getPricePerSeat()).as("check pricePerSeat").isEqualTo(expected.getPricePerSeat()))
             .satisfies(a -> assertThat(a.getMaxSeat()).as("check maxSeat").isEqualTo(expected.getMaxSeat()))
+            .satisfies(a -> assertThat(a.getTotalTime()).as("check totalTime").isEqualTo(expected.getTotalTime()))
+            .satisfies(a -> assertThat(a.getTotalDistance()).as("check totalDistance").isEqualTo(expected.getTotalDistance()))
             .satisfies(a -> assertThat(a.getStartDate()).as("check startDate").isEqualTo(expected.getStartDate()))
             .satisfies(a -> assertThat(a.getEndDate()).as("check endDate").isEqualTo(expected.getEndDate()))
             .satisfies(a -> assertThat(a.getCurrentSeat()).as("check currentSeat").isEqualTo(expected.getCurrentSeat()))

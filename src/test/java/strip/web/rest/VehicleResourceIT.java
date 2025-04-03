@@ -77,7 +77,7 @@ class VehicleResourceIT {
     private static final String UPDATED_VEHICLE_BRAND = "BBBBBBBBBB";
 
     private static final VehicleStatus DEFAULT_STATUS = VehicleStatus.ACTIVE;
-    private static final VehicleStatus UPDATED_STATUS = VehicleStatus.CONFIRMING;
+    private static final VehicleStatus UPDATED_STATUS = VehicleStatus.INACTIVE;
 
     private static final String ENTITY_API_URL = "/api/vehicles";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -398,11 +398,14 @@ class VehicleResourceIT {
         partialUpdatedVehicle.setId(vehicle.getId());
 
         partialUpdatedVehicle
-            .vehicleID(UPDATED_VEHICLE_ID)
-            .vehicleInspectionCertificate(UPDATED_VEHICLE_INSPECTION_CERTIFICATE)
-            .vehicleInspectionCertificateContentType(UPDATED_VEHICLE_INSPECTION_CERTIFICATE_CONTENT_TYPE)
-            .vehicleNumber(UPDATED_VEHICLE_NUMBER)
-            .vehicleBrand(UPDATED_VEHICLE_BRAND);
+            .vehicleImage(UPDATED_VEHICLE_IMAGE)
+            .vehicleImageContentType(UPDATED_VEHICLE_IMAGE_CONTENT_TYPE)
+            .carregistration(UPDATED_CARREGISTRATION)
+            .carregistrationContentType(UPDATED_CARREGISTRATION_CONTENT_TYPE)
+            .carInsurance(UPDATED_CAR_INSURANCE)
+            .carInsuranceContentType(UPDATED_CAR_INSURANCE_CONTENT_TYPE)
+            .numberOfSeats(UPDATED_NUMBER_OF_SEATS)
+            .status(UPDATED_STATUS);
 
         restVehicleMockMvc
             .perform(

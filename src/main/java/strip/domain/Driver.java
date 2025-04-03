@@ -76,18 +76,31 @@ public class Driver implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "driver", "userDetail" }, allowSetters = true)
+    private Set<DriverPointHistory> driverPointHistories = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "driver", "trips" }, allowSetters = true)
     private Set<Vehicle> vehicles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "ratings" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "reports", "ratings" },
+        allowSetters = true
+    )
     private Set<Trip> trips = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
     private Set<Feedback> feedbacks = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
+    private Set<Report> reports = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -283,6 +296,37 @@ public class Driver implements Serializable {
         return this;
     }
 
+    public Set<DriverPointHistory> getDriverPointHistories() {
+        return this.driverPointHistories;
+    }
+
+    public void setDriverPointHistories(Set<DriverPointHistory> driverPointHistories) {
+        if (this.driverPointHistories != null) {
+            this.driverPointHistories.forEach(i -> i.setDriver(null));
+        }
+        if (driverPointHistories != null) {
+            driverPointHistories.forEach(i -> i.setDriver(this));
+        }
+        this.driverPointHistories = driverPointHistories;
+    }
+
+    public Driver driverPointHistories(Set<DriverPointHistory> driverPointHistories) {
+        this.setDriverPointHistories(driverPointHistories);
+        return this;
+    }
+
+    public Driver addDriverPointHistory(DriverPointHistory driverPointHistory) {
+        this.driverPointHistories.add(driverPointHistory);
+        driverPointHistory.setDriver(this);
+        return this;
+    }
+
+    public Driver removeDriverPointHistory(DriverPointHistory driverPointHistory) {
+        this.driverPointHistories.remove(driverPointHistory);
+        driverPointHistory.setDriver(null);
+        return this;
+    }
+
     public Set<Vehicle> getVehicles() {
         return this.vehicles;
     }
@@ -373,6 +417,37 @@ public class Driver implements Serializable {
     public Driver removeFeedback(Feedback feedback) {
         this.feedbacks.remove(feedback);
         feedback.setDriver(null);
+        return this;
+    }
+
+    public Set<Report> getReports() {
+        return this.reports;
+    }
+
+    public void setReports(Set<Report> reports) {
+        if (this.reports != null) {
+            this.reports.forEach(i -> i.setDriver(null));
+        }
+        if (reports != null) {
+            reports.forEach(i -> i.setDriver(this));
+        }
+        this.reports = reports;
+    }
+
+    public Driver reports(Set<Report> reports) {
+        this.setReports(reports);
+        return this;
+    }
+
+    public Driver addReport(Report report) {
+        this.reports.add(report);
+        report.setDriver(this);
+        return this;
+    }
+
+    public Driver removeReport(Report report) {
+        this.reports.remove(report);
+        report.setDriver(null);
         return this;
     }
 

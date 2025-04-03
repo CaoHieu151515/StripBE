@@ -30,6 +30,5 @@
                                  referencedColumnNames="id"
                                  referencedTableName="user_wallet"
                                  />
-
     </changeSet>
 </databaseChangeLog>

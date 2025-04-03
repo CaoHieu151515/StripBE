@@ -22,6 +22,8 @@
       "tripImg": "Trip Img",
       "pricePerSeat": "Price Per Seat",
       "maxSeat": "Max Seat",
+      "totalTime": "Total Time",
+      "totalDistance": "Total Distance",
       "startDate": "Start Date",
       "endDate": "End Date",
       "currentSeat": "Current Seat",
@@ -36,8 +38,8 @@
       "requestTrip": "Request Trip",
       "tripStopLocation": "Trip Stop Location",
       "feedback": "Feedback",
-      "rating": "Rating",
-      "passenger": "Passenger"
+      "report": "Report",
+      "rating": "Rating"
     }
   }
 }

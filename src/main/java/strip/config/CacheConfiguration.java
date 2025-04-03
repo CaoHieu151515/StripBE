@@ -89,6 +89,11 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.DriverPackageSubscription.class.getName());
             createCache(cm, strip.domain.UserWallet.class.getName() + ".walletDeposits");
             createCache(cm, strip.domain.WalletDeposit.class.getName());
+            createCache(cm, strip.domain.Driver.class.getName() + ".driverPointHistories");
+            createCache(cm, strip.domain.Driver.class.getName() + ".reports");
+            createCache(cm, strip.domain.Trip.class.getName() + ".reports");
+            createCache(cm, strip.domain.UserDetail.class.getName() + ".driverPointHistories");
+            createCache(cm, strip.domain.DriverPointHistory.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -1,5 +1,6 @@
 package strip.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import strip.domain.enumeration.ReportStatus;
+import strip.domain.enumeration.ReportType;
 
 /**
  * A Report.
@@ -30,6 +32,10 @@ public class Report implements Serializable {
     @Column(name = "report_id", length = 36)
     private UUID reportID;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type")
+    private ReportType reportType;
+
     @Column(name = "date")
     private Instant date;
 
@@ -39,6 +45,20 @@ public class Report implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "report_status")
     private ReportStatus reportStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "reports", "ratings" },
+        allowSetters = true
+    )
+    private Trip trip;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(
+        value = { "user", "driverPointHistories", "vehicles", "trips", "feedbacks", "reports", "ratings", "driverPackageSubscriptions" },
+        allowSetters = true
+    )
+    private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -69,6 +89,19 @@ public class Report implements Serializable {
 
     public void setReportID(UUID reportID) {
         this.reportID = reportID;
+    }
+
+    public ReportType getReportType() {
+        return this.reportType;
+    }
+
+    public Report reportType(ReportType reportType) {
+        this.setReportType(reportType);
+        return this;
+    }
+
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
     }
 
     public Instant getDate() {
@@ -110,6 +143,32 @@ public class Report implements Serializable {
         this.reportStatus = reportStatus;
     }
 
+    public Trip getTrip() {
+        return this.trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
+    public Report trip(Trip trip) {
+        this.setTrip(trip);
+        return this;
+    }
+
+    public Driver getDriver() {
+        return this.driver;
+    }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
+    public Report driver(Driver driver) {
+        this.setDriver(driver);
+        return this;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -148,6 +207,7 @@ public class Report implements Serializable {
         return "Report{" +
             "id=" + getId() +
             ", reportID='" + getReportID() + "'" +
+            ", reportType='" + getReportType() + "'" +
             ", date='" + getDate() + "'" +
             ", content='" + getContent() + "'" +
             ", reportStatus='" + getReportStatus() + "'" +

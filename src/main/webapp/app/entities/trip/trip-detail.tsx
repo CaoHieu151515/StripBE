@@ -70,6 +70,18 @@ export const TripDetail = () => {
           </dt>
           <dd>{tripEntity.maxSeat}</dd>
           <dt>
+            <span id="totalTime">
+              <Translate contentKey="sTripBeApp.trip.totalTime">Total Time</Translate>
+            </span>
+          </dt>
+          <dd>{tripEntity.totalTime}</dd>
+          <dt>
+            <span id="totalDistance">
+              <Translate contentKey="sTripBeApp.trip.totalDistance">Total Distance</Translate>
+            </span>
+          </dt>
+          <dd>{tripEntity.totalDistance}</dd>
+          <dt>
             <span id="startDate">
               <Translate contentKey="sTripBeApp.trip.startDate">Start Date</Translate>
             </span>

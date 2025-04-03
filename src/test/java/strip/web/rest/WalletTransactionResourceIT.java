@@ -306,7 +306,7 @@ class WalletTransactionResourceIT {
         WalletTransaction partialUpdatedWalletTransaction = new WalletTransaction();
         partialUpdatedWalletTransaction.setId(walletTransaction.getId());
 
-        partialUpdatedWalletTransaction.walletType(UPDATED_WALLET_TYPE).transactionThirdPartyID(UPDATED_TRANSACTION_THIRD_PARTY_ID);
+        partialUpdatedWalletTransaction.transactionThirdPartyID(UPDATED_TRANSACTION_THIRD_PARTY_ID);
 
         restWalletTransactionMockMvc
             .perform(

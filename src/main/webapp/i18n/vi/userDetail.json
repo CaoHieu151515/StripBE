@@ -24,7 +24,8 @@
       "gender": "Gender",
       "address": "Address",
       "dob": "Dob",
-      "user": "User"
+      "user": "User",
+      "driverPointHistory": "Driver Point History"
     }
   }
 }

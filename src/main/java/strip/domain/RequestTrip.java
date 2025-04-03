@@ -85,7 +85,7 @@ public class RequestTrip implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "ratings", "passengers" },
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "reports", "ratings" },
         allowSetters = true
     )
     private Trip trip;

@@ -45,6 +45,24 @@ export const TripStopLocationDetail = () => {
           </dt>
           <dd>{tripStopLocationEntity.stopLoca}</dd>
           <dt>
+            <span id="stoplocaPosition">
+              <Translate contentKey="sTripBeApp.tripStopLocation.stoplocaPosition">Stoploca Position</Translate>
+            </span>
+          </dt>
+          <dd>{tripStopLocationEntity.stoplocaPosition}</dd>
+          <dt>
+            <span id="estimatedTime">
+              <Translate contentKey="sTripBeApp.tripStopLocation.estimatedTime">Estimated Time</Translate>
+            </span>
+          </dt>
+          <dd>{tripStopLocationEntity.estimatedTime}</dd>
+          <dt>
+            <span id="estimatedKM">
+              <Translate contentKey="sTripBeApp.tripStopLocation.estimatedKM">Estimated KM</Translate>
+            </span>
+          </dt>
+          <dd>{tripStopLocationEntity.estimatedKM}</dd>
+          <dt>
             <span id="stopLocaTime">
               <Translate contentKey="sTripBeApp.tripStopLocation.stopLocaTime">Stop Loca Time</Translate>
             </span>

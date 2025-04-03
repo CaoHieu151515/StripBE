@@ -28,9 +28,11 @@
       "identityCardFaceUp": "Identity Card Face Up",
       "identityCardFacedown": "Identity Card Facedown",
       "user": "User",
+      "driverPointHistory": "Driver Point History",
       "vehicle": "Vehicle",
       "trip": "Trip",
       "feedback": "Feedback",
+      "report": "Report",
       "rating": "Rating",
       "driverPackageSubscription": "Driver Package Subscription"
     }

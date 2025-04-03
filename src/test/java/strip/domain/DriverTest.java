@@ -2,9 +2,11 @@ package strip.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.DriverPackageSubscriptionTestSamples.*;
+import static strip.domain.DriverPointHistoryTestSamples.*;
 import static strip.domain.DriverTestSamples.*;
 import static strip.domain.FeedbackTestSamples.*;
 import static strip.domain.RatingTestSamples.*;
+import static strip.domain.ReportTestSamples.*;
 import static strip.domain.TripTestSamples.*;
 import static strip.domain.VehicleTestSamples.*;
 
@@ -27,6 +29,28 @@ class DriverTest {
 
         driver2 = getDriverSample2();
         assertThat(driver1).isNotEqualTo(driver2);
+    }
+
+    @Test
+    void driverPointHistoryTest() {
+        Driver driver = getDriverRandomSampleGenerator();
+        DriverPointHistory driverPointHistoryBack = getDriverPointHistoryRandomSampleGenerator();
+
+        driver.addDriverPointHistory(driverPointHistoryBack);
+        assertThat(driver.getDriverPointHistories()).containsOnly(driverPointHistoryBack);
+        assertThat(driverPointHistoryBack.getDriver()).isEqualTo(driver);
+
+        driver.removeDriverPointHistory(driverPointHistoryBack);
+        assertThat(driver.getDriverPointHistories()).doesNotContain(driverPointHistoryBack);
+        assertThat(driverPointHistoryBack.getDriver()).isNull();
+
+        driver.driverPointHistories(new HashSet<>(Set.of(driverPointHistoryBack)));
+        assertThat(driver.getDriverPointHistories()).containsOnly(driverPointHistoryBack);
+        assertThat(driverPointHistoryBack.getDriver()).isEqualTo(driver);
+
+        driver.setDriverPointHistories(new HashSet<>());
+        assertThat(driver.getDriverPointHistories()).doesNotContain(driverPointHistoryBack);
+        assertThat(driverPointHistoryBack.getDriver()).isNull();
     }
 
     @Test
@@ -93,6 +117,28 @@ class DriverTest {
         driver.setFeedbacks(new HashSet<>());
         assertThat(driver.getFeedbacks()).doesNotContain(feedbackBack);
         assertThat(feedbackBack.getDriver()).isNull();
+    }
+
+    @Test
+    void reportTest() {
+        Driver driver = getDriverRandomSampleGenerator();
+        Report reportBack = getReportRandomSampleGenerator();
+
+        driver.addReport(reportBack);
+        assertThat(driver.getReports()).containsOnly(reportBack);
+        assertThat(reportBack.getDriver()).isEqualTo(driver);
+
+        driver.removeReport(reportBack);
+        assertThat(driver.getReports()).doesNotContain(reportBack);
+        assertThat(reportBack.getDriver()).isNull();
+
+        driver.reports(new HashSet<>(Set.of(reportBack)));
+        assertThat(driver.getReports()).containsOnly(reportBack);
+        assertThat(reportBack.getDriver()).isEqualTo(driver);
+
+        driver.setReports(new HashSet<>());
+        assertThat(driver.getReports()).doesNotContain(reportBack);
+        assertThat(reportBack.getDriver()).isNull();
     }
 
     @Test

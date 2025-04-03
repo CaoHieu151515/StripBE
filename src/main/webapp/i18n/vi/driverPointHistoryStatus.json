@@ -1,0 +1,9 @@
+{
+  "sTripBeApp": {
+    "DriverPointHistoryStatus": {
+      "null": "",
+      "DONE": "DONE",
+      "REFUND": "REFUND"
+    }
+  }
+}

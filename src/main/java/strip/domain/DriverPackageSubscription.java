@@ -41,7 +41,7 @@ public class DriverPackageSubscription implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "user", "vehicles", "trips", "feedbacks", "ratings", "driverPackageSubscriptions" },
+        value = { "user", "driverPointHistories", "vehicles", "trips", "feedbacks", "reports", "ratings", "driverPackageSubscriptions" },
         allowSetters = true
     )
     private Driver driver;

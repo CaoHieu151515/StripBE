@@ -19,9 +19,12 @@
       },
       "id": "ID",
       "reportID": "Report ID",
+      "reportType": "Report Type",
       "date": "Date",
       "content": "Content",
       "reportStatus": "Report Status",
+      "trip": "Trip",
+      "driver": "Driver",
       "user": "User"
     }
   }

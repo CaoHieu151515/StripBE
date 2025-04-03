@@ -300,7 +300,7 @@ class WalletDepositResourceIT {
         WalletDeposit partialUpdatedWalletDeposit = new WalletDeposit();
         partialUpdatedWalletDeposit.setId(walletDeposit.getId());
 
-        partialUpdatedWalletDeposit.bankNumber(UPDATED_BANK_NUMBER).amount(UPDATED_AMOUNT).date(UPDATED_DATE);
+        partialUpdatedWalletDeposit.bankNumber(UPDATED_BANK_NUMBER).bank(UPDATED_BANK).status(UPDATED_STATUS);
 
         restWalletDepositMockMvc
             .perform(

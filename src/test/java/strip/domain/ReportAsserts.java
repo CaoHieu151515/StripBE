@@ -48,6 +48,7 @@ public class ReportAsserts {
         assertThat(actual)
             .as("Verify Report relevant properties")
             .satisfies(a -> assertThat(a.getReportID()).as("check reportID").isEqualTo(expected.getReportID()))
+            .satisfies(a -> assertThat(a.getReportType()).as("check reportType").isEqualTo(expected.getReportType()))
             .satisfies(a -> assertThat(a.getDate()).as("check date").isEqualTo(expected.getDate()))
             .satisfies(a -> assertThat(a.getContent()).as("check content").isEqualTo(expected.getContent()))
             .satisfies(a -> assertThat(a.getReportStatus()).as("check reportStatus").isEqualTo(expected.getReportStatus()));
@@ -60,6 +61,9 @@ public class ReportAsserts {
      * @param actual the actual entity
      */
     public static void assertReportUpdatableRelationshipsEquals(Report expected, Report actual) {
-        // empty method
+        assertThat(actual)
+            .as("Verify Report relationships")
+            .satisfies(a -> assertThat(a.getTrip()).as("check trip").isEqualTo(expected.getTrip()))
+            .satisfies(a -> assertThat(a.getDriver()).as("check driver").isEqualTo(expected.getDriver()));
     }
 }

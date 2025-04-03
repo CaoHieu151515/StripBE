@@ -3,6 +3,7 @@
     "VehicleStatus": {
       "null": "",
       "ACTIVE": "ACTIVE",
+      "INACTIVE": "INACTIVE",
       "CONFIRMING": "CONFIRMING",
       "REJECTED": "REJECTED"
     }

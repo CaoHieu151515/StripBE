@@ -127,6 +127,18 @@ export const TripStopLocation = () => {
                   <Translate contentKey="sTripBeApp.tripStopLocation.stopLoca">Stop Loca</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('stopLoca')} />
                 </th>
+                <th className="hand" onClick={sort('stoplocaPosition')}>
+                  <Translate contentKey="sTripBeApp.tripStopLocation.stoplocaPosition">Stoploca Position</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('stoplocaPosition')} />
+                </th>
+                <th className="hand" onClick={sort('estimatedTime')}>
+                  <Translate contentKey="sTripBeApp.tripStopLocation.estimatedTime">Estimated Time</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('estimatedTime')} />
+                </th>
+                <th className="hand" onClick={sort('estimatedKM')}>
+                  <Translate contentKey="sTripBeApp.tripStopLocation.estimatedKM">Estimated KM</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('estimatedKM')} />
+                </th>
                 <th className="hand" onClick={sort('stopLocaTime')}>
                   <Translate contentKey="sTripBeApp.tripStopLocation.stopLocaTime">Stop Loca Time</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('stopLocaTime')} />
@@ -151,6 +163,9 @@ export const TripStopLocation = () => {
                   </td>
                   <td>{tripStopLocation.stopLocaID}</td>
                   <td>{tripStopLocation.stopLoca}</td>
+                  <td>{tripStopLocation.stoplocaPosition}</td>
+                  <td>{tripStopLocation.estimatedTime}</td>
+                  <td>{tripStopLocation.estimatedKM}</td>
                   <td>
                     {tripStopLocation.stopLocaTime ? (
                       <TextFormat type="date" value={tripStopLocation.stopLocaTime} format={APP_DATE_FORMAT} />

@@ -20,6 +20,15 @@
             <column name="stop_loca" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
+            <column name="stoploca_position" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="estimated_time" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="estimated_km" type="double">
+                <constraints nullable="true" />
+            </column>
             <column name="stop_loca_time" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
@@ -53,6 +62,9 @@
             <column name="id" type="numeric"/>
             <column name="stop_loca_id" type="string"/>
             <column name="stop_loca" type="string"/>
+            <column name="stoploca_position" type="numeric"/>
+            <column name="estimated_time" type="numeric"/>
+            <column name="estimated_km" type="numeric"/>
             <column name="stop_loca_time" type="date"/>
             <column name="stop_loca_status" type="string"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->

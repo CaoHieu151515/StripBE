@@ -38,6 +38,13 @@
       "relationshipSide": "left",
       "relationshipType": "one-to-one",
       "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "driverPointHistory",
+      "otherEntityRelationshipName": "userDetail",
+      "relationshipName": "driverPointHistory",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no"

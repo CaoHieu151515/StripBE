@@ -49,6 +49,9 @@ public class TripStopLocationAsserts {
             .as("Verify TripStopLocation relevant properties")
             .satisfies(a -> assertThat(a.getStopLocaID()).as("check stopLocaID").isEqualTo(expected.getStopLocaID()))
             .satisfies(a -> assertThat(a.getStopLoca()).as("check stopLoca").isEqualTo(expected.getStopLoca()))
+            .satisfies(a -> assertThat(a.getStoplocaPosition()).as("check stoplocaPosition").isEqualTo(expected.getStoplocaPosition()))
+            .satisfies(a -> assertThat(a.getEstimatedTime()).as("check estimatedTime").isEqualTo(expected.getEstimatedTime()))
+            .satisfies(a -> assertThat(a.getEstimatedKM()).as("check estimatedKM").isEqualTo(expected.getEstimatedKM()))
             .satisfies(a -> assertThat(a.getStopLocaTime()).as("check stopLocaTime").isEqualTo(expected.getStopLocaTime()))
             .satisfies(a -> assertThat(a.getStopLocaStatus()).as("check stopLocaStatus").isEqualTo(expected.getStopLocaStatus()));
     }

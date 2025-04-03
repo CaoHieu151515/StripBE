@@ -33,6 +33,15 @@ public class TripStopLocation implements Serializable {
     @Column(name = "stop_loca")
     private String stopLoca;
 
+    @Column(name = "stoploca_position")
+    private Integer stoplocaPosition;
+
+    @Column(name = "estimated_time")
+    private Integer estimatedTime;
+
+    @Column(name = "estimated_km")
+    private Double estimatedKM;
+
     @Column(name = "stop_loca_time")
     private Instant stopLocaTime;
 
@@ -41,7 +50,7 @@ public class TripStopLocation implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "ratings", "passengers" },
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "reports", "ratings" },
         allowSetters = true
     )
     private Trip trip;
@@ -85,6 +94,45 @@ public class TripStopLocation implements Serializable {
 
     public void setStopLoca(String stopLoca) {
         this.stopLoca = stopLoca;
+    }
+
+    public Integer getStoplocaPosition() {
+        return this.stoplocaPosition;
+    }
+
+    public TripStopLocation stoplocaPosition(Integer stoplocaPosition) {
+        this.setStoplocaPosition(stoplocaPosition);
+        return this;
+    }
+
+    public void setStoplocaPosition(Integer stoplocaPosition) {
+        this.stoplocaPosition = stoplocaPosition;
+    }
+
+    public Integer getEstimatedTime() {
+        return this.estimatedTime;
+    }
+
+    public TripStopLocation estimatedTime(Integer estimatedTime) {
+        this.setEstimatedTime(estimatedTime);
+        return this;
+    }
+
+    public void setEstimatedTime(Integer estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public Double getEstimatedKM() {
+        return this.estimatedKM;
+    }
+
+    public TripStopLocation estimatedKM(Double estimatedKM) {
+        this.setEstimatedKM(estimatedKM);
+        return this;
+    }
+
+    public void setEstimatedKM(Double estimatedKM) {
+        this.estimatedKM = estimatedKM;
     }
 
     public Instant getStopLocaTime() {
@@ -152,6 +200,9 @@ public class TripStopLocation implements Serializable {
             "id=" + getId() +
             ", stopLocaID='" + getStopLocaID() + "'" +
             ", stopLoca='" + getStopLoca() + "'" +
+            ", stoplocaPosition=" + getStoplocaPosition() +
+            ", estimatedTime=" + getEstimatedTime() +
+            ", estimatedKM=" + getEstimatedKM() +
             ", stopLocaTime='" + getStopLocaTime() + "'" +
             ", stopLocaStatus='" + getStopLocaStatus() + "'" +
             "}";

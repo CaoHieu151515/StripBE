@@ -43,6 +43,15 @@ class TripStopLocationResourceIT {
     private static final String DEFAULT_STOP_LOCA = "AAAAAAAAAA";
     private static final String UPDATED_STOP_LOCA = "BBBBBBBBBB";
 
+    private static final Integer DEFAULT_STOPLOCA_POSITION = 1;
+    private static final Integer UPDATED_STOPLOCA_POSITION = 2;
+
+    private static final Integer DEFAULT_ESTIMATED_TIME = 1;
+    private static final Integer UPDATED_ESTIMATED_TIME = 2;
+
+    private static final Double DEFAULT_ESTIMATED_KM = 1D;
+    private static final Double UPDATED_ESTIMATED_KM = 2D;
+
     private static final Instant DEFAULT_STOP_LOCA_TIME = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_STOP_LOCA_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
@@ -84,6 +93,9 @@ class TripStopLocationResourceIT {
         return new TripStopLocation()
             .stopLocaID(DEFAULT_STOP_LOCA_ID)
             .stopLoca(DEFAULT_STOP_LOCA)
+            .stoplocaPosition(DEFAULT_STOPLOCA_POSITION)
+            .estimatedTime(DEFAULT_ESTIMATED_TIME)
+            .estimatedKM(DEFAULT_ESTIMATED_KM)
             .stopLocaTime(DEFAULT_STOP_LOCA_TIME)
             .stopLocaStatus(DEFAULT_STOP_LOCA_STATUS);
     }
@@ -98,6 +110,9 @@ class TripStopLocationResourceIT {
         return new TripStopLocation()
             .stopLocaID(UPDATED_STOP_LOCA_ID)
             .stopLoca(UPDATED_STOP_LOCA)
+            .stoplocaPosition(UPDATED_STOPLOCA_POSITION)
+            .estimatedTime(UPDATED_ESTIMATED_TIME)
+            .estimatedKM(UPDATED_ESTIMATED_KM)
             .stopLocaTime(UPDATED_STOP_LOCA_TIME)
             .stopLocaStatus(UPDATED_STOP_LOCA_STATUS);
     }
@@ -171,6 +186,9 @@ class TripStopLocationResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tripStopLocation.getId().intValue())))
             .andExpect(jsonPath("$.[*].stopLocaID").value(hasItem(DEFAULT_STOP_LOCA_ID.toString())))
             .andExpect(jsonPath("$.[*].stopLoca").value(hasItem(DEFAULT_STOP_LOCA)))
+            .andExpect(jsonPath("$.[*].stoplocaPosition").value(hasItem(DEFAULT_STOPLOCA_POSITION)))
+            .andExpect(jsonPath("$.[*].estimatedTime").value(hasItem(DEFAULT_ESTIMATED_TIME)))
+            .andExpect(jsonPath("$.[*].estimatedKM").value(hasItem(DEFAULT_ESTIMATED_KM)))
             .andExpect(jsonPath("$.[*].stopLocaTime").value(hasItem(DEFAULT_STOP_LOCA_TIME.toString())))
             .andExpect(jsonPath("$.[*].stopLocaStatus").value(hasItem(DEFAULT_STOP_LOCA_STATUS)));
     }
@@ -189,6 +207,9 @@ class TripStopLocationResourceIT {
             .andExpect(jsonPath("$.id").value(tripStopLocation.getId().intValue()))
             .andExpect(jsonPath("$.stopLocaID").value(DEFAULT_STOP_LOCA_ID.toString()))
             .andExpect(jsonPath("$.stopLoca").value(DEFAULT_STOP_LOCA))
+            .andExpect(jsonPath("$.stoplocaPosition").value(DEFAULT_STOPLOCA_POSITION))
+            .andExpect(jsonPath("$.estimatedTime").value(DEFAULT_ESTIMATED_TIME))
+            .andExpect(jsonPath("$.estimatedKM").value(DEFAULT_ESTIMATED_KM))
             .andExpect(jsonPath("$.stopLocaTime").value(DEFAULT_STOP_LOCA_TIME.toString()))
             .andExpect(jsonPath("$.stopLocaStatus").value(DEFAULT_STOP_LOCA_STATUS));
     }
@@ -215,6 +236,9 @@ class TripStopLocationResourceIT {
         updatedTripStopLocation
             .stopLocaID(UPDATED_STOP_LOCA_ID)
             .stopLoca(UPDATED_STOP_LOCA)
+            .stoplocaPosition(UPDATED_STOPLOCA_POSITION)
+            .estimatedTime(UPDATED_ESTIMATED_TIME)
+            .estimatedKM(UPDATED_ESTIMATED_KM)
             .stopLocaTime(UPDATED_STOP_LOCA_TIME)
             .stopLocaStatus(UPDATED_STOP_LOCA_STATUS);
         TripStopLocationDTO tripStopLocationDTO = tripStopLocationMapper.toDto(updatedTripStopLocation);
@@ -306,7 +330,10 @@ class TripStopLocationResourceIT {
         TripStopLocation partialUpdatedTripStopLocation = new TripStopLocation();
         partialUpdatedTripStopLocation.setId(tripStopLocation.getId());
 
-        partialUpdatedTripStopLocation.stopLocaID(UPDATED_STOP_LOCA_ID);
+        partialUpdatedTripStopLocation
+            .stoplocaPosition(UPDATED_STOPLOCA_POSITION)
+            .estimatedTime(UPDATED_ESTIMATED_TIME)
+            .estimatedKM(UPDATED_ESTIMATED_KM);
 
         restTripStopLocationMockMvc
             .perform(
@@ -340,6 +367,9 @@ class TripStopLocationResourceIT {
         partialUpdatedTripStopLocation
             .stopLocaID(UPDATED_STOP_LOCA_ID)
             .stopLoca(UPDATED_STOP_LOCA)
+            .stoplocaPosition(UPDATED_STOPLOCA_POSITION)
+            .estimatedTime(UPDATED_ESTIMATED_TIME)
+            .estimatedKM(UPDATED_ESTIMATED_KM)
             .stopLocaTime(UPDATED_STOP_LOCA_TIME)
             .stopLocaStatus(UPDATED_STOP_LOCA_STATUS);
 

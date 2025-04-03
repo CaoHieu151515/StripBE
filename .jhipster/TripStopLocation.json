@@ -14,6 +14,18 @@
       "fieldType": "String"
     },
     {
+      "fieldName": "stoplocaPosition",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "estimatedTime",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "estimatedKM",
+      "fieldType": "Double"
+    },
+    {
       "fieldName": "stopLocaTime",
       "fieldType": "Instant"
     },

@@ -49,7 +49,7 @@
     {
       "fieldName": "status",
       "fieldType": "VehicleStatus",
-      "fieldValues": "ACTIVE,CONFIRMING,REJECTED"
+      "fieldValues": "ACTIVE,INACTIVE,CONFIRMING,REJECTED"
     }
   ],
   "name": "Vehicle",

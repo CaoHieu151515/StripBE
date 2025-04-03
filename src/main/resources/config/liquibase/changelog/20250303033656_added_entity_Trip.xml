@@ -29,6 +29,12 @@
             <column name="max_seat" type="integer">
                 <constraints nullable="true" />
             </column>
+            <column name="total_time" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="total_distance" type="double">
+                <constraints nullable="true" />
+            </column>
             <column name="start_date" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
@@ -90,6 +96,8 @@
             <column name="trip_img_content_type" type="string"/>
             <column name="price_per_seat" type="numeric"/>
             <column name="max_seat" type="numeric"/>
+            <column name="total_time" type="numeric"/>
+            <column name="total_distance" type="numeric"/>
             <column name="start_date" type="date"/>
             <column name="end_date" type="date"/>
             <column name="current_seat" type="numeric"/>

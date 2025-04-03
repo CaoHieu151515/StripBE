@@ -10,6 +10,8 @@ export interface ITrip {
   tripImg?: string | null;
   pricePerSeat?: number | null;
   maxSeat?: number | null;
+  totalTime?: number | null;
+  totalDistance?: number | null;
   startDate?: dayjs.Dayjs | null;
   endDate?: dayjs.Dayjs | null;
   currentSeat?: number | null;

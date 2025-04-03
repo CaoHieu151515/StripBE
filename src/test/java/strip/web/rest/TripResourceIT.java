@@ -53,6 +53,12 @@ class TripResourceIT {
     private static final Integer DEFAULT_MAX_SEAT = 1;
     private static final Integer UPDATED_MAX_SEAT = 2;
 
+    private static final Integer DEFAULT_TOTAL_TIME = 1;
+    private static final Integer UPDATED_TOTAL_TIME = 2;
+
+    private static final Double DEFAULT_TOTAL_DISTANCE = 1D;
+    private static final Double UPDATED_TOTAL_DISTANCE = 2D;
+
     private static final Instant DEFAULT_START_DATE = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_START_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
@@ -118,6 +124,8 @@ class TripResourceIT {
             .tripImgContentType(DEFAULT_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(DEFAULT_PRICE_PER_SEAT)
             .maxSeat(DEFAULT_MAX_SEAT)
+            .totalTime(DEFAULT_TOTAL_TIME)
+            .totalDistance(DEFAULT_TOTAL_DISTANCE)
             .startDate(DEFAULT_START_DATE)
             .endDate(DEFAULT_END_DATE)
             .currentSeat(DEFAULT_CURRENT_SEAT)
@@ -142,6 +150,8 @@ class TripResourceIT {
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
             .maxSeat(UPDATED_MAX_SEAT)
+            .totalTime(UPDATED_TOTAL_TIME)
+            .totalDistance(UPDATED_TOTAL_DISTANCE)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
             .currentSeat(UPDATED_CURRENT_SEAT)
@@ -225,6 +235,8 @@ class TripResourceIT {
             .andExpect(jsonPath("$.[*].tripImg").value(hasItem(Base64.getEncoder().encodeToString(DEFAULT_TRIP_IMG))))
             .andExpect(jsonPath("$.[*].pricePerSeat").value(hasItem(DEFAULT_PRICE_PER_SEAT)))
             .andExpect(jsonPath("$.[*].maxSeat").value(hasItem(DEFAULT_MAX_SEAT)))
+            .andExpect(jsonPath("$.[*].totalTime").value(hasItem(DEFAULT_TOTAL_TIME)))
+            .andExpect(jsonPath("$.[*].totalDistance").value(hasItem(DEFAULT_TOTAL_DISTANCE)))
             .andExpect(jsonPath("$.[*].startDate").value(hasItem(DEFAULT_START_DATE.toString())))
             .andExpect(jsonPath("$.[*].endDate").value(hasItem(DEFAULT_END_DATE.toString())))
             .andExpect(jsonPath("$.[*].currentSeat").value(hasItem(DEFAULT_CURRENT_SEAT)))
@@ -253,6 +265,8 @@ class TripResourceIT {
             .andExpect(jsonPath("$.tripImg").value(Base64.getEncoder().encodeToString(DEFAULT_TRIP_IMG)))
             .andExpect(jsonPath("$.pricePerSeat").value(DEFAULT_PRICE_PER_SEAT))
             .andExpect(jsonPath("$.maxSeat").value(DEFAULT_MAX_SEAT))
+            .andExpect(jsonPath("$.totalTime").value(DEFAULT_TOTAL_TIME))
+            .andExpect(jsonPath("$.totalDistance").value(DEFAULT_TOTAL_DISTANCE))
             .andExpect(jsonPath("$.startDate").value(DEFAULT_START_DATE.toString()))
             .andExpect(jsonPath("$.endDate").value(DEFAULT_END_DATE.toString()))
             .andExpect(jsonPath("$.currentSeat").value(DEFAULT_CURRENT_SEAT))
@@ -289,6 +303,8 @@ class TripResourceIT {
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
             .maxSeat(UPDATED_MAX_SEAT)
+            .totalTime(UPDATED_TOTAL_TIME)
+            .totalDistance(UPDATED_TOTAL_DISTANCE)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
             .currentSeat(UPDATED_CURRENT_SEAT)
@@ -382,10 +398,12 @@ class TripResourceIT {
         partialUpdatedTrip
             .tripImg(UPDATED_TRIP_IMG)
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
-            .maxSeat(UPDATED_MAX_SEAT)
-            .startLocation(UPDATED_START_LOCATION)
+            .pricePerSeat(UPDATED_PRICE_PER_SEAT)
+            .totalTime(UPDATED_TOTAL_TIME)
+            .endDate(UPDATED_END_DATE)
             .description(UPDATED_DESCRIPTION)
-            .condition(UPDATED_CONDITION);
+            .condition(UPDATED_CONDITION)
+            .tripStatus(UPDATED_TRIP_STATUS);
 
         restTripMockMvc
             .perform(
@@ -419,6 +437,8 @@ class TripResourceIT {
             .tripImgContentType(UPDATED_TRIP_IMG_CONTENT_TYPE)
             .pricePerSeat(UPDATED_PRICE_PER_SEAT)
             .maxSeat(UPDATED_MAX_SEAT)
+            .totalTime(UPDATED_TOTAL_TIME)
+            .totalDistance(UPDATED_TOTAL_DISTANCE)
             .startDate(UPDATED_START_DATE)
             .endDate(UPDATED_END_DATE)
             .currentSeat(UPDATED_CURRENT_SEAT)

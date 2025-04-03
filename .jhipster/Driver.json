@@ -55,6 +55,13 @@
       "relationshipWithBuiltInEntity": true
     },
     {
+      "otherEntityName": "driverPointHistory",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "driverPointHistory",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
       "otherEntityName": "vehicle",
       "otherEntityRelationshipName": "driver",
       "relationshipName": "vehicle",
@@ -72,6 +79,13 @@
       "otherEntityName": "feedback",
       "otherEntityRelationshipName": "driver",
       "relationshipName": "feedback",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "report",
+      "otherEntityRelationshipName": "driver",
+      "relationshipName": "report",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },

@@ -1,0 +1,30 @@
+{
+  "sTripBeApp": {
+    "driverPointHistory": {
+      "home": {
+        "title": "Driver Point Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Driver Point History",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Driver Point History",
+        "notFound": "No Driver Point Histories found"
+      },
+      "created": "Một Driver Point History mới được tạo với định danh {{ param }}",
+      "updated": "Một Driver Point History cập nhật với định danh {{ param }}",
+      "deleted": "Một Driver Point History đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Driver Point History {{ id }}?"
+      },
+      "detail": {
+        "title": "Driver Point History"
+      },
+      "id": "ID",
+      "pointId": "Point Id",
+      "point": "Point",
+      "reason": "Reason",
+      "date": "Date",
+      "status": "Status",
+      "driver": "Driver",
+      "userDetail": "User Detail"
+    }
+  }
+}

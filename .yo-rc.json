@@ -34,14 +34,15 @@
       "UserDetail",
       "RequestTrip",
       "DriverPackageSubscription",
-      "WalletDeposit"
+      "WalletDeposit",
+      "DriverPointHistory"
     ],
     "feignClient": null,
     "gradleEnterpriseHost": null,
     "jhipsterVersion": "8.9.0",
     "jwtSecretKey": "OTk1YzUyOTg2ZjQyNmMyYWJiYWUyNTg2NmIwY2JhODkzNTgxNzUyOTI5NTM1MjlhZjMwODY2NzEyZDMwNGQxNzE0N2Y4Yzc1ZDU0NTA1NDRjODcxZjM2Y2ZkNjY2Y2Q4NzM1MTFiZWI2MTY3MjEyNzNhMDU4YjUzMzI4NGFmZDU=",
     "languages": ["en", "vi"],
-    "lastLiquibaseTimestamp": 1743093242000,
+    "lastLiquibaseTimestamp": 1743688641000,
     "messageBroker": false,
     "microfrontend": null,
     "microfrontends": [],

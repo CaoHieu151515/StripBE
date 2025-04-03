@@ -10,6 +10,11 @@
       "fieldType": "UUID"
     },
     {
+      "fieldName": "reportType",
+      "fieldType": "ReportType",
+      "fieldValues": "DRIVER_TO_USER,USER_TO_DRIVER"
+    },
+    {
       "fieldName": "date",
       "fieldType": "Instant"
     },
@@ -26,6 +31,20 @@
   "name": "Report",
   "pagination": "pagination",
   "relationships": [
+    {
+      "otherEntityName": "trip",
+      "otherEntityRelationshipName": "report",
+      "relationshipName": "trip",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "driver",
+      "otherEntityRelationshipName": "report",
+      "relationshipName": "driver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
     {
       "otherEntityName": "user",
       "otherEntityRelationshipName": "report",

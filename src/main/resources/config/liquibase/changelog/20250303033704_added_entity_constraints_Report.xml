@@ -10,6 +10,20 @@
     -->
     <changeSet id="20250303033704-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="trip_id"
+                                 baseTableName="report"
+                                 constraintName="fk_report__trip_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="trip"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="driver_id"
+                                 baseTableName="report"
+                                 constraintName="fk_report__driver_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="driver"
+                                 />
+
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="report"
                                  constraintName="fk_report__user_id"

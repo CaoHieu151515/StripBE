@@ -59,6 +59,12 @@ export const TripUpdate = () => {
     if (values.maxSeat !== undefined && typeof values.maxSeat !== 'number') {
       values.maxSeat = Number(values.maxSeat);
     }
+    if (values.totalTime !== undefined && typeof values.totalTime !== 'number') {
+      values.totalTime = Number(values.totalTime);
+    }
+    if (values.totalDistance !== undefined && typeof values.totalDistance !== 'number') {
+      values.totalDistance = Number(values.totalDistance);
+    }
     values.startDate = convertDateTimeToServer(values.startDate);
     values.endDate = convertDateTimeToServer(values.endDate);
     if (values.currentSeat !== undefined && typeof values.currentSeat !== 'number') {
@@ -135,6 +141,20 @@ export const TripUpdate = () => {
                 type="text"
               />
               <ValidatedField label={translate('sTripBeApp.trip.maxSeat')} id="trip-maxSeat" name="maxSeat" data-cy="maxSeat" type="text" />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.totalTime')}
+                id="trip-totalTime"
+                name="totalTime"
+                data-cy="totalTime"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('sTripBeApp.trip.totalDistance')}
+                id="trip-totalDistance"
+                name="totalDistance"
+                data-cy="totalDistance"
+                type="text"
+              />
               <ValidatedField
                 label={translate('sTripBeApp.trip.startDate')}
                 id="trip-startDate"

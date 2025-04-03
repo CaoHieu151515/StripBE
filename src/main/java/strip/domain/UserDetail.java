@@ -1,8 +1,11 @@
 package strip.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -51,6 +54,11 @@ public class UserDetail implements Serializable {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userDetail")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "driver", "userDetail" }, allowSetters = true)
+    private Set<DriverPointHistory> driverPointHistories = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -168,6 +176,37 @@ public class UserDetail implements Serializable {
 
     public UserDetail user(User user) {
         this.setUser(user);
+        return this;
+    }
+
+    public Set<DriverPointHistory> getDriverPointHistories() {
+        return this.driverPointHistories;
+    }
+
+    public void setDriverPointHistories(Set<DriverPointHistory> driverPointHistories) {
+        if (this.driverPointHistories != null) {
+            this.driverPointHistories.forEach(i -> i.setUserDetail(null));
+        }
+        if (driverPointHistories != null) {
+            driverPointHistories.forEach(i -> i.setUserDetail(this));
+        }
+        this.driverPointHistories = driverPointHistories;
+    }
+
+    public UserDetail driverPointHistories(Set<DriverPointHistory> driverPointHistories) {
+        this.setDriverPointHistories(driverPointHistories);
+        return this;
+    }
+
+    public UserDetail addDriverPointHistory(DriverPointHistory driverPointHistory) {
+        this.driverPointHistories.add(driverPointHistory);
+        driverPointHistory.setUserDetail(this);
+        return this;
+    }
+
+    public UserDetail removeDriverPointHistory(DriverPointHistory driverPointHistory) {
+        this.driverPointHistories.remove(driverPointHistory);
+        driverPointHistory.setUserDetail(null);
         return this;
     }
 

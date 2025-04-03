@@ -117,6 +117,10 @@ export const Report = () => {
                   <Translate contentKey="sTripBeApp.report.reportID">Report ID</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('reportID')} />
                 </th>
+                <th className="hand" onClick={sort('reportType')}>
+                  <Translate contentKey="sTripBeApp.report.reportType">Report Type</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('reportType')} />
+                </th>
                 <th className="hand" onClick={sort('date')}>
                   <Translate contentKey="sTripBeApp.report.date">Date</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('date')} />
                 </th>
@@ -127,6 +131,12 @@ export const Report = () => {
                 <th className="hand" onClick={sort('reportStatus')}>
                   <Translate contentKey="sTripBeApp.report.reportStatus">Report Status</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('reportStatus')} />
+                </th>
+                <th>
+                  <Translate contentKey="sTripBeApp.report.trip">Trip</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
+                <th>
+                  <Translate contentKey="sTripBeApp.report.driver">Driver</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th>
                   <Translate contentKey="sTripBeApp.report.user">User</Translate> <FontAwesomeIcon icon="sort" />
@@ -143,11 +153,16 @@ export const Report = () => {
                     </Button>
                   </td>
                   <td>{report.reportID}</td>
+                  <td>
+                    <Translate contentKey={`sTripBeApp.ReportType.${report.reportType}`} />
+                  </td>
                   <td>{report.date ? <TextFormat type="date" value={report.date} format={APP_DATE_FORMAT} /> : null}</td>
                   <td>{report.content}</td>
                   <td>
                     <Translate contentKey={`sTripBeApp.ReportStatus.${report.reportStatus}`} />
                   </td>
+                  <td>{report.trip ? <Link to={`/trip/${report.trip.id}`}>{report.trip.id}</Link> : ''}</td>
+                  <td>{report.driver ? <Link to={`/driver/${report.driver.id}`}>{report.driver.id}</Link> : ''}</td>
                   <td>{report.user ? report.user.id : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

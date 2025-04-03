@@ -7,7 +7,8 @@
       "ON_GOING": "ON_GOING",
       "DONE": "DONE",
       "RESEND": "RESEND",
-      "CANCEL": "CANCEL"
+      "CANCEL": "CANCEL",
+      "REJECTED": "REJECTED"
     }
   }
 }

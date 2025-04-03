@@ -46,6 +46,12 @@ public class Trip implements Serializable {
     @Column(name = "max_seat")
     private Integer maxSeat;
 
+    @Column(name = "total_time")
+    private Integer totalTime;
+
+    @Column(name = "total_distance")
+    private Double totalDistance;
+
     @Column(name = "start_date")
     private Instant startDate;
 
@@ -80,7 +86,7 @@ public class Trip implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "user", "vehicles", "trips", "feedbacks", "ratings", "driverPackageSubscriptions" },
+        value = { "user", "driverPointHistories", "vehicles", "trips", "feedbacks", "reports", "ratings", "driverPackageSubscriptions" },
         allowSetters = true
     )
     private Driver driver;
@@ -99,6 +105,11 @@ public class Trip implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
     private Set<Feedback> feedbacks = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "trip", "driver", "user" }, allowSetters = true)
+    private Set<Report> reports = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "trip")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -183,6 +194,32 @@ public class Trip implements Serializable {
 
     public void setMaxSeat(Integer maxSeat) {
         this.maxSeat = maxSeat;
+    }
+
+    public Integer getTotalTime() {
+        return this.totalTime;
+    }
+
+    public Trip totalTime(Integer totalTime) {
+        this.setTotalTime(totalTime);
+        return this;
+    }
+
+    public void setTotalTime(Integer totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public Double getTotalDistance() {
+        return this.totalDistance;
+    }
+
+    public Trip totalDistance(Double totalDistance) {
+        this.setTotalDistance(totalDistance);
+        return this;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public Instant getStartDate() {
@@ -421,6 +458,37 @@ public class Trip implements Serializable {
         return this;
     }
 
+    public Set<Report> getReports() {
+        return this.reports;
+    }
+
+    public void setReports(Set<Report> reports) {
+        if (this.reports != null) {
+            this.reports.forEach(i -> i.setTrip(null));
+        }
+        if (reports != null) {
+            reports.forEach(i -> i.setTrip(this));
+        }
+        this.reports = reports;
+    }
+
+    public Trip reports(Set<Report> reports) {
+        this.setReports(reports);
+        return this;
+    }
+
+    public Trip addReport(Report report) {
+        this.reports.add(report);
+        report.setTrip(this);
+        return this;
+    }
+
+    public Trip removeReport(Report report) {
+        this.reports.remove(report);
+        report.setTrip(null);
+        return this;
+    }
+
     public Set<Rating> getRatings() {
         return this.ratings;
     }
@@ -481,6 +549,8 @@ public class Trip implements Serializable {
             ", tripImgContentType='" + getTripImgContentType() + "'" +
             ", pricePerSeat=" + getPricePerSeat() +
             ", maxSeat=" + getMaxSeat() +
+            ", totalTime=" + getTotalTime() +
+            ", totalDistance=" + getTotalDistance() +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
             ", currentSeat=" + getCurrentSeat() +

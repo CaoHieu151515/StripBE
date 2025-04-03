@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import strip.domain.enumeration.ReportStatus;
+import strip.domain.enumeration.ReportType;
 
 /**
  * A DTO for the {@link strip.domain.Report} entity.
@@ -16,11 +17,17 @@ public class ReportDTO implements Serializable {
 
     private UUID reportID;
 
+    private ReportType reportType;
+
     private Instant date;
 
     private String content;
 
     private ReportStatus reportStatus;
+
+    private TripDTO trip;
+
+    private DriverDTO driver;
 
     private UserDTO user;
 
@@ -38,6 +45,14 @@ public class ReportDTO implements Serializable {
 
     public void setReportID(UUID reportID) {
         this.reportID = reportID;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
     }
 
     public Instant getDate() {
@@ -62,6 +77,22 @@ public class ReportDTO implements Serializable {
 
     public void setReportStatus(ReportStatus reportStatus) {
         this.reportStatus = reportStatus;
+    }
+
+    public TripDTO getTrip() {
+        return trip;
+    }
+
+    public void setTrip(TripDTO trip) {
+        this.trip = trip;
+    }
+
+    public DriverDTO getDriver() {
+        return driver;
+    }
+
+    public void setDriver(DriverDTO driver) {
+        this.driver = driver;
     }
 
     public UserDTO getUser() {
@@ -99,9 +130,12 @@ public class ReportDTO implements Serializable {
         return "ReportDTO{" +
             "id=" + getId() +
             ", reportID='" + getReportID() + "'" +
+            ", reportType='" + getReportType() + "'" +
             ", date='" + getDate() + "'" +
             ", content='" + getContent() + "'" +
             ", reportStatus='" + getReportStatus() + "'" +
+            ", trip=" + getTrip() +
+            ", driver=" + getDriver() +
             ", user=" + getUser() +
             "}";
     }

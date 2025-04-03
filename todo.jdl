@@ -11,7 +11,8 @@ enum VehicleType {
 }
 
 enum VehicleStatus{
-  ACTIVE, //XE PHẢI ACTIVE MỚI CHỌN XE ĐỂ ĐI ĐƯỢC
+  ACTIVE,
+  INACTIVE,
   CONFIRMING,
   REJECTED
 }
@@ -41,6 +42,11 @@ enum PassengerStatus {
 }
 
 enum FeedbackType {
+  DRIVER_TO_USER,
+  USER_TO_DRIVER
+}
+
+enum ReportType {
   DRIVER_TO_USER,
   USER_TO_DRIVER
 }
@@ -81,6 +87,11 @@ enum PassengerType{
 
 }
 
+enum DriverPointHistoryStatus{
+  DONE,
+  REFUND
+}
+
 enum WalletTransactionType{
     DEPOSIT, //User nap tiền
     WITHDRAW, // user rút tiền
@@ -100,6 +111,14 @@ enum PackageDriverStatus{
     ACTIVE,
     EXPIRED,
     CANCEL
+}
+
+entity DriverPointHistory {
+  pointId UUID,
+  point Integer,
+  reason String,
+  date Instant,
+  status DriverPointHistoryStatus
 }
 
 entity Driver {
@@ -216,6 +235,7 @@ entity Notification {
 
 entity Report {
   reportID UUID,
+  reportType ReportType,
   date Instant,
   content String,
   reportStatus ReportStatus
@@ -288,6 +308,8 @@ entity DriverPackageSubscription {
 }
 
 
+
+
 relationship OneToOne {
   UserDetail to User with builtInEntity,
   Driver to User with builtInEntity,
@@ -297,6 +319,8 @@ relationship OneToOne {
 
 
 relationship ManyToOne {
+  DriverPointHistory to Driver,
+  DriverPointHistory to UserDetail,
   Vehicle to Driver,
   Trip to Vehicle,
   Trip to Driver,
@@ -306,13 +330,15 @@ relationship ManyToOne {
   Feedback to Trip,
   Feedback to Driver,
   Feedback to User with builtInEntity,
+  Report to Trip,
+  Report to Driver,
+  Report to User with builtInEntity,
   Rating to Trip,
   Rating to Driver,
   Rating to User with builtInEntity,
   Payment to User with builtInEntity,
   Payment to PackageDriver,
   Notification to User with builtInEntity,
-  Report to User with builtInEntity,
   WalletTransaction to SystemWallet,
   WalletTransaction to Payment,
   SendingAplication to User with builtInEntity,
@@ -320,9 +346,9 @@ relationship ManyToOne {
   WalletDeposit to UserWallet,
   DriverPackageSubscription to Driver,
   DriverPackageSubscription to PackageDriver
-
 }
 
-paginate Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with pagination
-service Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with serviceClass
+paginate Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report, DriverPointHistory with pagination
+service Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report, DriverPointHistory with serviceClass
 dto Driver, Vehicle, Trip, TripStopLocation, RequestTrip, Feedback, PackageDriver, Payment, Notification, Report with mapstruct
+

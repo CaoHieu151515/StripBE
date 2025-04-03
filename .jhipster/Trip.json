@@ -22,6 +22,14 @@
       "fieldType": "Integer"
     },
     {
+      "fieldName": "totalTime",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "totalDistance",
+      "fieldType": "Double"
+    },
+    {
       "fieldName": "startDate",
       "fieldType": "Instant"
     },
@@ -94,6 +102,13 @@
       "otherEntityName": "feedback",
       "otherEntityRelationshipName": "trip",
       "relationshipName": "feedback",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "report",
+      "otherEntityRelationshipName": "trip",
+      "relationshipName": "report",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },

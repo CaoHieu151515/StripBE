@@ -1,0 +1,49 @@
+{
+  "annotations": {
+    "changelogDate": "20250403135721"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "pointId",
+      "fieldType": "UUID"
+    },
+    {
+      "fieldName": "point",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "reason",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "DriverPointHistoryStatus",
+      "fieldValues": "DONE,REFUND"
+    }
+  ],
+  "name": "DriverPointHistory",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "driver",
+      "otherEntityRelationshipName": "driverPointHistory",
+      "relationshipName": "driver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "userDetail",
+      "otherEntityRelationshipName": "driverPointHistory",
+      "relationshipName": "userDetail",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

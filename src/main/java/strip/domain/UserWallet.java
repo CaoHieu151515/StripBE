@@ -56,6 +56,11 @@ public class UserWallet implements Serializable {
     @JsonIgnoreProperties(value = { "systemWallet", "payment", "userWallet" }, allowSetters = true)
     private Set<WalletTransaction> walletTransactions = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userWallet")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "userWallet" }, allowSetters = true)
+    private Set<WalletDeposit> walletDeposits = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -180,6 +185,37 @@ public class UserWallet implements Serializable {
         return this;
     }
 
+    public Set<WalletDeposit> getWalletDeposits() {
+        return this.walletDeposits;
+    }
+
+    public void setWalletDeposits(Set<WalletDeposit> walletDeposits) {
+        if (this.walletDeposits != null) {
+            this.walletDeposits.forEach(i -> i.setUserWallet(null));
+        }
+        if (walletDeposits != null) {
+            walletDeposits.forEach(i -> i.setUserWallet(this));
+        }
+        this.walletDeposits = walletDeposits;
+    }
+
+    public UserWallet walletDeposits(Set<WalletDeposit> walletDeposits) {
+        this.setWalletDeposits(walletDeposits);
+        return this;
+    }
+
+    public UserWallet addWalletDeposit(WalletDeposit walletDeposit) {
+        this.walletDeposits.add(walletDeposit);
+        walletDeposit.setUserWallet(this);
+        return this;
+    }
+
+    public UserWallet removeWalletDeposit(WalletDeposit walletDeposit) {
+        this.walletDeposits.remove(walletDeposit);
+        walletDeposit.setUserWallet(null);
+        return this;
+    }
+
     public UserWallet addWalletTransactionAndUpdateBalance(WalletTransaction transaction) {
         if (transaction == null) return this;
 
@@ -274,8 +310,7 @@ public class UserWallet implements Serializable {
         this.current = newCurrent;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
-    // setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -290,8 +325,7 @@ public class UserWallet implements Serializable {
 
     @Override
     public int hashCode() {
-        // see
-        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -299,12 +333,12 @@ public class UserWallet implements Serializable {
     @Override
     public String toString() {
         return "UserWallet{" +
-                "id=" + getId() +
-                ", userWallet='" + getUserWallet() + "'" +
-                ", before=" + getBefore() +
-                ", amount=" + getAmount() +
-                ", current=" + getCurrent() +
-                ", mobifyDate='" + getMobifyDate() + "'" +
-                "}";
+            "id=" + getId() +
+            ", userWallet='" + getUserWallet() + "'" +
+            ", before=" + getBefore() +
+            ", amount=" + getAmount() +
+            ", current=" + getCurrent() +
+            ", mobifyDate='" + getMobifyDate() + "'" +
+            "}";
     }
 }

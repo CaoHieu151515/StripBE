@@ -39,6 +39,12 @@ export const ReportDetail = () => {
           </dt>
           <dd>{reportEntity.reportID}</dd>
           <dt>
+            <span id="reportType">
+              <Translate contentKey="sTripBeApp.report.reportType">Report Type</Translate>
+            </span>
+          </dt>
+          <dd>{reportEntity.reportType}</dd>
+          <dt>
             <span id="date">
               <Translate contentKey="sTripBeApp.report.date">Date</Translate>
             </span>
@@ -56,6 +62,14 @@ export const ReportDetail = () => {
             </span>
           </dt>
           <dd>{reportEntity.reportStatus}</dd>
+          <dt>
+            <Translate contentKey="sTripBeApp.report.trip">Trip</Translate>
+          </dt>
+          <dd>{reportEntity.trip ? reportEntity.trip.id : ''}</dd>
+          <dt>
+            <Translate contentKey="sTripBeApp.report.driver">Driver</Translate>
+          </dt>
+          <dd>{reportEntity.driver ? reportEntity.driver.id : ''}</dd>
           <dt>
             <Translate contentKey="sTripBeApp.report.user">User</Translate>
           </dt>

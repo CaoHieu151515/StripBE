@@ -7,7 +7,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { getEntities as getTrips } from 'app/entities/trip/trip.reducer';
+import { getEntities as getDrivers } from 'app/entities/driver/driver.reducer';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
+import { ReportType } from 'app/shared/model/enumerations/report-type.model';
 import { ReportStatus } from 'app/shared/model/enumerations/report-status.model';
 import { createEntity, getEntity, reset, updateEntity } from './report.reducer';
 
@@ -19,11 +22,14 @@ export const ReportUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const trips = useAppSelector(state => state.trip.entities);
+  const drivers = useAppSelector(state => state.driver.entities);
   const users = useAppSelector(state => state.userManagement.users);
   const reportEntity = useAppSelector(state => state.report.entity);
   const loading = useAppSelector(state => state.report.loading);
   const updating = useAppSelector(state => state.report.updating);
   const updateSuccess = useAppSelector(state => state.report.updateSuccess);
+  const reportTypeValues = Object.keys(ReportType);
   const reportStatusValues = Object.keys(ReportStatus);
 
   const handleClose = () => {
@@ -37,6 +43,8 @@ export const ReportUpdate = () => {
       dispatch(getEntity(id));
     }
 
+    dispatch(getTrips({}));
+    dispatch(getDrivers({}));
     dispatch(getUsers({}));
   }, []);
 
@@ -55,6 +63,8 @@ export const ReportUpdate = () => {
     const entity = {
       ...reportEntity,
       ...values,
+      trip: trips.find(it => it.id.toString() === values.trip?.toString()),
+      driver: drivers.find(it => it.id.toString() === values.driver?.toString()),
       user: users.find(it => it.id.toString() === values.user?.toString()),
     };
 
@@ -71,9 +81,12 @@ export const ReportUpdate = () => {
           date: displayDefaultDateTime(),
         }
       : {
+          reportType: 'DRIVER_TO_USER',
           reportStatus: 'WAITING',
           ...reportEntity,
           date: convertDateTimeFromServer(reportEntity.date),
+          trip: reportEntity?.trip?.id,
+          driver: reportEntity?.driver?.id,
           user: reportEntity?.user?.id,
         };
 
@@ -110,6 +123,19 @@ export const ReportUpdate = () => {
                 type="text"
               />
               <ValidatedField
+                label={translate('sTripBeApp.report.reportType')}
+                id="report-reportType"
+                name="reportType"
+                data-cy="reportType"
+                type="select"
+              >
+                {reportTypeValues.map(reportType => (
+                  <option value={reportType} key={reportType}>
+                    {translate(`sTripBeApp.ReportType.${reportType}`)}
+                  </option>
+                ))}
+              </ValidatedField>
+              <ValidatedField
                 label={translate('sTripBeApp.report.date')}
                 id="report-date"
                 name="date"
@@ -136,6 +162,26 @@ export const ReportUpdate = () => {
                     {translate(`sTripBeApp.ReportStatus.${reportStatus}`)}
                   </option>
                 ))}
+              </ValidatedField>
+              <ValidatedField id="report-trip" name="trip" data-cy="trip" label={translate('sTripBeApp.report.trip')} type="select">
+                <option value="" key="0" />
+                {trips
+                  ? trips.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField id="report-driver" name="driver" data-cy="driver" label={translate('sTripBeApp.report.driver')} type="select">
+                <option value="" key="0" />
+                {drivers
+                  ? drivers.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
               </ValidatedField>
               <ValidatedField id="report-user" name="user" data-cy="user" label={translate('sTripBeApp.report.user')} type="select">
                 <option value="" key="0" />

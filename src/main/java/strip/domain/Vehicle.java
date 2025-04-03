@@ -83,7 +83,7 @@ public class Vehicle implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "user", "vehicles", "trips", "feedbacks", "ratings", "driverPackageSubscriptions" },
+        value = { "user", "driverPointHistories", "vehicles", "trips", "feedbacks", "reports", "ratings", "driverPackageSubscriptions" },
         allowSetters = true
     )
     private Driver driver;
@@ -91,7 +91,7 @@ public class Vehicle implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vehicle")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(
-        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "ratings", "passengers" },
+        value = { "vehicle", "driver", "requestTrips", "tripStopLocations", "feedbacks", "reports", "ratings" },
         allowSetters = true
     )
     private Set<Trip> trips = new HashSet<>();

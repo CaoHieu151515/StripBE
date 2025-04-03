@@ -26,7 +26,8 @@
         "userDetail": "User Detail",
         "requestTrip": "Request Trip",
         "driverPackageSubscription": "Driver Package Subscription",
-        "walletDeposit": "Wallet Deposit"
+        "walletDeposit": "Wallet Deposit",
+        "driverPointHistory": "Driver Point History"
       },
       "account": {
         "main": "Account",
