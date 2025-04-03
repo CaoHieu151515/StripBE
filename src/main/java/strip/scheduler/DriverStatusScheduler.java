@@ -6,19 +6,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import strip.domain.Authority;
 import strip.domain.Driver;
-import strip.domain.Driver_;
+import strip.domain.User;
 import strip.domain.enumeration.DriverStatus;
+import strip.repository.AuthorityRepository;
 import strip.repository.DriverRepository;
+import strip.repository.UserRepository;
+import strip.security.AuthoritiesConstants;
 
 @Component
 public class DriverStatusScheduler {
 
-    private final DriverRepository driverRepository;
     private final Logger log = LoggerFactory.getLogger(DriverStatusScheduler.class);
 
-    public DriverStatusScheduler(DriverRepository driverRepository) {
+    private final DriverRepository driverRepository;
+
+    private final AuthorityRepository authorityRepository;
+
+    private final UserRepository userRepository;
+
+    public DriverStatusScheduler(
+        DriverRepository driverRepository,
+        AuthorityRepository authorityRepository,
+        UserRepository userRepository
+    ) {
         this.driverRepository = driverRepository;
+        this.authorityRepository = authorityRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -31,6 +46,9 @@ public class DriverStatusScheduler {
 
         for (Driver driver : expiredDrivers) {
             driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+
+            User user = driver.getUser();
+            removeDriverRoleIfPresent(user);
         }
 
         if (!expiredDrivers.isEmpty()) {
@@ -51,6 +69,15 @@ public class DriverStatusScheduler {
         if (!allDrivers.isEmpty()) {
             driverRepository.saveAll(allDrivers);
             log.info("Đã reset driverPoint về 14 cho {} tài xế", allDrivers.size());
+        }
+    }
+
+    private void removeDriverRoleIfPresent(User user) {
+        Authority driverRole = authorityRepository.findById(AuthoritiesConstants.DRIVER).orElse(null);
+
+        if (driverRole != null && user.getAuthorities().contains(driverRole)) {
+            user.getAuthorities().remove(driverRole);
+            userRepository.save(user);
         }
     }
 }

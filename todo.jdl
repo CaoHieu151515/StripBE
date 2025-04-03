@@ -22,7 +22,8 @@ enum TripStatus {
   ON_GOING,
   DONE,
   RESEND,
-  CANCEL
+  CANCEL,
+  REJECTED
 }
 
 enum FeedbackStatus {

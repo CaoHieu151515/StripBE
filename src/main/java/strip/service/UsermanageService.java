@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.Driver;
+import strip.domain.Feedback;
 import strip.domain.PackageDriver;
+import strip.domain.Trip;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.UserWallet;
@@ -25,15 +27,18 @@ import strip.domain.Vehicle;
 import strip.domain.WalletDeposit;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.DriverStatus;
+import strip.domain.enumeration.FeedbackStatus;
+import strip.domain.enumeration.FeedbackType;
 import strip.domain.enumeration.PackageDriverStatus;
 import strip.domain.enumeration.PaymentStatus;
-import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.TransactionStatus;
-import strip.domain.enumeration.VehicleStatus;
+import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.DriverRepository;
+import strip.repository.FeedbackRepository;
 import strip.repository.PackageDriverRepository;
+import strip.repository.TripRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
@@ -43,7 +48,10 @@ import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
+import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.PackageDriverDTO;
+import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
@@ -67,19 +75,24 @@ public class UsermanageService {
     private final WalletDepositRepository walletDepositRepository;
     private final UsermanageMapper usermanageMapper;
     private final UserWalletRepository userWalletRepository;
+    private final TripRepository tripRepository;
+    private final ImageUrlService imageUrlService;
+    private final FeedbackRepository feedbackRepository;
 
     public UsermanageService(
         UserRepository userRepository,
         UserDetailRepository userDetailRepository,
         DriverRepository driverRepository,
         DriverInfoMapper driverInfoMapper,
-        VehicleService vehicleService,
         VehicleRepository vehicleRepository,
         PackageDriverRepository packageDriverRepository,
         PackageDriverMapper packageDriverMapper,
         WalletDepositRepository walletDepositRepository,
         UsermanageMapper usermanageMapper,
-        UserWalletRepository userWalletRepository
+        UserWalletRepository userWalletRepository,
+        TripRepository tripRepository,
+        ImageUrlService imageUrlService,
+        FeedbackRepository feedbackRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -91,6 +104,9 @@ public class UsermanageService {
         this.walletDepositRepository = walletDepositRepository;
         this.usermanageMapper = usermanageMapper;
         this.userWalletRepository = userWalletRepository;
+        this.tripRepository = tripRepository;
+        this.imageUrlService = imageUrlService;
+        this.feedbackRepository = feedbackRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -152,15 +168,14 @@ public class UsermanageService {
     }
 
     public Optional<DriverInfoDTO> getDriverDetailsByUsername(String username) {
-        Optional<User> userOpt = userRepository.findOneByLogin(username);
+        User user = userRepository
+            .findOneByLogin(username)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
 
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            Optional<UserDetail> userDetailOpt = userDetailRepository.findById(user.getId());
-            Optional<Driver> driverOpt = driverRepository.findById(user.getId());
-
-            if (driverOpt.isPresent()) {
-                Driver driver = driverOpt.get();
+        Optional<UserDetail> userDetailOpt = userDetailRepository.findById(user.getId());
+        return driverRepository
+            .findById(user.getId())
+            .map(driver -> {
                 UserDetail userDetail = userDetailOpt.orElse(null);
 
                 // ✅ Map cơ bản
@@ -190,11 +205,8 @@ public class UsermanageService {
                     .collect(Collectors.toSet());
 
                 dto.setVehicles(vehicleDTOs);
-                return Optional.of(dto);
-            }
-        }
-
-        return Optional.empty();
+                return dto;
+            });
     }
 
     public List<ConfirmingVehicleDriverDTO> getAllConfirmingVehicles() {
@@ -213,25 +225,23 @@ public class UsermanageService {
     }
 
     public boolean approveVehicle(UUID vehicleId) {
-        Optional<Vehicle> vehicleOpt = vehicleRepository.findByVehicleID(vehicleId);
-        if (vehicleOpt.isPresent()) {
-            Vehicle vehicle = vehicleOpt.get();
-            vehicle.setStatus(VehicleStatus.ACTIVE);
-            vehicleRepository.save(vehicle);
-            return true;
-        }
-        return false;
+        Vehicle vehicle = vehicleRepository
+            .findByVehicleID(vehicleId)
+            .orElseThrow(() -> new BadRequestAlertException("Vehicle not found", "vehicle", "notfound"));
+
+        vehicle.setStatus(VehicleStatus.ACTIVE);
+        vehicleRepository.save(vehicle);
+        return true;
     }
 
     public boolean rejectVehicle(UUID vehicleId) {
-        Optional<Vehicle> vehicleOpt = vehicleRepository.findByVehicleID(vehicleId);
-        if (vehicleOpt.isPresent()) {
-            Vehicle vehicle = vehicleOpt.get();
-            vehicle.setStatus(VehicleStatus.REJECTED);
-            vehicleRepository.save(vehicle);
-            return true;
-        }
-        return false;
+        Vehicle vehicle = vehicleRepository
+            .findByVehicleID(vehicleId)
+            .orElseThrow(() -> new BadRequestAlertException("Vehicle not found", "vehicle", "notfound"));
+
+        vehicle.setStatus(VehicleStatus.REJECTED);
+        vehicleRepository.save(vehicle);
+        return true;
     }
 
     public List<ConfirmingVehicleDriverDTO> getConfirmingDrivers() {
@@ -239,80 +249,74 @@ public class UsermanageService {
 
         List<Driver> drivers = driverRepository.findByUsedtoDriverFalseAndDriverStatus(DriverStatus.CONFIRMING);
         log.debug("Found {} drivers with status CONFIRMING", drivers.size());
+
         for (Driver driver : drivers) {
-            Optional<User> user = userRepository.findById(driver.getUser().getId());
-            Optional<UserDetail> userDetail = userDetailRepository.findByUserId(driver.getUser().getId());
-            Optional<Vehicle> vehicle = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
-                driver.getDriverID(),
-                VehicleStatus.CONFIRMING
-            );
-            if (user.isPresent() && vehicle.isPresent()) {
-                ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(
-                    user.get(),
-                    userDetail.orElse(null),
-                    driver,
-                    vehicle.get()
-                );
-                confirmingDrivers.add(dto);
-            }
+            userRepository
+                .findById(driver.getUser().getId())
+                .ifPresent(user -> {
+                    Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
+                    vehicleRepository
+                        .findFirstByDriver_DriverIDAndStatus(driver.getDriverID(), VehicleStatus.CONFIRMING)
+                        .ifPresent(vehicle -> {
+                            ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(
+                                user,
+                                userDetail.orElse(null),
+                                driver,
+                                vehicle
+                            );
+                            confirmingDrivers.add(dto);
+                        });
+                });
         }
+
         return confirmingDrivers;
     }
 
     @Transactional
     public void approveDriver(UUID driverId) {
-        Optional<Driver> driverOptional = driverRepository.findByDriverID(driverId);
+        Driver driver = driverRepository
+            .findByDriverID(driverId)
+            .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverId));
 
-        if (driverOptional.isPresent()) {
-            Driver driver = driverOptional.get();
-            log.debug("Approving driver: {}", driverId);
+        log.debug("Approving driver: {}", driverId);
 
-            // Tìm xe đầu tiên có trạng thái CONFIRMING
-            Optional<Vehicle> vehicleOptional = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
-                driver.getDriverID(),
-                VehicleStatus.CONFIRMING
-            );
-
-            // Cập nhật trạng thái tài xế và xe
-            driver.setDriverStatus(DriverStatus.ACTIVE);
-            driver.setUsedtoDriver(true);
-            vehicleOptional.ifPresent(vehicle -> {
+        // Tìm xe đầu tiên có trạng thái CONFIRMING
+        vehicleRepository
+            .findFirstByDriver_DriverIDAndStatus(driver.getDriverID(), VehicleStatus.CONFIRMING)
+            .ifPresent(vehicle -> {
                 vehicle.setStatus(VehicleStatus.ACTIVE);
                 vehicleRepository.save(vehicle);
             });
 
-            driverRepository.save(driver);
-            log.debug("Driver {} approved successfully", driverId);
-        } else {
-            throw new EntityNotFoundException("Driver not found with ID: " + driverId);
-        }
+        // Cập nhật trạng thái tài xế
+        driver.setDriverStatus(DriverStatus.ACTIVE);
+        driver.setUsedtoDriver(true);
+        driverRepository.save(driver);
+
+        log.debug("Driver {} approved successfully", driverId);
     }
 
     @Transactional
     public void rejectDriver(UUID driverId) {
-        Optional<Driver> driverOptional = driverRepository.findByDriverID(driverId);
-        if (driverOptional.isPresent()) {
-            Driver driver = driverOptional.get();
-            log.debug("Rejecting driver: {}", driverId);
+        Driver driver = driverRepository
+            .findByDriverID(driverId)
+            .orElseThrow(() -> new EntityNotFoundException("Driver not found with ID: " + driverId));
 
-            // Tìm xe đầu tiên có trạng thái CONFIRMING
-            Optional<Vehicle> vehicleOptional = vehicleRepository.findFirstByDriver_DriverIDAndStatus(
-                driver.getDriverID(),
-                VehicleStatus.CONFIRMING
-            );
+        log.debug("Rejecting driver: {}", driverId);
 
-            // Cập nhật trạng thái tài xế và xe
-            driver.setDriverStatus(DriverStatus.NOT_DRIVER);
-            vehicleOptional.ifPresent(vehicle -> {
+        // Tìm xe đầu tiên có trạng thái CONFIRMING
+        vehicleRepository
+            .findFirstByDriver_DriverIDAndStatus(driver.getDriverID(), VehicleStatus.CONFIRMING)
+            .ifPresent(vehicle -> {
                 vehicle.setStatus(VehicleStatus.REJECTED);
                 vehicleRepository.save(vehicle);
             });
 
-            driverRepository.save(driver);
-            log.debug("Driver {} rejected successfully", driverId);
-        } else {
-            throw new EntityNotFoundException("Driver not found with ID: " + driverId);
-        }
+        // Cập nhật trạng thái tài xế
+        driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+        driverRepository.save(driver);
+
+        log.debug("Driver {} rejected successfully", driverId);
     }
 
     public List<PackageDriverDTO> getActivePackages() {
@@ -471,5 +475,79 @@ public class UsermanageService {
         userWalletRepository.save(userWallet);
 
         log.info("❌ Đã từ chối rút tiền và hoàn tiền lại cho user: {}", userWallet.getUser().getLogin());
+    }
+
+    public Page<TripCusDTO> getAllTrips(Pageable pageable, String startLocation, String endLocation, TripStatus status, UUID driverId) {
+        return tripRepository
+            .findAllWithFilters(startLocation, endLocation, status, driverId, pageable)
+            .map(this::toTripCusDTOWithCustomFields);
+    }
+
+    public TripCusDTO toTripCusDTOWithCustomFields(Trip trip) {
+        TripCusDTO dto = usermanageMapper.toTripCusDTO(trip);
+
+        // Trip image
+        dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+
+        // Driver name
+        if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
+            User user = trip.getDriver().getUser();
+            dto.setDriverName(user.getFirstName() + " " + user.getLastName());
+
+            // Lấy số điện thoại từ UserDetail
+            userDetailRepository.findById(user.getId()).map(UserDetail::getPhone).ifPresent(dto::setDriverPhone);
+        }
+
+        // Vehicle image
+        if (trip.getVehicle() != null) {
+            dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(trip.getVehicle().getVehicleID()));
+        }
+
+        // Stop locations
+        if (trip.getTripStopLocations() != null) {
+            List<TripStopLocationDTO> stops = trip
+                .getTripStopLocations()
+                .stream()
+                .map(usermanageMapper::toTripStopLocationDTO)
+                .collect(Collectors.toList());
+            dto.setStopLocations(stops);
+        }
+
+        return dto;
+    }
+
+    @Transactional
+    public void approveTrip(UUID tripId) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        trip.setTripStatus(TripStatus.UPCOMING);
+        tripRepository.save(trip);
+    }
+
+    @Transactional
+    public void rejectTrip(UUID tripId, String reason) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        trip.setTripStatus(TripStatus.REJECTED);
+        trip.setCancelReason(reason);
+        tripRepository.save(trip);
+    }
+
+    public Page<FeedbackCusDTO> getAllFeedbacks(Pageable pageable, FeedbackStatus status, FeedbackType type) {
+        return feedbackRepository.findAllWithFilters(status, type, pageable).map(usermanageMapper::toFeedbackCusDTO);
+    }
+
+    @Transactional
+    public void confirmFeedback(UUID id) {
+        Feedback feedback = feedbackRepository
+            .findByFeedbackID(id)
+            .orElseThrow(() -> new BadRequestAlertException("Feedback not found", "feedback", "notfound"));
+
+        feedback.setFeedbackStatus(FeedbackStatus.DONE);
+        feedbackRepository.save(feedback);
     }
 }

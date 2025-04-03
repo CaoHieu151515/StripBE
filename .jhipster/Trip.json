@@ -56,7 +56,7 @@
     {
       "fieldName": "tripStatus",
       "fieldType": "TripStatus",
-      "fieldValues": "UPCOMING,CONFIRMING,ON_GOING,DONE,RESEND,CANCEL"
+      "fieldValues": "UPCOMING,CONFIRMING,ON_GOING,DONE,RESEND,CANCEL,REJECTED"
     }
   ],
   "name": "Trip",

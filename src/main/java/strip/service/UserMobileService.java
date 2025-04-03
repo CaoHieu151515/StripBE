@@ -28,6 +28,7 @@ import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.WalletTransactionType;
+import strip.repository.AuthorityRepository;
 import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
 import strip.repository.SystemWalletRepository;
@@ -37,6 +38,7 @@ import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
 import strip.repository.WalletDepositRepository;
 import strip.repository.WalletTransactionRepository;
+import strip.security.AuthoritiesConstants;
 import strip.security.SecurityUtils;
 import strip.service.dto.ConfirmingDriverDTO;
 import strip.service.dto.ConfirmingVehicleDTO;
@@ -65,6 +67,7 @@ public class UserMobileService {
     private final SystemWalletRepository systemWalletRepository;
     private final ImageUrlService imageUrlService;
     private final WalletDepositRepository walletDepositRepository;
+    private final AuthorityRepository authorityRepository;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -77,7 +80,8 @@ public class UserMobileService {
         PackageDriverRepository packageDriverRepository,
         SystemWalletRepository systemWalletRepository,
         ImageUrlService imageUrlService,
-        WalletDepositRepository walletDepositRepository
+        WalletDepositRepository walletDepositRepository,
+        AuthorityRepository authorityRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -90,39 +94,38 @@ public class UserMobileService {
         this.systemWalletRepository = systemWalletRepository;
         this.imageUrlService = imageUrlService;
         this.walletDepositRepository = walletDepositRepository;
+        this.authorityRepository = authorityRepository;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
-        Optional<User> optionalUser = userService.getUserWithAuthorities();
-        if (optionalUser.isEmpty()) {
-            return Optional.empty();
-        }
+        return userService
+            .getUserWithAuthorities()
+            .map(user -> {
+                Optional<UserDetail> userDetailOpt = userDetailRepository.findByUser(user);
+                Optional<UserWallet> userWalletOpt = userWalletRepository.findByUser(user);
+                Optional<Driver> driverOpt = driverRepository.findByUser(user);
 
-        User user = optionalUser.get();
-        Optional<UserDetail> userDetailOpt = userDetailRepository.findByUser(user);
-        Optional<UserWallet> userWalletOpt = userWalletRepository.findByUser(user);
-        Optional<Driver> driverOpt = driverRepository.findByUser(user);
+                Set<String> roles = extractRoles(user);
+                boolean isDriver = driverOpt.map(d -> d.getDriverStatus() != DriverStatus.NOT_DRIVER).orElse(false);
+                List<Vehicle> vehicles = getDriverVehicles(driverOpt);
+                boolean hasVehicle = !vehicles.isEmpty();
 
-        Set<String> roles = extractRoles(user);
-        boolean isDriver = driverOpt.map(d -> d.getDriverStatus() != DriverStatus.NOT_DRIVER).orElse(false);
-        List<Vehicle> vehicles = getDriverVehicles(driverOpt);
-        boolean hasVehicle = !vehicles.isEmpty();
+                UserDetailsCusDTO userDetailsCusDTO = mapUserDetailToDTO(userDetailOpt);
+                DriverInfoDTO driverDTO = mapToDriverInfoDTO(user, userDetailOpt, driverOpt);
+                List<DriverVehicleDTO> vehicleDTOList = mapVehiclesToDTO(vehicles);
 
-        UserDetailsCusDTO userDetailsCusDTO = mapUserDetailToDTO(userDetailOpt);
-        DriverInfoDTO driverDTO = mapToDriverInfoDTO(user, userDetailOpt, driverOpt);
-        List<DriverVehicleDTO> vehicleDTOList = mapVehiclesToDTO(vehicles);
+                UserProfileDTO dto = new UserProfileDTO();
+                dto.setUser(user);
+                dto.setUserDetailsCusDTO(userDetailsCusDTO);
+                dto.setUserWallet(userWalletOpt.orElse(null));
+                dto.setDriver(driverDTO);
+                dto.setDriverVehicleDTO(vehicleDTOList);
+                dto.setDriver(isDriver);
+                dto.setHasVehicle(hasVehicle);
+                dto.setRoles(roles);
 
-        UserProfileDTO dto = new UserProfileDTO();
-        dto.setUser(user);
-        dto.setUserDetailsCusDTO(userDetailsCusDTO);
-        dto.setUserWallet(userWalletOpt.orElse(null));
-        dto.setDriver(driverDTO);
-        dto.setDriverVehicleDTO(vehicleDTOList);
-        dto.setDriver(isDriver);
-        dto.setHasVehicle(hasVehicle);
-        dto.setRoles(roles);
-
-        return Optional.of(dto);
+                return dto;
+            });
     }
 
     private Set<String> extractRoles(User user) {
@@ -149,10 +152,12 @@ public class UserMobileService {
     }
 
     private DriverInfoDTO mapToDriverInfoDTO(User user, Optional<UserDetail> userDetailOpt, Optional<Driver> driverOpt) {
-        if (driverOpt.isEmpty() || userDetailOpt.isEmpty()) return null;
+        if (driverOpt.isEmpty() || userDetailOpt.isEmpty()) {
+            return null;
+        }
 
-        Driver driver = driverOpt.get();
-        UserDetail userDetail = userDetailOpt.get();
+        Driver driver = driverOpt.orElseThrow(); // hoặc giữ nguyên vì đã kiểm tra isEmpty ở trên
+        UserDetail userDetail = userDetailOpt.orElseThrow();
 
         DriverInfoDTO dto = new DriverInfoDTO();
         dto.setUserId(user.getId());
@@ -251,6 +256,7 @@ public class UserMobileService {
         createAndAssignSubscription(driver, pkg, price);
         updateDriverStatusAndExpiration(driver, pkg);
         handleWalletTransactions(userWallet, systemWallet, price);
+        addDriverRoleIfMissing(user);
     }
 
     private User getCurrentUser() {
@@ -295,6 +301,21 @@ public class UserMobileService {
 
         driver.addDriverPackageSubscription(subscription);
         driverRepository.save(driver);
+    }
+
+    private void addDriverRoleIfMissing(User user) {
+        Authority driverRole = authorityRepository
+            .findById(AuthoritiesConstants.DRIVER)
+            .orElseGet(() -> {
+                Authority newAuth = new Authority();
+                newAuth.setName(AuthoritiesConstants.DRIVER);
+                return authorityRepository.save(newAuth);
+            });
+
+        if (!user.getAuthorities().contains(driverRole)) {
+            user.getAuthorities().add(driverRole);
+            userRepository.save(user);
+        }
     }
 
     private void handleWalletTransactions(UserWallet userWallet, SystemWallet systemWallet, double price) {

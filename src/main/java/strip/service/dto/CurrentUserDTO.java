@@ -1,6 +1,7 @@
 package strip.service.dto;
 
 import java.time.Instant;
+import java.util.Set;
 
 public class CurrentUserDTO {
 
@@ -14,6 +15,7 @@ public class CurrentUserDTO {
     private String address;
     private Instant dob;
     private String userImageUrl;
+    private Set<String> roles;
 
     public CurrentUserDTO() {
         // Default constructor
@@ -89,5 +91,13 @@ public class CurrentUserDTO {
 
     public void setUserImageUrl(String userImageUrl) {
         this.userImageUrl = userImageUrl;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

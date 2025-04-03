@@ -161,7 +161,7 @@ public class UserService {
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
-        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        authorityRepository.findById(AuthoritiesConstants.PASSENGER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
@@ -456,6 +456,8 @@ public class UserService {
                         dto.setDob(detail.getDob());
                         dto.setUserImageUrl(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
                     });
+                Set<String> roles = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+                dto.setRoles(roles);
 
                 return dto;
             });

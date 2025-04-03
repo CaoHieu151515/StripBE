@@ -250,6 +250,7 @@ public class TripCustomService {
         trip.setCondition(dto.getCondition());
 
         // 🔁 Đặt lại trạng thái xét duyệt
+        trip.setCancelReason(null);
         trip.setTripStatus(TripStatus.CONFIRMING);
 
         return tripRepository.save(trip);

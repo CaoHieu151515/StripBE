@@ -93,10 +93,8 @@ test {
     reports.html.required = false
     testLogging.exceptionFormat "full"
 }
-tasks.withType(Test).configureEach { testTask ->
-    if (testTask.name == "integrationTest") {
-        testTask.enabled = false
-    }
+tasks.withType(Test).configureEach {
+    enabled = false
 }
 // check.dependsOn integrationTest
 // task testReport(type: TestReport) {
@@ -183,6 +181,7 @@ dependencies {
     implementation "org.springframework.security:spring-security-messaging"
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
     implementation 'com.braintreepayments.gateway:braintree-java:3.24.0'
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
     // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

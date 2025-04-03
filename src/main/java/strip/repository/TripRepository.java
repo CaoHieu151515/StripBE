@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,7 +17,7 @@ import strip.domain.enumeration.TripStatus;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface TripRepository extends JpaRepository<Trip, Long> {
+public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
     @Query("SELECT t FROM Trip t WHERE t.driver.driverID = :driverId " + "AND t.startDate <= :endDate AND t.endDate >= :startDate")
     List<Trip> findOverlappingTripsByDriver(
         @Param("driverId") UUID driverId,
@@ -36,4 +38,21 @@ public interface TripRepository extends JpaRepository<Trip, Long> {
 
     @Query("SELECT t FROM Trip t WHERE t.tripStatus IN (:statuses) AND t.currentSeat < t.maxSeat ORDER BY t.startDate ASC")
     List<Trip> findAvailableTrips(@Param("statuses") List<TripStatus> statuses);
+
+    @Query(
+        """
+            SELECT t FROM Trip t
+            WHERE (:startLocation IS NULL OR LOWER(t.startLocation) LIKE LOWER(CONCAT('%', :startLocation, '%')))
+              AND (:endLocation IS NULL OR LOWER(t.endLocation) LIKE LOWER(CONCAT('%', :endLocation, '%')))
+              AND (:status IS NULL OR t.tripStatus = :status)
+              AND (:driverId IS NULL OR t.driver.driverID = :driverId)
+        """
+    )
+    Page<Trip> findAllWithFilters(
+        @Param("startLocation") String startLocation,
+        @Param("endLocation") String endLocation,
+        @Param("status") TripStatus status,
+        @Param("driverId") UUID driverId,
+        Pageable pageable
+    );
 }

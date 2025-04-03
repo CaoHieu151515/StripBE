@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,12 +27,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
+import strip.domain.enumeration.FeedbackStatus;
+import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.TripStatus;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.PackageDriverDTO;
+import strip.service.dto.TripCusDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
+import strip.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
@@ -41,7 +48,14 @@ public class ManagerResource {
     private static final List<String> ALLOWED_ORDERED_PROPERTIES = Collections.unmodifiableList(
         Arrays.asList("id", "username", "firstName", "lastName", "email", "active", "gender", "phoneNumber")
     );
-
+    private static final List<String> ALLOWED_ORDERED_PROPERTIES_TRIP = List.of(
+        "startLocation",
+        "endLocation",
+        "startDate",
+        "endDate",
+        "tripStatus"
+    );
+    private static final List<String> ALLOWED_ORDERED_PROPERTIES_FEEDBACK = List.of("feedbackStatus", "feedbackType", "feedbackRating");
     private final UsermanageService usermanageService;
 
     private final Logger log = LoggerFactory.getLogger(ManagerResource.class);
@@ -173,5 +187,63 @@ public class ManagerResource {
     public ResponseEntity<Void> rejectWithdrawal(@PathVariable UUID depositId) {
         usermanageService.rejectWithdrawal(depositId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/trips/getall")
+    public ResponseEntity<List<TripCusDTO>> getAllTrips(
+        @ParameterObject Pageable pageable,
+        @RequestParam(required = false) String startLocation,
+        @RequestParam(required = false) String endLocation,
+        @RequestParam(required = false) TripStatus status,
+        @RequestParam(required = false) UUID driverId
+    ) {
+        if (!onlyContainsAllowedPropertiesTrip(pageable)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<TripCusDTO> page = usermanageService.getAllTrips(pageable, startLocation, endLocation, status, driverId);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    private boolean onlyContainsAllowedPropertiesTrip(Pageable pageable) {
+        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_TRIP::contains);
+    }
+
+    @PutMapping("/trips/{tripId}/reject")
+    public ResponseEntity<Void> rejectTrip(@PathVariable UUID tripId, @RequestBody String reason) {
+        if (reason == null || reason.isBlank()) {
+            throw new BadRequestAlertException("Lý do từ chối là bắt buộc", "trip", "reason-required");
+        }
+
+        usermanageService.rejectTrip(tripId, reason);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/feedbacks")
+    public ResponseEntity<List<FeedbackCusDTO>> getAllFeedbacks(
+        @ParameterObject Pageable pageable,
+        @RequestParam(required = false) FeedbackStatus status,
+        @RequestParam(required = false) FeedbackType type
+    ) {
+        if (!onlyContainsAllowedPropertiesFeedback(pageable)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<FeedbackCusDTO> page = usermanageService.getAllFeedbacks(pageable, status, type);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    private boolean onlyContainsAllowedPropertiesFeedback(Pageable pageable) {
+        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_FEEDBACK::contains);
+    }
+
+    @PutMapping("/feedbacks/{id}/confirm")
+    public ResponseEntity<Void> confirmFeedback(@PathVariable UUID id) {
+        usermanageService.confirmFeedback(id);
+        return ResponseEntity.ok().build();
     }
 }

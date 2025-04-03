@@ -10,4 +10,5 @@ public enum TripStatus {
     DONE,
     RESEND,
     CANCEL,
+    REJECTED,
 }

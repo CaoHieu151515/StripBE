@@ -4,9 +4,15 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import strip.domain.Driver;
+import strip.domain.Feedback;
+import strip.domain.Trip;
+import strip.domain.TripStopLocation;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.WalletDeposit;
+import strip.service.dto.FeedbackCusDTO;
+import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
@@ -46,4 +52,26 @@ public interface UsermanageMapper {
     WithdrawalRequestManageDTO toDtoWithdrawalRequestManageDTO(WalletDeposit deposit);
 
     List<WithdrawalRequestManageDTO> toWithdrawalRequestManageDTOs(List<WalletDeposit> deposits); // 👈 Quan trọng!
+
+    @Mapping(target = "tripID", source = "tripID")
+    @Mapping(target = "tripImgUrl", ignore = true)
+    @Mapping(target = "driverName", ignore = true)
+    @Mapping(target = "driverPhone", ignore = true)
+    @Mapping(target = "vehicleID", source = "vehicle.vehicleID")
+    @Mapping(target = "vehicleType", source = "vehicle.vehicleType")
+    @Mapping(target = "vehicleNumber", source = "vehicle.vehicleNumber")
+    @Mapping(target = "numberOfSeats", source = "vehicle.numberOfSeats")
+    @Mapping(target = "vehicleColor", source = "vehicle.vehicleColor")
+    @Mapping(target = "vehicleBrand", source = "vehicle.vehicleBrand")
+    @Mapping(target = "vehicleImageUrl", ignore = true)
+    @Mapping(target = "stopLocations", ignore = true)
+    TripCusDTO toTripCusDTO(Trip trip);
+
+    @Mapping(target = "trip", ignore = true) // chỉ map tripID nếu cần
+    TripStopLocationDTO toTripStopLocationDTO(TripStopLocation stopLocation);
+
+    @Mapping(target = "tripId", source = "trip.tripID")
+    @Mapping(target = "driverId", source = "driver.driverID")
+    @Mapping(target = "username", source = "user.login")
+    FeedbackCusDTO toFeedbackCusDTO(Feedback feedback);
 }
