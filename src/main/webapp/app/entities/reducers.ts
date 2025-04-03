@@ -10,7 +10,6 @@ import payment from 'app/entities/payment/payment.reducer';
 import notification from 'app/entities/notification/notification.reducer';
 import report from 'app/entities/report/report.reducer';
 import systemWallet from 'app/entities/system-wallet/system-wallet.reducer';
-import systemTempWallet from 'app/entities/system-temp-wallet/system-temp-wallet.reducer';
 import walletTransaction from 'app/entities/wallet-transaction/wallet-transaction.reducer';
 import sendingAplication from 'app/entities/sending-aplication/sending-aplication.reducer';
 import userWallet from 'app/entities/user-wallet/user-wallet.reducer';
@@ -33,7 +32,6 @@ const entitiesReducers = {
   notification,
   report,
   systemWallet,
-  systemTempWallet,
   walletTransaction,
   sendingAplication,
   userWallet,

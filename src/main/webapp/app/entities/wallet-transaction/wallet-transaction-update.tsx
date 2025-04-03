@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntities as getSystemWallets } from 'app/entities/system-wallet/system-wallet.reducer';
 import { getEntities as getPayments } from 'app/entities/payment/payment.reducer';
 import { getEntities as getUserWallets } from 'app/entities/user-wallet/user-wallet.reducer';
-import { getEntities as getSystemTempWallets } from 'app/entities/system-temp-wallet/system-temp-wallet.reducer';
 import { WalletTransactionType } from 'app/shared/model/enumerations/wallet-transaction-type.model';
 import { TransactionStatus } from 'app/shared/model/enumerations/transaction-status.model';
 import { createEntity, getEntity, reset, updateEntity } from './wallet-transaction.reducer';
@@ -26,7 +25,6 @@ export const WalletTransactionUpdate = () => {
   const systemWallets = useAppSelector(state => state.systemWallet.entities);
   const payments = useAppSelector(state => state.payment.entities);
   const userWallets = useAppSelector(state => state.userWallet.entities);
-  const systemTempWallets = useAppSelector(state => state.systemTempWallet.entities);
   const walletTransactionEntity = useAppSelector(state => state.walletTransaction.entity);
   const loading = useAppSelector(state => state.walletTransaction.loading);
   const updating = useAppSelector(state => state.walletTransaction.updating);
@@ -48,7 +46,6 @@ export const WalletTransactionUpdate = () => {
     dispatch(getSystemWallets({}));
     dispatch(getPayments({}));
     dispatch(getUserWallets({}));
-    dispatch(getSystemTempWallets({}));
   }, []);
 
   useEffect(() => {
@@ -72,7 +69,6 @@ export const WalletTransactionUpdate = () => {
       systemWallet: systemWallets.find(it => it.id.toString() === values.systemWallet?.toString()),
       payment: payments.find(it => it.id.toString() === values.payment?.toString()),
       userWallet: userWallets.find(it => it.id.toString() === values.userWallet?.toString()),
-      systemTempWallet: systemTempWallets.find(it => it.id.toString() === values.systemTempWallet?.toString()),
     };
 
     if (isNew) {
@@ -95,7 +91,6 @@ export const WalletTransactionUpdate = () => {
           systemWallet: walletTransactionEntity?.systemWallet?.id,
           payment: walletTransactionEntity?.payment?.id,
           userWallet: walletTransactionEntity?.userWallet?.id,
-          systemTempWallet: walletTransactionEntity?.systemTempWallet?.id,
         };
 
   return (
@@ -220,22 +215,6 @@ export const WalletTransactionUpdate = () => {
                 <option value="" key="0" />
                 {userWallets
                   ? userWallets.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField
-                id="wallet-transaction-systemTempWallet"
-                name="systemTempWallet"
-                data-cy="systemTempWallet"
-                label={translate('sTripBeApp.walletTransaction.systemTempWallet')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {systemTempWallets
-                  ? systemTempWallets.map(otherEntity => (
                       <option value={otherEntity.id} key={otherEntity.id}>
                         {otherEntity.id}
                       </option>

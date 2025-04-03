@@ -26,8 +26,7 @@
       "transactionThirdPartyID": "Transaction Third Party ID",
       "systemWallet": "System Wallet",
       "payment": "Payment",
-      "userWallet": "User Wallet",
-      "systemTempWallet": "System Temp Wallet"
+      "userWallet": "User Wallet"
     }
   }
 }

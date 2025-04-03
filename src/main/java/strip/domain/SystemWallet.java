@@ -51,7 +51,7 @@ public class SystemWallet implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "systemWallet", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "systemWallet", "payment", "userWallet", "systemTempWallet" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "systemWallet", "payment", "userWallet" }, allowSetters = true)
     private Set<WalletTransaction> walletTransactions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

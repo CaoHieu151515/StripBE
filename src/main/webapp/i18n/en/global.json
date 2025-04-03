@@ -20,7 +20,6 @@
         "notification": "Notification",
         "report": "Report",
         "systemWallet": "System Wallet",
-        "systemTempWallet": "System Temp Wallet",
         "walletTransaction": "Wallet Transaction",
         "sendingAplication": "Sending Aplication",
         "userWallet": "User Wallet",

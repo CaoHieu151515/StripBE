@@ -75,8 +75,6 @@ public class CacheConfiguration {
             createCache(cm, strip.domain.Report.class.getName());
             createCache(cm, strip.domain.SystemWallet.class.getName());
             createCache(cm, strip.domain.SystemWallet.class.getName() + ".walletTransactions");
-            createCache(cm, strip.domain.SystemTempWallet.class.getName());
-            createCache(cm, strip.domain.SystemTempWallet.class.getName() + ".walletTransactions");
             createCache(cm, strip.domain.WalletTransaction.class.getName());
             createCache(cm, strip.domain.SendingAplication.class.getName());
             createCache(cm, strip.domain.UserWallet.class.getName());

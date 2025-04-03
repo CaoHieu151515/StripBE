@@ -53,13 +53,6 @@
       "relationshipName": "userWallet",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
-    },
-    {
-      "otherEntityName": "systemTempWallet",
-      "otherEntityRelationshipName": "walletTransaction",
-      "relationshipName": "systemTempWallet",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no"

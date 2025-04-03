@@ -61,10 +61,6 @@ public class WalletTransaction implements Serializable {
     @JsonIgnoreProperties(value = { "user", "walletTransactions", "walletDeposits" }, allowSetters = true)
     private UserWallet userWallet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "walletTransactions" }, allowSetters = true)
-    private SystemTempWallet systemTempWallet;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -194,19 +190,6 @@ public class WalletTransaction implements Serializable {
 
     public WalletTransaction userWallet(UserWallet userWallet) {
         this.setUserWallet(userWallet);
-        return this;
-    }
-
-    public SystemTempWallet getSystemTempWallet() {
-        return this.systemTempWallet;
-    }
-
-    public void setSystemTempWallet(SystemTempWallet systemTempWallet) {
-        this.systemTempWallet = systemTempWallet;
-    }
-
-    public WalletTransaction systemTempWallet(SystemTempWallet systemTempWallet) {
-        this.setSystemTempWallet(systemTempWallet);
         return this;
     }
 

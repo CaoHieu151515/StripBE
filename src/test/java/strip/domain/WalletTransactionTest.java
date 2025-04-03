@@ -2,7 +2,6 @@ package strip.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static strip.domain.PaymentTestSamples.*;
-import static strip.domain.SystemTempWalletTestSamples.*;
 import static strip.domain.SystemWalletTestSamples.*;
 import static strip.domain.UserWalletTestSamples.*;
 import static strip.domain.WalletTransactionTestSamples.*;
@@ -60,17 +59,5 @@ class WalletTransactionTest {
 
         walletTransaction.userWallet(null);
         assertThat(walletTransaction.getUserWallet()).isNull();
-    }
-
-    @Test
-    void systemTempWalletTest() {
-        WalletTransaction walletTransaction = getWalletTransactionRandomSampleGenerator();
-        SystemTempWallet systemTempWalletBack = getSystemTempWalletRandomSampleGenerator();
-
-        walletTransaction.setSystemTempWallet(systemTempWalletBack);
-        assertThat(walletTransaction.getSystemTempWallet()).isEqualTo(systemTempWalletBack);
-
-        walletTransaction.systemTempWallet(null);
-        assertThat(walletTransaction.getSystemTempWallet()).isNull();
     }
 }

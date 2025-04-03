@@ -28,7 +28,6 @@
       "Notification",
       "Report",
       "SystemWallet",
-      "SystemTempWallet",
       "WalletTransaction",
       "SendingAplication",
       "UserWallet",

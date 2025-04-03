@@ -127,10 +127,6 @@ export const WalletTransaction = () => {
                 <th>
                   <Translate contentKey="sTripBeApp.walletTransaction.userWallet">User Wallet</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
-                <th>
-                  <Translate contentKey="sTripBeApp.walletTransaction.systemTempWallet">System Temp Wallet</Translate>{' '}
-                  <FontAwesomeIcon icon="sort" />
-                </th>
                 <th />
               </tr>
             </thead>
@@ -171,15 +167,6 @@ export const WalletTransaction = () => {
                   <td>
                     {walletTransaction.userWallet ? (
                       <Link to={`/user-wallet/${walletTransaction.userWallet.id}`}>{walletTransaction.userWallet.id}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
-                  <td>
-                    {walletTransaction.systemTempWallet ? (
-                      <Link to={`/system-temp-wallet/${walletTransaction.systemTempWallet.id}`}>
-                        {walletTransaction.systemTempWallet.id}
-                      </Link>
                     ) : (
                       ''
                     )}

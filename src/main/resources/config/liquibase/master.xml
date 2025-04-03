@@ -22,7 +22,6 @@
     <include file="config/liquibase/changelog/20250303033703_added_entity_Notification.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033704_added_entity_Report.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033705_added_entity_SystemWallet.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20250303033706_added_entity_SystemTempWallet.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033707_added_entity_WalletTransaction.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033708_added_entity_SendingAplication.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250303033709_added_entity_UserWallet.xml" relativeToChangelogFile="false"/>

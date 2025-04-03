@@ -71,7 +71,6 @@ public class WalletTransactionAsserts {
             .as("Verify WalletTransaction relationships")
             .satisfies(a -> assertThat(a.getSystemWallet()).as("check systemWallet").isEqualTo(expected.getSystemWallet()))
             .satisfies(a -> assertThat(a.getPayment()).as("check payment").isEqualTo(expected.getPayment()))
-            .satisfies(a -> assertThat(a.getUserWallet()).as("check userWallet").isEqualTo(expected.getUserWallet()))
-            .satisfies(a -> assertThat(a.getSystemTempWallet()).as("check systemTempWallet").isEqualTo(expected.getSystemTempWallet()));
+            .satisfies(a -> assertThat(a.getUserWallet()).as("check userWallet").isEqualTo(expected.getUserWallet()));
     }
 }

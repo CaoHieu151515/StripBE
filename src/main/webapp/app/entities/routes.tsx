@@ -15,7 +15,6 @@ import Payment from './payment';
 import Notification from './notification';
 import Report from './report';
 import SystemWallet from './system-wallet';
-import SystemTempWallet from './system-temp-wallet';
 import WalletTransaction from './wallet-transaction';
 import SendingAplication from './sending-aplication';
 import UserWallet from './user-wallet';
@@ -42,7 +41,6 @@ export default () => {
         <Route path="notification/*" element={<Notification />} />
         <Route path="report/*" element={<Report />} />
         <Route path="system-wallet/*" element={<SystemWallet />} />
-        <Route path="system-temp-wallet/*" element={<SystemTempWallet />} />
         <Route path="wallet-transaction/*" element={<WalletTransaction />} />
         <Route path="sending-aplication/*" element={<SendingAplication />} />
         <Route path="user-wallet/*" element={<UserWallet />} />

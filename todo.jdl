@@ -226,15 +226,6 @@ entity SystemWallet{
 
 }
 
-entity SystemTempWallet{
-	systemWalletID UUID,
-    before Double,
-    amount Double,
-    current Double,
-    mobifyDate Instant
-
-}
-
 entity WalletTransaction
 {
 	transID UUID,
@@ -322,7 +313,6 @@ relationship ManyToOne {
   SendingAplication to User with builtInEntity,
   WalletTransaction to UserWallet,
   WalletDeposit to UserWallet,
-  WalletTransaction to SystemTempWallet,
   DriverPackageSubscription to Driver,
   DriverPackageSubscription to PackageDriver
 

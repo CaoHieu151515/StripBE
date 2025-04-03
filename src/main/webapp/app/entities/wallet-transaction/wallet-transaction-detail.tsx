@@ -82,10 +82,6 @@ export const WalletTransactionDetail = () => {
             <Translate contentKey="sTripBeApp.walletTransaction.userWallet">User Wallet</Translate>
           </dt>
           <dd>{walletTransactionEntity.userWallet ? walletTransactionEntity.userWallet.id : ''}</dd>
-          <dt>
-            <Translate contentKey="sTripBeApp.walletTransaction.systemTempWallet">System Temp Wallet</Translate>
-          </dt>
-          <dd>{walletTransactionEntity.systemTempWallet ? walletTransactionEntity.systemTempWallet.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/wallet-transaction" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

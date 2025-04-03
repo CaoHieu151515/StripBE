@@ -43,9 +43,6 @@ const EntitiesMenu = () => {
       <MenuItem icon="asterisk" to="/system-wallet">
         <Translate contentKey="global.menu.entities.systemWallet" />
       </MenuItem>
-      <MenuItem icon="asterisk" to="/system-temp-wallet">
-        <Translate contentKey="global.menu.entities.systemTempWallet" />
-      </MenuItem>
       <MenuItem icon="asterisk" to="/wallet-transaction">
         <Translate contentKey="global.menu.entities.walletTransaction" />
       </MenuItem>
