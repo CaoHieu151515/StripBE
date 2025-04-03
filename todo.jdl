@@ -134,6 +134,8 @@ entity Trip {
   tripImg Blob,
   pricePerSeat Double,
   maxSeat Integer,
+  totalTime Integer,
+  totalDistance Double,
   startDate Instant,
   endDate Instant,
   currentSeat Integer,
@@ -148,6 +150,9 @@ entity Trip {
 entity TripStopLocation {
   stopLocaID UUID,
   stopLoca String,
+  stoplocaPosition Integer,
+  estimatedTime Integer,
+  estimatedKM Double,
   stopLocaTime Instant,
   stopLocaStatus String
 }

@@ -31,11 +31,5 @@
                                  referencedTableName="user_wallet"
                                  />
 
-        <addForeignKeyConstraint baseColumnNames="system_temp_wallet_id"
-                                 baseTableName="wallet_transaction"
-                                 constraintName="fk_wallet_transaction__system_temp_wallet_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="system_temp_wallet"
-                                 />
     </changeSet>
 </databaseChangeLog>

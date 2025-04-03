@@ -21,7 +21,7 @@ liquibase {
   // activities {
   //   main {
   //     driver "com.mysql.cj.jdbc.Driver"
-  //     url "jdbc:mysql://localhost:3306/sTripBe"
+  //     url "jdbc:mysql://localhost:3306/Strip"
   //     username "root"
   //     changelogFile "src/main/resources/config/liquibase/master.xml"
   //     logLevel "debug"
@@ -29,14 +29,13 @@ liquibase {
   //   }
   //   diffLog {
   //     driver "com.mysql.cj.jdbc.Driver"
-  //     url "jdbc:mysql://localhost:3306/sTripBe"
+  //     url "jdbc:mysql://localhost:3306/Strip"
   //     username "root"
   //     changelogFile project.ext.diffChangelogFile
   //     referenceUrl "hibernate:spring:strip.domain?dialect=org.hibernate.dialect.MySQL8Dialect&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
   //     logLevel "debug"
   //     classpath "$buildDir/classes/java/main"
   //   }
-  // }
   activities {
     main {
       driver "com.mysql.cj.jdbc.Driver"
