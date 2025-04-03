@@ -199,6 +199,9 @@ public class TripCustomService {
             stop.setStopLoca(dto.getStopLoca());
             stop.setStopLocaTime(dto.getStopLocaTime());
             stop.setStopLocaStatus(dto.getStopLocaStatus());
+            stop.setEstimatedKM(dto.getEstimatedKM());
+            stop.setEstimatedTime(dto.getEstimatedTime());
+            stop.setStoplocaPosition(dto.getStoplocaPosition());
             stop.setTrip(trip);
             tripStopLocationRepository.save(stop);
         }
@@ -423,6 +426,8 @@ public class TripCustomService {
         dto.setCurrentSeat(trip.getCurrentSeat());
         dto.setTripStatus(trip.getTripStatus());
         dto.setCancelReason(trip.getCancelReason());
+        dto.setTotalDistance(trip.getTotalDistance());
+        dto.setTotalTime(trip.getTotalTime());
         return dto;
     }
 

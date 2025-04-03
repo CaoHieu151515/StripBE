@@ -12,7 +12,6 @@ import strip.service.dto.DriverVehicleDTO;
 
 @Mapper(componentModel = "spring")
 public interface DriverInfoMapper {
-    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "driver.driverID", target = "driverId")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
@@ -21,6 +20,7 @@ public interface DriverInfoMapper {
     @Mapping(source = "userDetail.gender", target = "gender")
     @Mapping(source = "userDetail.address", target = "address")
     @Mapping(source = "userDetail.dob", target = "dob")
+    @Mapping(source = "userDetail.appUserDetail", target = "userId")
     @Mapping(target = "driverLicenseUrl", ignore = true)
     @Mapping(target = "identityCardFaceUpUrl", ignore = true)
     @Mapping(target = "identityCardFaceDownUrl", ignore = true)
@@ -40,11 +40,11 @@ public interface DriverInfoMapper {
     @Mapping(target = "carInsuranceUrl", ignore = true)
     DriverVehicleDTO toDriverVehicleDTO(Vehicle vehicle);
 
-    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.email", target = "email")
     @Mapping(source = "userDetail.phone", target = "phone")
+    @Mapping(source = "userDetail.appUserDetail", target = "userId")
     @Mapping(source = "driver.driverID", target = "driverId")
     @Mapping(source = "vehicle", target = "vehicle")
     @Mapping(target = "identityCardFaceUpUrl", ignore = true)

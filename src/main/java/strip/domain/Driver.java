@@ -11,6 +11,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import strip.domain.enumeration.DriverPointHistoryStatus;
 import strip.domain.enumeration.DriverStatus;
 
 /**
@@ -74,7 +75,7 @@ public class Driver implements Serializable {
     @JoinColumn(unique = true)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "driver", "userDetail" }, allowSetters = true)
     private Set<DriverPointHistory> driverPointHistories = new HashSet<>();
@@ -315,10 +316,15 @@ public class Driver implements Serializable {
         return this;
     }
 
-    public Driver addDriverPointHistory(DriverPointHistory driverPointHistory) {
-        this.driverPointHistories.add(driverPointHistory);
-        driverPointHistory.setDriver(this);
-        return this;
+    public void addDriverPointHistory(DriverPointHistory history) {
+        driverPointHistories.add(history);
+        history.setDriver(this);
+
+        if (history.getStatus() == DriverPointHistoryStatus.DONE) {
+            this.driverPoint = this.driverPoint - history.getPoint();
+        } else if (history.getStatus() == DriverPointHistoryStatus.REFUND) {
+            this.driverPoint = this.driverPoint + history.getPoint();
+        }
     }
 
     public Driver removeDriverPointHistory(DriverPointHistory driverPointHistory) {

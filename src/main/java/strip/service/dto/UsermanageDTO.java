@@ -2,6 +2,7 @@ package strip.service.dto;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import strip.domain.Authority;
 import strip.domain.User;
@@ -9,14 +10,14 @@ import strip.domain.UserDetail;
 
 public class UsermanageDTO implements Serializable {
 
-    private Long userId;
+    private UUID userId;
     private String username;
     private String firstName;
     private String lastName;
     private String email;
     private String gender;
     private String phoneNumber;
-    private boolean active; // Thêm trạng thái kích hoạt
+    private boolean active;
     private Set<String> roles;
 
     public UsermanageDTO() {}
@@ -24,7 +25,7 @@ public class UsermanageDTO implements Serializable {
     // Constructor nhận dữ liệu từ User và UserDetail
     public UsermanageDTO(User user, UserDetail userDetail) {
         if (user != null) {
-            this.userId = user.getId();
+            this.userId = userDetail.getAppUserDetail();
             this.username = user.getLogin();
             this.firstName = user.getFirstName();
             this.lastName = user.getLastName();
@@ -42,11 +43,11 @@ public class UsermanageDTO implements Serializable {
     }
 
     // Getters và Setters
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

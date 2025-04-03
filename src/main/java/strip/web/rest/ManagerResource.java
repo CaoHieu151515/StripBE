@@ -29,12 +29,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.ReportStatus;
+import strip.domain.enumeration.ReportType;
 import strip.domain.enumeration.TripStatus;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.DriverPointHistoryDTO;
 import strip.service.dto.FeedbackCusDTO;
+import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
+import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
@@ -56,6 +61,8 @@ public class ManagerResource {
         "tripStatus"
     );
     private static final List<String> ALLOWED_ORDERED_PROPERTIES_FEEDBACK = List.of("feedbackStatus", "feedbackType", "feedbackRating");
+
+    private static final List<String> ALLOWED_ORDERED_PROPERTIES_REPORT = List.of("reportID", "date", "reportType", "reportStatus");
     private final UsermanageService usermanageService;
 
     private final Logger log = LoggerFactory.getLogger(ManagerResource.class);
@@ -102,9 +109,9 @@ public class ManagerResource {
     // -> ResponseEntity.notFound().build());
     // }
 
-    @GetMapping("/driver/details/{username}")
-    public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable String username) {
-        Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUsername(username);
+    @GetMapping("/details/{userId}")
+    public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable UUID userId) {
+        Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUserId(userId);
         return driverInfo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -241,9 +248,50 @@ public class ManagerResource {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_FEEDBACK::contains);
     }
 
-    @PutMapping("/feedbacks/{id}/confirm")
-    public ResponseEntity<Void> confirmFeedback(@PathVariable UUID id) {
-        usermanageService.confirmFeedback(id);
-        return ResponseEntity.ok().build();
+    @GetMapping("/driver-point/getonedriver")
+    public ResponseEntity<List<DriverPointHistoryDTO>> getDriverPointHistoryByUserDetail(
+        @RequestParam UUID userDetailId,
+        @ParameterObject Pageable pageable
+    ) {
+        Page<DriverPointHistoryDTO> page = usermanageService.getPointHistoryByUserDetail(userDetailId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    @PostMapping("/driver-point/{pointId}/refund")
+    public ResponseEntity<DriverPointHistoryDTO> refundDriverPoint(@PathVariable UUID pointId) {
+        DriverPointHistoryDTO dto = usermanageService.refundByHistory(pointId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/reports/gettall")
+    public ResponseEntity<List<ReportCusDTO>> getAllReports(
+        @ParameterObject Pageable pageable,
+        @RequestParam(required = false) ReportStatus status,
+        @RequestParam(required = false) ReportType type
+    ) {
+        log.debug("REST request to get all reports");
+
+        if (!onlyContainsAllowedPropertiesReport(pageable)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<ReportCusDTO> page = usermanageService.getAllReports(pageable, status, type);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    private boolean onlyContainsAllowedPropertiesReport(Pageable pageable) {
+        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_REPORT::contains);
+    }
+
+    @PatchMapping("/reports/{id}/handle")
+    public ResponseEntity<Void> handleReport(@PathVariable UUID id, @RequestBody HandleReportDTO dto) {
+        log.debug("REST request to handle report: {}", id);
+
+        usermanageService.handleReport(id, dto.getReason(), dto.getPoint());
+
+        return ResponseEntity.noContent().build(); // HTTP 204
     }
 }

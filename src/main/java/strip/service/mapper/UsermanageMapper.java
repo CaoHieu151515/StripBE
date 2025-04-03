@@ -4,13 +4,15 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import strip.domain.Driver;
-import strip.domain.Feedback;
+import strip.domain.DriverPointHistory;
+import strip.domain.Report;
 import strip.domain.Trip;
 import strip.domain.TripStopLocation;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.WalletDeposit;
-import strip.service.dto.FeedbackCusDTO;
+import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
@@ -19,12 +21,12 @@ import strip.service.dto.WithdrawalRequestManageDTO;
 
 @Mapper(componentModel = "spring")
 public interface UsermanageMapper {
-    @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.login", target = "username")
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.email", target = "email")
-    @Mapping(source = "user.activated", target = "active") // Thêm ánh xạ active
+    @Mapping(source = "user.activated", target = "active")
+    @Mapping(source = "userDetail.appUserDetail", target = "userId")
     @Mapping(source = "userDetail.gender", target = "gender")
     @Mapping(source = "userDetail.phone", target = "phoneNumber")
     @Mapping(target = "roles", ignore = true)
@@ -57,6 +59,8 @@ public interface UsermanageMapper {
     @Mapping(target = "tripImgUrl", ignore = true)
     @Mapping(target = "driverName", ignore = true)
     @Mapping(target = "driverPhone", ignore = true)
+    @Mapping(target = "totalTime", source = "totalTime")
+    @Mapping(target = "totalDistance", source = "totalDistance")
     @Mapping(target = "vehicleID", source = "vehicle.vehicleID")
     @Mapping(target = "vehicleType", source = "vehicle.vehicleType")
     @Mapping(target = "vehicleNumber", source = "vehicle.vehicleNumber")
@@ -70,8 +74,12 @@ public interface UsermanageMapper {
     @Mapping(target = "trip", ignore = true) // chỉ map tripID nếu cần
     TripStopLocationDTO toTripStopLocationDTO(TripStopLocation stopLocation);
 
-    @Mapping(target = "tripId", source = "trip.tripID")
+    @Mapping(target = "userId", source = "userDetail.appUserDetail")
     @Mapping(target = "driverId", source = "driver.driverID")
-    @Mapping(target = "username", source = "user.login")
-    FeedbackCusDTO toFeedbackCusDTO(Feedback feedback);
+    DriverPointHistoryDTO toDto(DriverPointHistory entity);
+
+    @Mapping(source = "trip.tripID", target = "tripId")
+    @Mapping(target = "userId", ignore = true)
+    @Mapping(source = "driver.driverID", target = "driverId")
+    ReportCusDTO toReportCusDTO(Report report);
 }

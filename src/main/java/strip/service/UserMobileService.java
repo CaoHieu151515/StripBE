@@ -160,7 +160,7 @@ public class UserMobileService {
         UserDetail userDetail = userDetailOpt.orElseThrow();
 
         DriverInfoDTO dto = new DriverInfoDTO();
-        dto.setUserId(user.getId());
+        dto.setUserId(userDetail.getAppUserDetail());
         dto.setDriverId(driver.getDriverID());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -459,7 +459,7 @@ public class UserMobileService {
 
     private ConfirmingVehicleDriverDTO buildConfirmingVehicleDriverDTO(User user, UserDetail detail, Driver driver, Vehicle vehicle) {
         ConfirmingVehicleDriverDTO res = new ConfirmingVehicleDriverDTO();
-        res.setUserId(user.getId());
+        res.setUserId(detail.getAppUserDetail());
         res.setDriverId(driver.getDriverID());
         res.setFirstName(user.getFirstName());
         res.setLastName(user.getLastName());
@@ -501,7 +501,7 @@ public class UserMobileService {
                 );
 
                 ConfirmingVehicleDriverDTO res = new ConfirmingVehicleDriverDTO();
-                res.setUserId(user.getId());
+
                 res.setFirstName(user.getFirstName());
                 res.setLastName(user.getLastName());
                 res.setEmail(user.getEmail());
@@ -509,6 +509,7 @@ public class UserMobileService {
                 // 🧾 UserDetail
                 detailOpt.ifPresent(detail -> {
                     res.setPhone(detail.getPhone());
+                    res.setUserId(detail.getAppUserDetail());
                 });
 
                 // 🧾 Driver

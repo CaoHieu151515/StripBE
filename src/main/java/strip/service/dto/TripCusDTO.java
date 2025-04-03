@@ -20,6 +20,8 @@ public class TripCusDTO {
     private int currentSeat;
     private TripStatus tripStatus;
     private String cancelReason;
+    private int totalTime;
+    private double totalDistance;
 
     // ✅ URL thay vì blob
     private String tripImgUrl;
@@ -134,6 +136,22 @@ public class TripCusDTO {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public int getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public String getTripImgUrl() {

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class DriverInfoDTO implements Serializable {
 
-    private Long userId;
+    private UUID userId;
     private UUID driverId;
     private String firstName;
     private String lastName;
@@ -25,11 +25,11 @@ public class DriverInfoDTO implements Serializable {
     // ✅ Danh sách phương tiện
     private Set<DriverVehicleDTO> vehicles;
 
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

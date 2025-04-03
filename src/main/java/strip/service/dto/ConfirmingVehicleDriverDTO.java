@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class ConfirmingVehicleDriverDTO implements Serializable {
 
-    private Long userId;
+    private UUID userId;
     private UUID driverId;
     private String firstName;
     private String lastName;
@@ -17,11 +17,11 @@ public class ConfirmingVehicleDriverDTO implements Serializable {
     private ConfirmingVehicleDTO vehicle; // Chỉ chứa một phương tiện
 
     // Getters & Setters
-    public Long getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

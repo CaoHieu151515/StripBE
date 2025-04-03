@@ -15,7 +15,7 @@ public class FeedbackCusDTO {
     // Custom fields
     private UUID tripId;
     private UUID driverId;
-    private String username;
+    private UUID userId;
 
     public UUID getFeedbackID() {
         return feedbackID;
@@ -73,11 +73,11 @@ public class FeedbackCusDTO {
         this.driverId = driverId;
     }
 
-    public String getUsername() {
-        return username;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }
