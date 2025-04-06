@@ -32,11 +32,11 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    # url: jdbc:mysql://root:OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT@hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    url: jdbc:mysql://localhost:3306/Strip?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+    url: jdbc:mysql://root:OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT@hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+    # url: jdbc:mysql://localhost:3306/Strip?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
     username: root
-    # password: OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT
-    password: Delete123.
+    password: OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT
+    # password: Delete123.
     hikari:
       poolName: Hikari
       auto-commit: false
