@@ -1,0 +1,33 @@
+{
+  "text": {
+    "dashboard": "Dashboard",
+    "outstanding_statistic": "Outstanding Statistic",
+    "overview": "Overview",
+    "app_subscribers": "Number of app subscribers",
+    "registered_devices": "Number of registered devices",
+    "devices_with_replaced_consumables": "Devices with Replaced Consumables",
+    "time_the_feature_has_been_used": "Number of time the feature has been used",
+    "function_usage_time": "Function usage time",
+    "processing_status": "Processing status",
+    "times": "Times",
+    "hours": "Hours",
+    "connection_activity": "Connection Activity",
+    "normal_connections": "Normal Connections",
+    "normal_disconnections": "Normal Disconnections",
+    "no_data_available": "No data available",
+    "date_range": "Date Range",
+    "value": "Value",
+    "country_region": "Number of registered devices by Country/Region",
+    "user_statistics": "User Statistics"
+  },
+  "label": {
+    "user": "User",
+    "user_one": "{{count}} User",
+    "user_other": "{{count}} Users"
+  },
+  "button": {
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out",
+    "zoom_to_fit": "Zoom to Fit"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "text": {
+    "login": "Login",
+    "reset_password": "Reset Password",
+    "change_password": "Change Password",
+    "forgot_password": "Forgot Password",
+    "email_sent": "An email has been sent, if you did not receive an email. Please check your spam mailbox.",
+    "stay_signed_in": "Stay signed in",
+    "have_you_forgotten": "Have you forgotten your password?",
+    "reset_password_description": "Please enter a new password to change password",
+    "verify_password": "Verify Password"
+  },
+  "button": {
+    "login": "Login",
+    "forgot_password": "Forgot password?",
+    "continue_with_google": "Continue with Google",
+    "first_time": "First time in HMM?",
+    "start": "START",
+    "send_email": "Send Email",
+    "reset_password": "Reset Password",
+    "back": "Back",
+    "change_password": "Change Password",
+    "confirm": "Confirm"
+  },
+  "toast": {
+    "bad_credential": "The ID or password is wrong, please try again",
+    "user_not_found": "User not found with ID: {{username}}",
+    "not_verified": "User with email has not been verified",
+    "email_not_found": "User not found with email: {{email}}",
+    "password_change": "Password has been changed successfully",
+    "invalid_token": "Your token is invalid or expired. Please resend a new forgot password request",
+    "otp_verified_successfully": "OTP verified successfully!",
+    "invalid_otp": "Invalid OTP. Please try again",
+    "otp_digit": "OTP must be exactly 6 digits."
+  }
+}

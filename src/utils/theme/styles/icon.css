@@ -1,0 +1,38 @@
+@layer components {
+  .default-icon {
+    @apply h-6 w-6 text-black dark:text-white;
+  }
+
+  /* default-text-input-icon */
+  .default-text-input-icon {
+    @apply h-5 w-5 text-gray-500 dark:text-gray-400;
+  }
+  .default-text-input-icon-4 {
+    @apply h-4 w-4 text-gray-500 dark:text-gray-400;
+  }
+
+  /* default-button-icon + size */
+  .default-button-icon-xs {
+    @apply h-3 w-3;
+  }
+  .default-button-icon-sm {
+    @apply h-3 w-3;
+  }
+  .default-button-icon-base {
+    @apply h-[14px] w-[14px];
+  }
+  .default-button-icon-lg {
+    @apply h-4 w-4;
+  }
+  .default-button-icon-xl {
+    @apply h-4 w-4;
+  }
+
+  /* default-button-icon + color */
+  .default-button-icon-gray {
+    @apply text-gray-900 group-hover:text-primary-700 group-focus:text-primary-700 dark:text-gray-400 dark:group-hover:text-white;
+  }
+  .default-button-icon-info {
+    @apply text-white;
+  }
+}

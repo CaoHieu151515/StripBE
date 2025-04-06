@@ -1,0 +1,3 @@
+export enum AUTH_CODE_TYPE {
+  RESET_PASSWORD = 'RESET_PASSWORD',
+}

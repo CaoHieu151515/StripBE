@@ -1,0 +1,19 @@
+{
+  "home": "Home",
+  "type": {
+    "sidebar_group_title_code": {
+      "dashboard": "dashboard",
+      "user": "User",
+      "view-user-account": "View User Account",
+      "censor-driver-request": "Censor Driver Request",
+      "trip": "Trip",
+      "feedback": "Feedback",
+      "package": "Package",
+      "wallet": "Wallet",
+      "report": "Report",
+      "transaction-history": "Transaction History",
+      "censor-vehicle": "Censor Vehicle",
+      "rate-driver": "Rate Driver"
+    }
+  }
+}

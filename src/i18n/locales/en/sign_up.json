@@ -1,0 +1,27 @@
+{
+  "toast": {
+    "error": {
+      "verify": "Verify failed",
+      "resend": "Resend failed",
+      "send_code": "Error when sending code to your email",
+      "submit_image": "Error when submitting image",
+      "account_with_this_email_created": "Account with this email is already created",
+      "create_account": "Error while creating account",
+      "auto_login": "Error when auto-login",
+      "update_business": "Error when updating business info",
+      "update_personal": "Error when updating personal info",
+      "create_business": "Error when creating business profile",
+      "create_personal": "Create personal info failed"
+    },
+    "success": {
+      "verify": "Verify success",
+      "resend": "Resend success",
+      "send_code": "Verification code is sent to your email",
+      "create_account": "Create account success",
+      "update_business": "Update business info success",
+      "update_personal": "Update personal info success",
+      "create_business": "Create business profile success",
+      "create_personal": "Create personal info success"
+    }
+  }
+}

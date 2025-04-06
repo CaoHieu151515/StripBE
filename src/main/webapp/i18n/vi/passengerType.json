@@ -1,9 +1,0 @@
-{
-  "sTripBeApp": {
-    "PassengerType": {
-      "null": "",
-      "LUGGAGE": "LUGGAGE",
-      "PASSENGER": "PASSENGER"
-    }
-  }
-}

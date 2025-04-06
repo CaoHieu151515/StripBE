@@ -1,0 +1,113 @@
+{
+  "button": {
+    "search": "Search",
+    "save": "Save",
+    "edit": "Edit",
+    "modify": "Modify",
+    "delete": "Delete",
+    "cancellation": "Cancel",
+    "download": "Download",
+    "register": "Register",
+    "select": "Select",
+    "close": "Close",
+    "bidding": "Bidding",
+    "no": "No",
+    "choose": "Choose",
+    "submit": "Submit",
+    "insert": "Insert",
+    "detail": "Detail",
+    "check": "Check",
+    "logout": "Log Out",
+    "change_password": "Change Password",
+    "download_excel": "Download Excel",
+    "upload_file": "Upload File",
+    "add": "Add"
+  },
+  "input": {
+    "search_placeholder": "Search"
+  },
+  "pagination": {
+    "size": "Size"
+  },
+  "label": {
+    "note": "Note",
+    "order_by": "Order By",
+    "search": "Search",
+    "search_by": "Search By",
+    "date": "Date",
+    "mode": "Select Mode",
+    "status": "Select Status",
+    "interval": "Select Interval",
+    "hide_filters": "Hide Filters",
+    "show_filters": "Show Filters",
+    "accepted_file_types": "Accepted file types:",
+    "start_date": "Start Date",
+    "end_date": "End Date"
+  },
+  "enum": {
+    "total": "Total",
+    "frequency": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "ADMIN_SEARCH_BY": {
+      "FULL_NAME": "Full Name",
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "PHONE_NUMBER": "Phone Number"
+    },
+    "DEVICE_SEARCH_BY": {
+      "SERIAL_NUMBER": "Serial Number",
+      "MODEL_NAME": "Model Name",
+      "PRODUCT_NAME": "Product Name",
+      "MAC_ADDRESS": "Mac Address"
+    },
+    "DASHBOARD_MODE": {
+      "AI_CUSTOM": "AI Custom",
+      "WASH": "Wash",
+      "ECO": "Eco"
+    },
+    "DASHBOARD_STATUS": {
+      "COMPLETE": "Complete",
+      "STOP": "Stop",
+      "ERROR": "Error"
+    },
+    "DASHBOARD_INTERVAL": {
+      "DAY": "Day",
+      "WEEK": "Week",
+      "MONTH": "Month"
+    },
+    "MEMBER_SEARCH_BY": {
+      "ID": "ID",
+      "FULL_NAME": "Full Name",
+      "NAME": "Name",
+      "EMAIL": "Email",
+      "PHONE_NUMBER": "Phone Number"
+    },
+    "FIRMWARE_TYPE": {
+      "SOUND_PACK": "Sound Pack",
+      "FIRMWARE_PACK": "Firmware Pack"
+    }
+  },
+  "component": {
+    "uploader": {
+      "sure_delete_file": "Are you sure you want to delete this file?",
+      "delete_file_message": "Once deleted, it cannot be recovered.",
+      "maximum_files": "The maximum number of files uploaded is {{quantity}}.",
+      "please_remove": "Please remove other files before adding a new one.",
+      "drop_to_upload": "Drop files here to upload.",
+      "drag_to_upload": "Drag files here to upload.",
+      "browse_for_files": "or browse for files",
+      "drag_or_browse_files": "Drag files here to upload <span>or browse for files</span>",
+      "max_file_size_mb": "Max File Size: {{max}} MB.",
+      "uploaded": "Uploaded {{current}}/{{max}}.",
+      "upload_failed": "Upload Failed",
+      "upload": "Upload"
+    },
+    "download": {
+      "success": "Download Success",
+      "failed": "Download Failed"
+    }
+  }
+}

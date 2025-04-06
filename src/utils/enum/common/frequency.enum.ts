@@ -1,0 +1,6 @@
+export enum FREQUENCY {
+  TOTAL = 'TOTAL',
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+}

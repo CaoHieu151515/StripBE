@@ -1,0 +1,12 @@
+@layer components {
+  /* transition-ease-out-200 */
+  .transition-ease-out-200 {
+    @apply transition-all duration-200 ease-out;
+  }
+  .transition-ease-out-200-hide {
+    @apply invisible opacity-0;
+  }
+  .transition-ease-out-200-show {
+    @apply visible opacity-100;
+  }
+}

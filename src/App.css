@@ -1,0 +1,12 @@
+html,
+body,
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition:
+    background-color 0s 600000s,
+    color 0s 600000s !important;
+}
