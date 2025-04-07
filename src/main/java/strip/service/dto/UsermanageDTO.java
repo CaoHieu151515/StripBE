@@ -25,7 +25,6 @@ public class UsermanageDTO implements Serializable {
     // Constructor nhận dữ liệu từ User và UserDetail
     public UsermanageDTO(User user, UserDetail userDetail) {
         if (user != null) {
-            this.userId = userDetail.getAppUserDetail();
             this.username = user.getLogin();
             this.firstName = user.getFirstName();
             this.lastName = user.getLastName();
@@ -37,6 +36,7 @@ public class UsermanageDTO implements Serializable {
         }
 
         if (userDetail != null) {
+            this.userId = userDetail.getAppUserDetail();
             this.gender = userDetail.getGender();
             this.phoneNumber = userDetail.getPhone();
         }

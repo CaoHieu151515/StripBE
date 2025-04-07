@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.Driver;
 import strip.domain.DriverPointHistory;
 import strip.domain.Feedback;
@@ -52,6 +53,7 @@ import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
 import strip.repository.WalletDepositRepository;
+import strip.repository.WalletTransactionRepository;
 import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
@@ -64,10 +66,12 @@ import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
+import strip.service.dto.WalletTransactionAdminDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.PackageDriverMapper;
 import strip.service.mapper.UsermanageMapper;
+import strip.ultil.UserRoleUtils;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -90,6 +94,7 @@ public class UsermanageService {
     private final FeedbackRepository feedbackRepository;
     private final DriverPointHistoryRepository driverPointHistoryRepository;
     private final ReportRepository reportRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -106,7 +111,8 @@ public class UsermanageService {
         ImageUrlService imageUrlService,
         FeedbackRepository feedbackRepository,
         DriverPointHistoryRepository driverPointHistoryRepository,
-        ReportRepository reportRepository
+        ReportRepository reportRepository,
+        WalletTransactionRepository walletTransactionRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -123,6 +129,7 @@ public class UsermanageService {
         this.feedbackRepository = feedbackRepository;
         this.driverPointHistoryRepository = driverPointHistoryRepository;
         this.reportRepository = reportRepository;
+        this.walletTransactionRepository = walletTransactionRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -143,34 +150,32 @@ public class UsermanageService {
     }
 
     public Page<UsermanageDTO> getAllUsers(Pageable pageable, String firstName, String lastName, String email, Boolean active) {
-        Page<User> users = userRepository.findAll(pageable);
-
-        // Chuyển đổi danh sách User thành danh sách UsermanageDTO
-        List<UsermanageDTO> filteredUsers = users
+        // Lấy toàn bộ danh sách user (chỉ trong 1 page) => có thể thiếu do filter sau
+        // khi lấy
+        List<UsermanageDTO> matchedUsers = userRepository
+            .findAll()
             .stream()
+            .filter(UserRoleUtils::isNormalUser)
             .map(user -> {
-                Optional<UserDetail> userDetail = userDetailRepository.findById(user.getId());
-                UsermanageDTO dto = new UsermanageDTO(user, userDetail.orElse(null));
-
-                // Kiểm tra các điều kiện lọc
-                if (firstName != null && !dto.getFirstName().toLowerCase().contains(firstName.toLowerCase())) {
-                    return null;
-                }
-                if (lastName != null && !dto.getLastName().toLowerCase().contains(lastName.toLowerCase())) {
-                    return null;
-                }
-                if (email != null && !dto.getEmail().toLowerCase().contains(email.toLowerCase())) {
-                    return null;
-                }
-                if (active != null && dto.isActive() != active) {
-                    return null;
-                }
-                return dto;
+                Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
+                return new UsermanageDTO(user, userDetail.orElse(null));
             })
-            .filter(dto -> dto != null) // Loại bỏ các giá trị null do không phù hợp điều kiện lọc
+            .filter(dto -> {
+                if (firstName != null && !dto.getFirstName().toLowerCase().contains(firstName.toLowerCase())) return false;
+                if (lastName != null && !dto.getLastName().toLowerCase().contains(lastName.toLowerCase())) return false;
+                if (email != null && !dto.getEmail().toLowerCase().contains(email.toLowerCase())) return false;
+                if (active != null && dto.isActive() != active) return false;
+                return true;
+            })
             .collect(Collectors.toList());
 
-        return new PageImpl<>(filteredUsers, pageable, filteredUsers.size()); // Trả về Page<UsermanageDTO>
+        // Thực hiện phân trang thủ công
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), matchedUsers.size());
+
+        List<UsermanageDTO> pagedResult = matchedUsers.subList(Math.min(start, end), end);
+
+        return new PageImpl<>(pagedResult, pageable, matchedUsers.size());
     }
 
     public Optional<UsermanageDetailsDTO> getUserDetailsById(Long id) {
@@ -194,16 +199,16 @@ public class UsermanageService {
 
         // B2: Tìm Driver theo User
         Driver driver = driverRepository
-            .findById(user.getId())
+            .findByUser(user)
             .orElseThrow(() -> new BadRequestAlertException("Driver not found", "driver", "notfound"));
 
         // B3: Map DriverInfoDTO
         DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user, userDetail, driver);
 
         UUID driverId = driver.getDriverID();
-        dto.setDriverLicenseUrl(buildDriverLicenseUrl(driverId));
-        dto.setIdentityCardFaceUpUrl(buildIdentityCardFaceUpUrl(driverId));
-        dto.setIdentityCardFaceDownUrl(buildIdentityCardFaceDownUrl(driverId));
+        dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
+        dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
+        dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
 
         // B4: Map Vehicle
         Set<DriverVehicleDTO> vehicleDTOs = driver
@@ -212,14 +217,14 @@ public class UsermanageService {
             .map(vehicle -> {
                 DriverVehicleDTO vdto = driverInfoMapper.toDriverVehicleDTO(vehicle);
                 UUID vehicleId = vehicle.getVehicleID();
-                vdto.setVehicleImageUrl(buildVehicleImageUrl(vehicleId));
-                vdto.setCarRegistrationUrl(buildCarregistrationUrl(vehicleId));
-                vdto.setVehicleInspectionCertificateUrl(buildInspectionCertificateUrl(vehicleId));
-                vdto.setCarInsuranceUrl(buildCarInsuranceUrl(vehicleId));
+                vdto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicleId));
+                vdto.setCarRegistrationUrl(imageUrlService.buildCarRegistrationUrl(vehicleId));
+                vdto.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(vehicleId));
+                vdto.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(vehicleId));
                 return vdto;
             })
             .collect(Collectors.toSet());
-
+        dto.setUserId(userDetail.getAppUserDetail());
         dto.setVehicles(vehicleDTOs);
         return Optional.of(dto);
     }
@@ -259,7 +264,7 @@ public class UsermanageService {
         return true;
     }
 
-    public List<ConfirmingVehicleDriverDTO> getConfirmingDrivers() {
+    public List<ConfirmingVehicleDriverDTO> getAllConfirmingDriversRaw() {
         List<ConfirmingVehicleDriverDTO> confirmingDrivers = new ArrayList<>();
 
         List<Driver> drivers = driverRepository.findByUsedtoDriverFalseAndDriverStatus(DriverStatus.CONFIRMING);
@@ -268,6 +273,7 @@ public class UsermanageService {
         for (Driver driver : drivers) {
             userRepository
                 .findById(driver.getUser().getId())
+                .filter(UserRoleUtils::isNormalUser)
                 .ifPresent(user -> {
                     Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
                     vehicleRepository
@@ -285,6 +291,52 @@ public class UsermanageService {
         }
 
         return confirmingDrivers;
+    }
+
+    public Page<ConfirmingVehicleDriverDTO> getConfirmingDrivers(
+        Pageable pageable,
+        String firstName,
+        String lastName,
+        String email,
+        String phone
+    ) {
+        List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRaw();
+
+        // Lọc
+        List<ConfirmingVehicleDriverDTO> filtered = all
+            .stream()
+            .filter(dto -> firstName == null || dto.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
+            .filter(dto -> lastName == null || dto.getLastName().toLowerCase().contains(lastName.toLowerCase()))
+            .filter(dto -> email == null || dto.getEmail().toLowerCase().contains(email.toLowerCase()))
+            .filter(dto -> phone == null || dto.getPhone().toLowerCase().contains(phone.toLowerCase()))
+            .collect(Collectors.toList());
+
+        // Sắp xếp (nếu có)
+        Comparator<ConfirmingVehicleDriverDTO> comparator = null;
+        for (Sort.Order order : pageable.getSort()) {
+            Comparator<ConfirmingVehicleDriverDTO> c =
+                switch (order.getProperty()) {
+                    case "firstName" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getFirstName, String.CASE_INSENSITIVE_ORDER);
+                    case "lastName" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getLastName, String.CASE_INSENSITIVE_ORDER);
+                    case "email" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getEmail, String.CASE_INSENSITIVE_ORDER);
+                    case "phone" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getPhone, String.CASE_INSENSITIVE_ORDER);
+                    default -> null;
+                };
+
+            if (c == null) continue; // ✅ đúng cú pháp
+            if (order.isDescending()) c = c.reversed();
+            comparator = comparator == null ? c : comparator.thenComparing(c);
+        }
+        if (comparator != null) {
+            filtered.sort(comparator);
+        }
+
+        // Phân trang
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+        List<ConfirmingVehicleDriverDTO> paged = filtered.subList(Math.min(start, end), end);
+
+        return new PageImpl<>(paged, pageable, filtered.size());
     }
 
     @Transactional
@@ -363,9 +415,9 @@ public class UsermanageService {
         ConfirmingVehicleDriverDTO dto = driverInfoMapper.toConfirmingVehicleDTO(user, userDetail, driver, vehicle);
 
         UUID driverId = driver.getDriverID();
-        dto.setIdentityCardFaceUpUrl(buildIdentityCardFaceUpUrl(driverId));
-        dto.setIdentityCardFaceDownUrl(buildIdentityCardFaceDownUrl(driverId));
-        dto.setDriverLicenseUrl(buildDriverLicenseUrl(driverId));
+        dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
+        dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
+        dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
 
         ConfirmingVehicleDTO vehicleDTO = mapVehicleToConfirmingVehicleDTO(vehicle);
         dto.setVehicle(vehicleDTO);
@@ -385,58 +437,12 @@ public class UsermanageService {
         dto.setVehicleBrand(v.getVehicleBrand());
         dto.setStatus(v.getStatus());
 
-        dto.setVehicleImageUrl(buildVehicleImageUrl(v.getVehicleID()));
-        dto.setCarregistrationUrl(buildCarregistrationUrl(v.getVehicleID()));
-        dto.setVehicleInspectionCertificateUrl(buildInspectionCertificateUrl(v.getVehicleID()));
-        dto.setCarInsuranceUrl(buildCarInsuranceUrl(v.getVehicleID()));
+        dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(v.getVehicleID()));
+        dto.setCarregistrationUrl(imageUrlService.buildCarRegistrationUrl(v.getVehicleID()));
+        dto.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(v.getVehicleID()));
+        dto.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(v.getVehicleID()));
 
         return dto;
-    }
-
-    public String buildDriverLicenseUrl(UUID driverId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/driver/license/")
-            .path(driverId.toString())
-            .toUriString();
-    }
-
-    public String buildIdentityCardFaceUpUrl(UUID driverId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/driver/identity-card-up/")
-            .path(driverId.toString())
-            .toUriString();
-    }
-
-    public String buildIdentityCardFaceDownUrl(UUID driverId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/driver/identity-card-down/")
-            .path(driverId.toString())
-            .toUriString();
-    }
-
-    public String buildVehicleImageUrl(UUID vehicleId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/images/vehicle/").path(vehicleId.toString()).toUriString();
-    }
-
-    public String buildCarregistrationUrl(UUID vehicleId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/vehicle/carregistration/")
-            .path(vehicleId.toString())
-            .toUriString();
-    }
-
-    public String buildInspectionCertificateUrl(UUID vehicleId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/vehicle/inspection/")
-            .path(vehicleId.toString())
-            .toUriString();
-    }
-
-    public String buildCarInsuranceUrl(UUID vehicleId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/vehicle/insurance/")
-            .path(vehicleId.toString())
-            .toUriString();
     }
 
     public List<WithdrawalRequestManageDTO> getPendingWithdrawalRequests() {
@@ -662,5 +668,89 @@ public class UsermanageService {
         driver.addDriverPointHistory(history);
 
         driverRepository.save(driver);
+    }
+
+    public Page<WalletTransactionAdminDTO> getSystemTransactions(
+        Pageable pageable,
+        WalletTransactionType walletType,
+        Instant fromDate,
+        Instant toDate
+    ) {
+        List<WalletTransaction> transactions = walletTransactionRepository.findAll();
+
+        List<WalletTransaction> filtered = transactions
+            .stream()
+            .filter(tx -> walletType == null || tx.getWalletType() == walletType)
+            .filter(tx -> fromDate == null || !tx.getDate().isBefore(fromDate))
+            .filter(tx -> toDate == null || !tx.getDate().isAfter(toDate))
+            .sorted(Comparator.comparing(WalletTransaction::getDate).reversed()) // sắp xếp theo thời gian mới nhất
+            .collect(Collectors.toList());
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+        List<WalletTransactionAdminDTO> content = filtered
+            .subList(Math.min(start, end), end)
+            .stream()
+            .map(this::mapToDTO)
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(content, pageable, filtered.size());
+    }
+
+    private WalletTransactionAdminDTO mapToDTO(WalletTransaction tx) {
+        WalletTransactionAdminDTO dto = new WalletTransactionAdminDTO();
+        dto.setTransactionId(tx.getTransID());
+        dto.setType(tx.getWalletType());
+        dto.setAmount(tx.getAmount());
+        dto.setCreatedDate(tx.getDate());
+        dto.setFromOwner(resolveFrom(tx));
+        dto.setToOwner(resolveTo(tx));
+        dto.setDescription(buildDescription(tx));
+        return dto;
+    }
+
+    private String resolveUserName(UserWallet wallet) {
+        if (wallet == null || wallet.getUser() == null) return "Unknown User";
+        return wallet.getUser().getFirstName() + " " + wallet.getUser().getLastName() + " (User)";
+    }
+
+    private String resolveFrom(WalletTransaction tx) {
+        return switch (tx.getWalletType()) {
+            case DEPOSIT -> "System";
+            case WITHDRAW, DRIVER_BUY_PACKAGE, DRIVER_CREATE_TRIP_FEE -> resolveUserName(tx.getUserWallet());
+            case SYSTEM_GAIN_CREATE_TRIP_FEE, SYSTEM_GAIN_PACKAGE_FEE -> resolveUserName(tx.getUserWallet());
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "System";
+            default -> "Unknown";
+        };
+    }
+
+    private String resolveTo(WalletTransaction tx) {
+        return switch (tx.getWalletType()) {
+            case DEPOSIT, SYSTEM_REFUND_TO_PASSENGER -> resolveUserName(tx.getUserWallet());
+            case SYSTEM_GAIN_PACKAGE_FEE, SYSTEM_GAIN_CREATE_TRIP_FEE -> "System";
+            case DRIVER_DONE_TRIP_REFUND -> resolveUserName(tx.getUserWallet());
+            default -> "Unknown";
+        };
+    }
+
+    private String buildDescription(WalletTransaction tx) {
+        return switch (tx.getWalletType()) {
+            case DEPOSIT -> "Người dùng nạp tiền vào ví";
+            case WITHDRAW -> "Người dùng rút tiền từ ví";
+            case REFUND -> "Hoàn tiền về ví người dùng";
+            case DRIVER_CREATE_TRIP_FEE -> "Tài xế tạo chuyến đi, trừ phí từ ví tài xế";
+            case DRIVER_DONE_TRIP_REFUND -> "Hoàn tiền lại cho tài xế khi hoàn tất chuyến đi";
+            case DRIVER_DONE_TRIP_FEE -> "Tổng tiền thu được từ các ghế đã đặt của chuyến đi";
+            case PASSENGER_APPROVE_FEE -> "Tiền cọc của hành khách khi đặt chỗ chuyến đi";
+            case SYSTEM_GAIN_CREATE_TRIP_FEE -> "Hệ thống thu phí từ việc tài xế tạo chuyến";
+            case SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> "Hệ thống giữ lại tiền cọc từ hành khách";
+            case SYSTEM_GAIN_DONE_TRIP_FEE -> "Hệ thống thu phí từ chuyến đi hoàn thành";
+            case DRIVER_BUY_PACKAGE -> "Tài xế mua gói dịch vụ";
+            case SYSTEM_GAIN_PACKAGE_FEE -> "Hệ thống thu tiền từ tài xế mua gói";
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "Hệ thống hoàn tiền cho tài xế (sau chuyến đi)";
+            case SYSTEM_REFUND_TO_PASSENGER -> "Hệ thống hoàn tiền cho hành khách";
+            default -> "Giao dịch hệ thống khác";
+        };
     }
 }

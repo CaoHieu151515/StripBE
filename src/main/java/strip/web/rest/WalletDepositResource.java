@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -46,6 +47,7 @@ public class WalletDepositResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new walletDeposit, or with status {@code 400 (Bad Request)} if the walletDeposit has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<WalletDeposit> createWalletDeposit(@RequestBody WalletDeposit walletDeposit) throws URISyntaxException {
         LOG.debug("REST request to save WalletDeposit : {}", walletDeposit);
@@ -68,6 +70,7 @@ public class WalletDepositResource {
      * or with status {@code 500 (Internal Server Error)} if the walletDeposit couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<WalletDeposit> updateWalletDeposit(
         @PathVariable(value = "id", required = false) final UUID id,
@@ -102,6 +105,7 @@ public class WalletDepositResource {
      * or with status {@code 500 (Internal Server Error)} if the walletDeposit couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<WalletDeposit> partialUpdateWalletDeposit(
         @PathVariable(value = "id", required = false) final UUID id,
@@ -156,6 +160,7 @@ public class WalletDepositResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of walletDeposits in body.
      */
+    @Hidden
     @GetMapping("")
     public List<WalletDeposit> getAllWalletDeposits() {
         LOG.debug("REST request to get all WalletDeposits");
@@ -168,6 +173,8 @@ public class WalletDepositResource {
      * @param id the id of the walletDeposit to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the walletDeposit, or with status {@code 404 (Not Found)}.
      */
+
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<WalletDeposit> getWalletDeposit(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get WalletDeposit : {}", id);
@@ -181,6 +188,7 @@ public class WalletDepositResource {
      * @param id the id of the walletDeposit to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWalletDeposit(@PathVariable("id") UUID id) {
         LOG.debug("REST request to delete WalletDeposit : {}", id);

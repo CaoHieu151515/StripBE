@@ -1,5 +1,6 @@
 package strip.web.rest;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -55,6 +56,7 @@ public class DriverPointHistoryResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new driverPointHistory, or with status {@code 400 (Bad Request)} if the driverPointHistory has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     public ResponseEntity<DriverPointHistory> createDriverPointHistory(@RequestBody DriverPointHistory driverPointHistory)
         throws URISyntaxException {
@@ -78,6 +80,7 @@ public class DriverPointHistoryResource {
      * or with status {@code 500 (Internal Server Error)} if the driverPointHistory couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PutMapping("/{id}")
     public ResponseEntity<DriverPointHistory> updateDriverPointHistory(
         @PathVariable(value = "id", required = false) final Long id,
@@ -112,6 +115,7 @@ public class DriverPointHistoryResource {
      * or with status {@code 500 (Internal Server Error)} if the driverPointHistory couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<DriverPointHistory> partialUpdateDriverPointHistory(
         @PathVariable(value = "id", required = false) final Long id,
@@ -143,6 +147,7 @@ public class DriverPointHistoryResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of driverPointHistories in body.
      */
+    @Hidden
     @GetMapping("")
     public ResponseEntity<List<DriverPointHistory>> getAllDriverPointHistories(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
@@ -159,6 +164,7 @@ public class DriverPointHistoryResource {
      * @param id the id of the driverPointHistory to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the driverPointHistory, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     public ResponseEntity<DriverPointHistory> getDriverPointHistory(@PathVariable("id") Long id) {
         LOG.debug("REST request to get DriverPointHistory : {}", id);
@@ -172,6 +178,7 @@ public class DriverPointHistoryResource {
      * @param id the id of the driverPointHistory to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
+    @Hidden
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDriverPointHistory(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete DriverPointHistory : {}", id);

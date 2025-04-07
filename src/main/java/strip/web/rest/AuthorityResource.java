@@ -53,6 +53,7 @@ public class AuthorityResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new authority, or with status {@code 400 (Bad Request)} if the authority has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @Hidden
     @PostMapping("")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Authority> createAuthority(@Valid @RequestBody Authority authority) throws URISyntaxException {
@@ -71,6 +72,7 @@ public class AuthorityResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of authorities in body.
      */
+    @Hidden
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public List<Authority> getAllAuthorities() {
@@ -84,6 +86,7 @@ public class AuthorityResource {
      * @param id the id of the authority to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the authority, or with status {@code 404 (Not Found)}.
      */
+    @Hidden
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Authority> getAuthority(@PathVariable("id") String id) {
