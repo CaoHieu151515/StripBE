@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,6 +29,7 @@ import strip.web.rest.errors.BadRequestAlertException;
 @Transactional
 public class TripCustomService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TripCustomService.class);
     private final TripRepository tripRepository;
     private final DriverRepository driverRepository;
     private final UserWalletRepository userWalletRepository;
@@ -320,7 +323,46 @@ public class TripCustomService {
 
         request.setStatus(PassengerStatus.REJECTED);
         request.setAppliedAt(Instant.now());
-        return requestTripRepository.save(request);
+        requestTripRepository.save(request);
+
+        // ✅ Hoàn tiền nếu có cọc
+        Double amount = request.getAmountApproveFee();
+        if (amount != null && amount > 0) {
+            User user = request.getUser();
+
+            // ✅ Cộng vào ví passenger
+            UserWallet userWallet = userWalletRepository
+                .findByUser(user)
+                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví người dùng", "wallet", "notfound"));
+
+            WalletTransaction userTx = new WalletTransaction();
+            userTx.setTransID(UUID.randomUUID());
+            userTx.setAmount(amount);
+            userTx.setDate(Instant.now());
+            userTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+            userTx.setTransStatus(TransactionStatus.SUCCESS);
+            userTx.setUserWallet(userWallet);
+
+            userWallet.addWalletTransactionAndUpdateBalance(userTx);
+            userWalletRepository.save(userWallet);
+
+            // ✅ Trừ từ ví hệ thống
+            SystemWallet systemWallet = systemWalletRepository
+                .findTopByOrderByMobifyDateDesc()
+                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+
+            WalletTransaction sysTx = new WalletTransaction();
+            sysTx.setTransID(UUID.randomUUID());
+            sysTx.setAmount(amount);
+            sysTx.setDate(Instant.now());
+            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+            sysTx.setTransStatus(TransactionStatus.SUCCESS);
+
+            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+            systemWalletRepository.save(systemWallet);
+        }
+
+        return request;
     }
 
     @Transactional
@@ -598,11 +640,58 @@ public class TripCustomService {
             driverTx.setTransID(UUID.randomUUID());
             driverTx.setAmount(amount);
             driverTx.setDate(Instant.now());
-            driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_FEE);
+            driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_REFUND);
             driverTx.setTransStatus(TransactionStatus.SUCCESS);
             driverTx.setUserWallet(driverWallet);
             driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
             userWalletRepository.save(driverWallet);
         }
+    }
+
+    @Transactional
+    public void markTripAsDone(UUID tripId) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        if (trip.getTripStatus() != TripStatus.ON_GOING) {
+            throw new BadRequestAlertException("Trip not in ON_GOING status", "trip", "invalid-status");
+        }
+
+        // Xác minh tài xế là người gọi
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("Current user not found", "user", "notfound"));
+
+        if (!trip.getDriver().getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestAlertException("Bạn không phải tài xế của chuyến này", "trip", "not-owner");
+        }
+
+        trip.setTripStatus(TripStatus.DONE);
+        trip.setEndDate(Instant.now());
+        tripRepository.save(trip);
+    }
+
+    public void payoutToDriver(Trip trip) {
+        Driver driver = trip.getDriver();
+        User user = driver.getUser();
+
+        LOG.debug("user:", user);
+        UserWallet driverWallet = userWalletRepository
+            .findByUser_Id(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví của tài xế", "wallet", "driver-notfound"));
+        SystemWallet systemWallet = systemWalletRepository
+            .findTopByOrderByMobifyDateDesc()
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+
+        List<RequestTrip> passengers = requestTripRepository.findByTripAndStatus(trip, PassengerStatus.DONE);
+
+        double createFee = trip.getMaxSeat() * trip.getPricePerSeat() * 0.1;
+        double totalEarnings = passengers.stream().mapToDouble(RequestTrip::getAmountApproveFee).sum();
+        double gainFee = totalEarnings * 0.1;
+
+        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee);
+        logSystemGainFee(systemWallet, gainFee);
+        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet);
     }
 }

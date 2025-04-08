@@ -184,6 +184,8 @@ public class SystemWallet implements Serializable {
     }
 
     public SystemWallet addWalletTransactionAndUpdateBalance(WalletTransaction transaction) {
+        boolean isDebit = false;
+
         if (transaction == null || transaction.getTransStatus() != TransactionStatus.SUCCESS) {
             return this;
         }
@@ -209,21 +211,24 @@ public class SystemWallet implements Serializable {
                 this.current += amount;
                 break;
             case SYSTEM_GAIN_DONE_TRIP_FEE:
-                this.current += amount;
                 break;
             case SYSTEM_GAIN_PACKAGE_FEE:
                 this.current += amount;
                 break;
-            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP:
+            case SYSTEM_REFUND_TO_PASSENGER:
+                isDebit = true;
                 this.current -= amount;
                 break;
-            case SYSTEM_REFUND_TO_PASSENGER:
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP:
+                isDebit = true;
                 this.current -= amount;
+                break;
             default:
                 // ❗Nếu type không liên quan hệ thống → không tác động số dư
                 break;
         }
 
+        this.amount = isDebit ? -amount : amount;
         this.mobifyDate = transaction.getDate() != null ? transaction.getDate() : Instant.now();
         return this;
     }

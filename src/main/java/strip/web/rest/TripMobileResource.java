@@ -97,7 +97,7 @@ public class TripMobileResource {
 
     @PutMapping("/trips/{tripId}/complete")
     public ResponseEntity<Void> completeTrip(@PathVariable UUID tripId) {
-        tripCustomService.completeTrip(tripId);
+        tripCustomService.markTripAsDone(tripId); // chỉ đánh dấu DONE
         return ResponseEntity.noContent().build();
     }
 }

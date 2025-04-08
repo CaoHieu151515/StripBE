@@ -35,7 +35,9 @@ import strip.security.AuthoritiesConstants;
 import strip.security.SecurityUtils;
 import strip.service.dto.AdminUserDTO;
 import strip.service.dto.CurrentUserDTO;
+import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserDTO;
+import strip.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.security.RandomUtil;
 
 /**
@@ -490,5 +492,36 @@ public class UserService {
         driver.setDriverStatus(DriverStatus.NOT_DRIVER);
         driver.setDriverPoint(0);
         driverRepository.save(driver);
+    }
+
+    @Transactional
+    public void updateUserProfile(UpdateUserProfileDTO dto) {
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
+
+        // ✅ Cập nhật User
+        currentUser.setFirstName(dto.getFirstName());
+        currentUser.setLastName(dto.getLastName());
+        userRepository.save(currentUser);
+
+        // ✅ Cập nhật hoặc tạo UserDetail
+        UserDetail userDetail = userDetailRepository
+            .findByUserId(currentUser.getId())
+            .orElseGet(() -> {
+                UserDetail detail = new UserDetail();
+                detail.setAppUserDetail(UUID.randomUUID());
+                detail.setUser(currentUser);
+                return detail;
+            });
+
+        userDetail.setPhone(dto.getPhone());
+        userDetail.setAddress(dto.getAddress());
+        userDetail.setDob(dto.getDob());
+        userDetail.setGender(dto.getGender());
+        userDetail.setUserimage(dto.getUserImage());
+        userDetail.setUserimageContentType(dto.getUserImageContentType());
+
+        userDetailRepository.save(userDetail);
     }
 }

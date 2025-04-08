@@ -751,4 +751,63 @@ public class UserMobileService {
             })
             .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void cancelRequestTrip(UUID requestTripId) {
+        RequestTrip request = requestTripRepository
+            .findByRequestTripID(requestTripId)
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy requestTrip", "trip", "notfound"));
+
+        // ✅ Check quyền huỷ
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
+
+        if (!request.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestAlertException("Không thể huỷ yêu cầu của người khác", "trip", "forbidden");
+        }
+
+        if (request.getStatus() == PassengerStatus.DONE || request.getStatus() == PassengerStatus.CANCEL) {
+            throw new BadRequestAlertException("Yêu cầu đã hoàn tất hoặc đã huỷ", "trip", "already-final");
+        }
+
+        // ✅ Cập nhật trạng thái
+        request.setStatus(PassengerStatus.CANCEL);
+        requestTripRepository.save(request);
+
+        // ✅ Hoàn tiền nếu đã thanh toán
+        Double amount = request.getAmountApproveFee();
+        if (amount != null && amount > 0) {
+            // 🎯 1. Cộng vào ví người dùng
+            UserWallet wallet = userWalletRepository
+                .findByUser(currentUser)
+                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví người dùng", "wallet", "notfound"));
+
+            WalletTransaction userTx = new WalletTransaction();
+            userTx.setTransID(UUID.randomUUID());
+            userTx.setAmount(amount);
+            userTx.setDate(Instant.now());
+            userTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+            userTx.setTransStatus(TransactionStatus.SUCCESS);
+            userTx.setUserWallet(wallet);
+
+            wallet.addWalletTransactionAndUpdateBalance(userTx);
+            userWalletRepository.save(wallet);
+
+            // 🎯 2. Trừ từ ví hệ thống
+            SystemWallet systemWallet = systemWalletRepository
+                .findTopByOrderByMobifyDateDesc()
+                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+
+            WalletTransaction sysTx = new WalletTransaction();
+            sysTx.setTransID(UUID.randomUUID());
+            sysTx.setAmount(amount);
+            sysTx.setDate(Instant.now());
+            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+            sysTx.setTransStatus(TransactionStatus.SUCCESS);
+
+            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+            systemWalletRepository.save(systemWallet);
+        }
+    }
 }

@@ -13,4 +13,6 @@ import strip.domain.UserWallet;
 @Repository
 public interface UserWalletRepository extends JpaRepository<UserWallet, Long> {
     Optional<UserWallet> findByUser(User user);
+
+    Optional<UserWallet> findByUser_Id(Long userId);
 }

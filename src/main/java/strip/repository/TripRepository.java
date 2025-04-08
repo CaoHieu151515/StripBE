@@ -59,4 +59,6 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
     @EntityGraph(attributePaths = { "driver.user", "vehicle", "tripStopLocations" })
     @Query("SELECT t FROM Trip t WHERE t.tripID = :id")
     Optional<Trip> findByIdWithRelations(@Param("id") UUID id);
+
+    List<Trip> findByTripStatusAndEndDateBefore(TripStatus status, Instant before);
 }
