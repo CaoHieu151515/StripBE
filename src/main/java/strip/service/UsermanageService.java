@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.DriverPointHistory;
 import strip.domain.Feedback;
@@ -63,6 +64,8 @@ import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
@@ -498,10 +501,13 @@ public class UsermanageService {
         log.info("❌ Đã từ chối rút tiền và hoàn tiền lại cho user: {}", userWallet.getUser().getLogin());
     }
 
-    public Page<TripCusDTO> getAllTrips(Pageable pageable, String startLocation, String endLocation, TripStatus status, UUID driverId) {
-        return tripRepository
-            .findAllWithFilters(startLocation, endLocation, status, driverId, pageable)
-            .map(this::toTripCusDTOWithCustomFields);
+    public Page<TripListDTO> getAllTrips(Pageable pageable, String startLocation, String endLocation, TripStatus status, UUID driverId) {
+        Page<Trip> trips = tripRepository.findAllWithFilters(startLocation, endLocation, status, driverId, pageable);
+        return trips.map(usermanageMapper::toTripListDTO);
+    }
+
+    public Optional<TripCusDTO> getTripById(UUID id) {
+        return tripRepository.findByIdWithRelations(id).map(this::toTripCusDTOWithCustomFields); // hoặc map bằng usermanageMapper + custom bổ sung URL
     }
 
     public TripCusDTO toTripCusDTOWithCustomFields(Trip trip) {
@@ -567,20 +573,81 @@ public class UsermanageService {
     public FeedbackCusDTO convertToFeedbackCusDTO(Feedback feedback) {
         FeedbackCusDTO dto = new FeedbackCusDTO();
 
+        // Feedback Info
         dto.setFeedbackID(feedback.getFeedbackID());
         dto.setFeedbackType(feedback.getFeedbackType());
         dto.setFeedbackStatus(feedback.getFeedbackStatus());
         dto.setFeedbackDescription(feedback.getFeedbackDescription());
         dto.setFeedbackRating(feedback.getFeedbackRating());
 
-        dto.setTripId(feedback.getTrip() != null ? feedback.getTrip().getTripID() : null);
-        dto.setDriverId(feedback.getDriver() != null ? feedback.getDriver().getDriverID() : null);
+        // Trip Info
+        if (feedback.getTrip() != null) {
+            Trip trip = feedback.getTrip();
+            TripDTO tripDTO = usermanageMapper.toTripDTO(trip);
+            tripDTO.setTripImg(null);
+            dto.setTrip(tripDTO);
+        }
 
+        // Driver Info
+        if (feedback.getDriver() != null) {
+            Driver driver = feedback.getDriver();
+            ConfirmingVehicleDriverDTO driverDTO = new ConfirmingVehicleDriverDTO();
+
+            driverDTO.setDriverId(driver.getDriverID());
+
+            // Set user info
+            if (driver.getUser() != null) {
+                User user = driver.getUser();
+                driverDTO.setFirstName(user.getFirstName());
+                driverDTO.setLastName(user.getLastName());
+                driverDTO.setEmail(user.getEmail());
+
+                userDetailRepository.findByUserId(user.getId()).map(UserDetail::getPhone).ifPresent(driverDTO::setPhone);
+            }
+
+            // Set image URLs
+            driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driver.getDriverID()));
+            driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driver.getDriverID()));
+            driverDTO.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driver.getDriverID()));
+
+            // Set 1 vehicle if exists
+            List<Vehicle> vehicles = vehicleRepository.findAllByDriver(driver);
+            if (!vehicles.isEmpty()) {
+                Vehicle vehicle = vehicles.get(0);
+                ConfirmingVehicleDTO vehicleDTO = usermanageMapper.toConfirmingVehicleDTO(vehicle);
+                driverDTO.setVehicle(vehicleDTO);
+            }
+
+            dto.setDriver(driverDTO);
+            dto.getDriver().setVehicle(null);
+            dto.getTrip().setVehicle(null);
+            dto.getTrip().setDriver(null);
+        }
+
+        // User Info
         if (feedback.getUser() != null) {
-            Optional<UserDetail> userDetailOpt = userDetailRepository.findByUser(feedback.getUser());
-            userDetailOpt.ifPresent(userDetail -> {
-                dto.setUserId(userDetail.getAppUserDetail());
-            });
+            User user = feedback.getUser();
+            UsermanageDTO userDTO = new UsermanageDTO();
+
+            userDTO.setUsername(user.getLogin());
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setActive(user.isActivated());
+
+            // Roles
+            Set<String> roles = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+            userDTO.setRoles(roles);
+
+            // Gender, Phone, Avatar
+            userDetailRepository
+                .findByUserId(user.getId())
+                .ifPresent(detail -> {
+                    userDTO.setGender(detail.getGender());
+                    userDTO.setPhoneNumber(detail.getPhone());
+                });
+
+            dto.setUser(userDTO);
         }
 
         return dto;

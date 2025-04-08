@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import strip.domain.RequestTrip;
 import strip.domain.Trip;
+import strip.domain.User;
+import strip.domain.enumeration.PassengerStatus;
 
 /**
  * Spring Data JPA repository for the RequestTrip entity.
@@ -20,4 +22,8 @@ public interface RequestTripRepository extends JpaRepository<RequestTrip, Long> 
     List<RequestTrip> findAllByTrip_TripID(UUID tripId);
 
     Optional<RequestTrip> findByRequestTripID(UUID requestTripID);
+
+    List<RequestTrip> findByUserAndStatus(User user, PassengerStatus status);
+
+    List<RequestTrip> findByTripAndStatus(Trip trip, PassengerStatus status);
 }

@@ -22,15 +22,9 @@ public class TripCusDTO {
     private String cancelReason;
     private int totalTime;
     private double totalDistance;
-
-    // ✅ URL thay vì blob
     private String tripImgUrl;
-
-    // ✅ Driver Info
     private String driverName;
     private String driverPhone;
-
-    // ✅ Vehicle Info
     private UUID vehicleID;
     private VehicleType vehicleType;
     private String vehicleNumber;
@@ -38,8 +32,6 @@ public class TripCusDTO {
     private String vehicleColor;
     private String vehicleBrand;
     private String vehicleImageUrl;
-
-    // ✅ Stop locations
     private List<TripStopLocationDTO> stopLocations;
 
     public UUID getTripID() {

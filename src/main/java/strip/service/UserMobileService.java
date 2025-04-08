@@ -9,13 +9,17 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.DriverPackageSubscription;
 import strip.domain.PackageDriver;
+import strip.domain.RequestTrip;
 import strip.domain.SystemWallet;
+import strip.domain.Trip;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.UserWallet;
@@ -24,13 +28,16 @@ import strip.domain.WalletDeposit;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.DriverStatus;
 import strip.domain.enumeration.PackageDriverStatus;
+import strip.domain.enumeration.PassengerStatus;
 import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.TransactionStatus;
+import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.AuthorityRepository;
 import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
+import strip.repository.RequestTripRepository;
 import strip.repository.SystemWalletRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
@@ -45,17 +52,21 @@ import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
+import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserDetailsCusDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
 import strip.service.dto.WithdrawRequestDTO;
+import strip.service.mapper.TripCusMapper;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional(readOnly = true)
 public class UserMobileService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserMobileService.class);
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
     private final UserWalletRepository userWalletRepository;
@@ -68,6 +79,8 @@ public class UserMobileService {
     private final ImageUrlService imageUrlService;
     private final WalletDepositRepository walletDepositRepository;
     private final AuthorityRepository authorityRepository;
+    private final TripCusMapper tripCusMapper;
+    private final RequestTripRepository requestTripRepository;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -81,7 +94,9 @@ public class UserMobileService {
         SystemWalletRepository systemWalletRepository,
         ImageUrlService imageUrlService,
         WalletDepositRepository walletDepositRepository,
-        AuthorityRepository authorityRepository
+        AuthorityRepository authorityRepository,
+        TripCusMapper tripCusMapper,
+        RequestTripRepository requestTripRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -95,6 +110,8 @@ public class UserMobileService {
         this.imageUrlService = imageUrlService;
         this.walletDepositRepository = walletDepositRepository;
         this.authorityRepository = authorityRepository;
+        this.tripCusMapper = tripCusMapper;
+        this.requestTripRepository = requestTripRepository;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -611,5 +628,127 @@ public class UserMobileService {
 
         wallet.addWalletTransactionAndUpdateBalance(trans);
         userWalletRepository.save(wallet); // cascade transaction
+    }
+
+    public List<TripCusDTO> getTripHistoryForPassenger() {
+        User user = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
+
+        List<RequestTrip> requests = requestTripRepository.findByUserAndStatus(user, PassengerStatus.DONE);
+
+        LOG.debug("Total requestTrips for DONE: {}", requests);
+
+        List<Trip> trips = requests
+            .stream()
+            .map(RequestTrip::getTrip)
+            .filter(trip -> trip.getTripStatus() == TripStatus.DONE)
+            .distinct()
+            .collect(Collectors.toList());
+
+        return trips
+            .stream()
+            .map(trip -> {
+                Driver driver = trip.getDriver();
+                Vehicle vehicle = trip.getVehicle();
+                TripCusDTO dto = tripCusMapper.toDto(trip, driver, vehicle);
+
+                // Bổ sung field phức tạp
+                dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+                dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicle.getVehicleID()));
+                if (driver != null && driver.getUser() != null) {
+                    User driverUser = driver.getUser();
+                    dto.setDriverName(driverUser.getFirstName() + " " + driverUser.getLastName());
+
+                    String phone = userDetailRepository.findByUserId(driverUser.getId()).map(UserDetail::getPhone).orElse(null);
+                    dto.setDriverPhone(phone);
+                } else {
+                    dto.setDriverName("Chưa xác định");
+                    dto.setDriverPhone(null);
+                }
+
+                dto.setStopLocations(
+                    trip
+                        .getTripStopLocations()
+                        .stream()
+                        .map(
+                            loc ->
+                                new TripStopLocationDTO(
+                                    loc.getStopLocaID(),
+                                    loc.getStopLoca(),
+                                    loc.getStoplocaPosition(),
+                                    loc.getEstimatedTime(),
+                                    loc.getEstimatedKM(),
+                                    loc.getStopLocaTime(),
+                                    loc.getStopLocaStatus()
+                                )
+                        )
+                        .collect(Collectors.toList())
+                );
+
+                return dto;
+            })
+            .collect(Collectors.toList());
+    }
+
+    public List<TripCusDTO> getTripHistoryForPassengerBooking() {
+        User user = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
+
+        List<RequestTrip> requests = requestTripRepository.findByUserAndStatus(user, PassengerStatus.BOOKED);
+
+        LOG.debug("Total requestTrips for DONE: {}", requests);
+
+        List<Trip> trips = requests
+            .stream()
+            .map(RequestTrip::getTrip)
+            .filter(trip -> trip.getTripStatus() == TripStatus.UPCOMING || trip.getTripStatus() == TripStatus.ON_GOING)
+            .distinct()
+            .collect(Collectors.toList());
+
+        return trips
+            .stream()
+            .map(trip -> {
+                Driver driver = trip.getDriver();
+                Vehicle vehicle = trip.getVehicle();
+                TripCusDTO dto = tripCusMapper.toDto(trip, driver, vehicle);
+
+                // Bổ sung field phức tạp
+                dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+                dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicle.getVehicleID()));
+                if (driver != null && driver.getUser() != null) {
+                    User driverUser = driver.getUser();
+                    dto.setDriverName(driverUser.getFirstName() + " " + driverUser.getLastName());
+
+                    String phone = userDetailRepository.findByUserId(driverUser.getId()).map(UserDetail::getPhone).orElse(null);
+                    dto.setDriverPhone(phone);
+                } else {
+                    dto.setDriverName("Chưa xác định");
+                    dto.setDriverPhone(null);
+                }
+
+                dto.setStopLocations(
+                    trip
+                        .getTripStopLocations()
+                        .stream()
+                        .map(
+                            loc ->
+                                new TripStopLocationDTO(
+                                    loc.getStopLocaID(),
+                                    loc.getStopLoca(),
+                                    loc.getStoplocaPosition(),
+                                    loc.getEstimatedTime(),
+                                    loc.getEstimatedKM(),
+                                    loc.getStopLocaTime(),
+                                    loc.getStopLocaStatus()
+                                )
+                        )
+                        .collect(Collectors.toList())
+                );
+
+                return dto;
+            })
+            .collect(Collectors.toList());
     }
 }

@@ -10,10 +10,15 @@ import strip.domain.Trip;
 import strip.domain.TripStopLocation;
 import strip.domain.User;
 import strip.domain.UserDetail;
+import strip.domain.Vehicle;
 import strip.domain.WalletDeposit;
+import strip.service.dto.ConfirmingVehicleDTO;
+import strip.service.dto.DriverDTO;
 import strip.service.dto.DriverPointHistoryDTO;
 import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
@@ -82,4 +87,24 @@ public interface UsermanageMapper {
     @Mapping(target = "userId", ignore = true)
     @Mapping(source = "driver.driverID", target = "driverId")
     ReportCusDTO toReportCusDTO(Report report);
+
+    @Mapping(source = "tripID", target = "stripID")
+    @Mapping(source = "startDate", target = "startDay")
+    @Mapping(source = "endDate", target = "endDay")
+    @Mapping(source = "startLocation", target = "startLocation")
+    @Mapping(source = "endLocation", target = "endlocation")
+    @Mapping(source = "pricePerSeat", target = "price")
+    @Mapping(source = "tripStatus", target = "status")
+    @Mapping(source = "totalTime", target = "totalTime")
+    TripListDTO toTripListDTO(Trip trip);
+
+    TripDTO toTripDTO(Trip trip);
+
+    DriverDTO toDriverDTO(Driver driver);
+
+    @Mapping(target = "carInsuranceUrl", ignore = true)
+    @Mapping(target = "carregistrationUrl", ignore = true)
+    @Mapping(target = "vehicleImageUrl", ignore = true)
+    @Mapping(target = "vehicleInspectionCertificateUrl", ignore = true)
+    ConfirmingVehicleDTO toConfirmingVehicleDTO(Vehicle vehicle);
 }

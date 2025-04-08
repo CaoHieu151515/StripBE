@@ -24,6 +24,7 @@ import strip.service.UserService;
 import strip.service.dto.ConfirmingDriverDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.PasswordChangeDTO;
+import strip.service.dto.TripCusDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
@@ -144,5 +145,17 @@ public class UserMobileResource {
     public ResponseEntity<UserWalletWithTransactionsDTO> getFullWalletInfo() {
         UserWalletWithTransactionsDTO dto = userMobileService.getWalletAndTransactions();
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/trips/history")
+    public ResponseEntity<List<TripCusDTO>> getTripHistoryForPassenger() {
+        List<TripCusDTO> trips = userMobileService.getTripHistoryForPassenger();
+        return ResponseEntity.ok(trips);
+    }
+
+    @GetMapping("/trips/booking")
+    public ResponseEntity<List<TripCusDTO>> getActiveTripsForPassenger() {
+        List<TripCusDTO> trips = userMobileService.getTripHistoryForPassengerBooking();
+        return ResponseEntity.ok(trips);
     }
 }

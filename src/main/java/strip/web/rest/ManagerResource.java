@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,12 +35,14 @@ import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
+import strip.service.dto.CustomPageDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverPointHistoryDTO;
 import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.WalletTransactionAdminDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
@@ -78,7 +79,7 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/GetAllUsers")
-    public ResponseEntity<List<UsermanageDTO>> getAllUsers(
+    public ResponseEntity<CustomPageDTO<UsermanageDTO>> getAllUsers(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) String firstName,
         @RequestParam(required = false) String lastName,
@@ -87,18 +88,12 @@ public class ManagerResource {
     ) {
         log.debug("REST request to get all Users with filters");
 
-        // Kiểm tra các thuộc tính sắp xếp có hợp lệ không
         if (!onlyContainsAllowedProperties(pageable)) {
             return ResponseEntity.badRequest().build();
         }
 
-        // Gọi service để lấy danh sách UsermanageDTO theo phân trang và lọc
-        final Page<UsermanageDTO> page = usermanageService.getAllUsers(pageable, firstName, lastName, email, active);
-
-        // Tạo HttpHeaders để hỗ trợ phân trang giống JHipster
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        Page<UsermanageDTO> page = usermanageService.getAllUsers(pageable, firstName, lastName, email, active);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
     private boolean onlyContainsAllowedProperties(Pageable pageable) {
@@ -153,7 +148,7 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/drivers/confirming/getAll")
-    public ResponseEntity<List<ConfirmingVehicleDriverDTO>> getConfirmingDrivers(
+    public ResponseEntity<CustomPageDTO<ConfirmingVehicleDriverDTO>> getConfirmingDrivers(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) String firstName,
         @RequestParam(required = false) String lastName,
@@ -165,9 +160,8 @@ public class ManagerResource {
         }
 
         Page<ConfirmingVehicleDriverDTO> page = usermanageService.getConfirmingDrivers(pageable, firstName, lastName, email, phone);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
 
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
     private boolean onlyContainsAllowedPropertiesDriverConfirming(Pageable pageable) {
@@ -237,7 +231,7 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/trips/getall")
-    public ResponseEntity<List<TripCusDTO>> getAllTrips(
+    public ResponseEntity<CustomPageDTO<TripListDTO>> getAllTrips(
         @ParameterObject Pageable pageable,
         @RequestParam(required = false) String startLocation,
         @RequestParam(required = false) String endLocation,
@@ -248,10 +242,15 @@ public class ManagerResource {
             return ResponseEntity.badRequest().build();
         }
 
-        Page<TripCusDTO> page = usermanageService.getAllTrips(pageable, startLocation, endLocation, status, driverId);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        Page<TripListDTO> page = usermanageService.getAllTrips(pageable, startLocation, endLocation, status, driverId);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
+    }
 
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @GetMapping("/trips/{id}")
+    public ResponseEntity<TripCusDTO> getTripById(@PathVariable UUID id) {
+        Optional<TripCusDTO> tripDTO = usermanageService.getTripById(id);
+        return tripDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     private boolean onlyContainsAllowedPropertiesTrip(Pageable pageable) {
@@ -278,7 +277,7 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/feedbacks")
-    public ResponseEntity<List<FeedbackCusDTO>> getAllFeedbacks(
+    public ResponseEntity<CustomPageDTO<FeedbackCusDTO>> getAllFeedbacks(
         @ParameterObject Pageable pageable,
         @RequestParam(required = false) FeedbackStatus status,
         @RequestParam(required = false) FeedbackType type
@@ -288,9 +287,7 @@ public class ManagerResource {
         }
 
         Page<FeedbackCusDTO> page = usermanageService.getAllFeedbacks(pageable, status, type);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
     private boolean onlyContainsAllowedPropertiesFeedback(Pageable pageable) {
@@ -353,16 +350,13 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/wallet-transactions")
-    public ResponseEntity<List<WalletTransactionAdminDTO>> getAllTransactions(
+    public ResponseEntity<CustomPageDTO<WalletTransactionAdminDTO>> getAllTransactions(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) WalletTransactionType walletType,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate
     ) {
         Page<WalletTransactionAdminDTO> page = usermanageService.getSystemTransactions(pageable, walletType, fromDate, toDate);
-
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 }

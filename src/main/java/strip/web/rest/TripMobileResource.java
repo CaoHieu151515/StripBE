@@ -94,4 +94,10 @@ public class TripMobileResource {
         List<TripCardDTO> tripCards = tripCustomService.getAvailableTripsForPassenger();
         return ResponseEntity.ok(tripCards);
     }
+
+    @PutMapping("/trips/{tripId}/complete")
+    public ResponseEntity<Void> completeTrip(@PathVariable UUID tripId) {
+        tripCustomService.completeTrip(tripId);
+        return ResponseEntity.noContent().build();
+    }
 }

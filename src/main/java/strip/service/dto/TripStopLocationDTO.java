@@ -29,6 +29,48 @@ public class TripStopLocationDTO implements Serializable {
 
     private TripDTO trip;
 
+    public TripStopLocationDTO() {}
+
+    public TripStopLocationDTO(
+        Long id,
+        UUID stopLocaID,
+        String stopLoca,
+        Integer stoplocaPosition,
+        Integer estimatedTime,
+        Double estimatedKM,
+        Instant stopLocaTime,
+        String stopLocaStatus,
+        TripDTO trip
+    ) {
+        this.id = id;
+        this.stopLocaID = stopLocaID;
+        this.stopLoca = stopLoca;
+        this.stoplocaPosition = stoplocaPosition;
+        this.estimatedTime = estimatedTime;
+        this.estimatedKM = estimatedKM;
+        this.stopLocaTime = stopLocaTime;
+        this.stopLocaStatus = stopLocaStatus;
+        this.trip = trip;
+    }
+
+    public TripStopLocationDTO(
+        UUID stopLocaID,
+        String stopLoca,
+        Integer stoplocaPosition,
+        Integer estimatedTime,
+        Double estimatedKM,
+        Instant stopLocaTime,
+        String stopLocaStatus
+    ) {
+        this.stopLocaID = stopLocaID;
+        this.stopLoca = stopLoca;
+        this.stoplocaPosition = stoplocaPosition;
+        this.estimatedTime = estimatedTime;
+        this.estimatedKM = estimatedKM;
+        this.stopLocaTime = stopLocaTime;
+        this.stopLocaStatus = stopLocaStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -126,15 +168,15 @@ public class TripStopLocationDTO implements Serializable {
     @Override
     public String toString() {
         return "TripStopLocationDTO{" +
-            "id=" + getId() +
-            ", stopLocaID='" + getStopLocaID() + "'" +
-            ", stopLoca='" + getStopLoca() + "'" +
-            ", stoplocaPosition=" + getStoplocaPosition() +
-            ", estimatedTime=" + getEstimatedTime() +
-            ", estimatedKM=" + getEstimatedKM() +
-            ", stopLocaTime='" + getStopLocaTime() + "'" +
-            ", stopLocaStatus='" + getStopLocaStatus() + "'" +
-            ", trip=" + getTrip() +
-            "}";
+                "id=" + getId() +
+                ", stopLocaID='" + getStopLocaID() + "'" +
+                ", stopLoca='" + getStopLoca() + "'" +
+                ", stoplocaPosition=" + getStoplocaPosition() +
+                ", estimatedTime=" + getEstimatedTime() +
+                ", estimatedKM=" + getEstimatedKM() +
+                ", stopLocaTime='" + getStopLocaTime() + "'" +
+                ", stopLocaStatus='" + getStopLocaStatus() + "'" +
+                ", trip=" + getTrip() +
+                "}";
     }
 }

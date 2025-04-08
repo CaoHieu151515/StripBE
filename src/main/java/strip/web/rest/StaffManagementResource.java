@@ -1,10 +1,14 @@
 package strip.web.rest;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +27,7 @@ import strip.domain.UserDetail;
 import strip.repository.AuthorityRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
+import strip.service.dto.CustomPageDTO;
 import strip.service.dto.StaffCreateDTO;
 import strip.service.dto.StaffUpdateDTO;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -48,7 +53,7 @@ public class StaffManagementResource {
         this.userDetailRepository = userDetailRepository;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping("/staff")
     public ResponseEntity<Void> createStaff(@RequestBody StaffCreateDTO dto) {
         if (userRepository.findOneByLogin(dto.getLogin().toLowerCase()).isPresent()) {
@@ -83,21 +88,25 @@ public class StaffManagementResource {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/staff")
-    public List<StaffUpdateDTO> getAllStaff(
+    public ResponseEntity<CustomPageDTO<StaffUpdateDTO>> getAllStaff(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) String firstName,
         @RequestParam(required = false) String lastName,
         @RequestParam(required = false) String email,
         @RequestParam(required = false) String phone
     ) {
+        // Lọc user có ROLE_STAFF
         List<User> staffUsers = userRepository
             .findAll()
             .stream()
             .filter(user -> user.getAuthorities().stream().anyMatch(auth -> "ROLE_STAFF".equals(auth.getName())))
             .collect(Collectors.toList());
 
-        return staffUsers
+        // Map sang DTO và lọc theo keyword
+        List<StaffUpdateDTO> filtered = staffUsers
             .stream()
             .map(user -> {
                 Optional<UserDetail> detail = userDetailRepository.findByUserId(user.getId());
@@ -108,9 +117,21 @@ public class StaffManagementResource {
             .filter(dto -> email == null || dto.getEmail().toLowerCase().contains(email.toLowerCase()))
             .filter(dto -> phone == null || (dto.getPhone() != null && dto.getPhone().toLowerCase().contains(phone.toLowerCase())))
             .collect(Collectors.toList());
+
+        // Áp dụng phân trang thủ công
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int start = Math.min(currentPage * pageSize, filtered.size());
+        int end = Math.min(start + pageSize, filtered.size());
+
+        List<StaffUpdateDTO> paged = filtered.subList(start, end);
+
+        Page<StaffUpdateDTO> page = new PageImpl<>(paged, pageable, filtered.size());
+
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/staff/update-by-detail")
     public ResponseEntity<Void> updateStaffByDetail(@RequestBody StaffUpdateDTO dto) {
         UserDetail detail = userDetailRepository
@@ -134,7 +155,7 @@ public class StaffManagementResource {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/staff/toggle-activation/{userid}")
     public ResponseEntity<Void> toggleStaffActivation(@PathVariable UUID userid) {
         // Tìm UserDetail

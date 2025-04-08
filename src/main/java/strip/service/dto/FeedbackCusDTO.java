@@ -1,9 +1,12 @@
 package strip.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.UUID;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
 
+@JsonInclude(Include.NON_NULL)
 public class FeedbackCusDTO {
 
     private UUID feedbackID;
@@ -13,9 +16,9 @@ public class FeedbackCusDTO {
     private Integer feedbackRating;
 
     // Custom fields
-    private UUID tripId;
-    private UUID driverId;
-    private UUID userId;
+    private TripDTO trip;
+    private ConfirmingVehicleDriverDTO driver;
+    private UsermanageDTO user;
 
     public UUID getFeedbackID() {
         return feedbackID;
@@ -57,27 +60,27 @@ public class FeedbackCusDTO {
         this.feedbackRating = feedbackRating;
     }
 
-    public UUID getTripId() {
-        return tripId;
+    public TripDTO getTrip() {
+        return trip;
     }
 
-    public void setTripId(UUID tripId) {
-        this.tripId = tripId;
+    public void setTrip(TripDTO trip) {
+        this.trip = trip;
     }
 
-    public UUID getDriverId() {
-        return driverId;
+    public UsermanageDTO getUser() {
+        return user;
     }
 
-    public void setDriverId(UUID driverId) {
-        this.driverId = driverId;
+    public void setUser(UsermanageDTO user) {
+        this.user = user;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public ConfirmingVehicleDriverDTO getDriver() {
+        return driver;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setDriver(ConfirmingVehicleDriverDTO driver) {
+        this.driver = driver;
     }
 }

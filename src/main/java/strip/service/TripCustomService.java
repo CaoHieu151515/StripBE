@@ -13,6 +13,7 @@ import strip.config.ApplicationProperties;
 import strip.domain.*;
 import strip.domain.enumeration.*;
 import strip.repository.*;
+import strip.security.SecurityUtils;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
@@ -20,6 +21,7 @@ import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
+import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
@@ -33,6 +35,7 @@ public class TripCustomService {
     private final VehicleRepository vehicleRepository;
     private final ApplicationProperties applicationProperties;
     private final RequestTripRepository requestTripRepository;
+    private final UserRepository userRepository;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -42,7 +45,8 @@ public class TripCustomService {
         TripStopLocationRepository tripStopLocationRepository,
         VehicleRepository vehicleRepository,
         ApplicationProperties applicationProperties,
-        RequestTripRepository requestTripRepository
+        RequestTripRepository requestTripRepository,
+        UserRepository userRepository
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -52,6 +56,7 @@ public class TripCustomService {
         this.vehicleRepository = vehicleRepository;
         this.applicationProperties = applicationProperties;
         this.requestTripRepository = requestTripRepository;
+        this.userRepository = userRepository;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -490,5 +495,114 @@ public class TripCustomService {
             .path(tripId.toString())
             .path("/cover")
             .toUriString();
+    }
+
+    @Transactional
+    public void completeTrip(UUID tripId) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        if (trip.getTripStatus() != TripStatus.ON_GOING) {
+            throw new BadRequestAlertException("Trip not in ON_GOING status", "trip", "invalid-status");
+        }
+
+        Driver driver = trip.getDriver();
+        if (driver == null || driver.getUser() == null) {
+            throw new BadRequestAlertException("Driver info missing", "trip", "driver-null");
+        }
+
+        // ✅ Lấy current user và kiểm tra quyền
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("Current user not found", "user", "notfound"));
+
+        if (!driver.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestAlertException("Bạn không phải là tài xế của chuyến đi này", "trip", "not-owner");
+        }
+
+        // ✅ Đánh dấu kết thúc
+        trip.setTripStatus(TripStatus.DONE);
+        trip.setEndDate(Instant.now());
+        tripRepository.save(trip);
+
+        User user = driver.getUser();
+        UserWallet driverWallet = userWalletRepository
+            .findByUser(user)
+            .orElseThrow(() -> new BadRequestAlertException("Driver wallet not found", "wallet", "notfound"));
+
+        SystemWallet systemWallet = systemWalletRepository.findTopByOrderByMobifyDateDesc().orElseThrow();
+
+        List<RequestTrip> passengers = requestTripRepository.findByTripAndStatus(trip, PassengerStatus.DONE);
+
+        double createFee = trip.getMaxSeat() * trip.getPricePerSeat() * 0.1;
+        double totalEarnings = passengers.stream().mapToDouble(RequestTrip::getAmountApproveFee).sum();
+        double gainFee = totalEarnings * 0.1;
+
+        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee);
+        logSystemGainFee(systemWallet, gainFee);
+        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet);
+    }
+
+    private void refundTripCreateFee(UserWallet driverWallet, SystemWallet systemWallet, double createFee, double gainFee) {
+        double refund = createFee - gainFee;
+        if (refund > 0) {
+            WalletTransaction sysTx = new WalletTransaction();
+            sysTx.setTransID(UUID.randomUUID());
+            sysTx.setAmount(refund);
+            sysTx.setDate(Instant.now());
+            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP);
+            sysTx.setTransStatus(TransactionStatus.SUCCESS);
+            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+            systemWalletRepository.save(systemWallet);
+
+            WalletTransaction driverTx = new WalletTransaction();
+            driverTx.setTransID(UUID.randomUUID());
+            driverTx.setAmount(refund);
+            driverTx.setDate(Instant.now());
+            driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_REFUND);
+            driverTx.setTransStatus(TransactionStatus.SUCCESS);
+            driverTx.setUserWallet(driverWallet);
+            driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
+            userWalletRepository.save(driverWallet);
+        }
+    }
+
+    private void logSystemGainFee(SystemWallet systemWallet, double gainFee) {
+        WalletTransaction tx = new WalletTransaction();
+        tx.setTransID(UUID.randomUUID());
+        tx.setAmount(gainFee);
+        tx.setDate(Instant.now());
+        tx.setWalletType(WalletTransactionType.SYSTEM_GAIN_DONE_TRIP_FEE);
+        tx.setTransStatus(TransactionStatus.SUCCESS);
+        systemWallet.addWalletTransactionAndUpdateBalance(tx);
+        systemWalletRepository.save(systemWallet);
+    }
+
+    private void transferPassengerMoneyToDriver(List<RequestTrip> passengers, UserWallet driverWallet, SystemWallet systemWallet) {
+        for (RequestTrip request : passengers) {
+            double amount = request.getAmountApproveFee();
+
+            // Trừ từ System
+            WalletTransaction sysTx = new WalletTransaction();
+            sysTx.setTransID(UUID.randomUUID());
+            sysTx.setAmount(amount);
+            sysTx.setDate(Instant.now());
+            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP);
+            sysTx.setTransStatus(TransactionStatus.SUCCESS);
+            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+            systemWalletRepository.save(systemWallet);
+
+            // Cộng cho Driver
+            WalletTransaction driverTx = new WalletTransaction();
+            driverTx.setTransID(UUID.randomUUID());
+            driverTx.setAmount(amount);
+            driverTx.setDate(Instant.now());
+            driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_FEE);
+            driverTx.setTransStatus(TransactionStatus.SUCCESS);
+            driverTx.setUserWallet(driverWallet);
+            driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
+            userWalletRepository.save(driverWallet);
+        }
     }
 }
