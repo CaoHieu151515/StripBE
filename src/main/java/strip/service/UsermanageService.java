@@ -834,17 +834,15 @@ public class UsermanageService {
             WalletTransactionType.SYSTEM_GAIN_PACKAGE_FEE
         );
 
-        // Nếu lọc theo type cụ thể
         List<WalletTransactionType> typesToFilter = (walletType != null && incomeTypes.contains(walletType))
             ? List.of(walletType)
             : incomeTypes;
 
-        Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeInAndDateBetween(
-            typesToFilter,
-            fromDate,
-            toDate,
-            pageable
-        );
+        // 👇 Gán mặc định nếu không truyền vào
+        Instant from = (fromDate != null) ? fromDate : Instant.EPOCH;
+        Instant to = (toDate != null) ? toDate : Instant.now();
+
+        Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeInAndDateBetween(typesToFilter, from, to, pageable);
 
         return txPage.map(this::mapToDTO);
     }
