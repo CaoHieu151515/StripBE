@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -161,8 +160,7 @@ public class UserMobileResource {
         return ResponseEntity.ok(trips);
     }
 
-    @PatchMapping("/request-trip/{id}/cancel")
-    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/trips/{id}/cancel")
     public ResponseEntity<Void> cancelRequestTrip(@PathVariable UUID id) {
         userMobileService.cancelRequestTrip(id);
         return ResponseEntity.noContent().build();

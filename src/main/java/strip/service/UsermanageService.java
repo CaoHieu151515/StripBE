@@ -239,7 +239,7 @@ public class UsermanageService {
             .stream()
             .map(vehicle -> {
                 User user = vehicle.getDriver().getUser();
-                UserDetail userDetail = userDetailRepository.findById(user.getId()).orElse(null);
+                UserDetail userDetail = userDetailRepository.findByUserId(user.getId()).orElse(null);
                 Driver driver = vehicle.getDriver();
 
                 return mapToConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
