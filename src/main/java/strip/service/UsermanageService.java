@@ -59,6 +59,7 @@ import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.DriverRawDTO;
 import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.PackageDriverDTO;
@@ -71,6 +72,7 @@ import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
+import strip.service.dto.VehicleRawDTO;
 import strip.service.dto.WalletTransactionAdminDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 import strip.service.mapper.DriverInfoMapper;
@@ -522,13 +524,29 @@ public class UsermanageService {
         dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
 
         if (trip.getVehicle() != null) {
-            dto.setVehicle(usermanageMapper.toRawDTO(trip.getVehicle()));
+            VehicleRawDTO vehicleDTO = usermanageMapper.toRawDTO(trip.getVehicle());
+
+            vehicleDTO.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicleDTO.getVehicleID()));
+            vehicleDTO.setCarregistrationUrl(imageUrlService.buildCarRegistrationUrl(vehicleDTO.getVehicleID()));
+            vehicleDTO.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(vehicleDTO.getVehicleID()));
+            vehicleDTO.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(vehicleDTO.getVehicleID()));
+
+            dto.setVehicle(vehicleDTO);
         }
 
         if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
             userDetailRepository
                 .findByUserId(trip.getDriver().getUser().getId())
-                .ifPresent(detail -> dto.setDriver(usermanageMapper.toRawDTO(trip.getDriver(), detail)));
+                .ifPresent(detail -> {
+                    DriverRawDTO driverDTO = usermanageMapper.toRawDTO(trip.getDriver(), detail);
+
+                    driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverDTO.getDriverId()));
+                    driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverDTO.getDriverId()));
+                    driverDTO.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverDTO.getDriverId()));
+                    driverDTO.setAvatarUrl(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
+
+                    dto.setDriver(driverDTO);
+                });
         }
 
         if (trip.getTripStopLocations() != null) {
@@ -538,7 +556,7 @@ public class UsermanageService {
                 .map(tripStopLocationSkipTripMapper::toDto)
                 .collect(Collectors.toSet());
 
-            dto.setStoplocation(stopDTOs); // ✅ Gán kết quả vào DTO
+            dto.setStoplocation(stopDTOs);
         }
 
         return dto;

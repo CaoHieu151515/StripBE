@@ -148,5 +148,6 @@ public interface UsermanageMapper {
     @Mapping(target = "driverLicenseUrl", ignore = true)
     @Mapping(target = "identityCardFaceUpUrl", ignore = true)
     @Mapping(target = "identityCardFaceDownUrl", ignore = true)
+    @Mapping(target = "avatarUrl", ignore = true)
     DriverRawDTO toRawDTO(Driver driver, UserDetail userDetail);
 }

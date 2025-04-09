@@ -16,6 +16,7 @@ import strip.domain.*;
 import strip.domain.enumeration.*;
 import strip.repository.*;
 import strip.security.SecurityUtils;
+import strip.service.dto.DriverRawDTO;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
@@ -23,6 +24,7 @@ import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
+import strip.service.dto.VehicleRawDTO;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -271,25 +273,47 @@ public class TripCustomService {
     public TripDetailDTO getFullTrip(UUID tripId) {
         Trip trip = tripRepository.findFullTripByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
 
+        // ✅ Map cơ bản
         TripDetailDTO dto = usermanageMapper.toTripDetailDTO(trip);
 
-        // ✅ Ảnh
+        // ✅ Trip image
         dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
 
-        // ✅ Driver
+        // ✅ Driver + Avatar + CMND
         if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
             userDetailRepository
                 .findByUserId(trip.getDriver().getUser().getId())
-                .ifPresent(detail -> dto.setDriver(usermanageMapper.toRawDTO(trip.getDriver(), detail)));
+                .ifPresent(detail -> {
+                    DriverRawDTO driverDTO = usermanageMapper.toRawDTO(trip.getDriver(), detail);
+
+                    UUID driverId = driverDTO.getDriverId();
+                    UUID userDetailId = detail.getAppUserDetail();
+
+                    // Set ảnh
+                    driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
+                    driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
+                    driverDTO.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
+                    driverDTO.setAvatarUrl(imageUrlService.buildUserAvatarUrl(userDetailId));
+
+                    dto.setDriver(driverDTO);
+                });
         }
 
-        // ✅ Vehicle
+        // ✅ Vehicle + ảnh
         if (trip.getVehicle() != null) {
-            dto.setVehicle(usermanageMapper.toRawDTO(trip.getVehicle()));
+            VehicleRawDTO vehicleDTO = usermanageMapper.toRawDTO(trip.getVehicle());
+            UUID vehicleId = vehicleDTO.getVehicleID();
+
+            vehicleDTO.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicleId));
+            vehicleDTO.setCarregistrationUrl(imageUrlService.buildCarRegistrationUrl(vehicleId));
+            vehicleDTO.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(vehicleId));
+            vehicleDTO.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(vehicleId));
+
+            dto.setVehicle(vehicleDTO);
         }
 
-        // ✅ Stop Locations
-        if (trip.getTripStopLocations() != null) {
+        // ✅ Stop locations
+        if (trip.getTripStopLocations() != null && !trip.getTripStopLocations().isEmpty()) {
             Set<TripStopLocationSkipTripDTO> stops = trip
                 .getTripStopLocations()
                 .stream()

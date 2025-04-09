@@ -15,6 +15,7 @@ public class DriverRawDTO {
     private String email;
 
     // ✅ Đổi byte[] -> URL
+    private String avatarUrl;
     private String driverLicenseUrl;
     private String identityCardFaceUpUrl;
     private String identityCardFaceDownUrl;
@@ -105,5 +106,13 @@ public class DriverRawDTO {
 
     public void setIdentityCardFaceDownUrl(String identityCardFaceDownUrl) {
         this.identityCardFaceDownUrl = identityCardFaceDownUrl;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
