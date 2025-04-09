@@ -21,5 +21,10 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
 
     boolean existsByWalletTypeAndUserWallet_User_IdAndDateAfter(WalletTransactionType type, Long userId, Instant date);
 
-    Page<WalletTransaction> findByWalletTypeIn(List<WalletTransactionType> types, Pageable pageable);
+    Page<WalletTransaction> findByWalletTypeInAndDateBetween(
+        List<WalletTransactionType> walletTypes,
+        Instant fromDate,
+        Instant toDate,
+        Pageable pageable
+    );
 }

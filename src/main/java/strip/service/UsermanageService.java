@@ -821,7 +821,12 @@ public class UsermanageService {
         };
     }
 
-    public Page<WalletTransactionAdminDTO> getSystemIncomeTransactions(Pageable pageable) {
+    public Page<WalletTransactionAdminDTO> getSystemIncomeTransactions(
+        Pageable pageable,
+        WalletTransactionType walletType,
+        Instant fromDate,
+        Instant toDate
+    ) {
         List<WalletTransactionType> incomeTypes = List.of(
             WalletTransactionType.SYSTEM_GAIN_CREATE_TRIP_FEE,
             WalletTransactionType.SYSTEM_GAIN_PASSENGER_APPROVE_FEE,
@@ -829,7 +834,17 @@ public class UsermanageService {
             WalletTransactionType.SYSTEM_GAIN_PACKAGE_FEE
         );
 
-        Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeIn(incomeTypes, pageable);
+        // Nếu lọc theo type cụ thể
+        List<WalletTransactionType> typesToFilter = (walletType != null && incomeTypes.contains(walletType))
+            ? List.of(walletType)
+            : incomeTypes;
+
+        Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeInAndDateBetween(
+            typesToFilter,
+            fromDate,
+            toDate,
+            pageable
+        );
 
         return txPage.map(this::mapToDTO);
     }
