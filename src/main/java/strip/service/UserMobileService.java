@@ -861,7 +861,8 @@ public class UserMobileService {
         dto.setAmountApproveFee(trip.getPricePerSeat() * dto.getNumberOfSeats());
 
         // ✅ FE gửi lên luôn số tiền cần thanh toán
-        double totalFee = dto.getAmountApproveFee() != null ? dto.getAmountApproveFee() : 0.0;
+        // double totalFee = dto.getAmountApproveFee() != null ? dto.getAmountApproveFee() : 0.0;
+        double totalFee = dto.getAmountApproveFee();
         if (totalFee <= 0) {
             throw new BadRequestAlertException("Amount must be greater than 0", "requestTrip", "invalidAmount");
         }

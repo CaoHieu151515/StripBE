@@ -41,6 +41,7 @@ import strip.service.dto.DriverPointHistoryDTO;
 import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
+import strip.service.dto.RejectTripDTO;
 import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripListDTO;
 import strip.service.dto.UsermanageDTO;
@@ -259,12 +260,12 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PutMapping("/trips/{tripId}/reject")
-    public ResponseEntity<Void> rejectTrip(@PathVariable UUID tripId, @RequestBody String reason) {
-        if (reason == null || reason.isBlank()) {
+    public ResponseEntity<Void> rejectTrip(@PathVariable UUID tripId, @RequestBody RejectTripDTO dto) {
+        if (dto.getReason() == null || dto.getReason().isBlank()) {
             throw new BadRequestAlertException("Lý do từ chối là bắt buộc", "trip", "reason-required");
         }
 
-        usermanageService.rejectTrip(tripId, reason);
+        usermanageService.rejectTrip(tripId, dto.getReason());
         return ResponseEntity.ok().build();
     }
 
