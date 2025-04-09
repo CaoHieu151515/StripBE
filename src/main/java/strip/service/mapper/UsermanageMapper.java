@@ -15,13 +15,16 @@ import strip.domain.WalletDeposit;
 import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.DriverDTO;
 import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.DriverRawDTO;
 import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripDTO;
+import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
+import strip.service.dto.VehicleRawDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 
 @Mapper(componentModel = "spring")
@@ -107,4 +110,43 @@ public interface UsermanageMapper {
     @Mapping(target = "vehicleImageUrl", ignore = true)
     @Mapping(target = "vehicleInspectionCertificateUrl", ignore = true)
     ConfirmingVehicleDTO toConfirmingVehicleDTO(Vehicle vehicle);
+
+    @Mapping(source = "tripID", target = "tripID")
+    @Mapping(source = "startLocation", target = "startLocation")
+    @Mapping(source = "endLocation", target = "endLocation")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "condition", target = "condition")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "pricePerSeat", target = "pricePerSeat")
+    @Mapping(source = "maxSeat", target = "maxSeat")
+    @Mapping(source = "currentSeat", target = "currentSeat")
+    @Mapping(source = "tripStatus", target = "tripStatus")
+    @Mapping(source = "cancelReason", target = "cancelReason")
+    @Mapping(source = "totalTime", target = "totalTime")
+    @Mapping(source = "totalDistance", target = "totalDistance")
+    @Mapping(target = "tripImgUrl", ignore = true)
+    @Mapping(target = "driver", ignore = true)
+    @Mapping(target = "vehicle", ignore = true)
+    @Mapping(target = "stoplocation", ignore = true)
+    TripDetailDTO toTripDetailDTO(Trip trip);
+
+    @Mapping(target = "vehicleImageUrl", ignore = true)
+    @Mapping(target = "carregistrationUrl", ignore = true)
+    @Mapping(target = "vehicleInspectionCertificateUrl", ignore = true)
+    @Mapping(target = "carInsuranceUrl", ignore = true)
+    VehicleRawDTO toRawDTO(Vehicle vehicle);
+
+    @Mapping(source = "driver.driverID", target = "driverId")
+    @Mapping(source = "driver.user.firstName", target = "firstName")
+    @Mapping(source = "driver.user.lastName", target = "lastName")
+    @Mapping(source = "driver.user.email", target = "email")
+    @Mapping(source = "userDetail.phone", target = "phone")
+    @Mapping(source = "userDetail.address", target = "address")
+    @Mapping(source = "userDetail.gender", target = "gender")
+    @Mapping(source = "userDetail.dob", target = "dob")
+    @Mapping(target = "driverLicenseUrl", ignore = true)
+    @Mapping(target = "identityCardFaceUpUrl", ignore = true)
+    @Mapping(target = "identityCardFaceDownUrl", ignore = true)
+    DriverRawDTO toRawDTO(Driver driver, UserDetail userDetail);
 }

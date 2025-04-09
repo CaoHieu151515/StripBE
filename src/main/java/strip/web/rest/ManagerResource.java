@@ -41,7 +41,7 @@ import strip.service.dto.DriverPointHistoryDTO;
 import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
-import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripListDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.WalletTransactionAdminDTO;
@@ -248,8 +248,8 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/trips/{id}")
-    public ResponseEntity<TripCusDTO> getTripById(@PathVariable UUID id) {
-        Optional<TripCusDTO> tripDTO = usermanageService.getTripById(id);
+    public ResponseEntity<TripDetailDTO> getTripById(@PathVariable UUID id) {
+        Optional<TripDetailDTO> tripDTO = usermanageService.getTripById(id);
         return tripDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 

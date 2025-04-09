@@ -65,14 +65,17 @@ import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripDTO;
+import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
+import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.UsermanageDTO;
 import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.dto.WalletTransactionAdminDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.PackageDriverMapper;
+import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
 import strip.ultil.UserRoleUtils;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -98,6 +101,7 @@ public class UsermanageService {
     private final DriverPointHistoryRepository driverPointHistoryRepository;
     private final ReportRepository reportRepository;
     private final WalletTransactionRepository walletTransactionRepository;
+    private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -115,7 +119,8 @@ public class UsermanageService {
         FeedbackRepository feedbackRepository,
         DriverPointHistoryRepository driverPointHistoryRepository,
         ReportRepository reportRepository,
-        WalletTransactionRepository walletTransactionRepository
+        WalletTransactionRepository walletTransactionRepository,
+        TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -133,6 +138,7 @@ public class UsermanageService {
         this.driverPointHistoryRepository = driverPointHistoryRepository;
         this.reportRepository = reportRepository;
         this.walletTransactionRepository = walletTransactionRepository;
+        this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -506,8 +512,36 @@ public class UsermanageService {
         return trips.map(usermanageMapper::toTripListDTO);
     }
 
-    public Optional<TripCusDTO> getTripById(UUID id) {
-        return tripRepository.findByIdWithRelations(id).map(this::toTripCusDTOWithCustomFields); // hoặc map bằng usermanageMapper + custom bổ sung URL
+    public Optional<TripDetailDTO> getTripById(UUID id) {
+        return tripRepository.findByIdWithRelations(id).map(this::toTripDetailDTO);
+    }
+
+    public TripDetailDTO toTripDetailDTO(Trip trip) {
+        TripDetailDTO dto = usermanageMapper.toTripDetailDTO(trip); // ✅ map phần chính
+
+        dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+
+        if (trip.getVehicle() != null) {
+            dto.setVehicle(usermanageMapper.toRawDTO(trip.getVehicle()));
+        }
+
+        if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
+            userDetailRepository
+                .findByUserId(trip.getDriver().getUser().getId())
+                .ifPresent(detail -> dto.setDriver(usermanageMapper.toRawDTO(trip.getDriver(), detail)));
+        }
+
+        if (trip.getTripStopLocations() != null) {
+            Set<TripStopLocationSkipTripDTO> stopDTOs = trip
+                .getTripStopLocations()
+                .stream()
+                .map(tripStopLocationSkipTripMapper::toDto)
+                .collect(Collectors.toSet());
+
+            dto.setStoplocation(stopDTOs); // ✅ Gán kết quả vào DTO
+        }
+
+        return dto;
     }
 
     public TripCusDTO toTripCusDTOWithCustomFields(Trip trip) {
