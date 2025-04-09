@@ -7,6 +7,10 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
 import strip.domain.User;
 import strip.service.MailService;
@@ -28,6 +33,7 @@ import strip.service.dto.JoinTripRequestDTO;
 import strip.service.dto.PasswordChangeDTO;
 import strip.service.dto.RequestTripDTO;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
@@ -35,6 +41,7 @@ import strip.service.dto.WithdrawRequestDTO;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.vm.KeyAndPasswordVM;
 import strip.web.rest.vm.ManagedUserVM;
+import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
 @RequestMapping("/api/mobile/user")
@@ -174,5 +181,12 @@ public class UserMobileResource {
 
         RequestTripDTO result = userMobileService.joinTrip(requestDTO);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/driver/trips/history")
+    public ResponseEntity<List<TripListDTO>> getDriverTripHistory(@ParameterObject Pageable pageable) {
+        Page<TripListDTO> page = userMobileService.getTripHistoryForDriver(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 }

@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.config.ApplicationProperties;
@@ -21,10 +23,13 @@ import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
 import strip.service.dto.TripDetailDTO;
+import strip.service.dto.TripDetailForDriverHistoryDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 import strip.service.dto.VehicleRawDTO;
+import strip.service.mapper.TripCusMapper;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -49,6 +54,7 @@ public class TripCustomService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
     private final UsermanageMapper usermanageMapper;
+    private final TripCusMapper tripCusMapper;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -64,7 +70,8 @@ public class TripCustomService {
         WalletTransactionRepository walletTransactionRepository,
         TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
         ImageUrlService imageUrlService,
-        UsermanageMapper usermanageMapper
+        UsermanageMapper usermanageMapper,
+        TripCusMapper tripCusMapper
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -80,6 +87,7 @@ public class TripCustomService {
         this.imageUrlService = imageUrlService;
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
         this.usermanageMapper = usermanageMapper;
+        this.tripCusMapper = tripCusMapper;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -722,5 +730,99 @@ public class TripCustomService {
         refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee);
         logSystemGainFee(systemWallet, gainFee);
         transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet);
+    }
+
+    public TripDetailForDriverHistoryDTO getTripDetailForDriver(UUID tripId) {
+        Trip trip = tripRepository.findFullTripByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+
+        TripDetailForDriverHistoryDTO dto = tripCusMapper.toTripDetailForDriverHistoryDTO(trip);
+
+        // ✅ Ảnh trip
+        dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+
+        // ✅ Driver
+        userDetailRepository
+            .findByUserId(trip.getDriver().getUser().getId())
+            .ifPresent(detail -> {
+                DriverRawDTO driverDTO = usermanageMapper.toRawDTO(trip.getDriver(), detail);
+                driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverDTO.getDriverId()));
+                driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverDTO.getDriverId()));
+                driverDTO.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverDTO.getDriverId()));
+                driverDTO.setAvatarUrl(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
+                dto.setDriver(driverDTO);
+            });
+
+        // ✅ Vehicle
+        VehicleRawDTO vehicleDTO = usermanageMapper.toRawDTO(trip.getVehicle());
+        vehicleDTO.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicleDTO.getVehicleID()));
+        vehicleDTO.setCarregistrationUrl(imageUrlService.buildCarRegistrationUrl(vehicleDTO.getVehicleID()));
+        vehicleDTO.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(vehicleDTO.getVehicleID()));
+        vehicleDTO.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(vehicleDTO.getVehicleID()));
+        dto.setVehicle(vehicleDTO);
+
+        // ✅ Điểm dừng
+        Set<TripStopLocationSkipTripDTO> stops = trip
+            .getTripStopLocations()
+            .stream()
+            .map(tripStopLocationSkipTripMapper::toDto)
+            .collect(Collectors.toSet());
+        dto.setStoplocation(stops);
+
+        // ✅ RequestTrip
+        Set<RequestTripCusDTO> requests = trip
+            .getRequestTrips()
+            .stream()
+            .map(request -> {
+                RequestTripCusDTO rDto = new RequestTripCusDTO();
+                rDto.setRequestTripID(request.getRequestTripID());
+                rDto.setAmountApproveFee(request.getAmountApproveFee());
+                rDto.setNumberofSeats(request.getNumberofSeats());
+                rDto.setLuggageDescription(request.getLuggageDescription());
+                rDto.setType(request.getType());
+                rDto.setStatus(request.getStatus());
+                rDto.setPickUpTime(request.getPickUpTime());
+                rDto.setEndTime(request.getEndTime());
+                rDto.setCheckIn(request.getCheckIn());
+                rDto.setCheckInTime(request.getCheckInTime());
+                rDto.setCheckOut(request.getCheckOut());
+                rDto.setCheckOutTIme(request.getCheckOutTIme());
+                rDto.setAppliedAt(request.getAppliedAt());
+
+                // ảnh hành lý
+                if (request.getLuggageImg() != null) {
+                    rDto.setLuggageImgUrl(imageUrlService.buildLuggageImageUrl(request.getRequestTripID()));
+                }
+
+                // start & end stop
+                if (request.getStartLoca() != null) {
+                    tripStopLocationRepository
+                        .findByStopLocaID(UUID.fromString(request.getStartLoca()))
+                        .map(tripStopLocationSkipTripMapper::toDto)
+                        .ifPresent(rDto::setStartLoca);
+                }
+                if (request.getEndLoca() != null) {
+                    tripStopLocationRepository
+                        .findByStopLocaID(UUID.fromString(request.getEndLoca()))
+                        .map(tripStopLocationSkipTripMapper::toDto)
+                        .ifPresent(rDto::setEndLoca);
+                }
+
+                return rDto;
+            })
+            .collect(Collectors.toSet());
+
+        dto.setRequest(requests);
+
+        return dto;
+    }
+
+    public Page<TripListDTO> getTripHistoryForDriver(Pageable pageable) {
+        String login = SecurityUtils.getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Không xác định được người dùng", "auth", "notfound"));
+
+        List<TripStatus> historyStatuses = List.of(TripStatus.DONE, TripStatus.CANCEL);
+        Page<Trip> trips = tripRepository.findByDriver_User_LoginAndTripStatusIn(login, historyStatuses, pageable);
+
+        return trips.map(tripCusMapper::toTripListDTO);
     }
 }

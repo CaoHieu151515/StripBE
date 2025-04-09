@@ -61,4 +61,6 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
     Optional<Trip> findByIdWithRelations(@Param("id") UUID id);
 
     List<Trip> findByTripStatusAndEndDateBefore(TripStatus status, Instant before);
+
+    Page<Trip> findByDriver_User_LoginAndTripStatusIn(String login, List<TripStatus> statuses, Pageable pageable);
 }

@@ -9,6 +9,8 @@ import strip.domain.TripStopLocation;
 import strip.domain.Vehicle;
 import strip.service.ImageUrlService;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripDetailForDriverHistoryDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
 
 @Mapper(componentModel = "spring", uses = { ImageUrlService.class })
@@ -41,4 +43,35 @@ public interface TripCusMapper {
     TripCusDTO toDto(Trip trip, Driver driver, Vehicle vehicle);
 
     List<TripStopLocationDTO> toDto(List<TripStopLocation> entities);
+
+    @Mapping(source = "tripID", target = "stripID")
+    @Mapping(source = "startDate", target = "startDay")
+    @Mapping(source = "endDate", target = "endDay")
+    @Mapping(source = "startLocation", target = "startLocation")
+    @Mapping(source = "endLocation", target = "endlocation")
+    @Mapping(source = "pricePerSeat", target = "price")
+    @Mapping(source = "tripStatus", target = "status")
+    @Mapping(source = "totalTime", target = "totalTime")
+    TripListDTO toTripListDTO(Trip trip);
+
+    @Mapping(source = "tripID", target = "tripID")
+    @Mapping(source = "startLocation", target = "startLocation")
+    @Mapping(source = "endLocation", target = "endLocation")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "condition", target = "condition")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "pricePerSeat", target = "pricePerSeat")
+    @Mapping(source = "maxSeat", target = "maxSeat")
+    @Mapping(source = "currentSeat", target = "currentSeat")
+    @Mapping(source = "tripStatus", target = "tripStatus")
+    @Mapping(source = "cancelReason", target = "cancelReason")
+    @Mapping(source = "totalTime", target = "totalTime")
+    @Mapping(source = "totalDistance", target = "totalDistance")
+    @Mapping(target = "tripImgUrl", ignore = true)
+    @Mapping(target = "driver", ignore = true)
+    @Mapping(target = "vehicle", ignore = true)
+    @Mapping(target = "stoplocation", ignore = true)
+    @Mapping(target = "request", ignore = true)
+    TripDetailForDriverHistoryDTO toTripDetailForDriverHistoryDTO(Trip trip);
 }

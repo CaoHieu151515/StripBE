@@ -3,9 +3,15 @@ package strip.web.rest;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.RequestTrip;
 import strip.domain.Trip;
 import strip.service.TripCustomService;
@@ -13,8 +19,11 @@ import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
 import strip.service.dto.TripDetailDTO;
+import strip.service.dto.TripDetailForDriverHistoryDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
+import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
 @RequestMapping("/api/mobile/trips")
@@ -99,5 +108,17 @@ public class TripMobileResource {
     public ResponseEntity<Void> completeTrip(@PathVariable UUID tripId) {
         tripCustomService.markTripAsDone(tripId); // chỉ đánh dấu DONE
         return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<List<TripListDTO>> getDriverTripHistory(@ParameterObject Pageable pageable) {
+        Page<TripListDTO> page = tripCustomService.getTripHistoryForDriver(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/{tripId}/history-detail")
+    public ResponseEntity<TripDetailForDriverHistoryDTO> getDriverTripDetail(@PathVariable UUID tripId) {
+        TripDetailForDriverHistoryDTO dto = tripCustomService.getTripDetailForDriver(tripId);
+        return ResponseEntity.ok(dto);
     }
 }

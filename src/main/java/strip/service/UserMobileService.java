@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Authority;
@@ -57,6 +59,7 @@ import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.JoinTripRequestDTO;
 import strip.service.dto.RequestTripDTO;
 import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripListDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserDetailsCusDTO;
@@ -1015,5 +1018,15 @@ public class UserMobileService {
         Optional<TripStopLocation> end = stops.stream().filter(stop -> stop.getStopLocaID().equals(endLocaId)).findFirst();
 
         return start.isPresent() && end.isPresent() && start.get().getStoplocaPosition() < end.get().getStoplocaPosition();
+    }
+
+    public Page<TripListDTO> getTripHistoryForDriver(Pageable pageable) {
+        String login = SecurityUtils.getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Không xác định được người dùng", "auth", "notfound"));
+
+        List<TripStatus> historyStatuses = List.of(TripStatus.DONE, TripStatus.CANCEL);
+        Page<Trip> trips = tripRepository.findByDriver_User_LoginAndTripStatusIn(login, historyStatuses, pageable);
+
+        return trips.map(tripCusMapper::toTripListDTO);
     }
 }
