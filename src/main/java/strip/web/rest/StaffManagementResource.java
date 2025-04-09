@@ -146,7 +146,9 @@ public class StaffManagementResource {
         userDetailRepository.save(detail);
 
         // Cập nhật thông tin User
-        User user = detail.getUser();
+        User user = userRepository
+            .findById(detail.getUser().getId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());

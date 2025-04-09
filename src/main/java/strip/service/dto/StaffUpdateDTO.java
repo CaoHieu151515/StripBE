@@ -17,13 +17,13 @@ public class StaffUpdateDTO {
     private String address;
     private Instant dob;
     private String gender;
-    private Boolean status;
+
+    public StaffUpdateDTO() {}
 
     public StaffUpdateDTO(User user, UserDetail detail) {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-        this.status = user.isActivated();
 
         if (detail != null) {
             this.UserId = detail.getAppUserDetail();
@@ -96,13 +96,5 @@ public class StaffUpdateDTO {
 
     public void setUserId(UUID userId) {
         UserId = userId;
-    }
-
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
     }
 }

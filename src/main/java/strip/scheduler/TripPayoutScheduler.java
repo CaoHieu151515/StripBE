@@ -38,7 +38,7 @@ public class TripPayoutScheduler {
     @Scheduled(fixedRate = 3600000) // chạy mỗi giờ
     @Transactional
     public void payoutAfter24Hours() {
-        Instant cutoff = Instant.now().minus(24, ChronoUnit.HOURS);
+        Instant cutoff = Instant.now().minus(8, ChronoUnit.HOURS);
 
         List<Trip> trips = tripRepository.findByTripStatusAndEndDateBefore(TripStatus.DONE, cutoff);
 
