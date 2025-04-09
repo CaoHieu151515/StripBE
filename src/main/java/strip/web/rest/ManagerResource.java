@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -357,6 +358,13 @@ public class ManagerResource {
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate
     ) {
         Page<WalletTransactionAdminDTO> page = usermanageService.getSystemTransactions(pageable, walletType, fromDate, toDate);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
+    }
+
+    @GetMapping("/wallet/Transactionhistory")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<CustomPageDTO<WalletTransactionAdminDTO>> getSystemIncomeTransactions(@ParameterObject Pageable pageable) {
+        Page<WalletTransactionAdminDTO> page = usermanageService.getSystemIncomeTransactions(pageable);
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 }

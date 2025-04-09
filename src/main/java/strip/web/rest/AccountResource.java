@@ -21,8 +21,10 @@ import strip.security.SecurityUtils;
 import strip.service.MailService;
 import strip.service.UserService;
 import strip.service.dto.AdminUserDTO;
+import strip.service.dto.ChangeAvatarDTO;
 import strip.service.dto.PasswordChangeDTO;
 import strip.service.dto.UpdateUserProfileDTO;
+import strip.service.dto.UpdateUserProfileNoImageDTO;
 import strip.web.rest.errors.EmailAlreadyUsedException;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.errors.LoginAlreadyUsedException;
@@ -246,8 +248,14 @@ public class AccountResource {
     }
 
     @PutMapping("/account/update/profile")
-    public ResponseEntity<Void> updateUserProfile(@RequestBody UpdateUserProfileDTO dto) {
+    public ResponseEntity<Void> updateUserProfile(@RequestBody UpdateUserProfileNoImageDTO dto) {
         userService.updateUserProfile(dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/user/avatar")
+    public ResponseEntity<Void> changeAvatar(@RequestBody ChangeAvatarDTO dto) {
+        userService.updateAvatar(dto);
         return ResponseEntity.noContent().build();
     }
 }

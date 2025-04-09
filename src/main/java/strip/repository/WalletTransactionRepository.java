@@ -3,6 +3,8 @@ package strip.repository;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import strip.domain.UserWallet;
@@ -18,4 +20,6 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
     List<WalletTransaction> findAllByUserWalletOrderByDateDesc(UserWallet userWallet);
 
     boolean existsByWalletTypeAndUserWallet_User_IdAndDateAfter(WalletTransactionType type, Long userId, Instant date);
+
+    Page<WalletTransaction> findByWalletTypeIn(List<WalletTransactionType> types, Pageable pageable);
 }

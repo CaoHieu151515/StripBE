@@ -15,10 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
 import strip.config.Constants;
 import strip.domain.Authority;
 import strip.domain.Driver;
@@ -34,8 +37,9 @@ import strip.repository.UserWalletRepository;
 import strip.security.AuthoritiesConstants;
 import strip.security.SecurityUtils;
 import strip.service.dto.AdminUserDTO;
+import strip.service.dto.ChangeAvatarDTO;
 import strip.service.dto.CurrentUserDTO;
-import strip.service.dto.UpdateUserProfileDTO;
+import strip.service.dto.UpdateUserProfileNoImageDTO;
 import strip.service.dto.UserDTO;
 import strip.web.rest.errors.BadRequestAlertException;
 import tech.jhipster.security.RandomUtil;
@@ -495,7 +499,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserProfile(UpdateUserProfileDTO dto) {
+    public void updateUserProfile(UpdateUserProfileNoImageDTO dto) {
         User currentUser = SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
@@ -519,9 +523,31 @@ public class UserService {
         userDetail.setAddress(dto.getAddress());
         userDetail.setDob(dto.getDob());
         userDetail.setGender(dto.getGender());
-        userDetail.setUserimage(dto.getUserImage());
-        userDetail.setUserimageContentType(dto.getUserImageContentType());
 
+        userDetailRepository.save(userDetail);
+    }
+
+    @Transactional
+    public void updateAvatar(ChangeAvatarDTO dto) {
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
+
+        UserDetail userDetail = userDetailRepository
+            .findByUserId(currentUser.getId())
+            .orElseGet(() -> {
+                UserDetail detail = new UserDetail();
+                detail.setAppUserDetail(UUID.randomUUID());
+                detail.setUser(currentUser);
+                return detail;
+            });
+
+        if (dto.getUserImage() == null || dto.getUserImage().length == 0) {
+            throw new BadRequestAlertException("Ảnh không hợp lệ", "user", "invalid-avatar");
+        } else {
+            userDetail.setUserimage(dto.getUserImage());
+            userDetail.setUserimageContentType(dto.getUserImageContentType());
+        }
         userDetailRepository.save(userDetail);
     }
 }

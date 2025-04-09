@@ -820,4 +820,17 @@ public class UsermanageService {
             default -> "Giao dịch hệ thống khác";
         };
     }
+
+    public Page<WalletTransactionAdminDTO> getSystemIncomeTransactions(Pageable pageable) {
+        List<WalletTransactionType> incomeTypes = List.of(
+            WalletTransactionType.SYSTEM_GAIN_CREATE_TRIP_FEE,
+            WalletTransactionType.SYSTEM_GAIN_PASSENGER_APPROVE_FEE,
+            WalletTransactionType.SYSTEM_GAIN_DONE_TRIP_FEE,
+            WalletTransactionType.SYSTEM_GAIN_PACKAGE_FEE
+        );
+
+        Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeIn(incomeTypes, pageable);
+
+        return txPage.map(this::mapToDTO);
+    }
 }
