@@ -116,9 +116,22 @@ public class TripMobileResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/{tripId}/history-detail")
+    @GetMapping("/{tripId}/view-detail")
     public ResponseEntity<TripDetailForDriverHistoryDTO> getDriverTripDetail(@PathVariable UUID tripId) {
         TripDetailForDriverHistoryDTO dto = tripCustomService.getTripDetailForDriver(tripId);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/getall/active")
+    public ResponseEntity<List<TripListDTO>> getActiveTrips(@ParameterObject Pageable pageable) {
+        Page<TripListDTO> page = tripCustomService.getActiveTripsForDriver(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @PutMapping("/{tripId}/start")
+    public ResponseEntity<Void> startTrip(@PathVariable UUID tripId) {
+        tripCustomService.startTrip(tripId);
+        return ResponseEntity.noContent().build();
     }
 }

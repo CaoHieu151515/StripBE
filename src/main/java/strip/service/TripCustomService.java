@@ -825,4 +825,37 @@ public class TripCustomService {
 
         return trips.map(tripCusMapper::toTripListDTO);
     }
+
+    public Page<TripListDTO> getActiveTripsForDriver(Pageable pageable) {
+        String login = SecurityUtils.getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Không xác định được tài xế", "auth", "notfound"));
+
+        List<TripStatus> activeStatuses = List.of(TripStatus.UPCOMING, TripStatus.ON_GOING, TripStatus.CONFIRMING);
+
+        Page<Trip> trips = tripRepository.findByDriver_User_LoginAndTripStatusIn(login, activeStatuses, pageable);
+
+        return trips.map(usermanageMapper::toTripListDTO);
+    }
+
+    @Transactional
+    public void startTrip(UUID tripId) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy chuyến đi", "trip", "notfound"));
+
+        String login = SecurityUtils.getCurrentUserLogin()
+            .orElseThrow(() -> new BadRequestAlertException("Không xác định được tài xế", "auth", "notfound"));
+
+        // ✅ Check tài xế có phải là chủ của trip không
+        if (!trip.getDriver().getUser().getLogin().equals(login)) {
+            throw new BadRequestAlertException("Không có quyền bắt đầu chuyến này", "trip", "forbidden");
+        }
+
+        if (trip.getTripStatus() != TripStatus.UPCOMING && trip.getTripStatus() != TripStatus.CONFIRMING) {
+            throw new BadRequestAlertException("Chỉ có thể bắt đầu chuyến sắp tới", "trip", "invalid-status");
+        }
+
+        trip.setTripStatus(TripStatus.ON_GOING);
+        tripRepository.save(trip);
+    }
 }
