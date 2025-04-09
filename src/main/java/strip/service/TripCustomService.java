@@ -3,6 +3,7 @@ package strip.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,11 +24,14 @@ import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
+import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
 @Transactional
 public class TripCustomService {
+
+    private final ImageUrlService imageUrlService;
 
     private static final Logger LOG = LoggerFactory.getLogger(TripCustomService.class);
     private final TripRepository tripRepository;
@@ -39,6 +43,9 @@ public class TripCustomService {
     private final ApplicationProperties applicationProperties;
     private final RequestTripRepository requestTripRepository;
     private final UserRepository userRepository;
+    private final UserDetailRepository userDetailRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
+    private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -49,7 +56,11 @@ public class TripCustomService {
         VehicleRepository vehicleRepository,
         ApplicationProperties applicationProperties,
         RequestTripRepository requestTripRepository,
-        UserRepository userRepository
+        UserRepository userRepository,
+        UserDetailRepository userDetailRepository,
+        WalletTransactionRepository walletTransactionRepository,
+        TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
+        ImageUrlService imageUrlService
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -60,6 +71,10 @@ public class TripCustomService {
         this.applicationProperties = applicationProperties;
         this.requestTripRepository = requestTripRepository;
         this.userRepository = userRepository;
+        this.userDetailRepository = userDetailRepository;
+        this.walletTransactionRepository = walletTransactionRepository;
+        this.imageUrlService = imageUrlService;
+        this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -187,6 +202,7 @@ public class TripCustomService {
         return systemWalletRepository.save(sw);
     }
 
+    @Transactional
     public List<RequestTripCusDTO> getRequestTripCusDTOsByTripId(UUID tripId) {
         List<RequestTrip> requests = findRequestsByTripId(tripId);
 
@@ -196,6 +212,20 @@ public class TripCustomService {
     @Transactional
     public void updateTripStopLocations(UUID tripId, Set<TripStopLocationUpdateDTO> newStops) {
         Trip trip = tripRepository.findByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+
+        boolean hasActivePassenger = trip
+            .getRequestTrips()
+            .stream()
+            .anyMatch(
+                r ->
+                    r.getStatus() == PassengerStatus.WAITING ||
+                    r.getStatus() == PassengerStatus.BOOKED ||
+                    r.getStatus() == PassengerStatus.DONE
+            );
+
+        if (hasActivePassenger) {
+            throw new BadRequestAlertException("Không thể cập nhật điểm dừng vì đã có người tham gia chuyến đi", "tripStop", "locked");
+        }
 
         // Xoá các điểm dừng cũ
         tripStopLocationRepository.deleteAllByTrip_TripID(tripId);
@@ -325,41 +355,55 @@ public class TripCustomService {
         request.setAppliedAt(Instant.now());
         requestTripRepository.save(request);
 
-        // ✅ Hoàn tiền nếu có cọc
+        // ✅ Chỉ hoàn tiền nếu đã thực sự thanh toán (trả trước)
         Double amount = request.getAmountApproveFee();
         if (amount != null && amount > 0) {
             User user = request.getUser();
+            Optional<UserWallet> userWalletOpt = userWalletRepository.findByUser(user);
+            Optional<UserDetail> detailOpt = userDetailRepository.findByUserId(user.getId());
 
-            // ✅ Cộng vào ví passenger
-            UserWallet userWallet = userWalletRepository
-                .findByUser(user)
-                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví người dùng", "wallet", "notfound"));
+            if (userWalletOpt.isPresent() && detailOpt.isPresent()) {
+                UserWallet userWallet = userWalletOpt.get();
+                UserDetail detail = detailOpt.get();
 
-            WalletTransaction userTx = new WalletTransaction();
-            userTx.setTransID(UUID.randomUUID());
-            userTx.setAmount(amount);
-            userTx.setDate(Instant.now());
-            userTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
-            userTx.setTransStatus(TransactionStatus.SUCCESS);
-            userTx.setUserWallet(userWallet);
+                String txKey = request.getTrip().getTripID().toString() + "-" + detail.getAppUserDetail().toString();
 
-            userWallet.addWalletTransactionAndUpdateBalance(userTx);
-            userWalletRepository.save(userWallet);
+                Optional<WalletTransaction> approveTxOpt =
+                    walletTransactionRepository.findByTransactionThirdPartyIDAndWalletTypeAndTransStatus(
+                        txKey,
+                        WalletTransactionType.PASSENGER_APPROVE_FEE,
+                        TransactionStatus.SUCCESS
+                    );
 
-            // ✅ Trừ từ ví hệ thống
-            SystemWallet systemWallet = systemWalletRepository
-                .findTopByOrderByMobifyDateDesc()
-                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+                if (approveTxOpt.isPresent()) {
+                    // ✅ 1. Cộng lại vào ví Passenger
+                    WalletTransaction userTx = new WalletTransaction();
+                    userTx.setTransID(UUID.randomUUID());
+                    userTx.setAmount(amount);
+                    userTx.setDate(Instant.now());
+                    userTx.setWalletType(WalletTransactionType.REFUND);
+                    userTx.setTransStatus(TransactionStatus.SUCCESS);
+                    userTx.setUserWallet(userWallet);
 
-            WalletTransaction sysTx = new WalletTransaction();
-            sysTx.setTransID(UUID.randomUUID());
-            sysTx.setAmount(amount);
-            sysTx.setDate(Instant.now());
-            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
-            sysTx.setTransStatus(TransactionStatus.SUCCESS);
+                    userWallet.addWalletTransactionAndUpdateBalance(userTx);
+                    userWalletRepository.save(userWallet);
 
-            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
-            systemWalletRepository.save(systemWallet);
+                    // ✅ 2. Trừ ví hệ thống
+                    SystemWallet systemWallet = systemWalletRepository
+                        .findTopByOrderByMobifyDateDesc()
+                        .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+
+                    WalletTransaction sysTx = new WalletTransaction();
+                    sysTx.setTransID(UUID.randomUUID());
+                    sysTx.setAmount(amount);
+                    sysTx.setDate(Instant.now());
+                    sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+                    sysTx.setTransStatus(TransactionStatus.SUCCESS);
+
+                    systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+                    systemWalletRepository.save(systemWallet);
+                }
+            }
         }
 
         return request;
@@ -434,12 +478,10 @@ public class TripCustomService {
             .collect(Collectors.toList());
     }
 
-    private RequestTripCusDTO mapToRequestTripCusDTO(RequestTrip request) {
+    public RequestTripCusDTO mapToRequestTripCusDTO(RequestTrip request) {
         RequestTripCusDTO dto = new RequestTripCusDTO();
 
         dto.setRequestTripID(request.getRequestTripID());
-        dto.setStartLoca(request.getStartLoca());
-        dto.setEndLoca(request.getEndLoca());
         dto.setAmountApproveFee(request.getAmountApproveFee());
         dto.setNumberofSeats(request.getNumberofSeats());
         dto.setLuggageDescription(request.getLuggageDescription());
@@ -453,8 +495,26 @@ public class TripCustomService {
         dto.setCheckOutTIme(request.getCheckOutTIme());
         dto.setAppliedAt(request.getAppliedAt());
 
-        // ✅ URL ảnh hành lý (dùng cùng tiêu chuẩn với ImageResource)
-        dto.setLuggageImgUrl(buildLuggageImageUrl(request.getRequestTripID()));
+        // ✅ startLoca
+        if (request.getStartLoca() != null) {
+            tripStopLocationRepository
+                .findByStopLocaID(UUID.fromString(request.getStartLoca()))
+                .map(tripStopLocationSkipTripMapper::toDto)
+                .ifPresent(dto::setStartLoca);
+        }
+
+        // ✅ endLoca
+        if (request.getEndLoca() != null) {
+            tripStopLocationRepository
+                .findByStopLocaID((UUID.fromString(request.getEndLoca())))
+                .map(tripStopLocationSkipTripMapper::toDto)
+                .ifPresent(dto::setEndLoca);
+        }
+
+        // ✅ luggage image URL
+        if (request.getLuggageImg() != null && request.getLuggageImg().length > 0) {
+            dto.setLuggageImgUrl(imageUrlService.buildLuggageImageUrl(request.getRequestTripID()));
+        }
 
         return dto;
     }

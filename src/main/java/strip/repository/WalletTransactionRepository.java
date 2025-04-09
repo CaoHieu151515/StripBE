@@ -2,13 +2,16 @@ package strip.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
+import strip.domain.User;
 import strip.domain.UserWallet;
 import strip.domain.WalletTransaction;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.WalletTransactionType;
 
 /**
@@ -26,5 +29,18 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
         Instant fromDate,
         Instant toDate,
         Pageable pageable
+    );
+
+    Optional<WalletTransaction> findFirstByUserWallet_UserAndWalletTypeAndAmountAndTransStatus(
+        User user,
+        WalletTransactionType walletType,
+        Double amount,
+        TransactionStatus transStatus
+    );
+
+    Optional<WalletTransaction> findByTransactionThirdPartyIDAndWalletTypeAndTransStatus(
+        String transactionThirdPartyID,
+        WalletTransactionType walletType,
+        TransactionStatus transStatus
     );
 }

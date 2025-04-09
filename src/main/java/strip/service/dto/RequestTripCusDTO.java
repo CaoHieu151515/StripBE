@@ -8,8 +8,8 @@ import strip.domain.enumeration.PassengerType;
 public class RequestTripCusDTO {
 
     private UUID requestTripID;
-    private String startLoca;
-    private String endLoca;
+    private TripStopLocationSkipTripDTO startLoca;
+    private TripStopLocationSkipTripDTO endLoca;
     private Double amountApproveFee;
     private Integer numberofSeats;
 
@@ -38,19 +38,19 @@ public class RequestTripCusDTO {
         this.requestTripID = requestTripID;
     }
 
-    public String getStartLoca() {
+    public TripStopLocationSkipTripDTO getStartLoca() {
         return startLoca;
     }
 
-    public void setStartLoca(String startLoca) {
+    public void setStartLoca(TripStopLocationSkipTripDTO startLoca) {
         this.startLoca = startLoca;
     }
 
-    public String getEndLoca() {
+    public TripStopLocationSkipTripDTO getEndLoca() {
         return endLoca;
     }
 
-    public void setEndLoca(String endLoca) {
+    public void setEndLoca(TripStopLocationSkipTripDTO endLoca) {
         this.endLoca = endLoca;
     }
 

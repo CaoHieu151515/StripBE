@@ -1,5 +1,6 @@
 package strip.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ import strip.domain.TripStopLocation;
 public interface TripStopLocationRepository extends JpaRepository<TripStopLocation, Long> {
     @Transactional
     void deleteAllByTrip_TripID(UUID tripId);
+
+    Optional<TripStopLocation> findByStopLocaID(UUID stopLocaId);
 }

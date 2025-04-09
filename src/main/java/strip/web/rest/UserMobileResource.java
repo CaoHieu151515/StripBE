@@ -24,7 +24,9 @@ import strip.service.UserMobileService;
 import strip.service.UserService;
 import strip.service.dto.ConfirmingDriverDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
+import strip.service.dto.JoinTripRequestDTO;
 import strip.service.dto.PasswordChangeDTO;
+import strip.service.dto.RequestTripDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserProfileDTO;
@@ -164,5 +166,13 @@ public class UserMobileResource {
     public ResponseEntity<Void> cancelRequestTrip(@PathVariable UUID id) {
         userMobileService.cancelRequestTrip(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/trips/join")
+    public ResponseEntity<RequestTripDTO> joinTrip(@RequestBody JoinTripRequestDTO requestDTO) {
+        log.debug("REST request to join trip: {}", requestDTO);
+
+        RequestTripDTO result = userMobileService.joinTrip(requestDTO);
+        return ResponseEntity.ok(result);
     }
 }

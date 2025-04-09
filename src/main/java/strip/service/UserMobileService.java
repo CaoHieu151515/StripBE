@@ -20,6 +20,7 @@ import strip.domain.PackageDriver;
 import strip.domain.RequestTrip;
 import strip.domain.SystemWallet;
 import strip.domain.Trip;
+import strip.domain.TripStopLocation;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.UserWallet;
@@ -39,6 +40,7 @@ import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
 import strip.repository.RequestTripRepository;
 import strip.repository.SystemWalletRepository;
+import strip.repository.TripRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
@@ -52,6 +54,8 @@ import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.DriverVehicleDTO;
+import strip.service.dto.JoinTripRequestDTO;
+import strip.service.dto.RequestTripDTO;
 import strip.service.dto.TripCusDTO;
 import strip.service.dto.TripStopLocationDTO;
 import strip.service.dto.UpdateUserProfileDTO;
@@ -59,6 +63,7 @@ import strip.service.dto.UserDetailsCusDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
 import strip.service.dto.WithdrawRequestDTO;
+import strip.service.mapper.RequestTripMapper;
 import strip.service.mapper.TripCusMapper;
 import strip.web.rest.errors.BadRequestAlertException;
 
@@ -81,6 +86,8 @@ public class UserMobileService {
     private final AuthorityRepository authorityRepository;
     private final TripCusMapper tripCusMapper;
     private final RequestTripRepository requestTripRepository;
+    private final TripRepository tripRepository;
+    private final RequestTripMapper requestTripMapper;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -96,7 +103,9 @@ public class UserMobileService {
         WalletDepositRepository walletDepositRepository,
         AuthorityRepository authorityRepository,
         TripCusMapper tripCusMapper,
-        RequestTripRepository requestTripRepository
+        RequestTripRepository requestTripRepository,
+        TripRepository tripRepository,
+        RequestTripMapper requestTripMapper
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -112,6 +121,8 @@ public class UserMobileService {
         this.authorityRepository = authorityRepository;
         this.tripCusMapper = tripCusMapper;
         this.requestTripRepository = requestTripRepository;
+        this.tripRepository = tripRepository;
+        this.requestTripMapper = requestTripMapper;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -754,60 +765,254 @@ public class UserMobileService {
 
     @Transactional
     public void cancelRequestTrip(UUID requestTripId) {
+        RequestTrip request = getValidCancelableRequest(requestTripId);
+        User currentUser = getCurrentUser();
+
+        validateRequestOwner(request, currentUser);
+
+        // ✅ Cập nhật trạng thái hủy
+        request.setStatus(PassengerStatus.CANCEL);
+        requestTripRepository.save(request);
+
+        // ✅ Giảm số ghế đang đặt
+        updateTripSeatAfterCancel(request);
+
+        // ✅ Thực hiện hoàn tiền nếu có
+        handleRefundIfNeeded(request, currentUser);
+    }
+
+    private RequestTrip getValidCancelableRequest(UUID requestTripId) {
         RequestTrip request = requestTripRepository
             .findByRequestTripID(requestTripId)
             .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy requestTrip", "trip", "notfound"));
-
-        // ✅ Check quyền huỷ
-        User currentUser = SecurityUtils.getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
-
-        if (!request.getUser().getId().equals(currentUser.getId())) {
-            throw new BadRequestAlertException("Không thể huỷ yêu cầu của người khác", "trip", "forbidden");
-        }
 
         if (request.getStatus() == PassengerStatus.DONE || request.getStatus() == PassengerStatus.CANCEL) {
             throw new BadRequestAlertException("Yêu cầu đã hoàn tất hoặc đã huỷ", "trip", "already-final");
         }
 
-        // ✅ Cập nhật trạng thái
-        request.setStatus(PassengerStatus.CANCEL);
-        requestTripRepository.save(request);
+        return request;
+    }
 
-        // ✅ Hoàn tiền nếu đã thanh toán
-        Double amount = request.getAmountApproveFee();
-        if (amount != null && amount > 0) {
-            // 🎯 1. Cộng vào ví người dùng
-            UserWallet wallet = userWalletRepository
-                .findByUser(currentUser)
-                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví người dùng", "wallet", "notfound"));
-
-            WalletTransaction userTx = new WalletTransaction();
-            userTx.setTransID(UUID.randomUUID());
-            userTx.setAmount(amount);
-            userTx.setDate(Instant.now());
-            userTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
-            userTx.setTransStatus(TransactionStatus.SUCCESS);
-            userTx.setUserWallet(wallet);
-
-            wallet.addWalletTransactionAndUpdateBalance(userTx);
-            userWalletRepository.save(wallet);
-
-            // 🎯 2. Trừ từ ví hệ thống
-            SystemWallet systemWallet = systemWalletRepository
-                .findTopByOrderByMobifyDateDesc()
-                .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
-
-            WalletTransaction sysTx = new WalletTransaction();
-            sysTx.setTransID(UUID.randomUUID());
-            sysTx.setAmount(amount);
-            sysTx.setDate(Instant.now());
-            sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
-            sysTx.setTransStatus(TransactionStatus.SUCCESS);
-
-            systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
-            systemWalletRepository.save(systemWallet);
+    private void validateRequestOwner(RequestTrip request, User currentUser) {
+        if (!request.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestAlertException("Không thể huỷ yêu cầu của người khác", "trip", "forbidden");
         }
+    }
+
+    private void updateTripSeatAfterCancel(RequestTrip request) {
+        Trip trip = request.getTrip();
+        int current = trip.getCurrentSeat() != null ? trip.getCurrentSeat() : 0;
+        trip.setCurrentSeat(Math.max(current - request.getNumberofSeats(), 0));
+        tripRepository.save(trip);
+    }
+
+    private void handleRefundIfNeeded(RequestTrip request, User currentUser) {
+        Double amount = request.getAmountApproveFee();
+        if (amount == null || amount <= 0) return;
+
+        Optional<UserWallet> userWalletOpt = userWalletRepository.findByUser(currentUser);
+        Optional<UserDetail> detailOpt = userDetailRepository.findByUserId(currentUser.getId());
+
+        if (userWalletOpt.isEmpty() || detailOpt.isEmpty()) return;
+
+        UserWallet userWallet = userWalletOpt.get();
+        UserDetail detail = detailOpt.get();
+        String txKey = request.getTrip().getTripID() + "-" + detail.getAppUserDetail();
+
+        Optional<WalletTransaction> approveTxOpt = walletTransactionRepository.findByTransactionThirdPartyIDAndWalletTypeAndTransStatus(
+            txKey,
+            WalletTransactionType.PASSENGER_APPROVE_FEE,
+            TransactionStatus.SUCCESS
+        );
+
+        if (approveTxOpt.isEmpty()) return;
+
+        // ✅ Hoàn tiền cho Passenger
+        WalletTransaction userTx = new WalletTransaction();
+        userTx.setTransID(UUID.randomUUID());
+        userTx.setAmount(amount);
+        userTx.setDate(Instant.now());
+        userTx.setWalletType(WalletTransactionType.REFUND);
+        userTx.setTransStatus(TransactionStatus.SUCCESS);
+        userTx.setUserWallet(userWallet);
+        userWallet.addWalletTransactionAndUpdateBalance(userTx);
+        userWalletRepository.save(userWallet);
+
+        // ✅ Trừ tiền hệ thống
+        SystemWallet systemWallet = systemWalletRepository
+            .findTopByOrderByMobifyDateDesc()
+            .orElseThrow(() -> new BadRequestAlertException("Không tìm thấy ví hệ thống", "wallet", "system-notfound"));
+
+        WalletTransaction sysTx = new WalletTransaction();
+        sysTx.setTransID(UUID.randomUUID());
+        sysTx.setAmount(amount);
+        sysTx.setDate(Instant.now());
+        sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_PASSENGER);
+        sysTx.setTransStatus(TransactionStatus.SUCCESS);
+        systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
+        systemWalletRepository.save(systemWallet);
+    }
+
+    @Transactional
+    public RequestTripDTO joinTrip(JoinTripRequestDTO dto) {
+        Trip trip = getAndValidateTrip(dto.getTripId());
+        User user = getCurrentUser();
+        validateJoinConditions(trip, user, dto.getNumberOfSeats());
+        dto.setAmountApproveFee(trip.getPricePerSeat() * dto.getNumberOfSeats());
+
+        // ✅ FE gửi lên luôn số tiền cần thanh toán
+        double totalFee = dto.getAmountApproveFee() != null ? dto.getAmountApproveFee() : 0.0;
+        if (totalFee <= 0) {
+            throw new BadRequestAlertException("Amount must be greater than 0", "requestTrip", "invalidAmount");
+        }
+
+        RequestTrip request = buildRequestTrip(dto, trip, user, totalFee);
+
+        if (dto.isPayNow()) {
+            handlePrepaidPayment(user, totalFee, trip.getTripID());
+        } else {
+            createPendingTransaction(user, totalFee, trip.getTripID());
+        }
+        if (!isValidStopLocation(trip, dto.getStartLoca(), dto.getEndLoca())) {
+            throw new BadRequestAlertException("Điểm lên/xuống không hợp lệ", "requestTrip", "invalidStop");
+        }
+
+        request.getTrip().setCurrentSeat(trip.getCurrentSeat() + request.getNumberofSeats());
+        RequestTrip saved = requestTripRepository.save(request);
+        return requestTripMapper.toDto(saved);
+    }
+
+    private Trip getAndValidateTrip(UUID tripId) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        if (!trip.getTripStatus().equals(TripStatus.UPCOMING)) {
+            throw new BadRequestAlertException("Trip is not open for joining", "trip", "invalidstatus");
+        }
+
+        return trip;
+    }
+
+    private RequestTrip buildRequestTrip(JoinTripRequestDTO dto, Trip trip, User user, double totalFee) {
+        RequestTrip request = new RequestTrip();
+        request.setRequestTripID(UUID.randomUUID());
+        request.setTrip(trip);
+        request.setUser(user);
+        request.setCheckIn(false);
+        request.setCheckOut(false);
+        request.setStartLoca(dto.getStartLoca().toString());
+        request.setEndLoca(dto.getEndLoca().toString());
+        request.setNumberofSeats(dto.getNumberOfSeats());
+        request.setType(dto.getType());
+        request.setLuggageDescription(dto.getLuggageDescription());
+        request.setPickUpTime(dto.getPickUpTime());
+        request.setStatus(PassengerStatus.WAITING);
+        request.setAmountApproveFee(totalFee);
+        request.setAppliedAt(Instant.now());
+
+        if (dto.getLuggageImg() != null) {
+            request.setLuggageImg(dto.getLuggageImg());
+        }
+
+        return request;
+    }
+
+    private void handlePrepaidPayment(User user, double amount, UUID tripId) {
+        UserWallet wallet = userWalletRepository
+            .findByUser_Id(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
+
+        UserDetail detail = userDetailRepository
+            .findByUserId(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
+
+        WalletTransaction passengerTx = new WalletTransaction();
+        passengerTx.setTransID(UUID.randomUUID());
+        passengerTx.setAmount(amount);
+        passengerTx.setDate(Instant.now());
+        passengerTx.setWalletType(WalletTransactionType.PASSENGER_APPROVE_FEE);
+        passengerTx.setTransactionThirdPartyID(tripId.toString() + "-" + detail.getAppUserDetail().toString());
+        passengerTx.setTransStatus(TransactionStatus.SUCCESS);
+
+        wallet.addWalletTransactionAndUpdateBalance(passengerTx);
+        walletTransactionRepository.save(passengerTx);
+        userWalletRepository.save(wallet);
+
+        createSystemTransaction(amount, WalletTransactionType.SYSTEM_GAIN_PASSENGER_APPROVE_FEE);
+    }
+
+    private void createPendingTransaction(User user, double amount, UUID tripId) {
+        UserWallet wallet = userWalletRepository
+            .findByUser_Id(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
+
+        UserDetail detail = userDetailRepository
+            .findByUserId(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
+
+        WalletTransaction pendingTx = new WalletTransaction();
+        pendingTx.setTransID(UUID.randomUUID());
+        pendingTx.setAmount(amount);
+        pendingTx.setDate(Instant.now());
+        pendingTx.setWalletType(WalletTransactionType.PASSENGER_APPROVE_FEE);
+        pendingTx.setTransStatus(TransactionStatus.PENDING);
+        pendingTx.setUserWallet(wallet);
+        pendingTx.setTransactionThirdPartyID(tripId.toString() + "-" + detail.getAppUserDetail().toString());
+        wallet.addWalletTransactionAndUpdateBalance(pendingTx);
+        userWalletRepository.save(wallet);
+    }
+
+    private void createSystemTransaction(double amount, WalletTransactionType type) {
+        SystemWallet systemWallet = systemWalletRepository
+            .findTopByOrderByMobifyDateDesc()
+            .orElseThrow(() -> new BadRequestAlertException("System wallet not found", "systemWallet", "notfound"));
+
+        WalletTransaction tx = new WalletTransaction();
+        tx.setTransID(UUID.randomUUID());
+        tx.setSystemWallet(systemWallet);
+        tx.setAmount(amount);
+        tx.setDate(Instant.now());
+        tx.setWalletType(type);
+        tx.setTransStatus(TransactionStatus.SUCCESS);
+
+        systemWallet.setBefore(systemWallet.getCurrent());
+        systemWallet.setCurrent(systemWallet.getCurrent() + amount);
+        systemWallet.setAmount(amount);
+        systemWallet.setMobifyDate(Instant.now());
+        systemWallet.addWalletTransactionAndUpdateBalance(tx);
+        systemWalletRepository.save(systemWallet);
+    }
+
+    private void validateJoinConditions(Trip trip, User user, int numberOfSeats) {
+        // 1. Kiểm tra số chỗ còn lại
+        int seatsAvailable = trip.getMaxSeat() - trip.getCurrentSeat();
+        if (numberOfSeats > seatsAvailable) {
+            throw new BadRequestAlertException("Số ghế còn lại không đủ", "trip", "seatsInsufficient");
+        }
+
+        // 2. Kiểm tra user đã tham gia chuyến này chưa
+        boolean alreadyJoined = requestTripRepository.existsByTripAndUser(trip, user);
+        if (alreadyJoined) {
+            throw new BadRequestAlertException("Bạn đã đăng ký tham gia chuyến đi này rồi", "trip", "alreadyJoined");
+        }
+    }
+
+    private boolean isValidStopLocation(Trip trip, UUID startLocaId, UUID endLocaId) {
+        if (startLocaId == null || endLocaId == null || startLocaId.equals(endLocaId)) {
+            return false;
+        }
+
+        Set<TripStopLocation> stops = trip.getTripStopLocations();
+        LOG.debug("list trip stoplocatoin {}", stops);
+        if (stops == null || stops.isEmpty()) {
+            return false;
+        }
+
+        Optional<TripStopLocation> start = stops.stream().filter(stop -> stop.getStopLocaID().equals(startLocaId)).findFirst();
+
+        Optional<TripStopLocation> end = stops.stream().filter(stop -> stop.getStopLocaID().equals(endLocaId)).findFirst();
+
+        return start.isPresent() && end.isPresent() && start.get().getStoplocaPosition() < end.get().getStoplocaPosition();
     }
 }

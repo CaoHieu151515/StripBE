@@ -1,5 +1,6 @@
 package strip.service.dto;
 
+import java.time.Instant;
 import java.util.UUID;
 import strip.domain.enumeration.PassengerType;
 
@@ -7,16 +8,18 @@ public class JoinTripRequestDTO {
 
     private UUID tripId;
     private int numberOfSeats;
-    private Double amount;
-    private boolean payNow;
-    private String luggageDescription;
-    private byte[] luggageImg;
-    private String luggageImgType;
-
     private PassengerType type;
+    private String luggageDescription;
+    private Instant pickUpTime;
+    private Double amountApproveFee;
+    private byte[] luggageImg;
+    private String luggageImgContentType;
+    private UUID startLoca;
+    private UUID endLoca;
 
-    private int startLocaPosition;
-    private int endLocaPosition;
+    private boolean payNow; // true = trả trước, false = trả sau
+
+    // === Getters and Setters ===
 
     public UUID getTripId() {
         return tripId;
@@ -34,12 +37,12 @@ public class JoinTripRequestDTO {
         this.numberOfSeats = numberOfSeats;
     }
 
-    public boolean isPayNow() {
-        return payNow;
+    public PassengerType getType() {
+        return type;
     }
 
-    public void setPayNow(boolean payNow) {
-        this.payNow = payNow;
+    public void setType(PassengerType type) {
+        this.type = type;
     }
 
     public String getLuggageDescription() {
@@ -50,6 +53,14 @@ public class JoinTripRequestDTO {
         this.luggageDescription = luggageDescription;
     }
 
+    public Instant getPickUpTime() {
+        return pickUpTime;
+    }
+
+    public void setPickUpTime(Instant pickUpTime) {
+        this.pickUpTime = pickUpTime;
+    }
+
     public byte[] getLuggageImg() {
         return luggageImg;
     }
@@ -58,43 +69,43 @@ public class JoinTripRequestDTO {
         this.luggageImg = luggageImg;
     }
 
-    public PassengerType getType() {
-        return type;
+    public String getLuggageImgContentType() {
+        return luggageImgContentType;
     }
 
-    public void setType(PassengerType type) {
-        this.type = type;
+    public void setLuggageImgContentType(String luggageImgContentType) {
+        this.luggageImgContentType = luggageImgContentType;
     }
 
-    public int getStartLocaPosition() {
-        return startLocaPosition;
+    public boolean isPayNow() {
+        return payNow;
     }
 
-    public void setStartLocaPosition(int startLocaPosition) {
-        this.startLocaPosition = startLocaPosition;
+    public void setPayNow(boolean payNow) {
+        this.payNow = payNow;
     }
 
-    public int getEndLocaPosition() {
-        return endLocaPosition;
+    public Double getAmountApproveFee() {
+        return amountApproveFee;
     }
 
-    public void setEndLocaPosition(int endLocaPosition) {
-        this.endLocaPosition = endLocaPosition;
+    public void setAmountApproveFee(Double amountApproveFee) {
+        this.amountApproveFee = amountApproveFee;
     }
 
-    public String getLuggageImgType() {
-        return luggageImgType;
+    public UUID getStartLoca() {
+        return startLoca;
     }
 
-    public void setLuggageImgType(String luggageImgType) {
-        this.luggageImgType = luggageImgType;
+    public void setStartLoca(UUID startLoca) {
+        this.startLoca = startLoca;
     }
 
-    public Double getAmount() {
-        return amount;
+    public UUID getEndLoca() {
+        return endLoca;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setEndLoca(UUID endLoca) {
+        this.endLoca = endLoca;
     }
 }
