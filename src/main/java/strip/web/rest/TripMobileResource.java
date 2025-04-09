@@ -12,7 +12,7 @@ import strip.service.TripCustomService;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
-import strip.service.dto.TripCusDTO;
+import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 
@@ -56,8 +56,8 @@ public class TripMobileResource {
     }
 
     @GetMapping("/{tripId}/trip/fulldetails")
-    public ResponseEntity<TripCusDTO> getFullTrip(@PathVariable UUID tripId) {
-        TripCusDTO trip = tripCustomService.getFullTrip(tripId);
+    public ResponseEntity<TripDetailDTO> getFullTrip(@PathVariable UUID tripId) {
+        TripDetailDTO trip = tripCustomService.getFullTrip(tripId);
         return ResponseEntity.ok(trip);
     }
 

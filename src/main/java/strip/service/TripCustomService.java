@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.config.ApplicationProperties;
 import strip.domain.*;
 import strip.domain.enumeration.*;
@@ -20,11 +19,12 @@ import strip.security.SecurityUtils;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
-import strip.service.dto.TripCusDTO;
-import strip.service.dto.TripStopLocationDTO;
+import strip.service.dto.TripDetailDTO;
+import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
+import strip.service.mapper.UsermanageMapper;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -46,6 +46,7 @@ public class TripCustomService {
     private final UserDetailRepository userDetailRepository;
     private final WalletTransactionRepository walletTransactionRepository;
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
+    private final UsermanageMapper usermanageMapper;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -60,7 +61,8 @@ public class TripCustomService {
         UserDetailRepository userDetailRepository,
         WalletTransactionRepository walletTransactionRepository,
         TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
-        ImageUrlService imageUrlService
+        ImageUrlService imageUrlService,
+        UsermanageMapper usermanageMapper
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -75,6 +77,7 @@ public class TripCustomService {
         this.walletTransactionRepository = walletTransactionRepository;
         this.imageUrlService = imageUrlService;
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
+        this.usermanageMapper = usermanageMapper;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -265,14 +268,36 @@ public class TripCustomService {
         return tripRepository.save(trip);
     }
 
-    public TripCusDTO getFullTrip(UUID tripId) {
+    public TripDetailDTO getFullTrip(UUID tripId) {
         Trip trip = tripRepository.findFullTripByTripID(tripId).orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
 
-        TripCusDTO dto = buildTripBasicInfo(trip);
-        setTripImageUrl(dto, trip);
-        setDriverInfo(dto, trip);
-        setVehicleInfo(dto, trip);
-        setStopLocations(dto, trip);
+        TripDetailDTO dto = usermanageMapper.toTripDetailDTO(trip);
+
+        // ✅ Ảnh
+        dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
+
+        // ✅ Driver
+        if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
+            userDetailRepository
+                .findByUserId(trip.getDriver().getUser().getId())
+                .ifPresent(detail -> dto.setDriver(usermanageMapper.toRawDTO(trip.getDriver(), detail)));
+        }
+
+        // ✅ Vehicle
+        if (trip.getVehicle() != null) {
+            dto.setVehicle(usermanageMapper.toRawDTO(trip.getVehicle()));
+        }
+
+        // ✅ Stop Locations
+        if (trip.getTripStopLocations() != null) {
+            Set<TripStopLocationSkipTripDTO> stops = trip
+                .getTripStopLocations()
+                .stream()
+                .map(tripStopLocationSkipTripMapper::toDto)
+                .collect(Collectors.toSet());
+
+            dto.setStoplocation(stops);
+        }
 
         return dto;
     }
@@ -464,7 +489,7 @@ public class TripCustomService {
                 dto.setPricePerSeat(trip.getPricePerSeat());
                 dto.setCurrentSeat(trip.getCurrentSeat());
                 dto.setMaxSeat(trip.getMaxSeat());
-                dto.setTripImgUrl(buildTripImageUrl(trip.getTripID()));
+                dto.setTripImgUrl(imageUrlService.buildTripImageUrl(dto.getTripID()));
 
                 if (trip.getDriver() != null) {
                     dto.setDriverName(trip.getDriver().getUser().getFirstName()); // hoặc "Ẩn danh"
@@ -517,86 +542,6 @@ public class TripCustomService {
         }
 
         return dto;
-    }
-
-    private TripCusDTO buildTripBasicInfo(Trip trip) {
-        TripCusDTO dto = new TripCusDTO();
-        dto.setTripID(trip.getTripID());
-        dto.setStartLocation(trip.getStartLocation());
-        dto.setEndLocation(trip.getEndLocation());
-        dto.setDescription(trip.getDescription());
-        dto.setCondition(trip.getCondition());
-        dto.setStartDate(trip.getStartDate());
-        dto.setEndDate(trip.getEndDate());
-        dto.setPricePerSeat(trip.getPricePerSeat());
-        dto.setMaxSeat(trip.getMaxSeat());
-        dto.setCurrentSeat(trip.getCurrentSeat());
-        dto.setTripStatus(trip.getTripStatus());
-        dto.setCancelReason(trip.getCancelReason());
-        dto.setTotalDistance(trip.getTotalDistance());
-        dto.setTotalTime(trip.getTotalTime());
-        return dto;
-    }
-
-    private void setDriverInfo(TripCusDTO dto, Trip trip) {
-        if (trip.getDriver() != null && trip.getDriver().getUser() != null) {
-            dto.setDriverName(trip.getDriver().getUser().getFirstName());
-            dto.setDriverPhone(trip.getDriver().getUser().getEmail()); // hoặc userDetail.phone nếu có
-        }
-    }
-
-    private void setVehicleInfo(TripCusDTO dto, Trip trip) {
-        if (trip.getVehicle() != null) {
-            dto.setVehicleID(trip.getVehicle().getVehicleID());
-            dto.setVehicleType(trip.getVehicle().getVehicleType());
-            dto.setVehicleNumber(trip.getVehicle().getVehicleNumber());
-            dto.setNumberOfSeats(trip.getVehicle().getNumberOfSeats());
-            dto.setVehicleColor(trip.getVehicle().getVehicleColor());
-            dto.setVehicleBrand(trip.getVehicle().getVehicleBrand());
-
-            String imageUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/images/vehicle/")
-                .path(trip.getVehicle().getVehicleID().toString())
-                .toUriString();
-            dto.setVehicleImageUrl(imageUrl);
-        }
-    }
-
-    private void setStopLocations(TripCusDTO dto, Trip trip) {
-        if (trip.getTripStopLocations() != null) {
-            List<TripStopLocationDTO> stopDTOs = trip
-                .getTripStopLocations()
-                .stream()
-                .map(stop -> {
-                    TripStopLocationDTO s = new TripStopLocationDTO();
-                    s.setStopLoca(stop.getStopLoca());
-                    s.setStopLocaTime(stop.getStopLocaTime());
-                    s.setStopLocaStatus(stop.getStopLocaStatus());
-                    return s;
-                })
-                .toList();
-            dto.setStopLocations(stopDTOs);
-        }
-    }
-
-    private void setTripImageUrl(TripCusDTO dto, Trip trip) {
-        String url = buildTripImageUrl(trip.getTripID());
-        dto.setTripImgUrl(url);
-    }
-
-    public String buildLuggageImageUrl(UUID requestTripId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/request-trip/luggage/")
-            .path(requestTripId.toString())
-            .toUriString();
-    }
-
-    public String buildTripImageUrl(UUID tripId) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/images/trips/")
-            .path(tripId.toString())
-            .path("/cover")
-            .toUriString();
     }
 
     @Transactional
