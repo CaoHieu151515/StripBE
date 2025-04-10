@@ -157,6 +157,7 @@ public class StaffManagementResource {
         return ResponseEntity.ok().build();
     }
 
+    @Transactional
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/staff/toggle-activation/{userid}")
     public ResponseEntity<Void> toggleStaffActivation(@PathVariable UUID userid) {
