@@ -17,6 +17,7 @@ public class StaffUpdateDTO {
     private String address;
     private Instant dob;
     private String gender;
+    private boolean isActivated;
 
     public StaffUpdateDTO() {}
 
@@ -24,7 +25,7 @@ public class StaffUpdateDTO {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
-
+        this.isActivated = user.isActivated();
         if (detail != null) {
             this.UserId = detail.getAppUserDetail();
             this.phone = detail.getPhone();
@@ -96,5 +97,13 @@ public class StaffUpdateDTO {
 
     public void setUserId(UUID userId) {
         UserId = userId;
+    }
+
+    public boolean isActivated() {
+        return isActivated;
+    }
+
+    public void setActivated(boolean isActivated) {
+        this.isActivated = isActivated;
     }
 }
