@@ -23,6 +23,7 @@ import strip.domain.Driver;
 import strip.domain.DriverPointHistory;
 import strip.domain.Feedback;
 import strip.domain.PackageDriver;
+import strip.domain.Rating;
 import strip.domain.Report;
 import strip.domain.Trip;
 import strip.domain.User;
@@ -47,6 +48,7 @@ import strip.repository.DriverPointHistoryRepository;
 import strip.repository.DriverRepository;
 import strip.repository.FeedbackRepository;
 import strip.repository.PackageDriverRepository;
+import strip.repository.RatingRepository;
 import strip.repository.ReportRepository;
 import strip.repository.TripRepository;
 import strip.repository.UserDetailRepository;
@@ -104,6 +106,7 @@ public class UsermanageService {
     private final ReportRepository reportRepository;
     private final WalletTransactionRepository walletTransactionRepository;
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
+    private final RatingRepository ratingRepository;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -122,7 +125,8 @@ public class UsermanageService {
         DriverPointHistoryRepository driverPointHistoryRepository,
         ReportRepository reportRepository,
         WalletTransactionRepository walletTransactionRepository,
-        TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper
+        TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
+        RatingRepository ratingRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -141,6 +145,7 @@ public class UsermanageService {
         this.reportRepository = reportRepository;
         this.walletTransactionRepository = walletTransactionRepository;
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
+        this.ratingRepository = ratingRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -215,8 +220,9 @@ public class UsermanageService {
 
         // B3: Map DriverInfoDTO
         DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user, userDetail, driver);
-
         UUID driverId = driver.getDriverID();
+        Double rating = ratingRepository.findAverageRatingByDriverId(driverId);
+        dto.setAverageRating(rating);
         dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
         dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
         dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
@@ -426,6 +432,7 @@ public class UsermanageService {
         ConfirmingVehicleDriverDTO dto = driverInfoMapper.toConfirmingVehicleDTO(user, userDetail, driver, vehicle);
 
         UUID driverId = driver.getDriverID();
+        dto.setRating(getAverageRatingForDriver(driverId));
         dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
         dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
         dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
@@ -539,6 +546,7 @@ public class UsermanageService {
                 .findByUserId(trip.getDriver().getUser().getId())
                 .ifPresent(detail -> {
                     DriverRawDTO driverDTO = usermanageMapper.toRawDTO(trip.getDriver(), detail);
+                    driverDTO.setRating(getAverageRatingForDriver(driverDTO.getDriverId()));
 
                     driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverDTO.getDriverId()));
                     driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverDTO.getDriverId()));
@@ -653,8 +661,14 @@ public class UsermanageService {
                 driverDTO.setFirstName(user.getFirstName());
                 driverDTO.setLastName(user.getLastName());
                 driverDTO.setEmail(user.getEmail());
+                driverDTO.setRating(getAverageRatingForDriver(driver.getDriverID()));
 
-                userDetailRepository.findByUserId(user.getId()).map(UserDetail::getPhone).ifPresent(driverDTO::setPhone);
+                userDetailRepository
+                    .findByUserId(user.getId())
+                    .ifPresent(detail -> {
+                        driverDTO.setPhone(detail.getPhone());
+                        driverDTO.setUserId(detail.getAppUserDetail());
+                    });
             }
 
             // Set image URLs
@@ -668,6 +682,14 @@ public class UsermanageService {
                 Vehicle vehicle = vehicles.get(0);
                 ConfirmingVehicleDTO vehicleDTO = usermanageMapper.toConfirmingVehicleDTO(vehicle);
                 driverDTO.setVehicle(vehicleDTO);
+            }
+
+            // ✅ Lấy thời gian rating nếu đủ thông tin
+            if (feedback.getTrip() != null && feedback.getDriver() != null && feedback.getUser() != null) {
+                ratingRepository
+                    .findByTripAndDriverAndUser(feedback.getTrip(), feedback.getDriver(), feedback.getUser())
+                    .map(Rating::getRatingTime)
+                    .ifPresent(dto::setFeedbackTime);
             }
 
             dto.setDriver(driverDTO);
@@ -695,6 +717,7 @@ public class UsermanageService {
             userDetailRepository
                 .findByUserId(user.getId())
                 .ifPresent(detail -> {
+                    userDTO.setUserId(detail.getAppUserDetail());
                     userDTO.setGender(detail.getGender());
                     userDTO.setPhoneNumber(detail.getPhone());
                 });
@@ -897,5 +920,10 @@ public class UsermanageService {
         Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeInAndDateBetween(typesToFilter, from, to, pageable);
 
         return txPage.map(this::mapToDTO);
+    }
+
+    public double getAverageRatingForDriver(UUID driverId) {
+        Double avg = ratingRepository.findAverageRatingByDriverId(driverId);
+        return avg != null ? avg : 0.0;
     }
 }

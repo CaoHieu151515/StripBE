@@ -25,6 +25,7 @@ public interface DriverInfoMapper {
     @Mapping(target = "identityCardFaceUpUrl", ignore = true)
     @Mapping(target = "identityCardFaceDownUrl", ignore = true)
     @Mapping(target = "vehicles", ignore = true)
+    @Mapping(target = "averageRating", ignore = true)
     DriverInfoDTO toDriverInfoDTO(User user, UserDetail userDetail, Driver driver);
 
     @Mapping(source = "vehicle.vehicleID", target = "vehicleId")
@@ -54,5 +55,6 @@ public interface DriverInfoMapper {
     @Mapping(target = "vehicle.carregistrationUrl", ignore = true)
     @Mapping(target = "vehicle.vehicleInspectionCertificateUrl", ignore = true)
     @Mapping(target = "vehicle.carInsuranceUrl", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     ConfirmingVehicleDriverDTO toConfirmingVehicleDTO(User user, UserDetail userDetail, Driver driver, Vehicle vehicle);
 }

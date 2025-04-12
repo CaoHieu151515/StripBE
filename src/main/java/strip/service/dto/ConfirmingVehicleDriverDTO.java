@@ -11,6 +11,7 @@ public class ConfirmingVehicleDriverDTO implements Serializable {
     private String lastName;
     private String phone;
     private String email;
+    private double rating;
     private String identityCardFaceUpUrl;
     private String identityCardFaceDownUrl;
     private String driverLicenseUrl;
@@ -95,5 +96,13 @@ public class ConfirmingVehicleDriverDTO implements Serializable {
 
     public void setVehicle(ConfirmingVehicleDTO vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

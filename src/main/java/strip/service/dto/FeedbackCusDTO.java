@@ -2,6 +2,7 @@ package strip.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.time.Instant;
 import java.util.UUID;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
@@ -14,6 +15,7 @@ public class FeedbackCusDTO {
     private FeedbackStatus feedbackStatus;
     private String feedbackDescription;
     private Integer feedbackRating;
+    private Instant feedbackTime;
 
     // Custom fields
     private TripDTO trip;
@@ -82,5 +84,13 @@ public class FeedbackCusDTO {
 
     public void setDriver(ConfirmingVehicleDriverDTO driver) {
         this.driver = driver;
+    }
+
+    public Instant getFeedbackTime() {
+        return feedbackTime;
+    }
+
+    public void setFeedbackTime(Instant feedbackTime) {
+        this.feedbackTime = feedbackTime;
     }
 }

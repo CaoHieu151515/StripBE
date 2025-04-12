@@ -16,6 +16,7 @@ public class DriverInfoDTO implements Serializable {
     private String gender;
     private Instant dob;
     private String email;
+    private double averageRating;
 
     // ✅ Đổi byte[] -> URL
     private String driverLicenseUrl;
@@ -127,6 +128,14 @@ public class DriverInfoDTO implements Serializable {
 
     public void setVehicles(Set<DriverVehicleDTO> vehicles) {
         this.vehicles = vehicles;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
     }
     // Getters & Setters
 

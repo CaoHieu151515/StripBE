@@ -13,6 +13,7 @@ public class DriverRawDTO {
     private String gender;
     private Instant dob;
     private String email;
+    private Double rating;
 
     // ✅ Đổi byte[] -> URL
     private String avatarUrl;
@@ -114,5 +115,13 @@ public class DriverRawDTO {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 }

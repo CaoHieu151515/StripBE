@@ -55,6 +55,7 @@ public class TripCustomService {
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
     private final UsermanageMapper usermanageMapper;
     private final TripCusMapper tripCusMapper;
+    private final RatingRepository ratingRepository;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -71,7 +72,8 @@ public class TripCustomService {
         TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
         ImageUrlService imageUrlService,
         UsermanageMapper usermanageMapper,
-        TripCusMapper tripCusMapper
+        TripCusMapper tripCusMapper,
+        RatingRepository ratingRepository
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -88,6 +90,7 @@ public class TripCustomService {
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
         this.usermanageMapper = usermanageMapper;
         this.tripCusMapper = tripCusMapper;
+        this.ratingRepository = ratingRepository;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -296,7 +299,7 @@ public class TripCustomService {
 
                     UUID driverId = driverDTO.getDriverId();
                     UUID userDetailId = detail.getAppUserDetail();
-
+                    driverDTO.setRating(getAverageRatingForDriver(driverId));
                     // Set ảnh
                     driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
                     driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
@@ -745,6 +748,7 @@ public class TripCustomService {
             .findByUserId(trip.getDriver().getUser().getId())
             .ifPresent(detail -> {
                 DriverRawDTO driverDTO = usermanageMapper.toRawDTO(trip.getDriver(), detail);
+                driverDTO.setRating(getAverageRatingForDriver(driverDTO.getDriverId()));
                 driverDTO.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverDTO.getDriverId()));
                 driverDTO.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverDTO.getDriverId()));
                 driverDTO.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverDTO.getDriverId()));
@@ -857,5 +861,10 @@ public class TripCustomService {
 
         trip.setTripStatus(TripStatus.ON_GOING);
         tripRepository.save(trip);
+    }
+
+    public double getAverageRatingForDriver(UUID driverId) {
+        Double avg = ratingRepository.findAverageRatingByDriverId(driverId);
+        return avg != null ? avg : 0.0;
     }
 }
