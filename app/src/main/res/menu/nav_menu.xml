@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home"
+            android:title="Home" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/settings"
+            android:title="Settings"
+            app:showAsAction="collapseActionView|withText">
+            <menu>
+                <item
+                    android:id="@+id/nav_privacy"
+                    android:icon="@drawable/lock_hashtag"
+                    android:title="Privacy"/>
+                <item
+                    android:id="@+id/nav_light_dark"
+                    android:icon="@drawable/mode"
+                    android:title="Light-Dark"/>
+                <item
+                    android:id="@+id/nav_notification"
+                    android:icon="@drawable/bell"
+                    android:title="Notification"/>
+            </menu>
+        </item>
+
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/share"
+            android:title="Share"/>
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/info_button"
+            android:title="About Us"/>
+
+    </group>
+    <item
+        android:title="">
+
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/logout"
+                android:title="Logout"/>
+        </menu>
+
+    </item>
+
+</menu>

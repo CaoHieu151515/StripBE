@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_margin="5dp"
+    android:background="@drawable/bg_square_gray">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <!-- FrameLayout to overlay text on Image -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_square_gray"
+            android:layout_height="wrap_content">
+
+            <!-- Image -->
+            <ImageView
+                android:id="@+id/ivVehicleImage"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/trip"/>
+
+            <!-- Text Content (Overlayed) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_gravity="bottom"
+                android:paddingVertical="8dp">
+
+                <TextView
+                    android:id="@+id/tvVehicleType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vehivle Type"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/accent_color"/>
+
+                <TextView
+                    android:id="@+id/tvVehicleNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vehicle Number"
+                    android:textSize="16sp"
+                    android:textColor="@color/strip_color"/>
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Text Section on the Right -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvVehicleBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_square_gray"
+            android:textColor="@color/red_orange"
+            android:text="Brand"
+            android:padding="3dp"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvVehicleColor"
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_square_gray"
+            android:layout_height="wrap_content"
+            android:text="Color"
+            android:textColor="@color/black"
+            android:padding="3dp"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:background="@drawable/bg_square_gray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/chartreuse"
+            android:padding="3dp"
+            android:text="Status"
+            android:textSize="16sp"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Featured Place -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp">
+
+                    <!-- Background Image -->
+                    <ImageView
+                        android:id="@+id/ivTripImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/trip" />
+                    <!-- Back Button (Top Left) -->
+                    <ImageView
+                        android:id="@+id/imgBack"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:layout_gravity="top|start"
+                        android:src="@drawable/back_button2"
+                        android:scaleType="centerInside" />
+                    <!-- Place Name & Location (Overlay) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="8dp"
+                        android:layout_gravity="bottom">
+
+                        <TextView
+                            android:id="@+id/tvEndLocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NilGiri Hill, Bandarban"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_marginEnd="8dp"/>
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            app:tint="@color/black"
+                            android:layout_height="25dp"
+                            android:src="@drawable/marker" />
+
+                        <TextView
+                            android:id="@+id/tvStartLocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bangladesh"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:layout_marginStart="4dp"/>
+                    </LinearLayout>
+
+                    <!-- Profile Image (Overlay) -->
+                    <ImageView
+                        android:id="@+id/ivVehicleImage"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="top|end"
+                        android:src="@drawable/profile"
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/circle_background"/>
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_square_gray"
+                android:padding="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+                <!-- Tab Layout (Details & Review) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Details"
+                        android:layout_marginRight="5dp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_signup_bg"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="5dp"
+                        android:text="Trip Locations"
+                        android:textAllCaps="false"
+                        android:textColor="@color/black"
+                        android:background="@drawable/button_signin_bg"/>
+                </LinearLayout>
+
+                <!-- Stats (Distance, Ratings, Temp) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingVertical="8dp">
+
+                    <LinearLayout
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/bg_square_gray"
+                        android:padding="5dp">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/car"/>
+
+                        <TextView
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="Vehicle Number"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:id="@+id/tvVehicleNumber"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="5.5 KM"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="5dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_square_gray"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/person_seat"/>
+
+                        <TextView
+                            android:text="Price Per Seat"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"                        android:textSize="12sp"/>
+
+                        <TextView
+                            android:id="@+id/tvPricePerSeat"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"                        android:text="5.5"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_margin="5dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_square_gray"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/seat_airline"/>
+
+                        <TextView
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="Seat"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:id="@+id/tvSeats"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:text="3"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Description -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:paddingTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="A district in South-Eastern Bangladesh, part of the Chittagong Division. It is one of the three hill districts of Bangladesh."
+                    android:textSize="20sp"/>
+
+            </LinearLayout>
+            <!-- Pricing & Book Now -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingVertical="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Price"
+                    android:textSize="22sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2,000 TK"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="8dp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnBook"
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Book Now"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_signup_bg"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

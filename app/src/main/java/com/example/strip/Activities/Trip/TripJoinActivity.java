@@ -1,0 +1,192 @@
+package com.example.strip.Activities.Trip;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.strip.Adapters.TripStopAdapter;
+import com.example.strip.Models.Request.JoinTripRequest;
+import com.example.strip.Models.StopLocation;
+import com.example.strip.Models.TripDetail;
+import com.example.strip.R;
+import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Utils.UnsafeOkHttpClient;
+
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class TripJoinActivity extends AppCompatActivity {
+    private ITripMobileApiService tripService;
+    private TextView tvStartLocation, tvEndLocation,tvStartLocaId, tvEndLocaId;
+    private String tripId;
+    private RecyclerView recyclerTripStops;
+
+    EditText etNumberOfSeats, etLuggageDescription;
+    Button btnJoinTrip;
+    private Button btnPickStartLoca, btnPickEndLoca;
+    private String selectedStartLocaId = "", selectedEndLocaId = "";
+    private String lastClicked = ""; // "start" or "end"
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_trip_join); // Update with your actual XML file name
+        tvStartLocation = findViewById(R.id.tvStartLocation);
+        tvEndLocation = findViewById(R.id.tvEndLocation);
+        recyclerTripStops = findViewById(R.id.recyclerTripStops);
+        etNumberOfSeats = findViewById(R.id.etNumberOfSeats);
+        etLuggageDescription = findViewById(R.id.etLuggageDescription);
+        tvStartLocaId = findViewById(R.id.tvStartLocaId);
+        tvEndLocaId = findViewById(R.id.tvEndLocaId);
+        btnPickStartLoca = findViewById(R.id.btnStartLocation);
+        btnPickEndLoca = findViewById(R.id.btnEndLocation);
+        ImageView btnBack = findViewById(R.id.backButton);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        btnPickStartLoca.setOnClickListener(v -> {
+            lastClicked = "start";
+            Toast.makeText(this, "Select a stop for Start Location", Toast.LENGTH_SHORT).show();
+        });
+
+        btnPickEndLoca.setOnClickListener(v -> {
+            lastClicked = "end";
+            Toast.makeText(this, "Select a stop for End Location", Toast.LENGTH_SHORT).show();
+        });
+        btnJoinTrip = findViewById(R.id.btnJoinTrip);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(TripJoinActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerTripStops.setLayoutManager(layoutManager);
+
+        tripId = getIntent().getStringExtra("tripId");
+        if (tripId == null) {
+            Toast.makeText(this, "Invalid Trip ID!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+        loadTripDetails();
+        btnJoinTrip.setOnClickListener(v -> sendJoinRequest());
+    }
+    private Retrofit getRetrofitClient() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String jwtToken = sharedPreferences.getString("jwtToken", null);
+        if (jwtToken == null) {
+            Toast.makeText(TripJoinActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+        }
+        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+                .newBuilder()
+                .addInterceptor(chain -> {
+                    Request.Builder requestBuilder = chain.request().newBuilder();
+                    if (jwtToken != null) {
+                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+                    }
+                    return chain.proceed(requestBuilder.build());
+                })
+                .build();
+        return new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    private void loadTripDetails() {
+        tripService = getRetrofitClient().create(ITripMobileApiService.class);
+        tripService.getTripDetails(tripId).enqueue(new Callback<TripDetail>() {
+            @Override
+            public void onResponse(@NonNull Call<TripDetail> call, @NonNull Response<TripDetail> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    TripDetail trip = response.body();
+                    tvStartLocation.setText(trip.getStartLocation());
+                    tvEndLocation.setText(trip.getEndLocation());
+                    List<StopLocation> stops = trip.getStopLocations();
+                    if (stops != null && !stops.isEmpty()) {
+                        TripStopAdapter adapter = new TripStopAdapter(TripJoinActivity.this, stops, selectedStop -> {
+                            if (lastClicked.equals("start")) {
+                                tvStartLocaId.setText(selectedStop.getStopLoca()); // assuming StopLocation has getName()
+                                selectedStartLocaId = selectedStop.getStopLocaID();
+                            } else if (lastClicked.equals("end")) {
+                                tvEndLocaId.setText(selectedStop.getStopLoca());
+                                selectedEndLocaId = selectedStop.getStopLocaID();
+                            } else {
+                                Toast.makeText(TripJoinActivity.this, "Please select Start or End button first", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        recyclerTripStops.setAdapter(adapter);
+                    }
+                } else {
+                    Log.e("Failed", "Failed to load trips!" + response.code());
+                    Toast.makeText(TripJoinActivity.this, "Failed to load trip details!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TripDetail> call, @NonNull Throwable t) {
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                Toast.makeText(TripJoinActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void sendJoinRequest() {
+        int seats = Integer.parseInt(etNumberOfSeats.getText().toString());
+        String luggage = etLuggageDescription.getText().toString();
+        String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                .format(new Date());
+        JoinTripRequest request = new JoinTripRequest();
+        request.setTripId(tripId);
+        request.setNumberOfSeats(seats);
+        request.setLuggageDescription(luggage);
+        request.setType("LUGGAGE");
+        request.setPickUpTime(now);
+        request.setAmountApproveFee(0); // Example fee
+        request.setStartLoca(selectedStartLocaId);
+        request.setEndLoca(selectedEndLocaId);
+        request.setPayNow(false);
+
+        tripService.joinTrip(request).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(TripJoinActivity.this, "Successfully joined trip!", Toast.LENGTH_LONG).show();
+                    finish(); // or navigate somewhere
+                } else {
+                    Toast.makeText(TripJoinActivity.this, "Failed to join: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(TripJoinActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}

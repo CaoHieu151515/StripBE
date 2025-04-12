@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="strip_color">#F48C7F</color>
+    <color name="orange">#E98862</color>
+    <color name="chartreuse">#7FFF00</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF370083</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="pink">#B24FA9</color>
+    <color name="red_orange">#FF4433</color>
+    <color name="lavender">#8692f7</color>
+    <color name="my_black">#373b54</color>
+    <color name="primary_color">#03A9F4</color>
+    <color name="primary_dark_color">#0288D1</color>
+    <color name="accent_color">#FFC107</color>
+    <color name="background_color">#F0F0F0</color> <!-- Light gray background -->
+    <color name="primary_text_color">#333333</color> <!-- Dark text color -->
+    <color name="secondary_text_color">#555555</color> <!-- Medium text color -->
+    <color name="button_color">#6200EE</color> <!-- Purple button color -->
+    <color name="aqua">#00FFFF</color>
+    <color name="blue">#0000FF</color>
+    <color name="azure">#007FFF</color>
+    <color name="LightSkyBlue">#87CEFA</color>
+    <color name="VividSkyBlue">#00CCFF</color>
+    <color name="Gray">#BEBEBE</color>
+    <color name="ForestGreen">#228B22</color>
+    <color name="gray">#808080</color>
+    <color name="green">#4CAF50</color>
+    <color name="dark_blue">#004A77</color>
+    <color name="Aquamarine">#7FFFD4</color>
+
+</resources>

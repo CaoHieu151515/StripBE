@@ -1,0 +1,104 @@
+package com.example.strip.Activities.Customer;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.strip.Adapters.PackageAdapter;
+import com.example.strip.Fragments.AccountFragment;
+import com.example.strip.R;
+import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.UnsafeOkHttpClient;
+
+import java.util.List;
+import com.example.strip.Models.PackageDriver;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+public class ViewPackagesActivity extends AppCompatActivity implements PackageAdapter.OnPackagePurchaseListener{
+    private RecyclerView recyclerView;
+    private PackageAdapter packageAdapter;
+    @Override
+    public void onPackagePurchased() {
+        Toast.makeText(this, "Package purchased! (from activity)", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_packages);
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ImageView btnBack = findViewById(R.id.backButton);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        fetchPackages();
+    }
+    private Retrofit getRetrofitClient() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        String jwtToken = sharedPreferences.getString("jwtToken", null);
+        if (jwtToken == null) {
+            Toast.makeText(ViewPackagesActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+        }
+        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+                .newBuilder()
+                .addInterceptor(chain -> {
+                    Request.Builder requestBuilder = chain.request().newBuilder();
+                    if (jwtToken != null) {
+                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+                    }
+                    return chain.proceed(requestBuilder.build());
+                })
+                .build();
+
+
+        return new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:8080/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+    private void fetchPackages() {
+        Retrofit retrofit = getRetrofitClient();
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<List<PackageDriver>> call = apiService.getAllPackages();
+
+        call.enqueue(new Callback<List<PackageDriver>>() {
+            @Override
+            public void onResponse(Call<List<PackageDriver>> call, Response<List<PackageDriver>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    packageAdapter = new PackageAdapter(ViewPackagesActivity.this,response.body(),ViewPackagesActivity.this);
+                    recyclerView.setAdapter(packageAdapter);
+                } else {
+                    Toast.makeText(ViewPackagesActivity.this, "Failed to fetch packages", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PackageDriver>> call, Throwable t) {
+                Log.e("API Error", "Error: " + t.getMessage(), t);
+                Toast.makeText(ViewPackagesActivity.this, "API Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+}

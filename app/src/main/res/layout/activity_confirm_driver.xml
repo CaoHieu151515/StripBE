@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <ImageView
+            android:layout_gravity="start"
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/back_button2"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_margin="15dp"
+            android:contentDescription="Back" />
+
+        <TextView android:id="@+id/userIdTextView" android:text="User ID:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/driverIdTextView" android:text="Driver ID:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/firstNameTextView" android:text="First Name:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/lastNameTextView" android:text="Last Name:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/phoneTextView" android:text="Phone:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/emailTextView" android:text="Email:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:paddingTop="16dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:text="ID Card Face Up:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+                <ImageView
+                    android:id="@+id/faceUpImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:text="ID Card Face Down:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+                <ImageView
+                    android:id="@+id/faceDownImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:text="Driver License:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center" />
+
+                <ImageView
+                    android:id="@+id/licenseImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:text="Vehicle Type:"
+            android:id="@+id/vehicleTypeTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:text="Vehicle Number:"
+            android:id="@+id/vehicleNumberTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:text="Vehicle Brand:"
+            android:id="@+id/vehicleBrandTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:text="Vehicle Color:"
+            android:id="@+id/vehicleColorTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:text="Seats:"
+            android:id="@+id/seatsTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:text="Vehicle Status:"
+            android:id="@+id/statusTextView" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:paddingTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView android:text="Vehicle Image:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <ImageView android:id="@+id/vehicleImageView"
+                    android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:orientation="vertical">
+                <TextView android:text="Car Registration:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <ImageView android:id="@+id/carRegistrationImageView"
+                    android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
+
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:paddingTop="16dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView android:text="Inspection Certificate:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <ImageView
+                    android:background="@android:color/darker_gray"
+                    android:id="@+id/inspectionCertificateImageView" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:orientation="vertical">
+                <TextView android:text="Insurance:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <ImageView
+                    android:background="@android:color/darker_gray"
+                    android:id="@+id/insuranceImageView" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

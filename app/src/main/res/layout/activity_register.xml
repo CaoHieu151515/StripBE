@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="40dp"
+    android:background="@android:color/white">
+
+    <!-- Title Text -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello!\nSignup to get\nstarted"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_marginTop="50dp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="start"/>
+
+    <!-- Profile Image -->
+    <ImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/user"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="10dp"
+        android:layout_marginTop="24dp"/>
+
+    <!-- Camera Icon -->
+    <ImageView
+        android:id="@+id/ivCamera"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/camera"
+        android:background="@drawable/circle_background"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@id/ivProfile"
+        app:layout_constraintEnd_toEndOf="@id/ivProfile"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"/>
+
+    <!--
+    Full Name Input -->
+    <EditText
+        android:id="@+id/etLogin"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:hint="Full Name"
+        android:background="@drawable/input_field_bg"
+        android:paddingStart="16dp"
+        android:textSize="16sp"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@id/ivProfile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp"/>
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:hint="Email"
+        android:background="@drawable/input_field_bg"
+        android:paddingStart="16dp"
+        android:textSize="16sp"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@id/etLogin"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Phone Number Input Group -->
+    <LinearLayout
+        android:id="@+id/llPhoneNumber"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp">
+
+        <!-- Phone Number Input -->
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="Password"
+            android:background="@drawable/input_field_bg"
+            android:paddingStart="16dp"
+            android:textSize="16sp"
+            android:inputType="textPassword"
+            />
+    </LinearLayout>
+
+    <!-- Sign Up Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSignUp"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:text="Sign up"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_signup_bg"
+        app:layout_constraintTop_toBottomOf="@id/llPhoneNumber"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
