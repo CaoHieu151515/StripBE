@@ -191,6 +191,7 @@ public class UserMobileService {
         UserDetail userDetail = userDetailOpt.orElseThrow();
 
         DriverInfoDTO dto = new DriverInfoDTO();
+        dto.setAvatar(imageUrlService.buildUserAvatarUrl(userDetail.getAppUserDetail()));
         dto.setUserId(userDetail.getAppUserDetail());
         dto.setDriverId(driver.getDriverID());
         dto.setFirstName(user.getFirstName());
@@ -496,7 +497,7 @@ public class UserMobileService {
         res.setLastName(user.getLastName());
         res.setPhone(detail.getPhone());
         res.setEmail(user.getEmail());
-
+        res.setAvatar(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
         res.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driver.getDriverID()));
         res.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driver.getDriverID()));
         res.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driver.getDriverID()));
@@ -541,6 +542,7 @@ public class UserMobileService {
                 detailOpt.ifPresent(detail -> {
                     res.setPhone(detail.getPhone());
                     res.setUserId(detail.getAppUserDetail());
+                    res.setAvatar(imageUrlService.buildUserAvatarUrl(detail.getAppUserDetail()));
                 });
 
                 // 🧾 Driver

@@ -433,6 +433,7 @@ public class UsermanageService {
 
         UUID driverId = driver.getDriverID();
         dto.setRating(getAverageRatingForDriver(driverId));
+        dto.setAvatar(imageUrlService.buildUserAvatarUrl(userDetail.getAppUserDetail()));
         dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
         dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
         dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
@@ -668,6 +669,7 @@ public class UsermanageService {
                     .ifPresent(detail -> {
                         driverDTO.setPhone(detail.getPhone());
                         driverDTO.setUserId(detail.getAppUserDetail());
+                        driverDTO.setAvatar(imageUrlService.buildVehicleImageUrl(detail.getAppUserDetail()));
                     });
             }
 

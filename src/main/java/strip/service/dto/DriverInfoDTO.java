@@ -17,6 +17,7 @@ public class DriverInfoDTO implements Serializable {
     private Instant dob;
     private String email;
     private double averageRating;
+    private String avatar;
 
     // ✅ Đổi byte[] -> URL
     private String driverLicenseUrl;
@@ -137,6 +138,14 @@ public class DriverInfoDTO implements Serializable {
     public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
+
     // Getters & Setters
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 }
