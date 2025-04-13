@@ -14,10 +14,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_URL", "\"${project.properties["API_URL"]}\"")
+            buildConfigField("String", "SERVER_HOST", "\"${project.properties["SERVER_HOST"]}\"")
+            buildConfigField("String", "MOBILE_HOST", "\"${project.properties["MOBILE_HOST"]}\"")
+        }
         release {
+            buildConfigField("String", "API_URL", "\"${project.properties["API_URL"]}\"")
+            buildConfigField("String", "SERVER_HOST", "\"${project.properties["SERVER_HOST"]}\"")
+            buildConfigField("String", "MOBILE_HOST", "\"${project.properties["MOBILE_HOST"]}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

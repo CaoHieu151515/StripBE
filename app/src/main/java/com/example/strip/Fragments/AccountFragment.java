@@ -22,10 +22,12 @@ import com.example.strip.Activities.Customer.ChangePasswordActivity;
 import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
+import com.example.strip.BuildConfig;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -36,6 +38,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
+
     private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
     private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver;
     private Button btnEditProfile;
@@ -87,32 +90,32 @@ public class AccountFragment extends Fragment {
 
         return view;
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(getContext(), "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(getContext(), "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//
+//
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void fetchUserInfo() {
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -137,8 +140,8 @@ public class AccountFragment extends Fragment {
                     // Hiển thị ảnh nếu có
                     String ivImageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (ivImageUrl != null && !ivImageUrl.isEmpty()) {
-                        if (ivImageUrl.startsWith("http://localhost")) {
-                            ivImageUrl = ivImageUrl.replace("http://localhost", "http://10.0.2.2");
+                        if (ivImageUrl.contains("localhost")) {
+                            ivImageUrl = ivImageUrl.replace("http://localhost", "http://10.0.2.2:8080");
                         }
                         Log.d("ImageDebug", "Image URL: " + ivImageUrl);
                         Glide.with(getContext())

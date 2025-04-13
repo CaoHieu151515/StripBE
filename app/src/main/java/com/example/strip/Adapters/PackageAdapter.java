@@ -18,6 +18,7 @@ import com.example.strip.Models.PackageDriver;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import java.util.List;
 
@@ -84,34 +85,34 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
 
         }
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-
-        if (jwtToken == null) {
-            Toast.makeText(context, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//
+//        if (jwtToken == null) {
+//            Toast.makeText(context, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
 
     private void buyPackage(String packageId, View view) {
-        Retrofit retrofit = getRetrofitClient(); // ✅ Use the secure, token-included client
+        Retrofit retrofit = ApiClient.getClientWithToken(context);
 
         IUserMobileApiService api = retrofit.create(IUserMobileApiService.class);
 

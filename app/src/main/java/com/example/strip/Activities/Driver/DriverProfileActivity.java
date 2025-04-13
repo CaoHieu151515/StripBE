@@ -18,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.VehicleAdapter;
+import com.example.strip.BuildConfig;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DriverProfileActivity extends AppCompatActivity {
+
+
     private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvCountTrip, tvBannedDay, tvDriverStatus;
     private ImageView ivProfile;
     private RecyclerView rvVehicles;
@@ -71,32 +75,32 @@ public class DriverProfileActivity extends AppCompatActivity {
         });
         fetchDriverInfo();
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(DriverProfileActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(DriverProfileActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//
+//
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void fetchDriverInfo() {
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -124,8 +128,8 @@ public class DriverProfileActivity extends AppCompatActivity {
                     // Hiển thị ảnh nếu có
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        if (imageUrl.startsWith("http://localhost")) {
-                            imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2");
+                        if (imageUrl.contains("localhost")) {
+                            imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
                         }
                         Glide.with(DriverProfileActivity.this)
                                 .load(imageUrl)

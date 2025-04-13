@@ -16,6 +16,7 @@ import com.example.strip.Models.Response.ResponseMessage;
 import com.example.strip.R;
 import com.example.strip.Services.IAccountApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,13 +51,8 @@ public class RegisterActivity extends AppCompatActivity {
         String password = edPassword.getText().toString();
 
         RegisterVM request = new RegisterVM(email, password, login,true,"string");
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        IAccountApiService apiService = retrofit.create(IAccountApiService.class);
+        IAccountApiService apiService = ApiClient.getClient().create(IAccountApiService.class);
 
         Call<Void> call = apiService.register(request);
         call.enqueue(new Callback<Void>() {

@@ -21,6 +21,7 @@ import com.example.strip.Models.Trip;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import java.util.List;
 
@@ -66,30 +67,30 @@ public class ManageTripActivity extends AppCompatActivity {
         recyclerViewTrips.setLayoutManager(layoutManager);
         loadTrips();
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(ManageTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(ManageTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void loadTrips() {
-        ITripMobileApiService tripService = getRetrofitClient().create(ITripMobileApiService.class);
+        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.getAllTrips().enqueue(new Callback<List<Trip>>() {
             @Override
             public void onResponse(@NonNull Call<List<Trip>> call, @NonNull Response<List<Trip>> response) {

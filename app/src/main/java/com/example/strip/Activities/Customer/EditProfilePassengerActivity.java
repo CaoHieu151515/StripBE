@@ -26,10 +26,12 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.BuildConfig;
 import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,6 +49,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditProfilePassengerActivity extends AppCompatActivity {
+
+
     private EditText etFirstName, etLastName, etPhone, etAddress, etDob, etGender;
     private ImageView ivProfile, ivCamera;
     private byte[] userImageBytes;
@@ -72,8 +76,8 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
         if (intent != null) {
             String imageUrl = intent.getStringExtra("imageUrl");
             if (imageUrl != null && !imageUrl.isEmpty()) {
-                if (imageUrl.startsWith("http://localhost")) {
-                    imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2");
+                if (imageUrl.contains("localhost")) {
+                    imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
                 }
                 Glide.with(EditProfilePassengerActivity.this)
                         .load(imageUrl)
@@ -173,30 +177,30 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
     }
 
 
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(EditProfilePassengerActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(EditProfilePassengerActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//
+//
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void updateUserProfile() {
         String firstName = etFirstName.getText().toString();
         String lastName = etLastName.getText().toString();
@@ -211,7 +215,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
         String userImageContentType = "image/png";
         byte[] userImage = userImageBytes;
         // Dummy image URL, replace with actual image handling
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
 
         PassengerProfileRequest passengerProfileRequest = new PassengerProfileRequest(

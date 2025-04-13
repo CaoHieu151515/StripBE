@@ -20,12 +20,14 @@ import com.example.strip.Activities.Trip.TripPublishActivity;
 //import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.TransactionAdapter;
+import com.example.strip.BuildConfig;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WalletActivity extends AppCompatActivity {
+
     private TextView tvUserWallet, tvMobifyDate, tvCurrent, tvBefore, tvAmount;
     private ImageView ivProfile,ivPayment;
     private RecyclerView recyclerView;
@@ -73,30 +76,30 @@ public class WalletActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fetchTransactionsList();
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(WalletActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(WalletActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void fetchWalletInfo() {
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -112,8 +115,8 @@ public class WalletActivity extends AppCompatActivity {
                     tvAmount.setText(String.format("%.2f", user.getUserWallet().getAmount()));
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        if (imageUrl.startsWith("http://localhost")) {
-                            imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2");
+                        if (imageUrl.contains("localhost")) {
+                            imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
                         }
                         Glide.with(WalletActivity.this)
                                 .load(imageUrl)
@@ -139,7 +142,7 @@ public class WalletActivity extends AppCompatActivity {
         });
     }
     private void fetchTransactionsList() {
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<WalletResponse> call = apiService.getWalletDetails();
         call.enqueue(new Callback<WalletResponse>() {

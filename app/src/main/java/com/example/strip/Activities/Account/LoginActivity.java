@@ -16,6 +16,7 @@ import com.example.strip.Models.Response.ResponseToken;
 import com.example.strip.R;
 import com.example.strip.Services.IAuthenticateApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,13 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = edPassword.getText().toString();
         LoginVM request = new LoginVM(email, password, true);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        IAuthenticateApiService apiService = retrofit.create(IAuthenticateApiService.class);
+        IAuthenticateApiService apiService = ApiClient.getClient().create(IAuthenticateApiService.class);
         Call<ResponseToken> call = apiService.login(request);
         call.enqueue(new Callback<ResponseToken>() {
             @Override

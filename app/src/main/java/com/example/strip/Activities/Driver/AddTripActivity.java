@@ -31,6 +31,7 @@ import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
 
 
 import org.json.JSONArray;
@@ -113,7 +114,7 @@ public class AddTripActivity extends AppCompatActivity{
             }
         });
 
-        retrofit = getRetrofitClient();
+        retrofit = ApiClient.getClientWithToken(this);
 
         btnCreateTrip.setOnClickListener(v -> createTrip());
         fetchUserInfo();
@@ -168,30 +169,30 @@ public class AddTripActivity extends AppCompatActivity{
             datePickerDialog.show();
         });
     }
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-        if (jwtToken == null) {
-            Toast.makeText(AddTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-        }
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-    }
+//    private Retrofit getRetrofitClient() {
+//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+//        String jwtToken = sharedPreferences.getString("jwtToken", null);
+//        if (jwtToken == null) {
+//            Toast.makeText(AddTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+//        }
+//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
+//                .newBuilder()
+//                .addInterceptor(chain -> {
+//                    Request.Builder requestBuilder = chain.request().newBuilder();
+//                    if (jwtToken != null) {
+//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
+//                    }
+//                    return chain.proceed(requestBuilder.build());
+//                })
+//                .build();
+//
+//
+//        return new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8080/")
+//                .client(client)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//    }
     private void createTrip() {
         String driverId = tvDriverId.getText().toString().trim();
         String vehicleId = selectedVehicleId;
@@ -207,7 +208,7 @@ public class AddTripActivity extends AppCompatActivity{
         TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, pricePerSeat, maxSeat,
                 startDate, endDate, startLocation, endLocation, description, condition);
 
-        ITripMobileApiService tripService = retrofit.create(ITripMobileApiService.class);
+        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
             @Override
             public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
@@ -371,7 +372,7 @@ public class AddTripActivity extends AppCompatActivity{
         return polyline;
     }
     private void fetchUserInfo() {
-        Retrofit retrofit = getRetrofitClient();
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 

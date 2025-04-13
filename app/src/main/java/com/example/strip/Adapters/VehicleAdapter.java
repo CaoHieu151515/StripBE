@@ -10,12 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.strip.BuildConfig;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.R;
 
 import java.util.List;
 
 public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder> {
+
+
     private List<DriverVehicleDTO> vehicleList;
 
     public VehicleAdapter(List<DriverVehicleDTO> vehicleList) {
@@ -41,8 +44,8 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         // Load vehicle image
         String imageUrl = vehicle.getVehicleImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            if (imageUrl.startsWith("http://localhost")) {
-                imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2");
+            if (imageUrl.contains("localhost")) {
+                imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
             }
             Glide.with(holder.itemView.getContext()).load(imageUrl).into(holder.ivVehicleImage);
         }
