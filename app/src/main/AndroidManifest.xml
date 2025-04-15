@@ -106,6 +106,18 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".Activities.Driver.ConfirmDriverOneActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Activities.Driver.ConfirmDriverTwoActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Activities.Driver.ConfirmDriverThreeActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".Activities.Trip.TripDetailActivity"
             android:exported="true">
         </activity>

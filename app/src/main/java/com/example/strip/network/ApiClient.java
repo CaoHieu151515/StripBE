@@ -3,12 +3,7 @@ package com.example.strip.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
-
-import com.example.strip.R;
 import com.example.strip.Utils.UnsafeOkHttpClient;
-import com.example.strip.BuildConfig;
-
-
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,9 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     private static Retrofit retrofit = null;
-
-
-    private static final String BASE_URL = BuildConfig.API_URL;
+    private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     public static Retrofit getClient() {
         if (retrofit == null) {

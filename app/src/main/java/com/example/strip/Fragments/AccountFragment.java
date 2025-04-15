@@ -22,7 +22,7 @@ import com.example.strip.Activities.Customer.ChangePasswordActivity;
 import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
-import com.example.strip.BuildConfig;
+import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -71,7 +71,7 @@ public class AccountFragment extends Fragment {
             startActivity(intent);
         });
         ivConfirmDriver.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ConfirmDriverActivity.class);
+            Intent intent = new Intent(getActivity(), ConfirmDriverOneActivity.class);
             startActivity(intent);
         });
         btnEditProfile.setOnClickListener(v -> {

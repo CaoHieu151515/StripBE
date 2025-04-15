@@ -9,7 +9,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="32dp">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+>
         <ImageView
             android:layout_gravity="start"
             android:id="@+id/backButton"
@@ -23,6 +27,8 @@
 
 
         <LinearLayout
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -33,25 +39,59 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/vehicleTypeTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
                     android:text="Vehicle Type:" />
+                <EditText
+                    android:id="@+id/etVehicleType"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Vehicle Type"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
 
                 <TextView
                     android:id="@+id/vehicleNumberTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
                     android:text="Vehicle Number:" />
+                <EditText
+                    android:id="@+id/etVehicleNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Vehicle Number"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
 
                 <TextView
                     android:id="@+id/vehicleBrandTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     android:text="Vehicle Brand:" />
+                <EditText
+                    android:id="@+id/etVehicleBrand"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Vehicle Brand"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
             <!-- Right Column -->
@@ -59,25 +99,59 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:padding="10dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/vehicleColorTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
                     android:text="Vehicle Color:" />
+                <EditText
+                    android:id="@+id/etVehicleColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Vehicle Color"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
 
                 <TextView
                     android:id="@+id/seatsTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
                     android:text="Seats:" />
+                <EditText
+                    android:id="@+id/etSeats"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Seats"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
 
                 <TextView
                     android:id="@+id/statusTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
                     android:text="Vehicle Status:" />
+                <EditText
+                    android:id="@+id/etVehicleStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Vehicle Status"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
             </LinearLayout>
         </LinearLayout>
 
@@ -86,17 +160,23 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2"
-            android:paddingTop="10dp"
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
+            android:layout_marginTop="10dp"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
                 <TextView
                     android:gravity="center"
-                    android:text="Vehicle Image:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    android:text="Vehicle Image:"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
                 <ImageView android:id="@+id/vehicleImageView"
                     android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
 
@@ -107,10 +187,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
                 <TextView
+                    android:textStyle="bold"
                     android:gravity="center"
-                    android:text="Car Registration:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                    android:text="Car Registration:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
                 <ImageView android:id="@+id/carRegistrationImageView"
                     android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
 
@@ -121,16 +205,20 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2"
-            android:paddingTop="16dp"
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
+            android:layout_marginTop="10dp"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
                 <TextView
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:text="Inspection Certificate:" android:layout_width="match_parent" android:layout_height="wrap_content"/>
                 <ImageView
                     android:background="@android:color/darker_gray"
@@ -144,14 +232,29 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="4dp"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
                 <TextView android:text="Insurance:"
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:layout_width="match_parent" android:layout_height="wrap_content"/>
                 <ImageView
                     android:background="@android:color/darker_gray"
                     android:id="@+id/insuranceImageView" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
             </LinearLayout>
         </LinearLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnConfirmDriver"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Confirm Driver"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_signup_bg"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </LinearLayout>
     </LinearLayout>
 </ScrollView>

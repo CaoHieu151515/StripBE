@@ -3,6 +3,7 @@ package com.example.strip.Activities.Account;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,14 +16,12 @@ import com.example.strip.Models.Request.LoginVM;
 import com.example.strip.Models.Response.ResponseToken;
 import com.example.strip.R;
 import com.example.strip.Services.IAuthenticateApiService;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class LoginActivity extends AppCompatActivity {
     private EditText edEmail, edPassword;
@@ -70,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Đăng nhập thất bại: " + errorBody);
                         Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + errorBody, Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -80,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseToken> call, Throwable t) {
+                Log.e("API_ERROR", "Error: " + t.getMessage());
                 Toast.makeText(LoginActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

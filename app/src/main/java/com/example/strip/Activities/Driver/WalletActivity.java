@@ -20,7 +20,6 @@ import com.example.strip.Activities.Trip.TripPublishActivity;
 //import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.TransactionAdapter;
-import com.example.strip.BuildConfig;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;

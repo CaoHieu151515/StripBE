@@ -26,7 +26,6 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.strip.BuildConfig;
 import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
