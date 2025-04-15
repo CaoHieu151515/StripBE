@@ -1,7 +1,10 @@
 package com.example.strip.Activities.Driver;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +20,9 @@ import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.network.ApiClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +32,12 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
     private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand, etVehicleStatus;
     private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView;
     private Button btnConfirmDriver;
+    private byte[] ImageBytes;
+
+    private static final int REQUEST_IMAGE_PICK = 100;
+    private static final int REQUEST_IMAGE_TWO_PICK = 101;
+    private static final int REQUEST_IMAGE_THREE_PICK = 102;
+    private static final int REQUEST_IMAGE_FOUR_PICK = 103;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +59,18 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 finish();
             }
+        });
+        vehicleImageView.setOnClickListener(v -> {
+            openVehicleImageViewicker();
+        });
+        carRegistrationImageView.setOnClickListener(v -> {
+            openCarRegistrationImageViewPicker();
+        });
+        inspectionCertificateImageView.setOnClickListener(v -> {
+            openInspectionCertificateImageViewPicker();
+        });
+        insuranceImageView.setOnClickListener(v -> {
+            openInsuranceImageViewPicker();
         });
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService userService = retrofit.create(IUserMobileApiService.class);
@@ -94,6 +118,99 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     .placeholder(R.drawable.logo)
                     .error(R.drawable.logout)
                     .into(target);
+        }
+    }
+    private void openVehicleImageViewicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+    private void openCarRegistrationImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_TWO_PICK);
+    }
+    private void openInspectionCertificateImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_THREE_PICK);
+    }
+    private void openInsuranceImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_FOUR_PICK);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                vehicleImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_TWO_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                carRegistrationImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_THREE_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                inspectionCertificateImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_FOUR_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                insuranceImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }

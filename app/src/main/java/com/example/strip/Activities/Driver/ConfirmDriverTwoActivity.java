@@ -1,7 +1,10 @@
 package com.example.strip.Activities.Driver;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +20,9 @@ import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.network.ApiClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,6 +31,10 @@ import retrofit2.Retrofit;
 public class ConfirmDriverTwoActivity extends AppCompatActivity {
     private ImageView faceUpImageView, faceDownImageView;
     private Button btnNext;
+    private static final int REQUEST_IMAGE_PICK = 100;
+    private static final int REQUEST_IMAGE_TWO_PICK = 101;
+
+    private byte[] ImageBytes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +53,12 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ConfirmDriverThreeActivity.class);
 
             startActivity(intent);
+        });
+        faceUpImageView.setOnClickListener(v -> {
+            openFaceUpImageViewPicker();
+        });
+        faceDownImageView.setOnClickListener(v -> {
+            openFaceDownImageViewPicker();
         });
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService userService = retrofit.create(IUserMobileApiService.class);
@@ -81,6 +97,55 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                     .placeholder(R.drawable.logo)
                     .error(R.drawable.logout)
                     .into(target);
+        }
+    }
+    private void openFaceUpImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+    private void openFaceDownImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_TWO_PICK);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                faceUpImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_TWO_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                faceDownImageView.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }
