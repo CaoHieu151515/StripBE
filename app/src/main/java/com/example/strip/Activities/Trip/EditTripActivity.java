@@ -1,13 +1,17 @@
 package com.example.strip.Activities.Trip;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.strip.Activities.Driver.AddTripActivity;
+import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Adapters.TripStopAdapter;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Request.StopLocationUpdateRequest;
@@ -42,13 +47,16 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,30 +71,40 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EditTripActivity extends AppCompatActivity {
     private ITripMobileApiService tripService;
-    private TextView tvStartLocation, tvEndLocation;
+    private TextView tvStartLocation, tvEndLocation,
+            tvStartDate, tvEndDate,
+            tvStopLoca, tvEstimatedTime, tvEstimatedKM, tvStopLocaPosition, tvTripStatus;
+    private Button btnFindLocation, btnAddLocation, btnUpdateTripLocation;
     private String tripId;
     private RecyclerView recyclerTripStops;
     private String lastClicked = "";
     private String selectedStartLocaId = "", selectedEndLocaId = "";
     private List<StopLocationUpdateRequest> tempStopList = new ArrayList<>();
     private TripStopAdapter tripStopAdapter;
-    private MapView mapView;
+    private int REQUEST_MAP = 1001;
+    private String startLocation, endLocation;
 
+    private double distance;
+    private int position, duration;
     // Inside EditTripActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_trip);
-
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
+        tvStartDate = findViewById(R.id.tvStartDate);
+        tvEndDate = findViewById(R.id.tvEndDate);
+        tvStopLoca = findViewById(R.id.tvStopLoca);
+        tvEstimatedTime = findViewById(R.id.tvEstimatedTime);
+        tvEstimatedKM = findViewById(R.id.tvEstimatedKM);
+        tvStopLocaPosition = findViewById(R.id.tvStopLocaPosition);
+        btnFindLocation = findViewById(R.id.btnFindLocation);
+        btnAddLocation = findViewById(R.id.btnAddLocation);
+        btnUpdateTripLocation = findViewById(R.id.btnUpdateTripLocation);
+        tvTripStatus = findViewById(R.id.tvTripStatus);
         recyclerTripStops = findViewById(R.id.recyclerTripStops);
-
-        EditText edtStopLoca = findViewById(R.id.edtStopLoca);
         EditText edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
-        EditText edtEstimatedTime = findViewById(R.id.edtEstimatedTime);
-        EditText edtEstimatedKM = findViewById(R.id.edtEstimatedKM);
-        EditText edtStopLocaPosition = findViewById(R.id.edtStopLocaPosition);
 
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(v -> finish());
@@ -108,22 +126,53 @@ public class EditTripActivity extends AppCompatActivity {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    this, (view, selectedYear, selectedMonth, selectedDay) -> {
-                // Create a Calendar object and set the selected date
-                Calendar selectedCalendar = Calendar.getInstance();
-                selectedCalendar.set(selectedYear, selectedMonth, selectedDay, 0, 0, 0);
-                selectedCalendar.set(Calendar.MILLISECOND, 0); // Set milliseconds to 0
+                    EditTripActivity.this, (view, selectedYear, selectedMonth, selectedDay) -> {
 
-                // Format the date to ISO 8601 format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z')
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                String dob = sdf.format(selectedCalendar.getTime());
+                // After date is selected, show time picker
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
 
-                // Set the formatted date into the EditText
-                edtStopLocaTime.setText(dob);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        EditTripActivity.this, (timeView, selectedHour, selectedMinute) -> {
+
+                    // Set calendar with both date and time
+                    Calendar selectedCalendar = Calendar.getInstance();
+                    selectedCalendar.set(Calendar.YEAR, selectedYear);
+                    selectedCalendar.set(Calendar.MONTH, selectedMonth);
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                    selectedCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                    selectedCalendar.set(Calendar.MINUTE, selectedMinute);
+                    selectedCalendar.set(Calendar.SECOND, 0);
+                    selectedCalendar.set(Calendar.MILLISECOND, 0);
+
+                    // Format with line break between date and time
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy'\n'hh:mm:ss a", Locale.getDefault());
+                    String formattedDate = sdf.format(selectedCalendar.getTime());
+
+                    edtStopLocaTime.setText(formattedDate);
+
+                    // Calculate etEndDate
+//                    Calendar calendarEndDate = (Calendar) selectedCalendar.clone();
+//                    calendarEndDate.add(Calendar.MINUTE, (int) duration);
+//
+//                    String endDateStr = sdf.format(calendarEndDate.getTime());
+//                    etEndDate.setText(endDateStr);
+
+                }, hour, minute, false // false = 12-hour format
+                );
+
+                timePickerDialog.show();
             }, year, month, day
             );
 
             datePickerDialog.show();
+        });
+        btnFindLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EditTripActivity.this, OpenStreetMapActivity.class);
+                startActivityForResult(intent, REQUEST_MAP);
+            }
         });
         recyclerTripStops.setAdapter(tripStopAdapter);
 
@@ -135,25 +184,23 @@ public class EditTripActivity extends AppCompatActivity {
         }
         loadTripDetails();
 
-        Button btnUpdateLocations = findViewById(R.id.btnUpdateLocations);
-        btnUpdateLocations.setOnClickListener(v -> {
+        btnUpdateTripLocation.setOnClickListener(v -> {
             if (tempStopList.isEmpty()) {
                 Toast.makeText(this, "Chưa có điểm dừng nào để cập nhật!", Toast.LENGTH_SHORT).show();
                 return;
             }
             updateTripStops();
         });
-
-        Button btnAddStop = findViewById(R.id.btnAddStop);
-        btnAddStop.setOnClickListener(v -> {
+//
+        btnAddLocation.setOnClickListener(v -> {
             try {
                 StopLocationUpdateRequest newStop = new StopLocationUpdateRequest();
-                newStop.setStopLoca(edtStopLoca.getText().toString());
+                newStop.setStopLoca(tvStopLoca.getText().toString());
                 newStop.setStopLocaTime(edtStopLocaTime.getText().toString());
                 newStop.setStopLocaStatus("UPCOMMING");
-                newStop.setEstimatedTime(Integer.parseInt(edtEstimatedTime.getText().toString()));
-                newStop.setEstimatedKM(Double.parseDouble(edtEstimatedKM.getText().toString()));
-                newStop.setStoplocaPosition(Integer.parseInt(edtStopLocaPosition.getText().toString()));
+                newStop.setEstimatedTime(duration);
+                newStop.setEstimatedKM(distance);
+                newStop.setStoplocaPosition(position);
 
                 tempStopList.add(newStop); // for updateTripStops()
 
@@ -175,31 +222,7 @@ public class EditTripActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid stop info: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(EditTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void loadTripDetails() {
         tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.getTripDetails(tripId).enqueue(new Callback<TripDetail>() {
@@ -209,6 +232,29 @@ public class EditTripActivity extends AppCompatActivity {
                     TripDetail trip = response.body();
                     tvStartLocation.setText(trip.getStartLocation());
                     tvEndLocation.setText(trip.getEndLocation());
+                    tvTripStatus.setText(trip.getTripStatus());
+                    String originalDateString = trip.getStartDate(); // Example: "2025-04-16T13:45:00" (ISO format)
+                    SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                    SimpleDateFormat displayFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
+                    try {
+                        Date date = originalFormat.parse(originalDateString);
+                        String formattedDate = displayFormat.format(date);
+                        tvStartDate.setText(formattedDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        tvStartDate.setText("Invalid date");
+                    }
+                    String originalDateString2 = trip.getStartDate(); // Example: "2025-04-16T13:45:00" (ISO format)
+                    SimpleDateFormat originalFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                    SimpleDateFormat displayFormat2 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
+                    try {
+                        Date date = originalFormat2.parse(originalDateString2);
+                        String formattedDate2 = displayFormat2.format(date);
+                        tvEndDate.setText(formattedDate2);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        tvEndDate.setText("Invalid date");
+                    }
                     List<StopLocation> stops = trip.getStopLocations();
                     if (stops != null && !stops.isEmpty()) {
                         TripStopAdapter adapter = new TripStopAdapter(EditTripActivity.this, stops, selectedStop -> {
@@ -221,6 +267,8 @@ public class EditTripActivity extends AppCompatActivity {
                             }
                         });
                         recyclerTripStops.setAdapter(adapter);
+                        position = adapter.getItemCount() + 1;
+                        tvStopLocaPosition.setText(String.valueOf(position));
                     }
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());
@@ -253,124 +301,20 @@ public class EditTripActivity extends AppCompatActivity {
             }
         });
     }
-    private GeoPoint getLocationFromAddress(Context context, String strAddress) {
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        GeoPoint point = null;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_MAP && resultCode == RESULT_OK && data != null) {
+            startLocation = data.getStringExtra("startLocation");
+            endLocation = data.getStringExtra("endLocation");
+            distance = data.getDoubleExtra("distance", 0.0);
+            duration = data.getIntExtra("duration", 0);
 
-        try {
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null || address.size() == 0) {
-                return null;
-            }
-            Address location = address.get(0);
-            point = new GeoPoint(location.getLatitude(), location.getLongitude());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            tvStopLoca.setText("" + endLocation);
+            tvEstimatedKM.setText(String.format("%.2f km", distance));
+            tvEstimatedTime.setText(String.format("%d mins", duration));
 
-        return point;
-    }
-
-    private class GetRouteTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String urlStr = params[0];
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.setRequestProperty("User-Agent", "MyAppName/1.0 (Android)");
-                urlConnection.connect();
-
-                InputStreamReader reader = new InputStreamReader(urlConnection.getInputStream());
-                StringBuilder response = new StringBuilder();
-                int data = reader.read();
-                while (data != -1) {
-                    char current = (char) data;
-                    response.append(current);
-                    data = reader.read();
-                }
-                return response.toString();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                try {
-                    JSONObject jsonResponse = new JSONObject(result);
-                    JSONArray routes = jsonResponse.optJSONArray("routes");
-                    if (routes != null && routes.length() > 0) {
-                        JSONObject route = routes.getJSONObject(0);
-                        String geometry = route.optString("geometry");
-                        Polyline line = decodePolyline(geometry);
-                        mapView.getOverlays().clear(); // Clear old routes
-                        mapView.getOverlays().add(line);
-                        mapView.invalidate();
-
-                        double distance = route.optDouble("distance") / 1000.0;
-                        double duration = route.optDouble("duration") / 60.0;
-//                        edtEstimatedTime.setText(String.format("%.2f km", distance));
-//                        edtEstimatedTime.tvDuration.setText(String.format("%.1f mins", duration));
-                        Toast.makeText(EditTripActivity.this, "Distance: " + distance + " km\nDuration: " + duration + " min", Toast.LENGTH_LONG).show();
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e("Error", "Failed to get route " + e);
-                    Toast.makeText(EditTripActivity.this, "Failed to parse route", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Log.e("Error", "Failed to get route " + result);
-                Toast.makeText(EditTripActivity.this, "Failed to get route", Toast.LENGTH_SHORT).show();
-            }
+            // Do something with the returned data
         }
     }
-
-
-    // Method to decode polyline geometry into coordinates
-    private Polyline decodePolyline(String encoded) {
-        Polyline polyline = new Polyline();
-        int index = 0;
-        int lat = 0;
-        int lng = 0;
-
-        while (index < encoded.length()) {
-            int shift = 0;
-            int result = 0;
-            while (true) {
-                int b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-                if (b < 0x20) break;
-            }
-            int dLat = result % 2 != 0 ? ~(result >> 1) : (result >> 1);
-            lat += dLat;
-
-            shift = 0;
-            result = 0;
-            while (true) {
-                int b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-                if (b < 0x20) break;
-            }
-            int dLng = result % 2 != 0 ? ~(result >> 1) : (result >> 1);
-            lng += dLng;
-
-            GeoPoint point = new GeoPoint((lat / 1E5), (lng / 1E5));
-            polyline.addPoint(point);
-
-            // Debugging: log each decoded point
-            Log.d("Decoded Point", "Latitude: " + (lat / 1E5) + ", Longitude: " + (lng / 1E5));
-        }
-
-        return polyline;
-    }
-
 }

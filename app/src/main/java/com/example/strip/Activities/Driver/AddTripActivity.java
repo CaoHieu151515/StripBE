@@ -84,8 +84,8 @@ public class AddTripActivity extends AppCompatActivity{
     private byte[] ImageBytes;
     private int REQUEST_MAP = 1001;
     private String startLocation, endLocation;
-    private double distance, duration;
-
+    private double distance;
+    private int duration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -309,11 +309,11 @@ public class AddTripActivity extends AppCompatActivity{
             startLocation = data.getStringExtra("startLocation");
             endLocation = data.getStringExtra("endLocation");
             distance = data.getDoubleExtra("distance", 0.0);
-            duration = data.getDoubleExtra("duration", 0.0);
+            duration = data.getIntExtra("duration", 0);
             tvStartLocation.setText("" + startLocation);
             tvEndLocation.setText("" + endLocation);
             tvDistance.setText(String.format("%.2f km", distance));
-            tvDuration.setText(String.format("%.2f mins", duration));
+            tvDuration.setText(String.format("%d mins", duration));
 
             // Do something with the returned data
         }

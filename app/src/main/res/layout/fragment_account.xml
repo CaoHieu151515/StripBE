@@ -75,6 +75,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
+            android:background="@drawable/bg_contanier"
             android:gravity="center">
 
             <!-- Payment -->
@@ -84,7 +85,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_margin="5dp"
-                android:background="@drawable/bg_contanier_two"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
 
                 <ImageView
@@ -106,7 +107,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_margin="5dp"
-                android:background="@drawable/bg_contanier_two"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
 
                 <ImageView
@@ -128,7 +129,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_margin="5dp"
-                android:background="@drawable/bg_contanier_two"
+                android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
 
                 <ImageView

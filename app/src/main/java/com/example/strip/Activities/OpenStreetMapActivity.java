@@ -37,8 +37,8 @@ public class OpenStreetMapActivity extends AppCompatActivity {
     private ImageView ivExit;
     private MapView mapView;
     private TextView tvDistanceValue, tvDurationValue;
-    private double distance, duration;
-
+    private double distance;
+    private int duration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +111,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
 
         new GetRouteTask().execute(routeUrl);
         tvDistanceValue.setText(String.format("%.2f km", distance));
-        tvDurationValue.setText(String.format("%.2f mins", duration));
+        tvDurationValue.setText(String.format("%d mins", duration));
     }
     private GeoPoint getLocationFromAddress(Context context, String strAddress) {
         Geocoder coder = new Geocoder(context);
@@ -174,9 +174,9 @@ public class OpenStreetMapActivity extends AppCompatActivity {
                         mapView.invalidate();
 
                         distance = route.optDouble("distance") / 1000.0;
-                        duration = route.optDouble("duration") / 60.0;
+                        duration = route.optInt("duration") / 60;
                         tvDistanceValue.setText(String.format("%.2f km", distance));
-                        tvDurationValue.setText(String.format("%.1f mins", duration));
+                        tvDurationValue.setText(duration + " mins");
                         Toast.makeText(OpenStreetMapActivity.this, "Distance: " + distance + " km\nDuration: " + duration + " min", Toast.LENGTH_LONG).show();
 
                     }

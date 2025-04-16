@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.VehicleAdapter;
-import com.example.strip.BuildConfig;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
