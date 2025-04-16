@@ -18,6 +18,8 @@ import strip.domain.enumeration.DriverStatus;
 public interface DriverRepository extends JpaRepository<Driver, Long> {
     Optional<Driver> findByUser(User user);
 
+    Optional<Driver> findByUser_id(Long id);
+
     List<Driver> findByUsedtoDriverFalseAndDriverStatus(DriverStatus driverStatus);
 
     Optional<Driver> findByDriverID(UUID driverID);

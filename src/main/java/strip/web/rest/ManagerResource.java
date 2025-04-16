@@ -31,6 +31,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.PackageDriverStatus;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.service.UsermanageService;
@@ -189,11 +191,16 @@ public class ManagerResource {
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/packages/getAllPackage")
-    public ResponseEntity<List<PackageDriverDTO>> getActivePackages() {
-        List<PackageDriverDTO> activePackages = usermanageService.getActivePackages();
-        return ResponseEntity.ok(activePackages);
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<List<PackageDriverDTO>> getAllPackages(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) Double price,
+        @RequestParam(required = false) Integer time,
+        @RequestParam(required = false) PackageDriverStatus status
+    ) {
+        List<PackageDriverDTO> results = usermanageService.getAllPackagesWithFilter(name, price, time, status);
+        return ResponseEntity.ok(results);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
@@ -204,10 +211,10 @@ public class ManagerResource {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PatchMapping("/package/{driverid}/expire")
-    public ResponseEntity<PackageDriver> expirePackage(@PathVariable UUID driverid) {
-        Optional<PackageDriver> updatedPackage = usermanageService.expirePackage(driverid);
-        return updatedPackage.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @PatchMapping("/package/{packageId}/toggle-status")
+    public ResponseEntity<PackageDriver> togglePackageStatus(@PathVariable UUID packageId) {
+        Optional<PackageDriver> updated = usermanageService.togglePackageStatus(packageId);
+        return updated.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
@@ -354,10 +361,17 @@ public class ManagerResource {
     public ResponseEntity<CustomPageDTO<WalletTransactionAdminDTO>> getAllTransactions(
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) WalletTransactionType walletType,
+        @RequestParam(required = false) TransactionStatus walletStatus,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate
     ) {
-        Page<WalletTransactionAdminDTO> page = usermanageService.getSystemTransactions(pageable, walletType, fromDate, toDate);
+        Page<WalletTransactionAdminDTO> page = usermanageService.getSystemTransactions(
+            pageable,
+            walletType,
+            walletStatus,
+            fromDate,
+            toDate
+        );
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 

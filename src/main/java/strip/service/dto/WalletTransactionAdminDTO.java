@@ -2,12 +2,14 @@ package strip.service.dto;
 
 import java.time.Instant;
 import java.util.UUID;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.WalletTransactionType;
 
 public class WalletTransactionAdminDTO {
 
     private UUID transactionId;
     private WalletTransactionType type;
+    private TransactionStatus status;
     private Double amount;
     private String fromOwner;
     private String toOwner;
@@ -68,6 +70,14 @@ public class WalletTransactionAdminDTO {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
     }
     // getters/setters
 

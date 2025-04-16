@@ -6,5 +6,4 @@ package strip.domain.enumeration;
 public enum PackageDriverStatus {
     ACTIVE,
     EXPIRED,
-    CANCEL,
 }

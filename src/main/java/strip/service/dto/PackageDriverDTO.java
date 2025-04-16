@@ -1,5 +1,6 @@
 package strip.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import strip.domain.enumeration.PackageDriverStatus;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class PackageDriverDTO implements Serializable {
 
+    @JsonIgnore
     private Long id;
 
     private UUID packageID;

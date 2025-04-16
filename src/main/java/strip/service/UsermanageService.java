@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -212,17 +213,22 @@ public class UsermanageService {
             .orElseThrow(() -> new BadRequestAlertException("UserDetail not found", "userDetail", "notfound"));
 
         User user = userDetail.getUser();
+        Set<String> roles = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
+
+        if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_STAFF")) {
+            throw new BadRequestAlertException("Staff/Admin không có thông tin tài xế", "driver", "invalid-role");
+        }
 
         // B2: Tìm Driver theo User
         Driver driver = driverRepository
-            .findByUser(user)
+            .findByUser_id(user.getId())
             .orElseThrow(() -> new BadRequestAlertException("Driver not found", "driver", "notfound"));
 
         // B3: Map DriverInfoDTO
         DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user, userDetail, driver);
         UUID driverId = driver.getDriverID();
-        Double rating = ratingRepository.findAverageRatingByDriverId(driverId);
-        dto.setAverageRating(rating);
+        dto.setAverageRating(Optional.ofNullable(ratingRepository.findAverageRatingByDriverId(driverId)).orElse(0.0));
+        dto.setAvatar(imageUrlService.buildUserAvatarUrl(userDetailId));
         dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
         dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
         dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
@@ -403,10 +409,15 @@ public class UsermanageService {
         log.debug("Driver {} rejected successfully", driverId);
     }
 
-    public List<PackageDriverDTO> getActivePackages() {
-        return packageDriverRepository
-            .findByStatus(PackageDriverStatus.ACTIVE)
+    public List<PackageDriverDTO> getAllPackagesWithFilter(String name, Double price, Integer time, PackageDriverStatus status) {
+        List<PackageDriver> all = packageDriverRepository.findAll();
+
+        return all
             .stream()
+            .filter(pkg -> name == null || pkg.getName().toLowerCase().contains(name.toLowerCase()))
+            .filter(pkg -> price == null || Objects.equals(pkg.getPrice(), price))
+            .filter(pkg -> time == null || Objects.equals(pkg.getTime(), time))
+            .filter(pkg -> status == null || pkg.getStatus() == status)
             .map(packageDriverMapper::toDto)
             .collect(Collectors.toList());
     }
@@ -419,12 +430,16 @@ public class UsermanageService {
         return packageDriverMapper.toDto(packageDriver);
     }
 
-    public Optional<PackageDriver> expirePackage(UUID packageId) {
+    public Optional<PackageDriver> togglePackageStatus(UUID packageId) {
         return packageDriverRepository
             .findByPackageID(packageId)
-            .map(packageDriver -> {
-                packageDriver.setStatus(PackageDriverStatus.EXPIRED);
-                return packageDriverRepository.save(packageDriver);
+            .map(pkg -> {
+                if (pkg.getStatus() == PackageDriverStatus.ACTIVE) {
+                    pkg.setStatus(PackageDriverStatus.EXPIRED);
+                } else if (pkg.getStatus() == PackageDriverStatus.EXPIRED) {
+                    pkg.setStatus(PackageDriverStatus.ACTIVE);
+                }
+                return packageDriverRepository.save(pkg);
             });
     }
 
@@ -817,6 +832,7 @@ public class UsermanageService {
     public Page<WalletTransactionAdminDTO> getSystemTransactions(
         Pageable pageable,
         WalletTransactionType walletType,
+        TransactionStatus walletStatus,
         Instant fromDate,
         Instant toDate
     ) {
@@ -825,6 +841,7 @@ public class UsermanageService {
         List<WalletTransaction> filtered = transactions
             .stream()
             .filter(tx -> walletType == null || tx.getWalletType() == walletType)
+            .filter(tx -> walletStatus == null || tx.getTransStatus() == walletStatus)
             .filter(tx -> fromDate == null || !tx.getDate().isBefore(fromDate))
             .filter(tx -> toDate == null || !tx.getDate().isAfter(toDate))
             .sorted(Comparator.comparing(WalletTransaction::getDate).reversed()) // sắp xếp theo thời gian mới nhất
@@ -844,6 +861,7 @@ public class UsermanageService {
 
     private WalletTransactionAdminDTO mapToDTO(WalletTransaction tx) {
         WalletTransactionAdminDTO dto = new WalletTransactionAdminDTO();
+        dto.setStatus(tx.getTransStatus());
         dto.setTransactionId(tx.getTransID());
         dto.setType(tx.getWalletType());
         dto.setAmount(tx.getAmount());
