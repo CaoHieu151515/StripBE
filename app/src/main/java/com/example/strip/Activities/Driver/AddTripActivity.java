@@ -2,13 +2,17 @@ package com.example.strip.Activities.Driver;
 
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,8 +24,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Request.TripCreateRequest;
@@ -42,13 +48,16 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,12 +79,18 @@ public class AddTripActivity extends AppCompatActivity{
     private Spinner spinnerVehicle;
     private List<DriverVehicleDTO> vehicles; // from user.getDriverVehicleDTO()
     private String selectedVehicleId;
+    private ImageView ivTripImage;
+    private static final int REQUEST_IMAGE_PICK = 100;
+    private byte[] ImageBytes;
+    private int REQUEST_MAP = 1001;
+    private String startLocation, endLocation;
+    private double distance, duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_trip);
-
+        ivTripImage = findViewById(R.id.ivTripImage);
         spinnerVehicle = findViewById(R.id.spinnerVehicle);
         etPricePerSeat = findViewById(R.id.etPricePerSeat);
         etMaxSeat = findViewById(R.id.etMaxSeat);
@@ -104,120 +119,106 @@ public class AddTripActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddTripActivity.this, OpenStreetMapActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_MAP);
+            }
+        });
+        ivTripImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openImagePicker();
             }
         });
         retrofit = ApiClient.getClientWithToken(this);
-        btnCreateTrip.setOnClickListener(v -> createTrip());
+//        btnCreateTrip.setOnClickListener(v -> createTrip());
         fetchUserInfo();
 
-//        etStartDate.setOnClickListener(v -> {
-//            Calendar calendar = Calendar.getInstance();
-//            int year = calendar.get(Calendar.YEAR);
-//            int month = calendar.get(Calendar.MONTH);
-//            int day = calendar.get(Calendar.DAY_OF_MONTH);
-//
-//            DatePickerDialog datePickerDialog = new DatePickerDialog(
-//                    this, (view, selectedYear, selectedMonth, selectedDay) -> {
-//                // Create a Calendar object and set the selected date
-//                Calendar selectedCalendar = Calendar.getInstance();
-//                selectedCalendar.set(selectedYear, selectedMonth, selectedDay, 0, 0, 0);
-//                selectedCalendar.set(Calendar.MILLISECOND, 0); // Set milliseconds to 0
-//
-//                // Format the date to ISO 8601 format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z')
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-//                String dob = sdf.format(selectedCalendar.getTime());
-//
-//                // Set the formatted date into the EditText
-//                etStartDate.setText(dob);
-//            }, year, month, day
-//            );
-//
-//            datePickerDialog.show();
-//        });
-//        etEndDate.setOnClickListener(v -> {
-//            Calendar calendar = Calendar.getInstance();
-//            int year = calendar.get(Calendar.YEAR);
-//            int month = calendar.get(Calendar.MONTH);
-//            int day = calendar.get(Calendar.DAY_OF_MONTH);
-//
-//            DatePickerDialog datePickerDialog = new DatePickerDialog(
-//                    this, (view, selectedYear, selectedMonth, selectedDay) -> {
-//                // Create a Calendar object and set the selected date
-//                Calendar selectedCalendar = Calendar.getInstance();
-//                selectedCalendar.set(selectedYear, selectedMonth, selectedDay, 0, 0, 0);
-//                selectedCalendar.set(Calendar.MILLISECOND, 0); // Set milliseconds to 0
-//
-//                // Format the date to ISO 8601 format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z')
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-//                String dob = sdf.format(selectedCalendar.getTime());
-//
-//                // etEndDate the formatted date into the EditText
-//                etEndDate.setText(dob);
-//            }, year, month, day
-//            );
-//
-//            datePickerDialog.show();
-//        });
-    }
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(AddTripActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//
-//
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
-    private void createTrip() {
-        String driverId = "";
-        String vehicleId = selectedVehicleId;
-        int pricePerSeat = Integer.parseInt(etPricePerSeat.getText().toString().trim());
-        int maxSeat = Integer.parseInt(etMaxSeat.getText().toString().trim());
-        String startDate = etStartDate.getText().toString().trim();
-        String endDate = etEndDate.getText().toString().trim();
-        String startLocation = "";
-        String endLocation = "";
-        String description = etDescription.getText().toString().trim();
-        String condition = etCondition.getText().toString().trim();
+        etStartDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, pricePerSeat, maxSeat,
-                startDate, endDate, startLocation, endLocation, description, condition);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    AddTripActivity.this, (view, selectedYear, selectedMonth, selectedDay) -> {
 
-        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
-        tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
-            @Override
-            public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.e("Failed", "Failed to create trips!" + response.code());
-                    Toast.makeText(AddTripActivity.this, "Failed to Create Trip!", Toast.LENGTH_SHORT).show();
-                }
-            }
+                // After date is selected, show time picker
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
 
-            @Override
-            public void onFailure(Call<TripDetail> call, Throwable t) {
-                Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(AddTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        AddTripActivity.this, (timeView, selectedHour, selectedMinute) -> {
+
+                    // Set calendar with both date and time
+                    Calendar selectedCalendar = Calendar.getInstance();
+                    selectedCalendar.set(Calendar.YEAR, selectedYear);
+                    selectedCalendar.set(Calendar.MONTH, selectedMonth);
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
+                    selectedCalendar.set(Calendar.HOUR_OF_DAY, selectedHour);
+                    selectedCalendar.set(Calendar.MINUTE, selectedMinute);
+                    selectedCalendar.set(Calendar.SECOND, 0);
+                    selectedCalendar.set(Calendar.MILLISECOND, 0);
+
+                    // Format with line break between date and time
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy'\n'hh:mm:ss a", Locale.getDefault());
+                    String formattedDate = sdf.format(selectedCalendar.getTime());
+
+                    etStartDate.setText(formattedDate);
+
+                    // Calculate etEndDate
+                    Calendar calendarEndDate = (Calendar) selectedCalendar.clone();
+                    calendarEndDate.add(Calendar.MINUTE, (int) duration);
+
+                    String endDateStr = sdf.format(calendarEndDate.getTime());
+                    etEndDate.setText(endDateStr);
+
+                }, hour, minute, false // false = 12-hour format
+                );
+
+                timePickerDialog.show();
+            }, year, month, day
+            );
+
+            datePickerDialog.show();
         });
+
+
+
+
     }
+//    private void createTrip() {
+//        String driverId = user.getDriver().getDriverID();
+//        String vehicleId = selectedVehicleId;
+//        int pricePerSeat = Integer.parseInt(etPricePerSeat.getText().toString().trim());
+//        int maxSeat = Integer.parseInt(etMaxSeat.getText().toString().trim());
+//        String startDate = etStartDate.getText().toString().trim();
+//        String endDate = etEndDate.getText().toString().trim();
+//        String startLocation = "";
+//        String endLocation = "";
+//        String description = etDescription.getText().toString().trim();
+//        String condition = etCondition.getText().toString().trim();
+//
+//        TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, pricePerSeat, maxSeat,
+//                startDate, endDate, startLocation, endLocation, description, condition);
+//
+//        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
+//        tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
+//            @Override
+//            public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
+//                if (response.isSuccessful() && response.body() != null) {
+//                    Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Log.e("Failed", "Failed to create trips!" + response.code());
+//                    Toast.makeText(AddTripActivity.this, "Failed to Create Trip!", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<TripDetail> call, Throwable t) {
+//                Log.e("API_ERROR", "Error: " + t.getMessage());
+//                Toast.makeText(AddTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
     private void fetchUserInfo() {
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
@@ -234,7 +235,7 @@ public class AddTripActivity extends AppCompatActivity{
 // Create a list of vehicle IDs (or any display name)
                     List<String> vehicleIds = new ArrayList<>();
                     for (DriverVehicleDTO dto : vehicles) {
-                        vehicleIds.add(dto.getVehicleId()); // or use dto.getLicensePlate() or something else more readable
+                        vehicleIds.add(dto.getVehicleNumber()); // or use dto.getLicensePlate() or something else more readable
                     }
 
 // IMPORTANT: use AddTripActivity.this as context
@@ -250,7 +251,7 @@ public class AddTripActivity extends AppCompatActivity{
                     spinnerVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            selectedVehicleId = vehicles.get(position).getVehicleNumber(); // Store selected vehicleId
+                            selectedVehicleId = vehicles.get(position).getVehicleId(); // Store selected vehicleId
                         }
 
                         @Override
@@ -277,5 +278,44 @@ public class AddTripActivity extends AppCompatActivity{
                 Toast.makeText(AddTripActivity.this, "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                ivTripImage.setImageURI(selectedImageUri);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (requestCode == REQUEST_MAP && resultCode == RESULT_OK && data != null) {
+            startLocation = data.getStringExtra("startLocation");
+            endLocation = data.getStringExtra("endLocation");
+            distance = data.getDoubleExtra("distance", 0.0);
+            duration = data.getDoubleExtra("duration", 0.0);
+            tvStartLocation.setText("" + startLocation);
+            tvEndLocation.setText("" + endLocation);
+            tvDistance.setText(String.format("%.2f km", distance));
+            tvDuration.setText(String.format("%.2f mins", duration));
+
+            // Do something with the returned data
+        }
     }
 }

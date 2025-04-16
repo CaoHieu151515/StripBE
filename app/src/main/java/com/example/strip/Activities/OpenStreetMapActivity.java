@@ -1,6 +1,7 @@
 package com.example.strip.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -36,6 +37,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
     private ImageView ivExit;
     private MapView mapView;
     private TextView tvDistanceValue, tvDurationValue;
+    private double distance, duration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,18 @@ public class OpenStreetMapActivity extends AppCompatActivity {
                 showRouteOnMap();
             }
         });
+        btnChooseLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("startLocation", etStartLocation.getText().toString().trim());
+                resultIntent.putExtra("endLocation", etEndLocation.getText().toString().trim());
+                resultIntent.putExtra("distance", distance);
+                resultIntent.putExtra("duration", duration);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
     }
     private void showRouteOnMap() {
         String startLoc = etStartLocation.getText().toString().trim();
@@ -96,6 +110,8 @@ public class OpenStreetMapActivity extends AppCompatActivity {
                 + "?overview=full&geometries=polyline";
 
         new GetRouteTask().execute(routeUrl);
+        tvDistanceValue.setText(String.format("%.2f km", distance));
+        tvDurationValue.setText(String.format("%.2f mins", duration));
     }
     private GeoPoint getLocationFromAddress(Context context, String strAddress) {
         Geocoder coder = new Geocoder(context);
@@ -157,8 +173,8 @@ public class OpenStreetMapActivity extends AppCompatActivity {
                         mapView.getOverlays().add(line);
                         mapView.invalidate();
 
-                        double distance = route.optDouble("distance") / 1000.0;
-                        double duration = route.optDouble("duration") / 60.0;
+                        distance = route.optDouble("distance") / 1000.0;
+                        duration = route.optDouble("duration") / 60.0;
                         tvDistanceValue.setText(String.format("%.2f km", distance));
                         tvDurationValue.setText(String.format("%.1f mins", duration));
                         Toast.makeText(OpenStreetMapActivity.this, "Distance: " + distance + " km\nDuration: " + duration + " min", Toast.LENGTH_LONG).show();

@@ -3,6 +3,8 @@ package com.example.strip.Models.Request;
 public class TripCreateRequest {
     private String driverId;
     private String vehicleId;
+    private byte[] tripImg;
+    private String tripImgContentType;
     private int pricePerSeat;
     private int maxSeat;
     private String startDate;
@@ -12,9 +14,22 @@ public class TripCreateRequest {
     private String description;
     private String condition;
 
-    public TripCreateRequest(String driverId, String vehicleId, int pricePerSeat, int maxSeat, String endDate, String startDate, String startLocation, String endLocation, String description, String condition) {
+    public TripCreateRequest(String driverId,
+                             String vehicleId,
+                             byte[] tripImg,
+                             String tripImgContentType,
+                             int pricePerSeat,
+                             int maxSeat,
+                             String endDate,
+                             String startDate,
+                             String startLocation,
+                             String endLocation,
+                             String description,
+                             String condition) {
         this.driverId = driverId;
         this.vehicleId = vehicleId;
+        this.tripImg = tripImg;
+        this.tripImgContentType = tripImgContentType;
         this.pricePerSeat = pricePerSeat;
         this.maxSeat = maxSeat;
         this.endDate = endDate;

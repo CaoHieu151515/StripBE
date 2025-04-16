@@ -21,86 +21,126 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingEnd="4dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Choose Vehicle"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
-                <Spinner
-                    android:id="@+id/spinnerVehicle"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/input_field_bg"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp"
-            android:weightSum="2">
+            android:padding="8dp">
 
+            <!-- Left Side Content -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingEnd="4dp">
+                android:orientation="vertical">
 
-                <TextView
+                <!-- Choose Vehicle Section -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Price Per Seat"
-                    android:textStyle="bold"
-                    android:textSize="16sp" />
+                    android:padding="5dp"
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/etPricePerSeat"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Choose Vehicle"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <Spinner
+                            android:id="@+id/spinnerVehicle"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/input_field_bg" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Price & Max Seats Section -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/input_field_bg"
-                    android:inputType="number"
-                    android:gravity="center"
-                    android:hint="Enter price" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="4dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Price Per Seat"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <EditText
+                            android:id="@+id/etPricePerSeat"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/input_field_bg"
+                            android:inputType="number"
+                            android:gravity="center"
+                            android:hint="Enter price" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="4dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Max Seats"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etMaxSeat"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/input_field_bg"
+                            android:inputType="number"
+                            android:gravity="center"
+                            android:hint="Enter max seats" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
-
+            <!-- Right Side Image -->
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="4dp">
-
+                android:orientation="vertical">
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Max Seats"
+                    android:text="Trip Image"
                     android:textSize="16sp"
-                    android:textStyle="bold"/>
-
-                <EditText
-                    android:id="@+id/etMaxSeat"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/input_field_bg"
-                    android:inputType="number"
                     android:gravity="center"
-                    android:hint="Enter max seats" />
+                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/ivTripImage"
+                    android:layout_width="100dp"
+                    android:layout_height="128dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/logo"
+                    android:background="@drawable/input_field_bg"
+                    android:contentDescription="Vehicle Image" />
             </LinearLayout>
         </LinearLayout>
+
 
 
         <LinearLayout
