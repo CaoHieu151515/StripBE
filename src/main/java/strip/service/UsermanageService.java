@@ -258,12 +258,21 @@ public class UsermanageService {
         return confirmingVehicles
             .stream()
             .map(vehicle -> {
-                User user = vehicle.getDriver().getUser();
-                UserDetail userDetail = userDetailRepository.findByUserId(user.getId()).orElse(null);
                 Driver driver = vehicle.getDriver();
+                if (driver == null || driver.getUser() == null) {
+                    return null; // Skip nếu không đủ thông tin liên kết
+                }
 
-                return mapToConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
+                User user = driver.getUser();
+
+                // Lấy UserDetail (có thể null)
+                UserDetail userDetail = userDetailRepository.findByUserId(user.getId()).orElse(null);
+
+                // Map DTO
+                ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
+                return dto;
             })
+            .filter(Objects::nonNull) // loại bỏ các bản ghi không đủ thông tin
             .collect(Collectors.toList());
     }
 
