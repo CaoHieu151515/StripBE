@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.play.services.fitness)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -86,5 +87,7 @@ dependencies {
 
     // to offer local payments
     implementation("com.braintreepayments.api:drop-in:6.16.0")
+    implementation("com.braintreepayments.api:card:4.38.0")
+    implementation("androidx.activity:activity:1.7.2")
 
 }

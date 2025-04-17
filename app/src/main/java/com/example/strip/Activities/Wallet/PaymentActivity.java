@@ -1,11 +1,9 @@
 package com.example.strip.Activities.Wallet;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,133 +11,136 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.braintreepayments.api.BraintreeClient;
-import com.braintreepayments.api.PayPalAccountNonce;
-import com.braintreepayments.api.PayPalCheckoutRequest;
+import com.braintreepayments.api.Card;
+import com.braintreepayments.api.CardClient;
+import com.braintreepayments.api.CardNonce;
+import com.braintreepayments.api.ClientTokenCallback;
+import com.braintreepayments.api.ClientTokenProvider;
+import com.braintreepayments.api.DropInClient;
+import com.braintreepayments.api.DropInListener;
+import com.braintreepayments.api.DropInRequest;
+import com.braintreepayments.api.DropInResult;
 import com.braintreepayments.api.PayPalClient;
+import com.braintreepayments.api.UserCanceledException;
 
 
-import com.braintreepayments.api.PayPalListener;
+
+import com.example.strip.Models.Request.PaymentRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IBrainTreeApiService;
-import com.example.strip.Utils.UnsafeOkHttpClient;
+import com.example.strip.network.ApiClient;
+
 import java.io.IOException;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import java.math.BigDecimal;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-public class PaymentActivity extends AppCompatActivity {
 
-    private Button btnPay;
+public class PaymentActivity extends AppCompatActivity implements DropInListener {
+
+    private EditText etAmount;
     private TextView tvResult;
+    private Button btnPay;
+
+    private DropInClient dropInClient;
     private String clientToken;
-    private PayPalClient payPalClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
-        btnPay = findViewById(R.id.btnPay);
+        etAmount = findViewById(R.id.etAmount);
         tvResult = findViewById(R.id.tvResult);
+        btnPay = findViewById(R.id.btnPay);
+
+        // ✅ Tạo DropInClient SỚM từ onCreate bằng ClientTokenProvider
+        dropInClient = new DropInClient(this, callback -> fetchClientToken(callback));
+        dropInClient.setListener(this);
 
 
-        // Load client token
-        fetchClientToken();
-
-        // Pay button click
         btnPay.setOnClickListener(v -> {
-            if (clientToken != null) {
-                BraintreeClient braintreeClient = new BraintreeClient(PaymentActivity.this, clientToken);
-                payPalClient = new PayPalClient(PaymentActivity.this, braintreeClient);
-
-                // Register the PayPalListener before calling tokenize
-                payPalClient.setListener(new PayPalListener() {
-                    @Override
-                    public void onPayPalSuccess(@NonNull PayPalAccountNonce payPalAccountNonce) {
-                        String nonce = payPalAccountNonce.getString();
-                        Log.d("NONCE", "Received nonce: " + nonce);
-                        tvResult.setText("Payment Success! Nonce: " + nonce);
-                        // TODO: send nonce to your backend for transaction
-                    }
-
-                    @Override
-                    public void onPayPalFailure(@NonNull Exception error) {
-                        Log.e("PAYPAL", "Payment failed: " + error.getMessage());
-                        tvResult.setText("Payment failed: " + error.getMessage());
-                    }
-                });
-
-                // Create the request and start the PayPal flow
-                PayPalCheckoutRequest request = new PayPalCheckoutRequest("10.00");
-                request.setCurrencyCode("USD");
-
-                payPalClient.tokenizePayPalAccount(PaymentActivity.this, request);
-            } else {
-                Toast.makeText(this, "Client token not ready yet", Toast.LENGTH_SHORT).show();
+            String amount = etAmount.getText().toString().trim();
+            if (amount.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập số tiền", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // ✅ Mở giao diện Drop-In
+            DropInRequest dropInRequest = new DropInRequest();
+            dropInClient.launchDropIn(dropInRequest);
         });
-
-
-
-
     }
 
-    private void fetchClientToken() {
-        Retrofit retrofit = getRetrofitClient();
+    private void fetchClientToken(ClientTokenCallback callback) {
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
         IBrainTreeApiService service = retrofit.create(IBrainTreeApiService.class);
-        Call<ResponseBody> call = service.getClientToken();
 
-        call.enqueue(new Callback<ResponseBody>() {
+        service.getClientToken().enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
                     try {
-                        clientToken = response.body().string();
-                        Log.d("TOKEN", "Client Token: " + clientToken);
-                        tvResult.setText("Token ready. You can now press Pay.");
+                        clientToken = response.body().string().trim();
+                        callback.onSuccess(clientToken);
                     } catch (IOException e) {
-                        e.printStackTrace();
-                        tvResult.setText("Error parsing token");
+                        callback.onFailure(e);
                     }
                 } else {
-                    tvResult.setText("Failed to get client token");
+                    callback.onFailure(new Exception("Không lấy được token"));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                tvResult.setText("API Error: " + t.getMessage());
+                callback.onFailure(new Exception(t));
             }
         });
     }
 
-    private Retrofit getRetrofitClient() {
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        String jwtToken = sharedPreferences.getString("jwtToken", null);
-
-        if (jwtToken == null) {
-            Toast.makeText(PaymentActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
+    @Override
+    public void onDropInSuccess(@NonNull DropInResult result) {
+        if (result.getPaymentMethodNonce() != null) {
+            String nonce = result.getPaymentMethodNonce().getString();
+            String amount = etAmount.getText().toString().trim();
+            Log.d("DROPIN", "✅ Nonce: " + nonce);
+            sendNonceToBackend(amount, nonce);
+        } else {
+            Toast.makeText(this, "Không có phương thức thanh toán nào được chọn", Toast.LENGTH_SHORT).show();
         }
-
-        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-                .newBuilder()
-                .addInterceptor(chain -> {
-                    Request.Builder requestBuilder = chain.request().newBuilder();
-                    if (jwtToken != null) {
-                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-                    }
-                    return chain.proceed(requestBuilder.build());
-                })
-                .build();
-
-        return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
 
+    @Override
+    public void onDropInFailure(@NonNull Exception error) {
+        if (error instanceof UserCanceledException) {
+            Toast.makeText(this, "🚫 Giao dịch bị huỷ", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "❌ Lỗi Drop-In: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendNonceToBackend(String amount, String nonce) {
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        IBrainTreeApiService service = retrofit.create(IBrainTreeApiService.class);
+
+        service.checkout(nonce, amount).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(PaymentActivity.this, "✅ Thanh toán thành công!", Toast.LENGTH_SHORT).show();
+                    tvResult.setText("Thành công");
+                } else {
+                    Toast.makeText(PaymentActivity.this, "❌ Backend lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(PaymentActivity.this, "❌ Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
