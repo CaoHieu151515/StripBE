@@ -35,7 +35,7 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
     private ImageView licenseImageView;
     private Button btnNext;
     private static final int REQUEST_IMAGE_PICK = 100;
-    private byte[] ImageBytes;
+    private byte[] licenseImageBytes;
 
 
     @Override
@@ -84,7 +84,10 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
         });
         btnNext.setOnClickListener(v -> {
             Intent intent = new Intent(this, ConfirmDriverTwoActivity.class);
-
+            intent.putExtra("firstName", etFullName.getText().toString());
+            intent.putExtra("lastName", etLastName.getText().toString());
+            intent.putExtra("phone", etPhone.getText().toString());
+            intent.putExtra("driverLicense", licenseImageBytes);
             startActivity(intent);
         });
         licenseImageView.setOnClickListener(v -> {
@@ -124,8 +127,8 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    licenseImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + licenseImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();

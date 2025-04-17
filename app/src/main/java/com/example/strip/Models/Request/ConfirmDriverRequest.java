@@ -36,7 +36,17 @@ public class ConfirmDriverRequest {
     private byte[] carInsurance;
     private String carInsuranceContentType;
 
-    public ConfirmDriverRequest(String firstName, String lastName, String phone, byte[] driverLicense, byte[] identityCardFaceUp, String driverLicenseContentType, String identityCardFaceUpContentType, byte[] identityCardFacedown, String identityCardFacedownContentType, Integer numberOfSeats, String vehicleType, String vehicleNumber, String vehicleColor, byte[] vehicleImage, String vehicleBrand, String vehicleImageContentType, byte[] carRegistration, String carRegistrationContentType, byte[] vehicleInspectionCertificate, String vehicleInspectionCertificateContentType, byte[] carInsurance, String carInsuranceContentType) {
+    public ConfirmDriverRequest(String firstName,
+                                String lastName,
+                                String phone,
+                                byte[] driverLicense, byte[] identityCardFaceUp,
+                                String driverLicenseContentType, String identityCardFaceUpContentType,
+                                byte[] identityCardFacedown, String identityCardFacedownContentType,
+                                Integer numberOfSeats, String vehicleType, String vehicleNumber, String vehicleColor,
+                                byte[] vehicleImage, String vehicleBrand, String vehicleImageContentType,
+                                byte[] carRegistration, String carRegistrationContentType,
+                                byte[] vehicleInspectionCertificate, String vehicleInspectionCertificateContentType,
+                                byte[] carInsurance, String carInsuranceContentType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;

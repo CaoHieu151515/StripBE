@@ -6,10 +6,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.strip.Activities.Intro.IntroFiveActivity;
+import com.example.strip.Activities.Intro.IntroFourActivity;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Models.Request.RegisterVM;
 import com.example.strip.Models.Response.ResponseMessage;
@@ -42,6 +45,15 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Navigate to CustomerHomeActivity
                 registerPassenger();
+            }
+        });
+        ImageView backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, BeginActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }

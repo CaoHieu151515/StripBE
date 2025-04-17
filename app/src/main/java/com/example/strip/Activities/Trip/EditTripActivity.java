@@ -59,6 +59,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -74,7 +75,7 @@ public class EditTripActivity extends AppCompatActivity {
     private TextView tvStartLocation, tvEndLocation,
             tvStartDate, tvEndDate,
             tvStopLoca, tvEstimatedTime, tvEstimatedKM, tvStopLocaPosition, tvTripStatus;
-    private Button btnFindLocation, btnAddLocation, btnUpdateTripLocation;
+    private Button btnFindLocation, btnAddLocation, btnUpdateTripLocation, btnStart, btnComplete;
     private String tripId;
     private RecyclerView recyclerTripStops;
     private String lastClicked = "";
@@ -82,10 +83,10 @@ public class EditTripActivity extends AppCompatActivity {
     private List<StopLocationUpdateRequest> tempStopList = new ArrayList<>();
     private TripStopAdapter tripStopAdapter;
     private int REQUEST_MAP = 1001;
-    private String startLocation, endLocation;
+    private String startLocation, endLocation, formatTimeShow, formatTimeStore;
 
     private double distance;
-    private int position, duration;
+    private int position = 1, duration;
     // Inside EditTripActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +104,12 @@ public class EditTripActivity extends AppCompatActivity {
         btnAddLocation = findViewById(R.id.btnAddLocation);
         btnUpdateTripLocation = findViewById(R.id.btnUpdateTripLocation);
         tvTripStatus = findViewById(R.id.tvTripStatus);
+        btnStart = findViewById(R.id.btnStart);
+        btnComplete = findViewById(R.id.btnComplete);
         recyclerTripStops = findViewById(R.id.recyclerTripStops);
-        EditText edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
 
+        EditText edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
+        tvStopLocaPosition.setText("" + position);
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(v -> finish());
 
@@ -144,19 +148,13 @@ public class EditTripActivity extends AppCompatActivity {
                     selectedCalendar.set(Calendar.MINUTE, selectedMinute);
                     selectedCalendar.set(Calendar.SECOND, 0);
                     selectedCalendar.set(Calendar.MILLISECOND, 0);
-
+                    SimpleDateFormat sdfStore = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+                    formatTimeStore = sdfStore.format(selectedCalendar.getTime());
                     // Format with line break between date and time
                     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy'\n'hh:mm:ss a", Locale.getDefault());
-                    String formattedDate = sdf.format(selectedCalendar.getTime());
+                    formatTimeShow = sdf.format(selectedCalendar.getTime());
 
-                    edtStopLocaTime.setText(formattedDate);
-
-                    // Calculate etEndDate
-//                    Calendar calendarEndDate = (Calendar) selectedCalendar.clone();
-//                    calendarEndDate.add(Calendar.MINUTE, (int) duration);
-//
-//                    String endDateStr = sdf.format(calendarEndDate.getTime());
-//                    etEndDate.setText(endDateStr);
+                    edtStopLocaTime.setText(formatTimeShow);
 
                 }, hour, minute, false // false = 12-hour format
                 );
@@ -167,6 +165,8 @@ public class EditTripActivity extends AppCompatActivity {
 
             datePickerDialog.show();
         });
+
+
         btnFindLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,7 +196,7 @@ public class EditTripActivity extends AppCompatActivity {
             try {
                 StopLocationUpdateRequest newStop = new StopLocationUpdateRequest();
                 newStop.setStopLoca(tvStopLoca.getText().toString());
-                newStop.setStopLocaTime(edtStopLocaTime.getText().toString());
+                newStop.setStopLocaTime(formatTimeStore);
                 newStop.setStopLocaStatus("UPCOMMING");
                 newStop.setEstimatedTime(duration);
                 newStop.setEstimatedKM(distance);
@@ -218,8 +218,52 @@ public class EditTripActivity extends AppCompatActivity {
                 currentList.add(displayStop);
                 tripStopAdapter.notifyItemInserted(currentList.size() - 1);
                 loadTripDetails();
+
+                tvStopLoca.setText("Stop Location");
+                tvEstimatedTime.setText(" - mins");
+                tvEstimatedKM.setText(" - km");
+                edtStopLocaTime.setText("DD-MM-YYYY\n hh:mm:ss tt");
+                position++;
+                tvStopLocaPosition.setText("" + position);
+
             } catch (Exception ex) {
                 Toast.makeText(this, "Invalid stop info: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ITripMobileApiService apiService = ApiClient.getClientWithToken(EditTripActivity.this).create(ITripMobileApiService.class);
+                Call<Void> call = apiService.startTrip(tripId);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(EditTripActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(EditTripActivity.this, "Failed to start trip", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        btnComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ITripMobileApiService apiService = ApiClient.getClientWithToken(EditTripActivity.this).create(ITripMobileApiService.class);
+                Call<Void> call = apiService.completeTrip(tripId);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Toast.makeText(EditTripActivity.this, "Trip completed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(EditTripActivity.this, "Failed to complete trip", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
@@ -267,7 +311,6 @@ public class EditTripActivity extends AppCompatActivity {
                             }
                         });
                         recyclerTripStops.setAdapter(adapter);
-                        position = adapter.getItemCount() + 1;
                         tvStopLocaPosition.setText(String.valueOf(position));
                     }
                 } else {
@@ -317,4 +360,5 @@ public class EditTripActivity extends AppCompatActivity {
             // Do something with the returned data
         }
     }
+
 }

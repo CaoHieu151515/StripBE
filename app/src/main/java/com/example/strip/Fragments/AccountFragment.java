@@ -26,8 +26,15 @@ import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -90,30 +97,6 @@ public class AccountFragment extends Fragment {
 
         return view;
     }
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(getContext(), "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//
-//
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void fetchUserInfo() {
         Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
@@ -136,7 +119,7 @@ public class AccountFragment extends Fragment {
                     tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "N/A");
                     tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "N/A");
                     tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "N/A");
-                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? user.getUserDetailsCusDTO().getDob() : "N/A");
+                    tvDob.setText(DateFormatter.formatDatePrimary(user.getUserDetailsCusDTO().getDob()));
                     // Hiển thị ảnh nếu có
                     String ivImageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (ivImageUrl != null && !ivImageUrl.isEmpty()) {

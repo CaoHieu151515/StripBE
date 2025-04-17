@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -22,6 +24,11 @@ import com.example.strip.network.ApiClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,8 +40,8 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
     private Button btnNext;
     private static final int REQUEST_IMAGE_PICK = 100;
     private static final int REQUEST_IMAGE_TWO_PICK = 101;
-
-    private byte[] ImageBytes;
+    private String firstName, lastName, phone;
+    private byte[] licenseImageBytes, faceUpImageBytes, faceDownImageBytes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +50,7 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
         faceDownImageView = findViewById(R.id.faceDownImageView);
         btnNext = findViewById(R.id.btnNext);
         ImageView btnBack = findViewById(R.id.backButton);
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,9 +59,22 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
         });
         btnNext.setOnClickListener(v -> {
             Intent intent = new Intent(this, ConfirmDriverThreeActivity.class);
+            intent.putExtra("firstName", firstName);
+            intent.putExtra("lastName", lastName);
+            intent.putExtra("phone", phone);
+            intent.putExtra("driverLicense", licenseImageBytes);
 
+            intent.putExtra("identityCardFaceUp", faceUpImageBytes);
+            intent.putExtra("identityCardFacedown", faceDownImageBytes);
             startActivity(intent);
         });
+        Intent intent = getIntent();
+        if (intent != null) {
+            licenseImageBytes = intent.getByteArrayExtra("driverLicense");
+            firstName = intent.getStringExtra("firstName");
+            lastName = intent.getStringExtra("lastName");
+            phone = intent.getStringExtra("phone");
+        }
         faceUpImageView.setOnClickListener(v -> {
             openFaceUpImageViewPicker();
         });
@@ -83,6 +104,9 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                 Toast.makeText(ConfirmDriverTwoActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
+
     }
     private void loadImageWithFixHost(String url, ImageView target) {
         if (url != null && !url.isEmpty()) {
@@ -122,8 +146,8 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    faceUpImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + faceUpImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -139,8 +163,8 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    faceDownImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + faceDownImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();

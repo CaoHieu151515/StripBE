@@ -37,6 +37,7 @@ import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
@@ -86,6 +87,8 @@ public class AddTripActivity extends AppCompatActivity{
     private String startLocation, endLocation;
     private double distance;
     private int duration;
+    private String formatTimeShow, formatTimeStore, formatTimeStoreTwo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +132,7 @@ public class AddTripActivity extends AppCompatActivity{
             }
         });
         retrofit = ApiClient.getClientWithToken(this);
-//        btnCreateTrip.setOnClickListener(v -> createTrip());
+        btnCreateTrip.setOnClickListener(v -> createTrip());
         fetchUserInfo();
 
         etStartDate.setOnClickListener(v -> {
@@ -158,18 +161,24 @@ public class AddTripActivity extends AppCompatActivity{
                     selectedCalendar.set(Calendar.SECOND, 0);
                     selectedCalendar.set(Calendar.MILLISECOND, 0);
 
-                    // Format with line break between date and time
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy'\n'hh:mm:ss a", Locale.getDefault());
-                    String formattedDate = sdf.format(selectedCalendar.getTime());
+                    // Formatters
+                    SimpleDateFormat sdfStore = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+                    SimpleDateFormat sdfDisplay = new SimpleDateFormat("MM/dd/yyyy'\n'hh:mm:ss a", Locale.getDefault());
 
-                    etStartDate.setText(formattedDate);
+                    // Format start date
+                    formatTimeStore = sdfStore.format(selectedCalendar.getTime());
+                    formatTimeShow = sdfDisplay.format(selectedCalendar.getTime());
+                    etStartDate.setText(formatTimeShow);
 
                     // Calculate etEndDate
                     Calendar calendarEndDate = (Calendar) selectedCalendar.clone();
                     calendarEndDate.add(Calendar.MINUTE, (int) duration);
 
-                    String endDateStr = sdf.format(calendarEndDate.getTime());
-                    etEndDate.setText(endDateStr);
+                    String endDateDisplay = sdfDisplay.format(calendarEndDate.getTime());
+                    etEndDate.setText(endDateDisplay);
+
+                    // Format end date in ISO format
+                    formatTimeStoreTwo = sdfStore.format(calendarEndDate.getTime());
 
                 }, hour, minute, false // false = 12-hour format
                 );
@@ -184,41 +193,42 @@ public class AddTripActivity extends AppCompatActivity{
 
 
 
+
     }
-//    private void createTrip() {
-//        String driverId = user.getDriver().getDriverID();
-//        String vehicleId = selectedVehicleId;
-//        int pricePerSeat = Integer.parseInt(etPricePerSeat.getText().toString().trim());
-//        int maxSeat = Integer.parseInt(etMaxSeat.getText().toString().trim());
-//        String startDate = etStartDate.getText().toString().trim();
-//        String endDate = etEndDate.getText().toString().trim();
-//        String startLocation = "";
-//        String endLocation = "";
-//        String description = etDescription.getText().toString().trim();
-//        String condition = etCondition.getText().toString().trim();
-//
-//        TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, pricePerSeat, maxSeat,
-//                startDate, endDate, startLocation, endLocation, description, condition);
-//
-//        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
-//        tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
-//            @Override
-//            public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Log.e("Failed", "Failed to create trips!" + response.code());
-//                    Toast.makeText(AddTripActivity.this, "Failed to Create Trip!", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<TripDetail> call, Throwable t) {
-//                Log.e("API_ERROR", "Error: " + t.getMessage());
-//                Toast.makeText(AddTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    private void createTrip() {
+        String driverId = user.getDriver().getDriverID();
+        String vehicleId = selectedVehicleId;
+        int pricePerSeat = Integer.parseInt(etPricePerSeat.getText().toString().trim());
+        int maxSeat = Integer.parseInt(etMaxSeat.getText().toString().trim());
+        String startDate = formatTimeStore;
+        String endDate = formatTimeStoreTwo;
+        String startLocation = tvStartLocation.getText().toString().trim();
+        String endLocation = tvEndLocation.getText().toString().trim();
+        String description = etDescription.getText().toString().trim();
+        String condition = etCondition.getText().toString().trim();
+
+        TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, ImageBytes, "image/png",
+                pricePerSeat, maxSeat,startDate ,endDate, startLocation, endLocation, description, condition);
+
+        ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
+        tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
+            @Override
+            public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("Failed", "Failed to create trips!" + response.code());
+                    Toast.makeText(AddTripActivity.this, "Failed to Create Trip!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TripDetail> call, Throwable t) {
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                Toast.makeText(AddTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void fetchUserInfo() {
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);

@@ -3,6 +3,7 @@ package com.example.strip.Services;
 import com.example.strip.Models.Request.JoinTripRequest;
 import com.example.strip.Models.Request.StopLocationUpdateRequest;
 import com.example.strip.Models.Request.TripCreateRequest;
+import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.Models.Trip;
 import com.example.strip.Models.TripDetail;
 
@@ -15,6 +16,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ITripMobileApiService {
     @GET("api/mobile/trips/getAll/card")
@@ -30,4 +32,14 @@ public interface ITripMobileApiService {
             @Path("tripId") String tripId,
             @Body List<StopLocationUpdateRequest> stopLocations
     );
+    @GET("api/mobile/trips/getall/active")
+    Call<List<TripActiveResponse>> getActiveTrips(
+            @Query("page") int page,
+            @Query("size") int size
+    );
+    @PUT("api/mobile/trips/{tripId}/start")
+    Call<Void> startTrip(@Path("tripId") String tripId);
+
+    @PUT("api/mobile/trips/trips/{tripId}/complete")
+    Call<Void> completeTrip(@Path("tripId") String tripId);
 }

@@ -35,9 +35,12 @@ import com.example.strip.network.ApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -55,7 +58,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
     private byte[] userImageBytes;
     private static final int REQUEST_IMAGE_PICK = 100;
 
-
+    private String formatTimeShow, formatTimeStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +93,27 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
             etLastName.setText(intent.getStringExtra("lastName"));
             etPhone.setText(intent.getStringExtra("phone"));
             etAddress.setText(intent.getStringExtra("address"));
-            etDob.setText(intent.getStringExtra("dob"));
+            String isoDob = intent.getStringExtra("dob");
+            if (isoDob != null && !isoDob.isEmpty()) {
+                try {
+                    // Step 1: Parse the ISO 8601 date
+                    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+                    isoFormat.setTimeZone(TimeZone.getTimeZone("UTC")); // Important if your date has Z (UTC) suffix
+                    Date date = isoFormat.parse(isoDob);
+
+                    // Step 2: Format to dd/MM/yyyy
+                    SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    String formattedDob = displayFormat.format(date);
+
+                    // Step 3: Set it to the EditText
+                    etDob.setText(formattedDob);
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    etDob.setText("Invalid date");
+                }
+            }
+
             etGender.setText(intent.getStringExtra("gender"));
         }
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -120,11 +143,12 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
                 selectedCalendar.set(Calendar.MILLISECOND, 0); // Set milliseconds to 0
 
                 // Format the date to ISO 8601 format (yyyy-MM-dd'T'HH:mm:ss.SSS'Z')
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                String dob = sdf.format(selectedCalendar.getTime());
-
+                SimpleDateFormat sdfStore = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+                formatTimeStore = sdfStore.format(selectedCalendar.getTime());
+                SimpleDateFormat sdfShow = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                formatTimeShow = sdfShow.format(selectedCalendar.getTime());
                 // Set the formatted date into the EditText
-                etDob.setText(dob);
+                etDob.setText(formatTimeShow);
             }, year, month, day
             );
 
@@ -133,9 +157,9 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
 
         etGender.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Select Gender");
+            builder.setTitle("Chọn giới tính");
 
-            String[] genders = {"Male", "Female"};
+            String[] genders = {"Nam", "Nữ"};
             builder.setItems(genders, (dialog, which) -> {
                 etGender.setText(genders[which]);
             });
@@ -209,7 +233,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter a valid date of birth!", Toast.LENGTH_SHORT).show();
             return;
         }
-        String dob = etDob.getText().toString().trim();
+        String dob = formatTimeStore;
         String gender = etGender.getText().toString();
         String userImageContentType = "image/png";
         byte[] userImage = userImageBytes;

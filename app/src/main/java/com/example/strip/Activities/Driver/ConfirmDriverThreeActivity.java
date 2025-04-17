@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -23,6 +24,7 @@ import com.example.strip.network.ApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,8 +34,10 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
     private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand, etVehicleStatus;
     private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView;
     private Button btnConfirmDriver;
-    private byte[] ImageBytes;
-
+    private byte[] vehicleImageBytes, carRegistrationImageBytes, inspectionCertificateImageBytes, insuranceImageBytes,
+            licenseImageBytes, faceUpImageBytes, faceDownImageBytes;
+    private String firstName, lastName, phone;
+    private Retrofit retrofit;
     private static final int REQUEST_IMAGE_PICK = 100;
     private static final int REQUEST_IMAGE_TWO_PICK = 101;
     private static final int REQUEST_IMAGE_THREE_PICK = 102;
@@ -53,6 +57,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         inspectionCertificateImageView = findViewById(R.id.inspectionCertificateImageView);
         insuranceImageView = findViewById(R.id.insuranceImageView);
         btnConfirmDriver = findViewById(R.id.btnConfirmDriver);
+        retrofit = ApiClient.getClientWithToken(this);
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +109,51 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            licenseImageBytes = intent.getByteArrayExtra("driverLicense");
+            firstName = intent.getStringExtra("firstName");
+            lastName = intent.getStringExtra("lastName");
+            phone = intent.getStringExtra("phone");
+
+            faceUpImageBytes = intent.getByteArrayExtra("identityCardFaceUp");
+            faceDownImageBytes = intent.getByteArrayExtra("identityCardFacedown");
+        }
+        btnConfirmDriver.setOnClickListener(v -> {
+            // 2. Create request object
+            ConfirmDriverRequest request = new ConfirmDriverRequest(
+                    firstName, lastName, phone,
+                    licenseImageBytes, faceUpImageBytes,
+                    "image/png", "image/png",
+                    faceDownImageBytes, "image/png",
+                    Integer.parseInt(etSeats.getText().toString()), etVehicleType.getText().toString(), etVehicleNumber.getText().toString(), etVehicleColor.getText().toString(),
+                    vehicleImageBytes, etVehicleBrand.getText().toString(), "image/png",
+                    carRegistrationImageBytes, "image/png",
+                    inspectionCertificateImageBytes, "image/png",
+                    insuranceImageBytes, "image/png"
+            );
+            // 3. Make API call
+            IUserMobileApiService apiService = ApiClient.getClientWithToken(this).create(IUserMobileApiService.class);
+            apiService.confirmDriver(request).enqueue(new Callback<RequestBody>() {
+                @Override
+                public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(ConfirmDriverThreeActivity.this, "Driver confirmed successfully!", Toast.LENGTH_SHORT).show();
+                        // You can navigate to another activity if needed
+                    } else {
+                        Toast.makeText(ConfirmDriverThreeActivity.this, "Failed to confirm driver: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RequestBody> call, Throwable t) {
+                    Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+
     }
     private void loadImageWithFixHost(String url, ImageView target) {
         if (url != null && !url.isEmpty()) {
@@ -153,8 +203,8 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    vehicleImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + vehicleImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -170,8 +220,8 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    carRegistrationImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + carRegistrationImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -187,8 +237,8 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    inspectionCertificateImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + inspectionCertificateImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -204,8 +254,8 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
+                    insuranceImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + insuranceImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -213,4 +263,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 }
