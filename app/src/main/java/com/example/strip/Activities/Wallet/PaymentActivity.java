@@ -2,8 +2,10 @@ package com.example.strip.Activities.Wallet;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ public class PaymentActivity extends AppCompatActivity implements DropInListener
 
     private DropInClient dropInClient;
     private String clientToken;
+    private ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,13 @@ public class PaymentActivity extends AppCompatActivity implements DropInListener
         etAmount = findViewById(R.id.etAmount);
         tvResult = findViewById(R.id.tvResult);
         btnPay = findViewById(R.id.btnPay);
-
+        backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         // ✅ Tạo DropInClient SỚM từ onCreate bằng ClientTokenProvider
         dropInClient = new DropInClient(this, callback -> fetchClientToken(callback));
         dropInClient.setListener(this);
