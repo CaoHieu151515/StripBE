@@ -19,6 +19,7 @@ import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.DriverPackageSubscription;
 import strip.domain.PackageDriver;
+import strip.domain.Payment;
 import strip.domain.RequestTrip;
 import strip.domain.SystemWallet;
 import strip.domain.Trip;
@@ -40,6 +41,7 @@ import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.AuthorityRepository;
 import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
+import strip.repository.PaymentRepository;
 import strip.repository.RequestTripRepository;
 import strip.repository.SystemWalletRepository;
 import strip.repository.TripRepository;
@@ -91,6 +93,7 @@ public class UserMobileService {
     private final RequestTripRepository requestTripRepository;
     private final TripRepository tripRepository;
     private final RequestTripMapper requestTripMapper;
+    private final PaymentRepository paymentRepository;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -108,7 +111,8 @@ public class UserMobileService {
         TripCusMapper tripCusMapper,
         RequestTripRepository requestTripRepository,
         TripRepository tripRepository,
-        RequestTripMapper requestTripMapper
+        RequestTripMapper requestTripMapper,
+        PaymentRepository paymentRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -126,6 +130,7 @@ public class UserMobileService {
         this.requestTripRepository = requestTripRepository;
         this.tripRepository = tripRepository;
         this.requestTripMapper = requestTripMapper;
+        this.paymentRepository = paymentRepository;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -285,10 +290,24 @@ public class UserMobileService {
         UserWallet userWallet = getValidUserWalletWithBalance(user, price);
         SystemWallet systemWallet = systemWalletRepository.findTopByOrderByMobifyDateDesc().orElseGet(this::createInitialSystemWallet);
 
+        Payment payment = createPaymentForDriverPackage(user, pkg, price);
         createAndAssignSubscription(driver, pkg, price);
         updateDriverStatusAndExpiration(driver, pkg);
-        handleWalletTransactions(userWallet, systemWallet, price);
+        handleWalletTransactions(userWallet, systemWallet, price, pkg, payment);
         addDriverRoleIfMissing(user);
+    }
+
+    private Payment createPaymentForDriverPackage(User user, PackageDriver pkg, double price) {
+        Payment payment = new Payment();
+        payment.setPaymentID(UUID.randomUUID());
+        payment.setAmount(price);
+        payment.setPaymentDate(Instant.now());
+        payment.setPaymentStatus(PaymentStatus.SUCCESS);
+        payment.setTransactionId(UUID.randomUUID().toString());
+        payment.setUser(user);
+        payment.setPackageDriver(pkg);
+
+        return paymentRepository.save(payment);
     }
 
     private User getCurrentUser() {
@@ -350,7 +369,13 @@ public class UserMobileService {
         }
     }
 
-    private void handleWalletTransactions(UserWallet userWallet, SystemWallet systemWallet, double price) {
+    private void handleWalletTransactions(
+        UserWallet userWallet,
+        SystemWallet systemWallet,
+        double price,
+        PackageDriver pkg,
+        Payment payment
+    ) {
         Instant now = Instant.now();
 
         // User transaction
@@ -362,6 +387,7 @@ public class UserMobileService {
         userTx.setTransStatus(TransactionStatus.SUCCESS);
         userTx.setTransactionThirdPartyID(null);
         userTx.setUserWallet(userWallet);
+        userTx.setPayment(payment);
         userWallet.addWalletTransactionAndUpdateBalance(userTx);
         userWalletRepository.save(userWallet);
 
@@ -374,6 +400,8 @@ public class UserMobileService {
         sysTx.setTransStatus(TransactionStatus.SUCCESS);
         sysTx.setTransactionThirdPartyID(null);
         sysTx.setSystemWallet(systemWallet);
+        sysTx.setPayment(payment);
+        sysTx.setUserWallet(userWallet);
         systemWallet.addWalletTransaction(sysTx);
         systemWalletRepository.save(systemWallet);
     }
@@ -945,7 +973,7 @@ public class UserMobileService {
         walletTransactionRepository.save(passengerTx);
         userWalletRepository.save(wallet);
 
-        createSystemTransaction(amount, WalletTransactionType.SYSTEM_GAIN_PASSENGER_APPROVE_FEE);
+        createSystemTransaction(amount, WalletTransactionType.SYSTEM_GAIN_PASSENGER_APPROVE_FEE, wallet);
     }
 
     private void createPendingTransaction(User user, double amount, UUID tripId) {
@@ -969,7 +997,7 @@ public class UserMobileService {
         userWalletRepository.save(wallet);
     }
 
-    private void createSystemTransaction(double amount, WalletTransactionType type) {
+    private void createSystemTransaction(double amount, WalletTransactionType type, UserWallet wallet) {
         SystemWallet systemWallet = systemWalletRepository
             .findTopByOrderByMobifyDateDesc()
             .orElseThrow(() -> new BadRequestAlertException("System wallet not found", "systemWallet", "notfound"));
@@ -980,6 +1008,7 @@ public class UserMobileService {
         tx.setAmount(amount);
         tx.setDate(Instant.now());
         tx.setWalletType(type);
+        tx.setUserWallet(wallet);
         tx.setTransStatus(TransactionStatus.SUCCESS);
 
         systemWallet.setBefore(systemWallet.getCurrent());

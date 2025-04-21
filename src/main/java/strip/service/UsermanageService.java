@@ -883,44 +883,68 @@ public class UsermanageService {
 
     private String resolveUserName(UserWallet wallet) {
         if (wallet == null || wallet.getUser() == null) return "Unknown User";
-        return wallet.getUser().getFirstName() + " " + wallet.getUser().getLastName() + " (User)";
+        return wallet.getUser().getFirstName() + " " + wallet.getUser().getLastName();
     }
 
     private String resolveFrom(WalletTransaction tx) {
         return switch (tx.getWalletType()) {
             case DEPOSIT -> "System";
-            case WITHDRAW, DRIVER_BUY_PACKAGE, DRIVER_CREATE_TRIP_FEE -> resolveUserName(tx.getUserWallet());
-            case SYSTEM_GAIN_CREATE_TRIP_FEE, SYSTEM_GAIN_PACKAGE_FEE -> resolveUserName(tx.getUserWallet());
-            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "System";
+            case SYSTEM_GAIN_PACKAGE_FEE -> {
+                if (tx.getPayment() != null && tx.getPayment().getUser() != null) {
+                    User user = tx.getPayment().getUser();
+                    yield user.getFirstName() + " " + user.getLastName() + " (User)";
+                }
+                yield "Unknown";
+            }
+            case WITHDRAW,
+                DRIVER_CREATE_TRIP_FEE,
+                DRIVER_BUY_PACKAGE,
+                PASSENGER_APPROVE_FEE,
+                SYSTEM_GAIN_CREATE_TRIP_FEE,
+                SYSTEM_GAIN_DONE_TRIP_FEE,
+                SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> resolveUserName(tx.getUserWallet());
+            case DRIVER_DONE_TRIP_FEE -> "Passenger(s)";
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP, SYSTEM_REFUND_TO_PASSENGER, DRIVER_DONE_TRIP_REFUND, REFUND -> "System";
             default -> "Unknown";
         };
     }
 
     private String resolveTo(WalletTransaction tx) {
         return switch (tx.getWalletType()) {
-            case DEPOSIT, SYSTEM_REFUND_TO_PASSENGER -> resolveUserName(tx.getUserWallet());
-            case SYSTEM_GAIN_PACKAGE_FEE, SYSTEM_GAIN_CREATE_TRIP_FEE -> "System";
-            case DRIVER_DONE_TRIP_REFUND -> resolveUserName(tx.getUserWallet());
+            case DEPOSIT, SYSTEM_REFUND_TO_DRIVER_DONE_TRIP, SYSTEM_REFUND_TO_PASSENGER, DRIVER_DONE_TRIP_REFUND, REFUND -> resolveUserName(
+                tx.getUserWallet()
+            );
+            case WITHDRAW,
+                DRIVER_CREATE_TRIP_FEE,
+                DRIVER_BUY_PACKAGE,
+                PASSENGER_APPROVE_FEE,
+                SYSTEM_GAIN_CREATE_TRIP_FEE,
+                SYSTEM_GAIN_PACKAGE_FEE,
+                SYSTEM_GAIN_DONE_TRIP_FEE,
+                SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> "System";
+            case DRIVER_DONE_TRIP_FEE -> "System";
             default -> "Unknown";
         };
     }
 
     private String buildDescription(WalletTransaction tx) {
         return switch (tx.getWalletType()) {
+            // 🔹 Giao dịch liên quan đến chuyến đi
+            case DRIVER_DONE_TRIP_FEE -> "Tổng tiền thu từ chuyến đi" + buildTripIdSuffix(tx);
+            case DRIVER_CREATE_TRIP_FEE -> "Tài xế tạo chuyến đi, trừ phí" + buildTripIdSuffix(tx);
+            case SYSTEM_GAIN_CREATE_TRIP_FEE -> "Hệ thống thu phí tạo chuyến" + buildTripIdSuffix(tx);
+            case SYSTEM_GAIN_DONE_TRIP_FEE -> "Hệ thống thu từ chuyến đi hoàn thành" + buildTripIdSuffix(tx);
+            case PASSENGER_APPROVE_FEE -> "Tiền cọc của hành khách" + buildTripIdSuffix(tx);
+            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "Hệ thống hoàn tiền cho tài xế" + buildTripIdSuffix(tx);
+            case SYSTEM_REFUND_TO_PASSENGER -> "Hệ thống hoàn tiền cho hành khách" + buildTripIdSuffix(tx);
+            // 🔹 Giao dịch liên quan đến gói tài xế
+            case DRIVER_BUY_PACKAGE -> "Tài xế mua gói dịch vụ" + getPackageIdSuffix(tx);
+            case SYSTEM_GAIN_PACKAGE_FEE -> "Hệ thống thu tiền từ tài xế mua gói" + getPackageIdSuffix(tx);
+            // 🔹 Giao dịch người dùng
             case DEPOSIT -> "Người dùng nạp tiền vào ví";
             case WITHDRAW -> "Người dùng rút tiền từ ví";
             case REFUND -> "Hoàn tiền về ví người dùng";
-            case DRIVER_CREATE_TRIP_FEE -> "Tài xế tạo chuyến đi, trừ phí từ ví tài xế";
-            case DRIVER_DONE_TRIP_REFUND -> "Hoàn tiền lại cho tài xế khi hoàn tất chuyến đi";
-            case DRIVER_DONE_TRIP_FEE -> "Tổng tiền thu được từ các ghế đã đặt của chuyến đi";
-            case PASSENGER_APPROVE_FEE -> "Tiền cọc của hành khách khi đặt chỗ chuyến đi";
-            case SYSTEM_GAIN_CREATE_TRIP_FEE -> "Hệ thống thu phí từ việc tài xế tạo chuyến";
-            case SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> "Hệ thống giữ lại tiền cọc từ hành khách";
-            case SYSTEM_GAIN_DONE_TRIP_FEE -> "Hệ thống thu phí từ chuyến đi hoàn thành";
-            case DRIVER_BUY_PACKAGE -> "Tài xế mua gói dịch vụ";
-            case SYSTEM_GAIN_PACKAGE_FEE -> "Hệ thống thu tiền từ tài xế mua gói";
-            case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "Hệ thống hoàn tiền cho tài xế (sau chuyến đi)";
-            case SYSTEM_REFUND_TO_PASSENGER -> "Hệ thống hoàn tiền cho hành khách";
+            // 🔹 Giao dịch khác
             default -> "Giao dịch hệ thống khác";
         };
     }
@@ -954,5 +978,17 @@ public class UsermanageService {
     public double getAverageRatingForDriver(UUID driverId) {
         Double avg = ratingRepository.findAverageRatingByDriverId(driverId);
         return avg != null ? avg : 0.0;
+    }
+
+    private String buildTripIdSuffix(WalletTransaction tx) {
+        String id = tx.getTransactionThirdPartyID();
+        return (id != null && !id.isBlank()) ? " (Trip ID: " + id + ")" : "";
+    }
+
+    private String getPackageIdSuffix(WalletTransaction tx) {
+        if (tx.getPayment() != null && tx.getPayment().getPackageDriver() != null) {
+            return " (Gói: " + tx.getPayment().getPackageDriver().getName() + ")";
+        }
+        return "";
     }
 }

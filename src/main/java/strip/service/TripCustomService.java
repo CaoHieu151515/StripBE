@@ -190,7 +190,7 @@ public class TripCustomService {
         userTx.setDate(Instant.now());
         userTx.setWalletType(WalletTransactionType.DRIVER_CREATE_TRIP_FEE);
         userTx.setTransStatus(TransactionStatus.SUCCESS);
-        userTx.setTransactionThirdPartyID(null);
+        userTx.setTransactionThirdPartyID(trip.getTripID().toString());
         userTx.setUserWallet(userWallet);
         userWallet.addWalletTransactionAndUpdateBalance(userTx);
         userWalletRepository.save(userWallet);
@@ -201,7 +201,7 @@ public class TripCustomService {
         systemTx.setDate(Instant.now());
         systemTx.setWalletType(WalletTransactionType.SYSTEM_GAIN_CREATE_TRIP_FEE);
         systemTx.setTransStatus(TransactionStatus.SUCCESS);
-        systemTx.setTransactionThirdPartyID(null);
+        systemTx.setTransactionThirdPartyID(trip.getTripID().toString());
         systemTx.setSystemWallet(systemWallet);
         systemWallet.addWalletTransactionAndUpdateBalance(systemTx);
         systemWalletRepository.save(systemWallet);
@@ -621,12 +621,12 @@ public class TripCustomService {
         double totalEarnings = passengers.stream().mapToDouble(RequestTrip::getAmountApproveFee).sum();
         double gainFee = totalEarnings * 0.1;
 
-        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee);
-        logSystemGainFee(systemWallet, gainFee);
-        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet);
+        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee, trip);
+        logSystemGainFee(systemWallet, gainFee, trip, driverWallet);
+        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet, trip);
     }
 
-    private void refundTripCreateFee(UserWallet driverWallet, SystemWallet systemWallet, double createFee, double gainFee) {
+    private void refundTripCreateFee(UserWallet driverWallet, SystemWallet systemWallet, double createFee, double gainFee, Trip trip) {
         double refund = createFee - gainFee;
         if (refund > 0) {
             WalletTransaction sysTx = new WalletTransaction();
@@ -635,6 +635,8 @@ public class TripCustomService {
             sysTx.setDate(Instant.now());
             sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP);
             sysTx.setTransStatus(TransactionStatus.SUCCESS);
+            sysTx.setTransactionThirdPartyID(trip.getTripID().toString());
+            sysTx.setUserWallet(driverWallet);
             systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
             systemWalletRepository.save(systemWallet);
 
@@ -645,23 +647,30 @@ public class TripCustomService {
             driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_REFUND);
             driverTx.setTransStatus(TransactionStatus.SUCCESS);
             driverTx.setUserWallet(driverWallet);
+            driverTx.setTransactionThirdPartyID(trip.getTripID().toString());
             driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
             userWalletRepository.save(driverWallet);
         }
     }
 
-    private void logSystemGainFee(SystemWallet systemWallet, double gainFee) {
+    private void logSystemGainFee(SystemWallet systemWallet, double gainFee, Trip trip, UserWallet driverWallet) {
         WalletTransaction tx = new WalletTransaction();
         tx.setTransID(UUID.randomUUID());
         tx.setAmount(gainFee);
         tx.setDate(Instant.now());
         tx.setWalletType(WalletTransactionType.SYSTEM_GAIN_DONE_TRIP_FEE);
         tx.setTransStatus(TransactionStatus.SUCCESS);
+        tx.setUserWallet(driverWallet);
         systemWallet.addWalletTransactionAndUpdateBalance(tx);
         systemWalletRepository.save(systemWallet);
     }
 
-    private void transferPassengerMoneyToDriver(List<RequestTrip> passengers, UserWallet driverWallet, SystemWallet systemWallet) {
+    private void transferPassengerMoneyToDriver(
+        List<RequestTrip> passengers,
+        UserWallet driverWallet,
+        SystemWallet systemWallet,
+        Trip trip
+    ) {
         for (RequestTrip request : passengers) {
             double amount = request.getAmountApproveFee();
 
@@ -672,6 +681,8 @@ public class TripCustomService {
             sysTx.setDate(Instant.now());
             sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP);
             sysTx.setTransStatus(TransactionStatus.SUCCESS);
+            sysTx.setUserWallet(driverWallet);
+            sysTx.setTransactionThirdPartyID(trip.getTripID().toString());
             systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
             systemWalletRepository.save(systemWallet);
 
@@ -683,6 +694,7 @@ public class TripCustomService {
             driverTx.setWalletType(WalletTransactionType.DRIVER_DONE_TRIP_REFUND);
             driverTx.setTransStatus(TransactionStatus.SUCCESS);
             driverTx.setUserWallet(driverWallet);
+            driverTx.setTransactionThirdPartyID(trip.getTripID().toString());
             driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
             userWalletRepository.save(driverWallet);
         }
@@ -730,9 +742,9 @@ public class TripCustomService {
         double totalEarnings = passengers.stream().mapToDouble(RequestTrip::getAmountApproveFee).sum();
         double gainFee = totalEarnings * 0.1;
 
-        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee);
-        logSystemGainFee(systemWallet, gainFee);
-        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet);
+        refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee, trip);
+        logSystemGainFee(systemWallet, gainFee, trip, driverWallet);
+        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet, trip);
     }
 
     public TripDetailForDriverHistoryDTO getTripDetailForDriver(UUID tripId) {
