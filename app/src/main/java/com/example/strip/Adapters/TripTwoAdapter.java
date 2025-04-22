@@ -73,7 +73,6 @@ public class TripTwoAdapter extends RecyclerView.Adapter<TripTwoAdapter.TripView
             tvEndLocation = itemView.findViewById(R.id.tvEndLocation);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvSeats = itemView.findViewById(R.id.tvSeats);
-            tvDriver = itemView.findViewById(R.id.tvDriver);
             tvVehicleType = itemView.findViewById(R.id.tvVehicleType);
             ivTripImage = itemView.findViewById(R.id.ivTripImage);
         }

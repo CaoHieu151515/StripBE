@@ -68,6 +68,8 @@ dependencies {
     implementation ("androidx.viewpager2:viewpager2:1.0.0")
     // Rounded ImageView dependency
     implementation ("com.makeramen:roundedimageview:2.3.0")
+    implementation ("com.google.android.material:material:1.11.0")
+
     //chat
     implementation ("im.crisp:crisp-sdk:2.0.5")
     implementation ("androidx.multidex:multidex:2.0.1")

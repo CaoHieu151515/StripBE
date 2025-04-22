@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.strip.Adapters.TripActiveAdapter;
 import com.example.strip.Adapters.TripAdapter;
-import com.example.strip.Adapters.TripTwoAdapter;
 import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.Models.Trip;
 import com.example.strip.R;
@@ -38,7 +37,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ManageTripActivity extends AppCompatActivity {
     private RecyclerView recyclerViewTrips;
-    private TripTwoAdapter tripAdapter;
     private RecyclerView recyclerView;
     private TripActiveAdapter tripActiveAdapter;
     private List<TripActiveResponse> tripList = new ArrayList<>();

@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.example.strip.Activities.Driver.AddTripActivity;
 import com.example.strip.Activities.Driver.ManageTripActivity;
 import com.example.strip.Adapters.TripActiveAdapter;
-import com.example.strip.Adapters.TripTwoAdapter;
 import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
@@ -31,7 +30,6 @@ import retrofit2.Response;
 
 public class ManageTripsFragment extends Fragment {
     private RecyclerView recyclerViewTrips;
-    private TripTwoAdapter tripAdapter;
     private RecyclerView recyclerView;
     private TripActiveAdapter tripActiveAdapter;
     private List<TripActiveResponse> tripList = new ArrayList<>();

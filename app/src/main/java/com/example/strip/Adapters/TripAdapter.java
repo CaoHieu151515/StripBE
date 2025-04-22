@@ -39,10 +39,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         Trip trip = tripList.get(position);
         holder.tvStartLocation.setText(trip.getStartLocation());
         holder.tvEndLocation.setText(trip.getEndLocation());
-        holder.tvPrice.setText("Price: " + trip.getPricePerSeat());
-        holder.tvSeats.setText("Seats: " + trip.getCurrentSeat() + "/" + trip.getMaxSeat());
-        holder.tvDriver.setText("Driver: " + trip.getDriverName());
-        holder.tvVehicleType.setText("Vehicle: " + trip.getVehicleType());
+        holder.tvPrice.setText( trip.getPricePerSeat() + " VND");
+        holder.tvSeats.setText(trip.getCurrentSeat() + "/" + trip.getMaxSeat() + " Seats");
         String imageUrl = trip.getTripImgUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (imageUrl.startsWith("https://localhost")) {
@@ -72,8 +70,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
             tvEndLocation = itemView.findViewById(R.id.tvEndLocation);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvSeats = itemView.findViewById(R.id.tvSeats);
-            tvDriver = itemView.findViewById(R.id.tvDriver);
-            tvVehicleType = itemView.findViewById(R.id.tvVehicleType);
             ivTripImage = itemView.findViewById(R.id.ivTripImage);
         }
     }
