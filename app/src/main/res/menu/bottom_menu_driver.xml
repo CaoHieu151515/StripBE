@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homeDriver"
+        android:title="Home"
+        android:icon="@drawable/home"/>
+
+    <item
+        android:id="@+id/tripsDriver"
+        android:title="Manage Trips"
+        android:icon="@drawable/car_journey" />
+    <item
+        android:id="@+id/walletsDriver"
+        android:title="Manage Wallet"
+        android:icon="@drawable/wallet_buyer"/>
+    <item
+        android:id="@+id/driver"
+        android:title="Driver Profile"
+        android:icon="@drawable/driver_man" />
+
+</menu>

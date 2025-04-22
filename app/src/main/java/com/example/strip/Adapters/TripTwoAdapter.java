@@ -46,8 +46,8 @@ public class TripTwoAdapter extends RecyclerView.Adapter<TripTwoAdapter.TripView
         holder.tvVehicleType.setText("Vehicle: " + trip.getVehicleType());
         String imageUrl = trip.getTripImgUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            if (imageUrl.startsWith("http://localhost")) {
-                imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2");
+            if (imageUrl.startsWith("https://localhost:8080")) {
+                imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
             }
             Glide.with(holder.itemView.getContext()).load(imageUrl).into(holder.ivTripImage);
         }

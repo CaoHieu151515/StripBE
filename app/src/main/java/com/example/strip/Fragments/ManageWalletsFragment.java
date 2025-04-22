@@ -1,23 +1,21 @@
-package com.example.strip.Activities.Driver;
+package com.example.strip.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Trip.TripFindActivity;
-import com.example.strip.Activities.Trip.TripPublishActivity;
-//import com.example.strip.Activities.Wallet.PaymentActivity;
+import com.example.strip.Activities.Driver.WalletActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.TransactionAdapter;
 import com.example.strip.Models.Response.UserMoreResponse;
@@ -25,80 +23,50 @@ import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class WalletActivity extends AppCompatActivity {
+
+public class ManageWalletsFragment extends Fragment {
 
     private TextView tvUserWallet, tvMobifyDate, tvCurrent, tvBefore, tvAmount;
     private ImageView ivProfile,ivPayment;
     private RecyclerView recyclerView;
     private TransactionAdapter transactionAdapter;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wallet); // Update with your actual XML file name
-
-        tvUserWallet = findViewById(R.id.tvUserWallet);
-        tvMobifyDate = findViewById(R.id.tvMobifyDate);
-        tvCurrent = findViewById(R.id.tvCurrent);
-        tvBefore = findViewById(R.id.tvBefore);
-        tvAmount = findViewById(R.id.tvAmount);
-        ivProfile = findViewById(R.id.profileImage);
-        ivPayment = findViewById(R.id.ivPayment);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_manage_wallets, container, false);
+        tvUserWallet = view.findViewById(R.id.tvUserWallet);
+        tvMobifyDate =  view.findViewById(R.id.tvMobifyDate);
+        tvCurrent =  view.findViewById(R.id.tvCurrent);
+        tvBefore =  view.findViewById(R.id.tvBefore);
+        tvAmount =  view.findViewById(R.id.tvAmount);
+        ivProfile =  view.findViewById(R.id.profileImage);
+        ivPayment =  view.findViewById(R.id.ivPayment);
         ivPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(WalletActivity.this, PaymentActivity.class);
+                Intent intent = new Intent(getContext(), PaymentActivity.class);
                 startActivity(intent);
             }
         });
-        ImageView btnBack = findViewById(R.id.backButton);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
         fetchWalletInfo();
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView =  view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fetchTransactionsList();
+        // Inflate the layout for this fragment
+        return view;
     }
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(WalletActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void fetchWalletInfo() {
-        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        Retrofit retrofit = ApiClient.getClientWithToken(getContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -115,9 +83,9 @@ public class WalletActivity extends AppCompatActivity {
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         if (imageUrl.contains("localhost")) {
-                            imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
+                            imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
                         }
-                        Glide.with(WalletActivity.this)
+                        Glide.with(getContext())
                                 .load(imageUrl)
                                 .into(ivProfile);
                     }
@@ -125,10 +93,10 @@ public class WalletActivity extends AppCompatActivity {
                     try {
                         String errorBody = response.errorBody().string();
                         Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
-                        Toast.makeText(WalletActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(WalletActivity.this, "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -136,12 +104,12 @@ public class WalletActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(WalletActivity.this, "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
     private void fetchTransactionsList() {
-        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        Retrofit retrofit = ApiClient.getClientWithToken(getContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<WalletResponse> call = apiService.getWalletDetails();
         call.enqueue(new Callback<WalletResponse>() {
@@ -152,14 +120,14 @@ public class WalletActivity extends AppCompatActivity {
                     transactionAdapter = new TransactionAdapter(transactions);
                     recyclerView.setAdapter(transactionAdapter);
                 } else {
-                    Toast.makeText(WalletActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<WalletResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(WalletActivity.this, "API request failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "API request failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

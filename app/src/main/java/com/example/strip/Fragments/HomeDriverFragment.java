@@ -1,8 +1,5 @@
 package com.example.strip.Fragments;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,29 +11,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.strip.Activities.Trip.TripDetailActivity;
 import com.example.strip.Adapters.TripAdapter;
 import com.example.strip.Models.Trip;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-
-public class HomeFragment extends Fragment {
+public class HomeDriverFragment extends Fragment {
     private RecyclerView recyclerViewTrips;
     private TripAdapter tripAdapter;
 
@@ -44,7 +33,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home_driver, container, false);
 
         recyclerViewTrips = view.findViewById(R.id.recyclerViewTrips);
 

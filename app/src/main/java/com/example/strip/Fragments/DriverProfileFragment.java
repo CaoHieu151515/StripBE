@@ -1,105 +1,79 @@
-package com.example.strip.Activities.Driver;
+package com.example.strip.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-
 import com.bumptech.glide.Glide;
+import com.example.strip.Activities.Driver.AddTripActivity;
+import com.example.strip.Activities.Driver.DriverProfileActivity;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.VehicleAdapter;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DriverProfileActivity extends AppCompatActivity {
-
-
+public class DriverProfileFragment extends Fragment {
     private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvCountTrip, tvBannedDay, tvDriverStatus;
-    private ImageView ivProfile;
+    private ImageView ivProfile, ivChangeToPassenger;
     private RecyclerView rvVehicles;
     private VehicleAdapter vehicleAdapter;
     private List<DriverVehicleDTO> vehicleList = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver); // Update with your actual XML file name
-        ImageView btnBack = findViewById(R.id.backButton);
-        tvCountTrip = findViewById(R.id.tvCountTrip);
-        tvBannedDay = findViewById(R.id.tvBannedDay);
-        tvDriverStatus = findViewById(R.id.tvDriverStatus);
-        tvEmail = findViewById(R.id.tvEmail);
-        tvFullName = findViewById(R.id.tvFullName);
-        tvPhone = findViewById(R.id.tvPhone);
-        tvGender = findViewById(R.id.tvGender);
-        tvAddress = findViewById(R.id.tvAddress);
-        tvDob = findViewById(R.id.tvDob);
-        ivProfile = findViewById(R.id.ivProfile);
-        rvVehicles = findViewById(R.id.rvVehicles);
-        rvVehicles.setLayoutManager(new LinearLayoutManager(this));
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_driver_profile, container, false);
+        ImageView btnBack = view.findViewById(R.id.backButton);
+        tvCountTrip = view.findViewById(R.id.tvCountTrip);
+        tvBannedDay = view.findViewById(R.id.tvBannedDay);
+        tvDriverStatus = view.findViewById(R.id.tvDriverStatus);
+        tvEmail = view.findViewById(R.id.tvEmail);
+        tvFullName = view.findViewById(R.id.tvFullName);
+        tvPhone = view.findViewById(R.id.tvPhone);
+        tvGender = view.findViewById(R.id.tvGender);
+        tvAddress = view.findViewById(R.id.tvAddress);
+        tvDob = view.findViewById(R.id.tvDob);
+        ivProfile = view.findViewById(R.id.ivProfile);
+        rvVehicles = view.findViewById(R.id.rvVehicles);
+        ivChangeToPassenger = view.findViewById(R.id.ivChangeToPassenger);
+        rvVehicles.setLayoutManager(new LinearLayoutManager(getContext()));
         vehicleAdapter = new VehicleAdapter(vehicleList);
         rvVehicles.setAdapter(vehicleAdapter);
-        btnBack.setOnClickListener(new View.OnClickListener() {
+        ivChangeToPassenger.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DriverProfileActivity.this, StripActivity.class);
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), StripActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
         fetchDriverInfo();
+        // Inflate the layout for this fragment
+        return view;
     }
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(DriverProfileActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//
-//
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void fetchDriverInfo() {
-        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        Retrofit retrofit = ApiClient.getClientWithToken(getContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -128,9 +102,9 @@ public class DriverProfileActivity extends AppCompatActivity {
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         if (imageUrl.contains("localhost")) {
-                            imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
+                            imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
                         }
-                        Glide.with(DriverProfileActivity.this)
+                        Glide.with(getContext())
                                 .load(imageUrl)
                                 .into(ivProfile);
                     }
@@ -144,10 +118,10 @@ public class DriverProfileActivity extends AppCompatActivity {
                     try {
                         String errorBody = response.errorBody().string();
                         Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
-                        Toast.makeText(DriverProfileActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(DriverProfileActivity.this, "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -155,9 +129,8 @@ public class DriverProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(DriverProfileActivity.this, "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
-
 }

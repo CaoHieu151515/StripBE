@@ -111,7 +111,7 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
     private void loadImageWithFixHost(String url, ImageView target) {
         if (url != null && !url.isEmpty()) {
             if (url.contains("localhost")) {
-                url = url.replace("http://localhost", "http://10.0.2.2:8080");
+                url = url.replace("https://localhost", "http://10.0.2.2:8080");
             }
 
             Log.d("ImageDebug", "Image URL: " + url);

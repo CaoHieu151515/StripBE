@@ -45,28 +45,20 @@ import com.google.android.material.navigation.NavigationView;
 import im.crisp.client.external.Crisp;
 
 public class StripActivity extends AppCompatActivity {
-    FloatingActionButton fab;
-    DrawerLayout drawerLayout;
+//    FloatingActionButton fab;
     BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav);
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        fab = findViewById(R.id.fab);
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+//        fab = findViewById(R.id.fab);
+//        NavigationView navigationView = findViewById(R.id.nav_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_layout, new HomeFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
         }
-
         replaceFragment(new HomeFragment());
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -82,12 +74,12 @@ public class StripActivity extends AppCompatActivity {
             }
             return true;
         });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showBottomDialog();
-            }
-        });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showBottomDialog();
+//            }
+//        });
 
         Crisp.resetChatSession(StripActivity.this.getApplicationContext());
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
@@ -101,17 +93,17 @@ public class StripActivity extends AppCompatActivity {
             Crisp.setUserEmail(email);
         }
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.nav_logout) {
-                    Log.d("LogoutDebug", "Logout menu item selected");
-                    handleLogout();
-                    return true;
-                }
-                return false;
-            }
-        });
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                if (item.getItemId() == R.id.nav_logout) {
+//                    Log.d("LogoutDebug", "Logout menu item selected");
+//                    handleLogout();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     private  void replaceFragment(Fragment fragment) {
@@ -147,67 +139,67 @@ public class StripActivity extends AppCompatActivity {
     }
 
 
-    private void showBottomDialog() {
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.bottom_sheet_layout);
-
-        LinearLayout layoutTrip = dialog.findViewById(R.id.layoutTrip);
-        LinearLayout layoutWallet = dialog.findViewById(R.id.layoutWallet);
-        LinearLayout layoutProfile = dialog.findViewById(R.id.layoutProfile);
-        ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
-
-        layoutTrip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                dialog.dismiss();
-                // Create an Intent to start the new activity
-                Intent intent = new Intent(StripActivity.this, ManageTripActivity.class);
-
-                // Start the new activity
-                startActivity(intent);
-
-                Toast.makeText(StripActivity.this,"Payment is clicked",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        layoutWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                Intent intent = new Intent(StripActivity.this, WalletActivity.class);
-                startActivity(intent);
-                Toast.makeText(StripActivity.this,"Wallet is Clicked",Toast.LENGTH_SHORT).show();
-
-            }
-        });
+//    private void showBottomDialog() {
 //
-        layoutProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                dialog.dismiss();
-                Intent intent = new Intent(StripActivity.this, DriverProfileActivity.class);
-                startActivity(intent);
-                Toast.makeText(StripActivity.this,"Driver profile is Clicked",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
-
-    }
+//        final Dialog dialog = new Dialog(this);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(R.layout.bottom_sheet_layout);
+//
+//        LinearLayout layoutTrip = dialog.findViewById(R.id.layoutTrip);
+//        LinearLayout layoutWallet = dialog.findViewById(R.id.layoutWallet);
+//        LinearLayout layoutProfile = dialog.findViewById(R.id.layoutProfile);
+//        ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
+//
+//        layoutTrip.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                dialog.dismiss();
+//                // Create an Intent to start the new activity
+//                Intent intent = new Intent(StripActivity.this, ManageTripActivity.class);
+//
+//                // Start the new activity
+//                startActivity(intent);
+//
+//                Toast.makeText(StripActivity.this,"Payment is clicked",Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//
+//        layoutWallet.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//                Intent intent = new Intent(StripActivity.this, WalletActivity.class);
+//                startActivity(intent);
+//                Toast.makeText(StripActivity.this,"Wallet is Clicked",Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+////
+//        layoutProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                dialog.dismiss();
+//                Intent intent = new Intent(StripActivity.this, DriverProfileActivity.class);
+//                startActivity(intent);
+//                Toast.makeText(StripActivity.this,"Driver profile is Clicked",Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//        cancelButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        dialog.show();
+//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+//        dialog.getWindow().setGravity(Gravity.BOTTOM);
+//
+//    }
 }

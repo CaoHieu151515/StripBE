@@ -45,7 +45,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         String imageUrl = vehicle.getVehicleImageUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (imageUrl.contains("localhost")) {
-                imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
+                imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
             }
             Glide.with(holder.itemView.getContext()).load(imageUrl).into(holder.ivVehicleImage);
         }

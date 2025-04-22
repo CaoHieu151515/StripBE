@@ -23,6 +23,7 @@ import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
 import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
+import com.example.strip.Activities.StripDriverActivity;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -47,7 +48,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AccountFragment extends Fragment {
 
     private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
-    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver;
+    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver;
     private Button btnEditProfile;
     private UserMoreResponse user;
 
@@ -69,6 +70,7 @@ public class AccountFragment extends Fragment {
         ivChangePassword = view.findViewById(R.id.ivChangePassword);
         ivUpdateToDriver = view.findViewById(R.id.ivUpdateToDriver);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        ivChangeToDriver = view.findViewById(R.id.ivChangeToDriver);
         ivChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
             startActivity(intent);
@@ -79,6 +81,10 @@ public class AccountFragment extends Fragment {
         });
         ivConfirmDriver.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ConfirmDriverOneActivity.class);
+            startActivity(intent);
+        });
+        ivChangeToDriver.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), StripDriverActivity.class);
             startActivity(intent);
         });
         btnEditProfile.setOnClickListener(v -> {
@@ -124,17 +130,21 @@ public class AccountFragment extends Fragment {
                     String ivImageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (ivImageUrl != null && !ivImageUrl.isEmpty()) {
                         if (ivImageUrl.contains("localhost")) {
-                            ivImageUrl = ivImageUrl.replace("http://localhost", "http://10.0.2.2:8080");
+                            ivImageUrl = ivImageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
                         }
-                        Log.d("ImageDebug", "Image URL: " + ivImageUrl);
-                        Glide.with(getContext())
-                                .load(ivImageUrl)
+                        Log.d("ImageDebug", "URL=[" + ivImageUrl + "]");
+
+                        Glide.with(requireContext()) // or getContext(), depending on where this is
+                                .load(ivImageUrl.trim())
                                 .placeholder(R.drawable.logo)
                                 .error(R.drawable.logout)
                                 .skipMemoryCache(true)
                                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(ivProfile);;
+                                .into(ivProfile);
+
+                        Log.e("ImageLoadError", "Failed to load image from: [" + ivImageUrl + "]");
                     }
+
                 } else {
                     try {
                         String errorBody = response.errorBody().string();

@@ -79,7 +79,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
             String imageUrl = intent.getStringExtra("imageUrl");
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 if (imageUrl.contains("localhost")) {
-                    imageUrl = imageUrl.replace("http://localhost", "http://10.0.2.2:8080");
+                    imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
                 }
                 Glide.with(EditProfilePassengerActivity.this)
                         .load(imageUrl)

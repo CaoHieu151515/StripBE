@@ -178,7 +178,10 @@
             android:name=".Activities.OpenStreetMapActivity"
             android:exported="true">
         </activity>
-
+        <activity
+            android:name=".Activities.StripDriverActivity"
+            android:exported="true">
+        </activity>
         <activity
             android:name=".Activities.Intro.IntroOneActivity"
             android:exported="true">

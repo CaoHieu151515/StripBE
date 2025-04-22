@@ -121,15 +121,15 @@ public class TripDetailActivity extends AppCompatActivity {
                     // Load trip image
                     String imageUrlTrip = trip.getTripImgUrl();
                     if (imageUrlTrip != null && !imageUrlTrip.isEmpty()) {
-                        if (imageUrlTrip.startsWith("http://localhost")) {
-                            imageUrlTrip = imageUrlTrip.replace("http://localhost", "http://10.0.2.2");
+                        if (imageUrlTrip.startsWith("https://localhost")) {
+                            imageUrlTrip = imageUrlTrip.replace("https://localhost", "http://10.0.2.2");
                         }
                         Glide.with(TripDetailActivity.this).load(imageUrlTrip).into(ivTripImage);
                     }
                     String imageUrlVehicle = trip.getVehicleImageUrl();
                     if (imageUrlVehicle != null && !imageUrlVehicle.isEmpty()) {
-                        if (imageUrlVehicle.startsWith("http://localhost")) {
-                            imageUrlVehicle = imageUrlVehicle.replace("http://localhost", "http://10.0.2.2");
+                        if (imageUrlVehicle.startsWith("https://localhost")) {
+                            imageUrlVehicle = imageUrlVehicle.replace("https://localhost", "http://10.0.2.2");
                         }
                         Glide.with(TripDetailActivity.this).load(imageUrlVehicle).into(ivVehicleImage);
                     }
