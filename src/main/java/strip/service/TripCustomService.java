@@ -673,6 +673,7 @@ public class TripCustomService {
     ) {
         for (RequestTrip request : passengers) {
             double amount = request.getAmountApproveFee();
+            request.setStatus(PassengerStatus.DONE);
 
             // Trừ từ System
             WalletTransaction sysTx = new WalletTransaction();
