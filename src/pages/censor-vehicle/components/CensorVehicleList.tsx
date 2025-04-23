@@ -1,20 +1,21 @@
 import CustomTablePagination from '@/components/table/CustomTablePagination';
 import { TableBuilder } from '@/components/table/TableBuilder';
-import { CensorVehicleDTO } from '@/data/censor-vehicle/dto/censor-vehicle.dto';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
-import { CensorVehicleData } from '../mocks/CensorVehicleData';
 import CensorVehicleFilter from './CensorVehicleFilter';
 import { CensorVehicleColumn } from './column/CensorVehicleColumn';
+import useCensorVehicleData from '@/data/services/api/censorVehicle/useCensorVehicleData';
+import { CensorVehicleDTO } from '@/@types/dto/censorVehicleDTO';
 
 export default function CensorVehicleList() {
+  const { CensorVehicleData, isLoading } = useCensorVehicleData();
   return (
     <div className='flex flex-col gap-5'>
       <CensorVehicleFilter />
       <TableBuilder<CensorVehicleDTO>
-        rowKey='id'
+        rowKey='driverId'
         columns={CensorVehicleColumn()}
-        data={CensorVehicleData}
-        isLoading={false}
+        data={CensorVehicleData ?? []}
+        isLoading={isLoading}
       />
       <CustomTablePagination
         totalItems={CensorVehicleData?.length || 1}

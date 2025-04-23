@@ -6,7 +6,7 @@ export default function TripDetailPage() {
   return (
     <TableUtilProvider>
       <DefaultContainer
-        title='Trip Detail'
+        title='Thông tin chi tiết chuyến đi'
         breadcrumbs={[
           {
             title: 'Trip',

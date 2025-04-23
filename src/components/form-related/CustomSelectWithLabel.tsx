@@ -1,13 +1,19 @@
 import CustomLabel from '@/components/form-related/CustomLabel';
 import { ErrorMessage, ErrorMessageTranslateKey } from '@/components/form-related/ErrorMessage';
 import { Select } from 'antd';
-import { SelectProps } from 'antd/lib';
-import { HTMLAttributes, useState } from 'react';
+import { HTMLAttributes } from 'react';
 import { FieldValues, UseControllerProps, useController } from 'react-hook-form';
+
+export interface OptionType {
+  label: string;
+  value: string | number | boolean;
+  disabled?: boolean;
+  [key: string]: any;
+}
 
 type CustomSelectWithLabelProps<T extends FieldValues> = UseControllerProps<T> &
   Pick<HTMLAttributes<HTMLDivElement>, 'className'> & {
-    options: SelectProps['options'];
+    options: OptionType[];
     label?: string;
     required?: boolean;
     placeholder?: string;
@@ -28,7 +34,6 @@ export default function CustomSelectWithLabel<T extends FieldValues>({
   ...props
 }: CustomSelectWithLabelProps<T>) {
   const { field, fieldState } = useController({ control, name });
-  const [searchValue, setSearchValue] = useState('');
 
   return (
     <div className={className}>
@@ -46,12 +51,10 @@ export default function CustomSelectWithLabel<T extends FieldValues>({
         allowClear
         autoClearSearchValue
         optionFilterProp='label'
-        onSearch={(value: string) => setSearchValue(value.slice(0, 8))}
-        searchValue={searchValue}
         options={options}
         optionRender={(option) => <div className='py-0.5 text-base font-normal'>{option.data.label}</div>}
         size='large'
-        style={{ ...style, fontFamily: 'inherit' }}
+        style={{ ...style, fontFamily: 'inherit', height: '55.5px' }}
         {...props}
       />
       <ErrorMessage translateKey={fieldState.error?.message as ErrorMessageTranslateKey} />

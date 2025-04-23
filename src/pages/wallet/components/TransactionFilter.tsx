@@ -1,67 +1,76 @@
-import CustomSearchInputQueryWithLabel from '@/components/form-related/CustomSearchInputQueryWithLabel';
 import CustomSelectQueryWithLabel from '@/components/form-related/CustomSelectQueryWithLabel';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
-import { TRANSACTION_STATUS } from '@/utils/enum/transaction/transaction.enum';
+import { WALLET_TYPE } from '@/utils/enum/wallet/wallet-type.enum';
+
+const WalletTypeList = [
+  {
+    label: 'DEPOSIT',
+    value: WALLET_TYPE.DEPOSIT,
+  },
+  {
+    label: 'WITHDRAW',
+    value: WALLET_TYPE.WITHDRAW,
+  },
+  {
+    label: 'REFUND',
+    value: WALLET_TYPE.REFUND,
+  },
+  {
+    label: 'DRIVER_CREATE_TRIP_FEE',
+    value: WALLET_TYPE.DRIVER_CREATE_TRIP_FEE,
+  },
+  {
+    label: 'DRIVER_DONE_TRIP_REFUND',
+    value: WALLET_TYPE.DRIVER_DONE_TRIP_REFUND,
+  },
+  {
+    label: 'DRIVER_DONE_TRIP_FEE',
+    value: WALLET_TYPE.DRIVER_DONE_TRIP_FEE,
+  },
+  {
+    label: 'PASSENGER_APPROVE_FEE',
+    value: WALLET_TYPE.PASSENGER_APPROVE_FEE,
+  },
+  {
+    label: 'SYSTEM_GAIN_CREATE_TRIP_FEE',
+    value: WALLET_TYPE.SYSTEM_GAIN_CREATE_TRIP_FEE,
+  },
+  {
+    label: 'SYSTEM_GAIN_PASSENGER_APPROVE_FEE',
+    value: WALLET_TYPE.SYSTEM_GAIN_PASSENGER_APPROVE_FEE,
+  },
+  {
+    label: 'SYSTEM_GAIN_DONE_TRIP_FEE',
+    value: WALLET_TYPE.SYSTEM_GAIN_DONE_TRIP_FEE,
+  },
+  {
+    label: 'DRIVER_BUY_PACKAGE',
+    value: WALLET_TYPE.DRIVER_BUY_PACKAGE,
+  },
+  {
+    label: 'SYSTEM_GAIN_PACKAGE_FEE',
+    value: WALLET_TYPE.SYSTEM_GAIN_PACKAGE_FEE,
+  },
+  {
+    label: 'SYSTEM_REFUND_TO_DRIVER_DONE_TRIP',
+    value: WALLET_TYPE.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP,
+  },
+  {
+    label: 'SYSTEM_REFUND_TO_PASSENGER',
+    value: WALLET_TYPE.SYSTEM_REFUND_TO_PASSENGER,
+  },
+];
 
 export default function TransactionFilter() {
   return (
     <div>
       <div className='flex flex-wrap items-center justify-start gap-5'>
-        <CustomSearchInputQueryWithLabel label={'Full Name'} searchParamName={PARAM_FIELD.FULL_NAME} />
-        <CustomSearchInputQueryWithLabel label={'Phone'} searchParamName={PARAM_FIELD.PHONE} />
-        <CustomSearchInputQueryWithLabel label={'Email'} searchParamName={PARAM_FIELD.EMAIL} />
         <CustomSelectQueryWithLabel
-          label={'Payment Method'}
-          queryKey={PARAM_FIELD.PAYMENT_METHOD}
-          options={[
-            {
-              label: 'Credit Card',
-              value: 'CREDIT_CARD',
-            },
-          ]}
-          className='w-40'
-        />
-        <CustomSelectQueryWithLabel
-          label={'Package Time'}
-          queryKey={PARAM_FIELD.PACKAGE_TIME}
-          options={[
-            {
-              label: '1 month',
-              value: '1',
-            },
-            {
-              label: '3 months',
-              value: '3',
-            },
-            {
-              label: '6 months',
-              value: '6',
-            },
-          ]}
-          className='w-40'
-        />
-        <CustomSelectQueryWithLabel
-          label={'Status'}
-          queryKey={PARAM_FIELD.SEARCH_BY}
-          options={[
-            {
-              label: 'Success',
-              value: TRANSACTION_STATUS.SUCCESS,
-            },
-            {
-              label: 'Pending',
-              value: TRANSACTION_STATUS.PENDING,
-            },
-            {
-              label: 'Failed',
-              value: TRANSACTION_STATUS.FAILED,
-            },
-            {
-              label: 'Cancelled',
-              value: TRANSACTION_STATUS.CANCELLED,
-            },
-          ]}
-          className='w-40'
+          label={'Loại'}
+          queryKey={PARAM_FIELD.WALLET_TYPE}
+          placeholder='Chọn loại'
+          options={WalletTypeList}
+          className='w-100'
         />
       </div>
     </div>

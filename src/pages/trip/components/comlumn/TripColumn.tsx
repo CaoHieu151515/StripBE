@@ -14,82 +14,126 @@ export const TripColumn = (): ColumnsType<TripDTO> => {
 
   return [
     {
-      title: () => <TableHeaderCell key='id' label={'ID'} sortKey='id' />,
-      key: 'id',
-      width: 60,
+      title: () => <TableHeaderCell key='stt' label={'STT'} />,
+      key: 'stt',
       render: ({ ...props }: TripDTO) => {
-        return <div>{props?.id}</div>;
+        return <div>{props?.index}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='driverName' label={'Driver Name'} sortKey='driverName' />,
-      key: 'driverName',
+      title: () => <TableHeaderCell key='startLocation' label={'Điểm khởi hành'} />,
+      key: 'startLocation',
       render: ({ ...props }: TripDTO) => {
-        return <div>{props?.driver?.name}</div>;
+        return <div>{props?.startLocation}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='departureDate' label={'Departure Date'} sortKey='departureDate' />,
-      key: 'departureDate',
-      width: 150,
+      title: () => <TableHeaderCell key='endlocation' label={'Điểm đến'} />,
+      key: 'endlocation',
       render: ({ ...props }: TripDTO) => {
-        return <div>{dayjs(props?.departureDate).format(DATE_FORMAT_DOT)}</div>;
+        return <div>{props?.endlocation}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='arrivalDate' label={'Arrival Date'} sortKey='arrivalDate' />,
-      key: 'arrivalDate',
-      width: 150,
+      title: () => <TableHeaderCell key='startDay' label={'Ngày và thời gian khởi hành'} />,
+      key: 'startDay',
       render: ({ ...props }: TripDTO) => {
-        return <div>{dayjs(props?.arrivalDate).format(DATE_FORMAT_DOT)}</div>;
+        return (
+          <div>
+            {dayjs(props?.startDay).format(DATE_FORMAT_DOT) + ' - ' + dayjs(props?.startDay).format(TIME_24H_FORMAT)}
+          </div>
+        );
       },
     },
+    // {
+    //   title: () => <TableHeaderCell key='endDay' label={'Ngày tới'} />,
+    //   key: 'endDay',
+    //   width: 150,
+    //   render: ({ ...props }: TripDTO) => {
+    //     return <div>{dayjs(props?.endDay).format(DATE_FORMAT_DOT)}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='startTime' label={'Thời gian khởi hành'} />,
+    //   key: 'startTime',
+    //   render: ({ ...props }: TripDTO) => {
+    //     return <div>{dayjs(props?.startDay).format(TIME_24H_FORMAT)}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='endTime' label={'Thời gian đến'} />,
+    //   key: 'endTime',
+    //   width: 130,
+    //   render: ({ ...props }: TripDTO) => {
+    //     return <div>{dayjs(props?.endDay).format(TIME_24H_FORMAT)}</div>;
+    //   },
+    // },
     {
-      title: () => <TableHeaderCell key='departureLocation' label={'Departure Location'} />,
-      key: 'departureLocation',
+      title: () => <TableHeaderCell key='price' label={'Giá (VNĐ)'} />,
+      key: 'price',
+      width: 100,
       render: ({ ...props }: TripDTO) => {
-        return <div>{props?.departureLocation}</div>;
+        return (
+          <div className='text-right'>
+            {props?.price.toLocaleString('vi-VN', {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
+          </div>
+        );
       },
     },
+    // {
+    //   title: () => <TableHeaderCell key='totalTime' label={'Thời gian'} />,
+    //   key: 'totalTime',
+    //   width: 150,
+    //   render: ({ ...props }: TripDTO) => {
+    //     return (
+    //       <div>
+    //         {props?.totalTime > 120
+    //           ? `${Math.floor(props?.totalTime / 60)} giờ ${props?.totalTime % 60} phút`
+    //           : `${props?.totalTime} phút`}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
-      title: () => <TableHeaderCell key='arrivalLocation' label={'Arrival Location'} />,
-      key: 'arrivalLocation',
-      render: ({ ...props }: TripDTO) => {
-        return <div>{props?.arrivalLocation}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='departureTime' label={'Departure Time'} sortKey='departureTime' />,
-      key: 'departureTime',
-      render: ({ ...props }: TripDTO) => {
-        return <div>{dayjs(props?.departureTime).format(DATE_FORMAT_DOT)}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='arrivalTime' label={'Arrival Time'} sortKey='arrivalTime' />,
-      key: 'arrivalTime',
-      width: 130,
-      render: ({ ...props }: TripDTO) => {
-        return <div>{dayjs(props?.arrivalTime).format(TIME_24H_FORMAT)}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='status' label={'Status'} sortKey='status' />,
+      title: () => <TableHeaderCell key='status' label={'Status'} />,
       key: 'status',
       render: ({ ...props }: TripDTO) => {
         return (
           <div className='capitalize'>
-            {props?.status === TRIP_STATUS.ACCEPTED ? (
-              <Tag color='success' className='w-20 text-center'>
-                {props?.status}
+            {props?.status === TRIP_STATUS.DONE ? (
+              <Tag color='success' className='w-36 text-center'>
+                Đã hoàn thành
               </Tag>
-            ) : props?.status === TRIP_STATUS.PENDING ? (
-              <Tag color='processing' className='w-20 text-center'>
-                {props?.status}
+            ) : props?.status === TRIP_STATUS.CONFIRMING ? (
+              <Tag color='warning' className='w-36 text-center'>
+                Chờ xác nhận
+              </Tag>
+            ) : props?.status === TRIP_STATUS.ON_GOING ? (
+              <Tag color='processing' className='w-36 text-center'>
+                Đang đi
+              </Tag>
+            ) : props?.status === TRIP_STATUS.UPCOMING ? (
+              <Tag color='geekblue' className='w-36 text-center'>
+                Chuẩn bị khởi hành
+              </Tag>
+            ) : props?.status === TRIP_STATUS.REJECTED ? (
+              <Tag color='error' className='w-36 text-center'>
+                Đã từ chối
+              </Tag>
+            ) : props?.status === TRIP_STATUS.CANCEL ? (
+              <Tag color='error' className='w-36 text-center'>
+                Đã hủy
+              </Tag>
+            ) : props?.status === TRIP_STATUS.RESEND ? (
+              <Tag color='blue-inverse' className='w-36 text-center'>
+                Đã gửi lại
               </Tag>
             ) : (
-              <Tag color='error' className='w-20 text-center'>
-                {props?.status}
+              <Tag color='default' className='w-36 text-center'>
+                Chờ xác nhận
               </Tag>
             )}
           </div>
@@ -97,14 +141,14 @@ export const TripColumn = (): ColumnsType<TripDTO> => {
       },
     },
     {
-      title: () => <TableHeaderCell key='action' label={'Action'} />,
+      title: () => <TableHeaderCell key='action' label={''} />,
       key: 'action',
       render: ({ ...props }: TripDTO) => (
         <>
           <div className='flex w-full justify-start'>
             <CustomTableActionsButton
-              label={'See Details'}
-              onClick={() => navigate(MY_ROUTE.TRIP.detail(props?.id.toString()))}
+              label={'Xem chi tiết'}
+              onClick={() => navigate(MY_ROUTE.TRIP.detail(props?.stripID.toString()))}
             />
           </div>
         </>

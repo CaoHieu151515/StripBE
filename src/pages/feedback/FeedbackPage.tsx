@@ -5,7 +5,7 @@ import FeedbackList from './components/FeedbackList';
 export default function FeedbackPage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='Feedback'>
+      <DefaultContainer title='Phản hồi của khách hàng'>
         <FeedbackList />
       </DefaultContainer>
     </TableUtilProvider>

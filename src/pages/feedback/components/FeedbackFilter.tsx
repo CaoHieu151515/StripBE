@@ -1,31 +1,35 @@
-import CustomSearchInputQueryWithLabel from '@/components/form-related/CustomSearchInputQueryWithLabel';
+/* eslint-disable react-hooks/exhaustive-deps */
 import CustomSelectQueryWithLabel from '@/components/form-related/CustomSelectQueryWithLabel';
+import { FEEDBACK_STATUS } from '@/utils/enum/feedback/feedback-status.enum';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
-import { TRIP_STATUS } from '@/utils/enum/trip/trip-status.enum';
+import queryString from 'query-string';
+import { useLayoutEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function FeedbackFilter() {
+  const location = useLocation();
+  const params = queryString.parse(location.search);
+  const navigate = useNavigate();
+
+  useLayoutEffect(() => {
+    delete params[PARAM_FIELD.PAGE];
+    navigate({ search: queryString.stringify(params) });
+  }, [navigate, params[PARAM_FIELD.STATUS]]);
+
   return (
     <div>
       <div className='flex flex-wrap items-center justify-start gap-5'>
-        <CustomSearchInputQueryWithLabel label={'Name'} searchParamName={PARAM_FIELD.NAME} />
-        <CustomSearchInputQueryWithLabel label={'Driver Name'} searchParamName={PARAM_FIELD.NAME} />
-        <CustomSearchInputQueryWithLabel label={'Trip ID'} searchParamName={PARAM_FIELD.TRIP_ID} />
-        <CustomSearchInputQueryWithLabel label={'Location'} searchParamName={PARAM_FIELD.LOCATION} />
         <CustomSelectQueryWithLabel
           label={'Status'}
-          queryKey={PARAM_FIELD.SEARCH_BY}
+          queryKey={PARAM_FIELD.STATUS}
           options={[
             {
-              label: 'Accepted',
-              value: TRIP_STATUS.ACCEPTED,
+              label: 'Đã xử lý',
+              value: FEEDBACK_STATUS.DONE,
             },
             {
-              label: 'Waiting',
-              value: TRIP_STATUS.PENDING,
-            },
-            {
-              label: 'Declined',
-              value: TRIP_STATUS.DECLINED,
+              label: 'Chưa xử lý',
+              value: FEEDBACK_STATUS.WAITING,
             },
           ]}
           className='w-40'

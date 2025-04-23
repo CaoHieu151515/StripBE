@@ -42,9 +42,9 @@ const CustomDatePickerWithLabel = <T extends FieldValues>({
           showTime={showTime}
           format={showTime ? (use12Hours ? DATE_TIME_SHORT_FORMAT : DATE_TIME_SHORT_24H_FORMAT) : format}
           use12Hours={use12Hours}
-          onChange={(date) => field.onChange(dayjs(date).valueOf())}
+          onChange={(date) => field.onChange(dayjs(date))}
           className={twMerge(
-            'w-full !resize-none rounded-md border-2 border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm',
+            'w-full !resize-none rounded-md border-2 border-gray-300 px-3 py-[15.5px] placeholder-gray-400 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm',
             className,
           )}
           onBlur={field.onBlur}

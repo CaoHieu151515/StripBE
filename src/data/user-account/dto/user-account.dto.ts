@@ -8,7 +8,7 @@
 //   role: USER_ACCOUNT_ROLE;
 // }
 export interface UserDTO {
-  userId: number;
+  userId: string;
   username: string;
   firstName: string;
   lastName: string;

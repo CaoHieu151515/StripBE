@@ -12,6 +12,7 @@ import LoginAdminPage from '@/pages/login/LoginAdminPage';
 import PackagePage from '@/pages/package/PackagePage';
 import RatingPage from '@/pages/rating/RatingPage';
 import ReportPage from '@/pages/report/ReportPage';
+import StaffPage from '@/pages/staff/StaffPage';
 import TransactionHistoryPage from '@/pages/transaction-history/TransactionHistoryPage';
 import TripDetailPage from '@/pages/trip/TripDetailPage';
 import TripPage from '@/pages/trip/TripPage';
@@ -50,6 +51,10 @@ const router = createBrowserRouter(
                 {
                   path: MY_ROUTE.USER.CENSOR_DRIVER_REQUEST.self,
                   element: <CensorDriverRequestPage />,
+                },
+                {
+                  path: MY_ROUTE.USER.STAFF.self,
+                  element: <StaffPage />,
                 },
               ],
             },

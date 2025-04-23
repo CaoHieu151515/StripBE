@@ -1,6 +1,4 @@
-import { useVerifyAuthCodeMutation } from '@/data/auth/auth.api';
 import { AuthVerifyPasswordREQ } from '@/data/auth/request/auth-verify-password.request';
-import { AUTH_CODE_TYPE } from '@/utils/enum/auth/auth-code-type.enum';
 import { Button } from 'antd';
 import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -21,7 +19,7 @@ export default function InputOTPCode({ email, onSuccess }: InputOTPCodeInputProp
   const navigate = useNavigate();
 
   // api
-  const [verifyAuthCode, { isLoading: isVerifyAuthCodeLoading }] = useVerifyAuthCodeMutation();
+  // const [verifyAuthCode, { isLoading: isVerifyAuthCodeLoading }] = useVerifyAuthCodeMutation();
 
   const [otp, setOtp] = useState('');
 
@@ -36,24 +34,23 @@ export default function InputOTPCode({ email, onSuccess }: InputOTPCodeInputProp
 
     const verifyAuthCodeREQ: AuthVerifyPasswordREQ = {
       email: email,
-      authCodeType: AUTH_CODE_TYPE.RESET_PASSWORD,
       authCode: otp,
     };
-    verifyAuthCode(verifyAuthCodeREQ)
-      .unwrap()
-      .then(() => {
-        enqueueSnackbar({
-          message: tLogin('toast.otp_verified_successfully'),
-          variant: 'success',
-        });
-        onSuccess(otp);
-      })
-      .catch(() => {
-        enqueueSnackbar({
-          message: tLogin('toast.invalid_otp'),
-          variant: 'error',
-        });
-      });
+    // verifyAuthCode(verifyAuthCodeREQ)
+    //   .unwrap()
+    //   .then(() => {
+    //     enqueueSnackbar({
+    //       message: tLogin('toast.otp_verified_successfully'),
+    //       variant: 'success',
+    //     });
+    //     onSuccess(otp);
+    //   })
+    //   .catch(() => {
+    //     enqueueSnackbar({
+    //       message: tLogin('toast.invalid_otp'),
+    //       variant: 'error',
+    //     });
+    //   });
   };
 
   return (
@@ -86,7 +83,7 @@ export default function InputOTPCode({ email, onSuccess }: InputOTPCodeInputProp
         htmlType='submit'
         className='mt-4 w-full bg-primary-500 py-6 text-white ease-linear'
         onClick={onSubmit}
-        loading={isVerifyAuthCodeLoading}>
+        loading={false}>
         {tLogin('button.confirm')}
       </Button>
       <Button

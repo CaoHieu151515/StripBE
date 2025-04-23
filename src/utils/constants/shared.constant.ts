@@ -6,7 +6,7 @@ export const STORAGE = {
   RECENTLY_LOGGED_IN: 'recentlyLoggedIn',
 };
 
-export const PAGE_SIZE = 10;
+export const PAGE_SIZE = 8;
 
 export const NOTISTACK_DURATION = 5000;
 
@@ -15,6 +15,10 @@ export const TAG_TYPES = {
   CURRENCY: 'currency',
   NOTIFICATION_SETTING: 'setting_notification',
   ADMIN: 'admin',
+  TRIP: 'trip',
+  TRIP_DETAIL: 'trip_detail',
+  STAFF: 'staff',
+  FEEDBACK: 'feedback',
 };
 
 export const apiBaseUrl = import.meta.env.VITE_API_ENDPOINT;

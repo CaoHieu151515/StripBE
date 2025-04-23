@@ -5,7 +5,7 @@ import TransactionHistoryList from './components/TransactionHistoryList';
 export default function TransactionHistoryPage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='Transaction History'>
+      <DefaultContainer title='Lợi Nhuận Hệ Thống'>
         <TransactionHistoryList />
       </DefaultContainer>
     </TableUtilProvider>

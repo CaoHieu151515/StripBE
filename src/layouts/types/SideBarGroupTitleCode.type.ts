@@ -10,4 +10,5 @@ export type SideBarGroupTitleCode =
   | 'report'
   | 'transaction-history'
   | 'censor-vehicle'
-  | 'rate-driver';
+  | 'rate-driver'
+  | 'staff';

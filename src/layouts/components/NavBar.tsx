@@ -16,7 +16,7 @@ export default function NavBar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { userInfo }: GlobalState = useAppSelector((state: RootState) => state.global);
-
+  // console.log('userInfo', userInfo);
   const contentPopover = (
     <div className='flex w-[150px] flex-col gap-2'>
       <button

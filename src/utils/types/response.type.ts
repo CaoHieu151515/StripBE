@@ -5,7 +5,7 @@ export type BaseResponse<T> = {
   message: string;
   data: T;
 };
+
 export type PaginationRESP<T> = {
-  list: T[];
-  message: string;
+  content: T[];
 } & PagingRESP;

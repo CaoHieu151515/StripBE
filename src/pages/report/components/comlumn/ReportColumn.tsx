@@ -81,12 +81,12 @@ export const ReportColumn = (): ColumnsType<ReportDTO> => {
       },
     },
     {
-      title: () => <TableHeaderCell key='action' label={'Action'} />,
+      title: () => <TableHeaderCell key='action' label={''} />,
       key: 'action',
       render: ({ ...props }: ReportDTO) => (
         <>
           <div className='flex w-full justify-start'>
-            <CustomTableActionsButton label={'See Details'} onClick={() => setIsShownDetailsModal(props?.id)} />
+            <CustomTableActionsButton label={'Xem chi tiết'} onClick={() => setIsShownDetailsModal(props?.id)} />
           </div>
           {isShownDetailsModal === props?.id && (
             <ReportDetailModal

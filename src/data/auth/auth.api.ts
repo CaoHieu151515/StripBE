@@ -8,7 +8,6 @@ import { AuthLoginREQ } from './request/auth-login.request';
 import { AuthRegisterREQ } from './request/auth-register.request';
 import { AuthResetPasswordREQ } from './request/auth-reset-password.request';
 import { AuthSendCodeREQ } from './request/auth-send-code.request';
-import { AuthVerifyPasswordREQ } from './request/auth-verify-password.request';
 import { AuthLoginRESP } from './response/auth-login.response';
 
 export const authApi = createApi({
@@ -90,18 +89,10 @@ export const authApi = createApi({
       }),
     }),
 
-    verifyAuthCode: build.mutation({
-      query: ({ email, authCodeType, authCode }: AuthVerifyPasswordREQ) => ({
-        url: 'admin/public/verify-auth-code',
-        body: { email, authCodeType, authCode },
-        method: HTTP_METHOD.POST,
-      }),
-    }),
-
     resetPassword: build.mutation({
-      query: ({ email, password, authCode }: AuthResetPasswordREQ) => ({
-        url: 'admin/public/reset-password',
-        body: { email, password, authCode },
+      query: ({ currentPassword, newPassword }: AuthResetPasswordREQ) => ({
+        url: 'account/change-password',
+        body: { currentPassword, newPassword },
         method: HTTP_METHOD.POST,
       }),
     }),
@@ -116,6 +107,5 @@ export const {
   useDoubleCheckMutation,
   useForgotPasswordMutation,
   useSendAuthCodeMutation,
-  useVerifyAuthCodeMutation,
   useResetPasswordMutation,
 } = authApi;

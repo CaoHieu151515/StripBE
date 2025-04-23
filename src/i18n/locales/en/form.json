@@ -37,7 +37,9 @@
       "package_name": "Package Name is required",
       "package_time": "Package Time is required",
       "package_bonus_time": "Package Bonus Time is required",
-      "package_price": "Package Price is required"
+      "package_price": "Package Price is required",
+      "first_name": "First Name is required",
+      "last_name": "Last Name is required"
     },
     "matches": {
       "email": "Invalid email format",

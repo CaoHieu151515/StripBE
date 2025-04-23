@@ -1,5 +1,5 @@
-import { Button, Modal } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Modal } from 'antd';
+import { twMerge } from 'tailwind-merge';
 
 interface CustomConfirmModalProps {
   open: boolean;
@@ -8,26 +8,34 @@ interface CustomConfirmModalProps {
   setOpen: (open: boolean) => void;
   className?: string;
   onConfirm?: () => void;
+  okText?: string;
+  cancelText?: string;
 }
 
-const CustomConfirmModal = ({ open, setOpen, title, message, onConfirm }: CustomConfirmModalProps) => {
-  const { t: tCommon } = useTranslation('common');
-
+const CustomConfirmModal = ({
+  open,
+  setOpen,
+  title,
+  message,
+  onConfirm,
+  className,
+  okText,
+  cancelText,
+}: CustomConfirmModalProps) => {
   return (
     <Modal
       open={open}
       centered
       closable={false}
-      footer={null}
       width={400}
       onCancel={() => setOpen(false)}
-      className='rounded-lg'>
+      okText={okText}
+      onOk={onConfirm}
+      cancelText={cancelText}
+      className={twMerge('rounded-lg', className)}>
       <div className='flex flex-col items-center px-10 py-4'>
         <h3 className='text-xl font-bold'>{title}</h3>
         <p className='mb-4 mt-2 text-sm'>{message}</p>
-        <Button size='large' block onClick={onConfirm}>
-          {tCommon('button.check')}
-        </Button>
       </div>
     </Modal>
   );

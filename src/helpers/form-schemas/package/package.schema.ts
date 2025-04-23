@@ -6,4 +6,5 @@ export const createPackageSchema = yup.object().shape({
   packageTime: allFormSchema.packageTime,
   packageBonusTime: allFormSchema.packageBonusTime,
   packagePrice: allFormSchema.packagePrice,
+  packageDescription: yup.string().optional(),
 });

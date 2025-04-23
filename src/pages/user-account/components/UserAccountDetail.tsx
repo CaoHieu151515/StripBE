@@ -3,13 +3,23 @@ import { Divider, Image } from 'antd';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserAccountData } from '../mocks/UserData';
+import { useUserDetailData } from '@/data/services/api/user/useUserDetailData';
+import { DATE_FORMAT } from '@/utils/constants/date.constant';
+import dayjs from 'dayjs';
 
 export const UserAccountDetail = () => {
   const { id } = useParams();
+  const { userDetailData } = useUserDetailData(id);
   const dataAccount = useMemo(() => UserAccountData.find((item) => item.id === Number(id)), [id]);
 
   return (
     <div className='space-y-4'>
+      {/* <button
+        onClick={() => {
+          console.table(userDetailData?.vehicles);
+        }}>
+        ssss
+      </button> */}
       <div className='mb-4 grid gap-4 sm:grid-cols-2 sm:gap-8 lg:gap-16'>
         <div className='space-y-4'>
           <div className='flex space-x-4'>
@@ -29,16 +39,17 @@ export const UserAccountDetail = () => {
               </h2>
             </div>
           </div>
-          <InfoItem label='Gender' value={dataAccount?.gender.toLocaleUpperCase()} />
-          <InfoItem label='Phone Number' value={dataAccount?.phone} />
-          <InfoItem label='Email' value={dataAccount?.email} />
+          <InfoItem label='Gender' value={userDetailData?.gender?.toLocaleUpperCase()} />
+          <InfoItem label='Phone Number' value={userDetailData?.phone} />
         </div>
         <div className='space-y-4'>
-          <InfoItem label='Date of Birth' value={'19/02/1989'} />
-          <InfoItem label='Home Address' value={'FPT Software, Ho Chi Minh City'} />
-          <InfoItem label='Role' value={dataAccount?.role.toLocaleUpperCase()} />
-          <InfoItem label='Total trip attended' value={'10'} />
-          <InfoItem label='Number of trips created' value={'20'} />
+          <InfoItem label='Tên' value={userDetailData?.firstName + ' ' + userDetailData?.lastName} />
+          <InfoItem label='Ngày Sinh' value={dayjs(userDetailData?.dob)?.format(DATE_FORMAT)} />
+          <InfoItem label='Email' value={userDetailData?.email} />
+          <InfoItem label='Địa chỉ' value={userDetailData?.address} />
+          {/* <InfoItem label='Role' value={dataAccount?.role.toLocaleUpperCase()} /> */}
+          {/* <InfoItem label='Total trip attended' value={'10'} />
+          <InfoItem label='Number of trips created' value={'20'} /> */}
         </div>
       </div>
       <Divider />
@@ -48,7 +59,10 @@ export const UserAccountDetail = () => {
           <div>
             <div className='flex w-full gap-4'>
               <Image
-                src={'https://vinfast-auto-vn.net/wp-content/uploads/2022/08/VinFast-VF-8-mau-Xanh-Luc.png'}
+                src={
+                  userDetailData?.vehicles?.[0]?.vehicleImageUrl ??
+                  'https://vinfast-auto-vn.net/wp-content/uploads/2022/08/VinFast-VF-8-mau-Xanh-Luc.png'
+                }
                 alt='vehicle'
                 width={600}
                 height={350}
@@ -57,12 +71,13 @@ export const UserAccountDetail = () => {
               <div className='max-w-2/3 w-full'>
                 <h3 className='text-lg font-bold'>Vehicle Information</h3>
                 <div className='mt-4 grid grid-cols-2 gap-4'>
-                  <InfoItem label='Vehicle Type' value={'Car'} />
-                  <InfoItem label='Vehicle Name' value={'VinFast VF8'} />
-                  <InfoItem label='Vehicle Brand' value={'VinFast'} />
-                  <InfoItem label='Vehicle Model' value={'VF8'} />
-                  <InfoItem label='Vehicle Color' value={'Blue'} />
-                  <InfoItem label='Machine Number' value={'1234567890'} />
+                  <InfoItem label='Vehicle Type' value={userDetailData?.vehicles?.[0]?.vehicleType} />
+                  <InfoItem label='Vehicle Brand' value={userDetailData?.vehicles?.[0]?.vehicleBrand} />
+                  <InfoItem label='Vehicle Color' value={userDetailData?.vehicles?.[0]?.vehicleColor} />
+                  <InfoItem label='Vehicle Status' value={userDetailData?.vehicles?.[0]?.status} />
+                  <InfoItem label='Number of Seats' value={userDetailData?.vehicles?.[0]?.numberOfSeats} />
+                  <InfoItem label='Vehicle Number' value={userDetailData?.vehicles?.[0]?.vehicleNumber} />
+                  {/* <InfoItem label='sssssss' value={userDetailData?.vehicles?.[0]?.status} /> */}
                 </div>
               </div>
             </div>
@@ -72,6 +87,7 @@ export const UserAccountDetail = () => {
                 value={
                   <Image
                     src={
+                      userDetailData?.vehicles?.[0]?.vehicleInspectionCertificateUrl ??
                       'https://tnclerks.zendesk.com/hc/article_attachments/4409967522708/Combined_month_and_year_decal.PNG'
                     }
                     alt='vehicle'
@@ -85,7 +101,10 @@ export const UserAccountDetail = () => {
                 label='Car Insurance'
                 value={
                   <Image
-                    src={'https://www.policybazaar.com/pblife/assets/images/pb_life_1650972275.jpg'}
+                    src={
+                      userDetailData?.vehicles?.[0]?.carInsuranceUrl ??
+                      'https://www.policybazaar.com/pblife/assets/images/pb_life_1650972275.jpg'
+                    }
                     alt='vehicle'
                     width={200}
                     height={200}
@@ -98,6 +117,7 @@ export const UserAccountDetail = () => {
                 value={
                   <Image
                     src={
+                      userDetailData?.vehicles?.[0]?.carRegistrationUrl ??
                       'https://dmv.ny.gov/sites/default/files/styles/wysiwyg/public/images/2022-01/reg_sample-340x300.png?itok=HZLA63ka'
                     }
                     alt='vehicle'
@@ -110,7 +130,7 @@ export const UserAccountDetail = () => {
             </div>
           </div>
           <Divider />
-          <div>
+          {/* <div>
             <div className='flex w-full gap-4'>
               <div className='w-full'>
                 <h3 className='text-lg font-bold'>Vehicle Information</h3>
@@ -173,7 +193,7 @@ export const UserAccountDetail = () => {
                 }
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

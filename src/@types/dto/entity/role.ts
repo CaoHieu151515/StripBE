@@ -1,0 +1,7 @@
+export enum Role {
+  ADMIN = 'ROLE_ADMIN',
+  DRIVER = 'ROLE_DRIVER',
+  PASSENGER = 'ROLE_PASSENGER',
+  STAFF = 'ROLE_STAFF',
+  USER = 'ROLE_USER',
+}

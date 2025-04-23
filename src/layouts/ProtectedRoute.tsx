@@ -33,7 +33,7 @@ export default function ProtectedRoute() {
   }, [userInfoData, status, dispatch]);
 
   if (status === 'in-app') {
-    if (isFetchingGetUserInfo || isLoadingGetUserInfo) return <LoadingPageBanner />;
+    if (isLoadingGetUserInfo) return <LoadingPageBanner />;
     if (errorGetUserInfo) return <Empty />;
 
     return <Outlet />;

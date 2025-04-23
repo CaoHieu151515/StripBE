@@ -1,9 +1,9 @@
-import { STORAGE } from '@/utils/constants/shared.constant';
 import axios from 'axios';
-import Cookie from 'js-cookie';
+import { getJwtData } from '../auth/auth.service';
+import { apiBaseUrl } from '@/utils/constants/shared.constant';
 
 const axiosClient = axios.create({
-  baseURL: 'https://stripbe-production.up.railway.app/api',
+  baseURL: apiBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,8 +13,7 @@ const axiosClient = axios.create({
 // Interceptor để thêm token nếu cần
 axiosClient.interceptors.request.use(
   (config) => {
-    const accessToken = Cookie.get(STORAGE.ACCESS_TOKEN);
-    const token = localStorage.getItem('access_token');
+    const accessToken = getJwtData()?.accessToken;
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

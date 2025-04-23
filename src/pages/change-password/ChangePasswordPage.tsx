@@ -1,37 +1,57 @@
 import CustomTextFieldWithLabel from '@/components/form-related/CustomTextFieldWithLabel';
 import { RootState } from '@/data';
+import { AuthResetPasswordREQ } from '@/data/auth/request/auth-reset-password.request';
 import { GlobalState } from '@/data/global/global.slice';
+import { usePutChangePasswordMutation } from '@/data/user/user.api';
 import { ResetPasswordInput } from '@/helpers/form-schemas/reset-password/reset-password.input';
 import { resetPasswordSchema } from '@/helpers/form-schemas/reset-password/reset-password.schema';
 import { useAppSelector } from '@/hooks/reduxHook';
 import DefaultContainer from '@/layouts/DefaultContainer';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button } from 'antd';
+import { enqueueSnackbar } from 'notistack';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 export default function ChangePasswordPage() {
   const { t: tCommon } = useTranslation('common');
-  const { t: tForm } = useTranslation('form');
   const { t: tLogin } = useTranslation('login');
 
   const { userInfo }: GlobalState = useAppSelector((state: RootState) => state.global);
 
   const navigate = useNavigate();
 
+  // api
+  const [putChangePassword, { isLoading: isLoadingPutChangePassword }] = usePutChangePasswordMutation();
+
   //handle form
-  const { handleSubmit, control } = useForm<ResetPasswordInput>({
+  const { handleSubmit, control, reset } = useForm<ResetPasswordInput>({
     resolver: yupResolver(resetPasswordSchema),
     defaultValues: resetPasswordSchema.getDefault(),
   });
 
   //handle submit
   const onSubmit: SubmitHandler<ResetPasswordInput> = async (data) => {
-    const editAdminPasswordREQ = {
-      password: data.password,
+    const editAdminPasswordREQ: AuthResetPasswordREQ = {
+      currentPassword: data.password,
+      newPassword: data.newPassword,
     };
-    console.log('editAdminPasswordREQ', editAdminPasswordREQ);
+    putChangePassword(editAdminPasswordREQ)
+      .unwrap()
+      .then(() => {
+        enqueueSnackbar({
+          message: 'Đổi mật khẩu thành công',
+          variant: 'success',
+        });
+        reset();
+      })
+      .catch(() => {
+        enqueueSnackbar({
+          message: 'Đổi mật khẩu thất bại',
+          variant: 'error',
+        });
+      });
   };
 
   return (
@@ -44,22 +64,35 @@ export default function ChangePasswordPage() {
           <CustomTextFieldWithLabel
             name='password'
             control={control}
-            label={tForm('label.new_password')}
+            label={'Mật khẩu hiện tại'}
             required
             type='password'
-            placeholder={tForm('placeholder.new_password')}
+            placeholder={'Mật khẩu hiện tại'}
+            autoComplete='false'
+          />
+          <CustomTextFieldWithLabel
+            name='newPassword'
+            control={control}
+            label={'Mật khẩu mới'}
+            required
+            type='password'
+            placeholder={'Mật khẩu mới'}
             autoComplete='false'
           />
           <CustomTextFieldWithLabel
             name='confirmPassword'
             control={control}
-            label={tForm('label.confirm_password')}
+            label={'Xác nhận mật khẩu mới'}
             required
             type='password'
-            placeholder={tForm('placeholder.confirm_password')}
+            placeholder={'Xác nhận mật khẩu mới'}
             autoComplete='false'
           />
-          <Button type='primary' htmlType='submit' className='mt-5 w-full py-6 text-base font-semibold' loading={false}>
+          <Button
+            type='primary'
+            htmlType='submit'
+            className='mt-5 w-full py-6 text-base font-semibold'
+            loading={isLoadingPutChangePassword}>
             {tCommon('button.change_password')}
           </Button>
         </form>

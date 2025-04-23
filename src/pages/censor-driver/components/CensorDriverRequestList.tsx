@@ -1,23 +1,26 @@
 import CustomTablePagination from '@/components/table/CustomTablePagination';
 import { TableBuilder } from '@/components/table/TableBuilder';
-import { CensorDriverDTO } from '@/data/censor-driver/dto/censor-driver.dto';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
-import { CensorDriverRequestData } from '../mocks/CensorDriverRequestData';
 import CensorDriverRequestFilter from './CensorDriverRequestFilter';
 import { CensorDriverRequestColumn } from './column/CensorDriverRequestColumn';
 
+import { CensorDriverRequestDTO } from '@/@types/dto/censorDriverRequestDTO';
+import useCensorDriverRequestData from '@/data/services/api/censorDriverRequest/useCensorDriverRequestData';
+
 export default function CensorDriverRequestList() {
+  const { CensorDriverRequestData, isLoading } = useCensorDriverRequestData();
+
   return (
     <div className='flex flex-col gap-5'>
       <CensorDriverRequestFilter />
-      <TableBuilder<CensorDriverDTO>
-        rowKey='id'
+      <TableBuilder<CensorDriverRequestDTO>
+        rowKey='userId'
         columns={CensorDriverRequestColumn()}
-        data={CensorDriverRequestData}
-        isLoading={false}
+        data={CensorDriverRequestData?.content ?? []}
+        isLoading={isLoading}
       />
       <CustomTablePagination
-        totalItems={CensorDriverRequestData?.length || 1}
+        totalItems={CensorDriverRequestData?.totalElements || 1}
         queryKey={PARAM_FIELD.CURRENT_PAGE}
         isScrollAfterPageChange
       />

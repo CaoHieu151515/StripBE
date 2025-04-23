@@ -1,16 +1,12 @@
 import { PackageGetAllDTO } from '@/@types/dto/packageDTO';
 import { TableHeaderCell } from '@/components/table/TableHeaderCell';
 import { ColumnsType } from 'antd/es/table';
+import { useState } from 'react';
 
 export const PackageColumn = (): ColumnsType<PackageGetAllDTO> => {
+  const [isModalDetailOpen, setIsModalDetailOpen] = useState<number | null>(null);
+
   return [
-    {
-      title: () => <TableHeaderCell key='id' label={'ID'} sortKey='id' />,
-      key: 'id',
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.id}</div>;
-      },
-    },
     {
       title: () => <TableHeaderCell key='name' label={'name'} sortKey='name' />,
       key: 'name',
@@ -19,72 +15,119 @@ export const PackageColumn = (): ColumnsType<PackageGetAllDTO> => {
       },
     },
     {
-      title: () => <TableHeaderCell key='packageID' label={'Package ID'} sortKey='packageID' />,
-      key: 'packageID',
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.packageID}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='price' label={'Price'} sortKey='price' />,
+      title: () => <TableHeaderCell key='price' label={'price'} sortKey='price' />,
       key: 'price',
       render: ({ ...props }: PackageGetAllDTO) => {
         return <div>{props?.price}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='description' label={'Description'} sortKey='description' />,
-      key: 'description',
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.description}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='time' label={'time'} sortKey='time' />,
+      title: () => <TableHeaderCell key='time' label={'Package Time'} sortKey='time' />,
       key: 'time',
-      width: 100,
       render: ({ ...props }: PackageGetAllDTO) => {
         return <div>{props?.time}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='bonus' label={'bonus'} sortKey='bonus' />,
+      title: () => <TableHeaderCell key='bonus' label={'Package Bonus Time'} sortKey='bonus' />,
       key: 'bonus',
-      width: 100,
       render: ({ ...props }: PackageGetAllDTO) => {
         return <div>{props?.bonus}</div>;
       },
     },
-    {
-      title: () => <TableHeaderCell key='status' label={'status'} sortKey='status' />,
-      key: 'status',
-      width: 120,
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.status}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='payments' label={'payments'} sortKey='payments' />,
-      key: 'payments',
-      width: 120,
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.payments ? 'todo' : 'null'}</div>;
-      },
-    },
-    {
-      title: () => (
-        <TableHeaderCell
-          key='driverPackageSubscriptions'
-          label={'Driver Package Subscriptions'}
-          sortKey='driverPackageSubscriptions'
-        />
-      ),
-      width: 300,
-      key: 'driverPackageSubscriptions',
-      render: ({ ...props }: PackageGetAllDTO) => {
-        return <div>{props?.driverPackageSubscriptions ? 'todo' : 'null'}</div>;
-      },
-    },
+    // {
+    //   title: () => <TableHeaderCell key='id' label={'ID'} sortKey='id' />,
+    //   key: 'id',
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.id}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='packageID' label={'Package ID'} sortKey='packageID' />,
+    //   key: 'packageID',
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.packageID}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='price' label={'Price'} sortKey='price' />,
+    //   key: 'price',
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.price}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='description' label={'Description'} sortKey='description' />,
+    //   key: 'description',
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.description}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='time' label={'time'} sortKey='time' />,
+    //   key: 'time',
+    //   width: 100,
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.time}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='bonus' label={'bonus'} sortKey='bonus' />,
+    //   key: 'bonus',
+    //   width: 100,
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.bonus}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='status' label={'status'} sortKey='status' />,
+    //   key: 'status',
+    //   width: 120,
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.status}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='payments' label={'payments'} sortKey='payments' />,
+    //   key: 'payments',
+    //   width: 120,
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.payments ? 'todo' : 'null'}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => (
+    //     <TableHeaderCell
+    //       key='driverPackageSubscriptions'
+    //       label={'Driver Package Subscriptions'}
+    //       sortKey='driverPackageSubscriptions'
+    //     />
+    //   ),
+    //   width: 300,
+    //   key: 'driverPackageSubscriptions',
+    //   render: ({ ...props }: PackageGetAllDTO) => {
+    //     return <div>{props?.driverPackageSubscriptions ? 'todo' : 'null'}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='action' label={''} />,
+    //   key: 'action',
+    //   render: ({ ...props }: PackageGetAllDTO) => (
+    //     <>
+    //       <div className='flex w-full justify-start'>
+    //         <Button>Inactive</Button>
+    //         {/* <CustomTableActionsButton label={'Inactive'} onClick={() => setIsModalDetailOpen(props.id ?? null)} /> */}
+    //       </div>
+    //       {/* {isModalDetailOpen === props.id && (
+    //             <CensorDriverDetailModal
+    //               open={isModalDetailOpen === props.id}
+    //               setOpen={() => setIsModalDetailOpen(null)}
+    //               data={props}
+    //             />
+    //           )} */}
+    //     </>
+    //   ),
+    // },
     // {
     //   title: () => <TableHeaderCell key='packageName' label={'Package Name'} sortKey='packageName' />,
     //   key: 'packageName',

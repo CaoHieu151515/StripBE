@@ -7,20 +7,22 @@ import { PackageGetAllDTO } from '@/@types/dto/packageDTO';
 // }
 
 export const packageApi = {
-  // getAll: async (): Promise<PagedResponse<User>> => {
-  //   const response: AxiosResponse<User[]> = await axiosClient.get("/manager/GetAllUsers", {
-  //     // params: { page, size },
-  //   });
+  getAll: async (params?: { firstName?: string; lastName?: string }) => {
+    const response: PackageGetAllDTO[] = await axiosClient.get('/mobile/user/view/allpackages', { params });
+    return response;
+  },
 
-  getAll: async () => {
-    const token = localStorage.getItem('token'); // hoặc lấy từ Redux/Zustand
-
-    const response = await axiosClient.get<PackageGetAllDTO[]>('/mobile/user/view/allpackages', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  create: async (data: { name: string; price: number; time: number; bonus: number; description: string }) => {
+    const response = await axiosClient.post('/manager/packages/createPackage', {
+      id: 0,
+      packageID: crypto.randomUUID(),
+      name: data.name,
+      price: data.price,
+      time: data.time,
+      bonus: data.bonus,
+      description: data.description || '',
+      status: 'ACTIVE',
     });
-
     return response;
   },
 };

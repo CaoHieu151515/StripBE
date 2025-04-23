@@ -26,7 +26,7 @@ export default function ResetPasswordForm({ email, otp }: InputResetPasswordForm
   const navigate = useNavigate();
 
   //handle form
-  const { handleSubmit, control } = useForm<ResetPasswordInput>({
+  const { handleSubmit, control, reset } = useForm<ResetPasswordInput>({
     resolver: yupResolver(resetPasswordSchema),
     defaultValues: resetPasswordSchema.getDefault(),
   });
@@ -36,9 +36,8 @@ export default function ResetPasswordForm({ email, otp }: InputResetPasswordForm
 
   const onSubmit = (data: ResetPasswordInput) => {
     const verifyAuthCodeREQ: AuthResetPasswordREQ = {
-      email: email,
-      password: data.password,
-      authCode: otp,
+      currentPassword: data.password,
+      newPassword: data.confirmPassword,
     };
 
     resetPassword(verifyAuthCodeREQ)

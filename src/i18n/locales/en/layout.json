@@ -13,7 +13,8 @@
       "report": "Report",
       "transaction-history": "Transaction History",
       "censor-vehicle": "Censor Vehicle",
-      "rate-driver": "Rate Driver"
+      "rate-driver": "Rate Driver",
+      "staff": "Staff"
     }
   }
 }

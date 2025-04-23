@@ -17,6 +17,7 @@ export default function WalletOverview() {
       icon: <CardCreditIcon className='size-6 text-primary-500' />,
     },
   ];
+
   return (
     <div className='hover-scrollbar flex h-full w-full max-w-pc gap-6 p-2'>
       {walletCardsData.map((card, index) => (

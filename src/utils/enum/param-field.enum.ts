@@ -23,4 +23,13 @@ export enum PARAM_FIELD {
   NAME = 'name',
   LOCATION = 'location',
   TRIP_ID = 'tripId',
+  PAGE = 'page',
+  SIZE = 'size',
+  FIRST_NAME = 'firstName',
+  LAST_NAME = 'lastName',
+  SORT = 'sort',
+  START_LOCATION = 'startLocation',
+  END_LOCATION = 'endLocation',
+  WALLET_TYPE = 'walletType',
+  DRIVER_ID = 'driverId',
 }

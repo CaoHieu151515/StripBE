@@ -13,7 +13,6 @@ const usePackageData = () => {
   const fetchUserDataFunction = async () => {
     try {
       const response = await packageApi.getAll();
-      // console.log(response);
       return response;
     } catch (e) {
       console.log(e);

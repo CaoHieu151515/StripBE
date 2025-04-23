@@ -1,13 +1,13 @@
-export type PagingREQ = { pageSize: number; currentPage: number };
+export type PagingREQ = { page: number; size: number };
 
 export type PagingRESP = {
   page: number;
-  limit: number;
+  size: number;
   totalPages: number;
-  totalRows: number;
+  totalElements: number;
 };
 
 export const initialPagingState = {
-  pageSize: 10,
-  currentPage: 1,
+  page: 0,
+  size: 8,
 };

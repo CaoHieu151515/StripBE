@@ -1,18 +1,33 @@
+import { RootState } from '@/data';
+import { GlobalState } from '@/data/global/global.slice';
+import { useAppSelector } from '@/hooks/reduxHook';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
-import { LAYOUT_SIDEBAR_GROUP_TEMPLATES } from '@/utils/constants/layout.constant';
-import { useEffect, useState } from 'react';
+import {
+  LAYOUT_SIDEBAR_GROUP_TEMPLATES,
+  LAYOUT_SIDEBAR_GROUP_TEMPLATES_STAFF,
+} from '@/utils/constants/layout.constant';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import SideBar from './components/SideBar';
+import { SideBarGroupTemplate } from './types/SideBarGroupTemplate.type';
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const { isXl: screenIsLargerThanXl } = useBreakpoint('xl');
-
+  const { userInfo }: GlobalState = useAppSelector((state: RootState) => state.global);
   const [openSideBar, setOpenSideBar] = useState<boolean>(true);
   const [focusedTitles, setFocusedTitles] = useState<[string | undefined, string | undefined]>([undefined, undefined]);
+
+  const sidebarGroupTemplate = useMemo<SideBarGroupTemplate[]>(() => {
+    if (!userInfo?.roles) return [];
+
+    if (userInfo.roles.includes('ROLE_ADMIN')) return LAYOUT_SIDEBAR_GROUP_TEMPLATES;
+    if (userInfo.roles.includes('ROLE_STAFF')) return LAYOUT_SIDEBAR_GROUP_TEMPLATES_STAFF;
+    return LAYOUT_SIDEBAR_GROUP_TEMPLATES;
+  }, [userInfo?.roles]);
 
   useEffect(() => {
     if (!screenIsLargerThanXl) setOpenSideBar(false);
@@ -48,7 +63,7 @@ export default function MainLayout() {
       <SideBar
         className={screenIsLargerThanXl ? 'z-[48] pb-navbar' : 'pb-32'}
         open={openSideBar}
-        groups={LAYOUT_SIDEBAR_GROUP_TEMPLATES}
+        groups={sidebarGroupTemplate}
         focusedTitles={focusedTitles}
         onChangeOpen={() => setOpenSideBar((previous) => !previous)}
         alwaysOpen={screenIsLargerThanXl}

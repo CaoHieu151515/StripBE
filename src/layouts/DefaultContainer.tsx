@@ -1,9 +1,6 @@
-import HomeIcon from '@/components/icons/HomeIcon';
-import { MY_ROUTE } from '@/helpers/router/route.constant';
-import { Breadcrumb } from 'antd';
+import ChervonRightIcon from '@/components/icons/ChervonRightIcon';
 import { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 
 type BreadcrumbItem = {
@@ -27,17 +24,17 @@ export default function DefaultContainer({
   breadcrumbs,
   button,
 }: DefaultContainerProps) {
-  const { t: tLayout } = useTranslation('layout');
+  const navigate = useNavigate();
 
   return (
     <div
       className={twMerge(
-        'flex min-h-screen w-full max-w-pc flex-col gap-10 overflow-hidden rounded-lg bg-white p-8 shadow-lg',
+        'flex min-h-screen w-full max-w-pc flex-col gap-5 overflow-hidden rounded-lg bg-white p-8 shadow-lg',
         className,
       )}>
       <div className='flex items-center justify-between'>
         <div className='w-full'>
-          <Breadcrumb
+          {/* <Breadcrumb
             className='text-primary-500'
             items={
               breadcrumbs
@@ -70,14 +67,19 @@ export default function DefaultContainer({
                     },
                   ]
             }
-          />
+          /> */}
           {button ? (
             <div className='flex w-full items-center justify-between'>
-              <h1 className='mt-5 text-3xl font-bold text-primary-500'>{title}</h1>
+              <h1 className='text-3xl font-bold text-primary-500'>{title}</h1>
               {button}
             </div>
           ) : (
-            <h1 className='mt-5 text-3xl font-bold text-primary-500'>{title}</h1>
+            <div className='flex items-center gap-1'>
+              <button onClick={() => navigate(-1)}>
+                <ChervonRightIcon className='size-5 rotate-180 text-primary-500' />
+              </button>
+              <h1 className='text-3xl font-bold text-primary-500'>{title}</h1>
+            </div>
           )}
         </div>
         {icon}

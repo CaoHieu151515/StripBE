@@ -27,6 +27,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 Select: {
                   optionActiveBg: '#FEECDC',
                 },
+                Switch: {
+                  colorPrimary: '#0E9F6E',
+                  colorPrimaryHover: '#31C48D',
+                },
               },
             }}>
             <App />

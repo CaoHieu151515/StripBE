@@ -11,6 +11,7 @@ interface CustomModalProps {
   children: React.ReactNode;
   okType?: 'default' | 'danger' | 'link' | 'text' | undefined;
   okText?: string;
+  loading?: boolean;
 }
 
 const CustomModal: FC<CustomModalProps> = ({
@@ -23,6 +24,7 @@ const CustomModal: FC<CustomModalProps> = ({
   okType,
   children,
   okText,
+  loading,
 }) => {
   return (
     <Modal
@@ -34,7 +36,9 @@ const CustomModal: FC<CustomModalProps> = ({
       onCancel={() => setOpen(false)}
       onOk={onConfirm}
       okType={okType}
-      okText={okText}>
+      okText={okText}
+      confirmLoading={loading}
+      cancelText='Đóng'>
       {children}
     </Modal>
   );
