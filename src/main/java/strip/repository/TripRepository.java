@@ -46,6 +46,7 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
               AND (:endLocation IS NULL OR LOWER(t.endLocation) LIKE LOWER(CONCAT('%', :endLocation, '%')))
               AND (:status IS NULL OR t.tripStatus = :status)
               AND (:driverId IS NULL OR t.driver.driverID = :driverId)
+              AND (:tripId IS NULL OR t.id = :tripId)
         """
     )
     Page<Trip> findAllWithFilters(
@@ -53,6 +54,7 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
         @Param("endLocation") String endLocation,
         @Param("status") TripStatus status,
         @Param("driverId") UUID driverId,
+        @Param("tripId") Long tripId,
         Pageable pageable
     );
 

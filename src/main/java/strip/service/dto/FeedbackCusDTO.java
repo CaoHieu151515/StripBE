@@ -21,6 +21,7 @@ public class FeedbackCusDTO {
     private TripDTO trip;
     private ConfirmingVehicleDriverDTO driver;
     private UsermanageDTO user;
+    private String tripId;
 
     public UUID getFeedbackID() {
         return feedbackID;
@@ -28,6 +29,14 @@ public class FeedbackCusDTO {
 
     public void setFeedbackID(UUID feedbackID) {
         this.feedbackID = feedbackID;
+    }
+
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 
     public FeedbackType getFeedbackType() {

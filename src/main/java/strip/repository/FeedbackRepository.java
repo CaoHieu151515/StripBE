@@ -26,9 +26,15 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
             SELECT f FROM Feedback f
             WHERE (:status IS NULL OR f.feedbackStatus = :status)
               AND (:type IS NULL OR f.feedbackType = :type)
+              AND (:tripId IS NULL OR f.trip.id = :tripId)
         """
     )
-    Page<Feedback> findAllWithFilters(@Param("status") FeedbackStatus status, @Param("type") FeedbackType type, Pageable pageable);
+    Page<Feedback> findAllWithFilters(
+        @Param("status") FeedbackStatus status,
+        @Param("type") FeedbackType type,
+        @Param("tripId") Long tripId,
+        Pageable pageable
+    );
 
     Optional<Feedback> findByFeedbackID(UUID feedbackID);
 }

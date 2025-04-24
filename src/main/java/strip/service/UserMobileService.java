@@ -957,16 +957,12 @@ public class UserMobileService {
             .findByUser_Id(user.getId())
             .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
 
-        UserDetail detail = userDetailRepository
-            .findByUserId(user.getId())
-            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
-
         WalletTransaction passengerTx = new WalletTransaction();
         passengerTx.setTransID(UUID.randomUUID());
         passengerTx.setAmount(amount);
         passengerTx.setDate(Instant.now());
         passengerTx.setWalletType(WalletTransactionType.PASSENGER_APPROVE_FEE);
-        passengerTx.setTransactionThirdPartyID(tripId.toString() + "-" + detail.getAppUserDetail().toString());
+        passengerTx.setTransactionThirdPartyID(tripId.toString());
         passengerTx.setTransStatus(TransactionStatus.SUCCESS);
 
         wallet.addWalletTransactionAndUpdateBalance(passengerTx);
@@ -981,10 +977,6 @@ public class UserMobileService {
             .findByUser_Id(user.getId())
             .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
 
-        UserDetail detail = userDetailRepository
-            .findByUserId(user.getId())
-            .orElseThrow(() -> new BadRequestAlertException("User wallet not found", "wallet", "notfound"));
-
         WalletTransaction pendingTx = new WalletTransaction();
         pendingTx.setTransID(UUID.randomUUID());
         pendingTx.setAmount(amount);
@@ -992,7 +984,7 @@ public class UserMobileService {
         pendingTx.setWalletType(WalletTransactionType.PASSENGER_APPROVE_FEE);
         pendingTx.setTransStatus(TransactionStatus.PENDING);
         pendingTx.setUserWallet(wallet);
-        pendingTx.setTransactionThirdPartyID(tripId.toString() + "-" + detail.getAppUserDetail().toString());
+        pendingTx.setTransactionThirdPartyID(tripId.toString());
         wallet.addWalletTransactionAndUpdateBalance(pendingTx);
         userWalletRepository.save(wallet);
     }

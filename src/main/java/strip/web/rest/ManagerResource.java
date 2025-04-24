@@ -237,20 +237,20 @@ public class ManagerResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/trips/getall")
     public ResponseEntity<CustomPageDTO<TripListDTO>> getAllTrips(
         @ParameterObject Pageable pageable,
         @RequestParam(required = false) String startLocation,
         @RequestParam(required = false) String endLocation,
         @RequestParam(required = false) TripStatus status,
-        @RequestParam(required = false) UUID driverId
+        @RequestParam(required = false) UUID driverId,
+        @RequestParam(required = false) String tripHandleId
     ) {
         if (!onlyContainsAllowedPropertiesTrip(pageable)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Page<TripListDTO> page = usermanageService.getAllTrips(pageable, startLocation, endLocation, status, driverId);
+        Page<TripListDTO> page = usermanageService.getAllTrips(pageable, startLocation, endLocation, status, driverId, tripHandleId);
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
@@ -288,13 +288,14 @@ public class ManagerResource {
     public ResponseEntity<CustomPageDTO<FeedbackCusDTO>> getAllFeedbacks(
         @ParameterObject Pageable pageable,
         @RequestParam(required = false) FeedbackStatus status,
-        @RequestParam(required = false) FeedbackType type
+        @RequestParam(required = false) FeedbackType type,
+        @RequestParam(required = false) String tripId
     ) {
         if (!onlyContainsAllowedPropertiesFeedback(pageable)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Page<FeedbackCusDTO> page = usermanageService.getAllFeedbacks(pageable, status, type);
+        Page<FeedbackCusDTO> page = usermanageService.getAllFeedbacks(pageable, status, type, tripId);
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 

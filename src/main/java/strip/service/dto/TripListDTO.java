@@ -14,6 +14,7 @@ public class TripListDTO {
     Double price;
     TripStatus status;
     int totalTime;
+    private String tripHandleId;
 
     public UUID getStripID() {
         return stripID;
@@ -77,5 +78,13 @@ public class TripListDTO {
 
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
+    }
+
+    public String getTripHandleId() {
+        return tripHandleId;
+    }
+
+    public void setTripHandleId(String tripHandleId) {
+        this.tripHandleId = tripHandleId;
     }
 }

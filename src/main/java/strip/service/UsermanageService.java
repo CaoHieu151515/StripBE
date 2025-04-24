@@ -82,6 +82,7 @@ import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.PackageDriverMapper;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
+import strip.ultil.TripCodeUtils;
 import strip.ultil.UserRoleUtils;
 import strip.web.rest.errors.BadRequestAlertException;
 
@@ -541,9 +542,25 @@ public class UsermanageService {
         log.info("❌ Đã từ chối rút tiền và hoàn tiền lại cho user: {}", userWallet.getUser().getLogin());
     }
 
-    public Page<TripListDTO> getAllTrips(Pageable pageable, String startLocation, String endLocation, TripStatus status, UUID driverId) {
-        Page<Trip> trips = tripRepository.findAllWithFilters(startLocation, endLocation, status, driverId, pageable);
-        return trips.map(usermanageMapper::toTripListDTO);
+    public Page<TripListDTO> getAllTrips(
+        Pageable pageable,
+        String startLocation,
+        String endLocation,
+        TripStatus status,
+        UUID driverId,
+        String tripHandleId
+    ) {
+        Long tripDbId = TripCodeUtils.decode(tripHandleId);
+
+        Page<Trip> trips = tripRepository.findAllWithFilters(startLocation, endLocation, status, driverId, tripDbId, pageable);
+
+        return trips.map(trip -> {
+            TripListDTO dto = usermanageMapper.toTripListDTO(trip);
+            if (trip.getId() != null) {
+                dto.setTripHandleId(TripCodeUtils.encode(trip.getId()));
+            }
+            return dto;
+        });
     }
 
     public Optional<TripDetailDTO> getTripById(UUID id) {
@@ -590,6 +607,9 @@ public class UsermanageService {
                 .collect(Collectors.toSet());
 
             dto.setStoplocation(stopDTOs);
+        }
+        if (trip.getId() != null) {
+            dto.setTripHandleId(TripCodeUtils.encode(trip.getId()));
         }
 
         return dto;
@@ -649,8 +669,9 @@ public class UsermanageService {
         tripRepository.save(trip);
     }
 
-    public Page<FeedbackCusDTO> getAllFeedbacks(Pageable pageable, FeedbackStatus status, FeedbackType type) {
-        Page<Feedback> feedbackPage = feedbackRepository.findAllWithFilters(status, type, pageable);
+    public Page<FeedbackCusDTO> getAllFeedbacks(Pageable pageable, FeedbackStatus status, FeedbackType type, String tripCode) {
+        Long tripId = TripCodeUtils.decode(tripCode); // TRIP-00042 → 42
+        Page<Feedback> feedbackPage = feedbackRepository.findAllWithFilters(status, type, tripId, pageable);
 
         return feedbackPage.map(this::convertToFeedbackCusDTO);
     }
@@ -671,6 +692,9 @@ public class UsermanageService {
             TripDTO tripDTO = usermanageMapper.toTripDTO(trip);
             tripDTO.setTripImg(null);
             dto.setTrip(tripDTO);
+            if (trip.getId() != null) {
+                dto.setTripId(TripCodeUtils.encode(trip.getId()));
+            }
         }
 
         // Driver Info
@@ -934,6 +958,7 @@ public class UsermanageService {
             case DRIVER_CREATE_TRIP_FEE -> "Tài xế tạo chuyến đi, trừ phí" + buildTripIdSuffix(tx);
             case SYSTEM_GAIN_CREATE_TRIP_FEE -> "Hệ thống thu phí tạo chuyến" + buildTripIdSuffix(tx);
             case SYSTEM_GAIN_DONE_TRIP_FEE -> "Hệ thống thu từ chuyến đi hoàn thành" + buildTripIdSuffix(tx);
+            case DRIVER_DONE_TRIP_REFUND -> "Hệ thống hoàn tiền chuyến đi cho tài xế" + buildTripIdSuffix(tx);
             case PASSENGER_APPROVE_FEE -> "Tiền cọc của hành khách" + buildTripIdSuffix(tx);
             case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP -> "Hệ thống hoàn tiền cho tài xế" + buildTripIdSuffix(tx);
             case SYSTEM_REFUND_TO_PASSENGER -> "Hệ thống hoàn tiền cho hành khách" + buildTripIdSuffix(tx);
@@ -981,8 +1006,26 @@ public class UsermanageService {
     }
 
     private String buildTripIdSuffix(WalletTransaction tx) {
-        String id = tx.getTransactionThirdPartyID();
-        return (id != null && !id.isBlank()) ? " (Trip ID: " + id + ")" : "";
+        String rawUuid = tx.getTransactionThirdPartyID();
+
+        if (rawUuid == null || rawUuid.isBlank()) {
+            return "";
+        }
+
+        try {
+            UUID tripUUID = UUID.fromString(rawUuid);
+            Optional<Trip> optionalTrip = tripRepository.findByTripID(tripUUID);
+
+            if (optionalTrip.isPresent()) {
+                Trip trip = optionalTrip.get();
+                String shortCode = TripCodeUtils.encode(trip.getId());
+                return " (" + shortCode + ")";
+            } else {
+                return " (Trip UUID: " + rawUuid + ")";
+            }
+        } catch (IllegalArgumentException e) {
+            return " (Invalid Trip UUID)";
+        }
     }
 
     private String getPackageIdSuffix(WalletTransaction tx) {

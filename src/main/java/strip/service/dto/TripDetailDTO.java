@@ -24,6 +24,7 @@ public class TripDetailDTO {
     private String tripImgUrl;
     private DriverRawDTO driver;
     private VehicleRawDTO vehicle;
+    private String tripHandleId;
     private Set<TripStopLocationSkipTripDTO> stoplocation;
 
     public UUID getTripID() {
@@ -168,5 +169,13 @@ public class TripDetailDTO {
 
     public void setStoplocation(Set<TripStopLocationSkipTripDTO> stoplocation) {
         this.stoplocation = stoplocation;
+    }
+
+    public String getTripHandleId() {
+        return tripHandleId;
+    }
+
+    public void setTripHandleId(String tripHandleId) {
+        this.tripHandleId = tripHandleId;
     }
 }
