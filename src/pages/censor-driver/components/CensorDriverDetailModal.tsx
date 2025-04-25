@@ -70,7 +70,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
   return (
     <>
       <CustomModal
-        title='Censor Driver Detail'
+        title='Thông Tin Chi Tiết Kiểm Duyệt'
         open={open}
         setOpen={setOpen}
         className='!w-[1020px]'
@@ -95,9 +95,9 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
             </Button>
           </div>
         }>
-        <div className='flex gap-4'>
+        <div className=''>
           <div>
-            <h3 className='text-2xl font-bold'>Driver Information</h3>
+            <h3 className='text-2xl font-bold'>Thông Tin Tài Xế</h3>
             <div className='flex items-center gap-4'>
               <figure className='relative h-40 w-40 rounded-xl border-[5px] border-white'>
                 <img
@@ -106,7 +106,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                   className='h-full w-full rounded-xl border-[5px] border-white object-contain'
                 />
               </figure>
-              <div className='mt-4 grid grid-cols-2 gap-4'>
+              <div className='mt-4 grid grid-cols-3 gap-4'>
                 <InfoItem label='Họ và tên' value={data?.firstName + ' ' + data?.lastName} />
                 <InfoItem label='Số điện thoại' value={data?.phone} />
                 <InfoItem label='Email' value={data?.email} />
@@ -119,62 +119,62 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                     </div>
                   }
                 />
+                <div>
+                  <Link
+                    to={`${MY_ROUTE.TRIP.self}?driverId=${data?.driverId}`}
+                    className='mt-4 flex w-fit items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-500'>
+                    <span>Lịch sử chuyến đi</span>
+                  </Link>
+                </div>
               </div>
             </div>
+
             <div>
-              <Link
-                to={`${MY_ROUTE.TRIP.self}?driverId=${data?.driverId}`}
-                className='mt-4 flex w-fit items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-500'>
-                <span>Lịch sử chuyến đi</span>
-              </Link>
-            </div>
-          </div>
-          <div>
-            <h3 className='text-2xl font-bold'>Vehicle Information</h3>
-            <Image
-              src={data?.vehicle?.vehicleImageUrl}
-              alt='vehicle'
-              width={400}
-              height={250}
-              className='object-contain'
-            />
-            <div className='mt-4 grid grid-cols-2 gap-4'>
-              {/* <InfoItem label='Vehicle Id' value={data?.vehicle?.vehicleID} /> */}
-              <InfoItem label='Vehicle Type' value={data?.vehicle?.vehicleType} />
-              <InfoItem label='Vehicle Number' value={data?.vehicle?.vehicleNumber} />
-              <InfoItem label='Vehicle Brand' value={data?.vehicle?.vehicleBrand} />
-              <InfoItem label='NumberOfSeats' value={data?.vehicle?.numberOfSeats} />
-              <InfoItem label='VehicleColor' value={data?.vehicle?.vehicleColor} />
-              <InfoItem label='Status' value={data?.vehicle?.status} />
-            </div>
-            <div className='mt-4'>
-              <div className='grid grid-cols-2 gap-4'>
-                <InfoItem
-                  label='Car Insurance'
-                  value={
-                    <Image
-                      // src={'https://www.policybazaar.com/pblife/assets/images/pb_life_1650972275.jpg'}
-                      src={data?.vehicle?.carInsuranceUrl}
-                      alt='carInsurance'
-                      width={100}
-                      height={100}
-                      className='object-contain'
-                    />
-                  }
-                />
-                <InfoItem
-                  label='Carregistration'
-                  value={
-                    <Image
-                      src={data?.vehicle?.carregistrationUrl}
-                      alt='carInsurance'
-                      width={100}
-                      height={100}
-                      className='object-contain'
-                    />
-                  }
-                />
-                {/* <InfoItem
+              <h3 className='mt-4 text-2xl font-bold'>Thông Tin Phương Tiện</h3>
+              <Image
+                src={data?.vehicle?.vehicleImageUrl}
+                alt='vehicle'
+                width={400}
+                height={250}
+                className='object-contain'
+              />
+              <div className='mt-4 grid grid-cols-3 gap-4'>
+                {/* <InfoItem label='Vehicle Id' value={data?.vehicle?.vehicleID} /> */}
+                <InfoItem label='Vehicle Type' value={data?.vehicle?.vehicleType} />
+                <InfoItem label='Vehicle Number' value={data?.vehicle?.vehicleNumber} />
+                <InfoItem label='Vehicle Brand' value={data?.vehicle?.vehicleBrand} />
+                <InfoItem label='NumberOfSeats' value={data?.vehicle?.numberOfSeats} />
+                <InfoItem label='VehicleColor' value={data?.vehicle?.vehicleColor} />
+                <InfoItem label='Status' value={data?.vehicle?.status} />
+              </div>
+              <div className='mt-4'>
+                <div className='grid grid-cols-3 gap-4'>
+                  <InfoItem
+                    label='Car Insurance'
+                    value={
+                      <Image
+                        // src={'https://www.policybazaar.com/pblife/assets/images/pb_life_1650972275.jpg'}
+                        src={data?.vehicle?.carInsuranceUrl}
+                        alt='carInsurance'
+                        width={100}
+                        height={100}
+                        className='object-contain'
+                      />
+                    }
+                  />
+                  <InfoItem
+                    label='Carregistration'
+                    value={
+                      <Image
+                        src={data?.vehicle?.carregistrationUrl}
+                        alt='carInsurance'
+                        width={100}
+                        height={100}
+                        className='object-contain'
+                      />
+                    }
+                  />
+                  {/* <InfoItem
                   label='Registration Certificate'
                   value={
                     <Image
@@ -188,8 +188,8 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                     />
                   }
                 /> */}
-              </div>
-              {/* <InfoItem
+                </div>
+                {/* <InfoItem
                 label='Vehicle Registration Certificate'
                 value={
                   <Image
@@ -203,18 +203,19 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                   />
                 }
               /> */}
-              <InfoItem
-                label='Vehicle Inspection Certificate'
-                value={
-                  <Image
-                    src={data?.vehicle?.vehicleInspectionCertificateUrl}
-                    alt='vehicle'
-                    width={100}
-                    height={100}
-                    className='object-contain'
-                  />
-                }
-              />
+                <InfoItem
+                  label='Vehicle Inspection Certificate'
+                  value={
+                    <Image
+                      src={data?.vehicle?.vehicleInspectionCertificateUrl}
+                      alt='vehicle'
+                      width={100}
+                      height={100}
+                      className='object-contain'
+                    />
+                  }
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -22,7 +22,6 @@ const useWalletData = () => {
     }
   };
 
-  // TODO: use debounce technique to prevent many calls at a short time
   const queryKey = ['walletData', params.walletType as string, page];
 
   const {
@@ -31,17 +30,12 @@ const useWalletData = () => {
     ...rest
   } = useQuery(queryKey, fetchWalletDataFunction, {
     onError: (err) => console.log('error at hook', err),
+    keepPreviousData: true,
   });
 
   return {
     WalletData,
     refreshWalletData,
-    // setSortState,
-    // setKeyword,
-    // setPagination,
-    // setFilter,
-    // keyword,
-    // totalRows,
     ...rest,
   };
 };

@@ -9,36 +9,22 @@ export const CensorDriverRequestColumn = (): ColumnsType<CensorDriverRequestDTO>
   const [isModalDetailOpen, setIsModalDetailOpen] = useState<string | null>(null);
 
   return [
-    // {
-    //   title: () => <TableHeaderCell key='driverId' label={'driverId'} sortKey='usedriverIdrId' />,
-    //   key: 'driverId',
-    //   render: ({ ...props }: CensorDriverRequestDTO) => {
-    //     return <div>{props?.driverId}</div>;
-    //   },
-    // },
-    // {
-    //   title: () => <TableHeaderCell key='userId' label={'userId'} sortKey='userId' />,
-    //   key: 'userId',
-    //   render: ({ ...props }: CensorDriverRequestDTO) => {
-    //     return <div>{props?.userId}</div>;
-    //   },
-    // },
     {
-      title: () => <TableHeaderCell key='firstName' label={'firstName'} sortKey='firstName' />,
+      title: () => <TableHeaderCell key='firstName' label={'Tên'} sortKey='firstName' />,
       key: 'firstName',
       render: ({ ...props }: CensorDriverRequestDTO) => {
         return <div>{props?.firstName}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='lastName' label={'lastName'} sortKey='lastName' />,
+      title: () => <TableHeaderCell key='lastName' label={'Họ'} sortKey='lastName' />,
       key: 'lastName',
       render: ({ ...props }: CensorDriverRequestDTO) => {
         return <div>{props?.lastName}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='phone' label={'Phone Number'} sortKey='phone' />,
+      title: () => <TableHeaderCell key='phone' label={'Số Điện Thoại'} sortKey='phone' />,
       key: 'phone',
       render: ({ ...props }: CensorDriverRequestDTO) => {
         return <div>{props?.phone}</div>;
@@ -83,7 +69,7 @@ export const CensorDriverRequestColumn = (): ColumnsType<CensorDriverRequestDTO>
     // },
 
     {
-      title: () => <TableHeaderCell key='action' label={'Action'} />,
+      title: () => <TableHeaderCell key='action' label={'Hành Động'} />,
       key: 'action',
       render: ({ ...props }: CensorDriverRequestDTO) => (
         <>

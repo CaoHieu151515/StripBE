@@ -10,24 +10,31 @@ export const CensorVehicleColumn = (): ColumnsType<CensorVehicleDTO> => {
 
   return [
     {
-      title: () => <TableHeaderCell key='vehicleNumber' label={'Vehicle Number'} sortKey='vehicleNumber' />,
+      title: () => <TableHeaderCell key='vehicleNumber' label={'Số Máy'} sortKey='vehicleNumber' />,
       key: 'vehicleNumber',
       render: ({ ...props }: CensorVehicleDTO) => {
         return <div>{props?.vehicle?.vehicleNumber}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='vehicleType' label={'Vehicle Type'} sortKey='vehicleType' />,
+      title: () => <TableHeaderCell key='vehicleType' label={'Loại Phương Tiện'} sortKey='vehicleType' />,
       key: 'vehicleType',
       render: ({ ...props }: CensorVehicleDTO) => {
         return <div>{props?.vehicle?.vehicleType}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='vehicleBrand' label={'vehicle Brand'} sortKey='vehicleBrand' />,
+      title: () => <TableHeaderCell key='vehicleBrand' label={'Hãng'} sortKey='vehicleBrand' />,
       key: 'vehicleBrand',
       render: ({ ...props }: CensorVehicleDTO) => {
         return <div>{props?.vehicle?.vehicleBrand}</div>;
+      },
+    },
+    {
+      title: () => <TableHeaderCell key='vehicleStatus' label={'Trạng Thái'} sortKey='vehicleStatus' />,
+      key: 'vehicleStatus',
+      render: ({ ...props }: CensorVehicleDTO) => {
+        return <div>{props?.vehicle?.status}</div>;
       },
     },
     // {
@@ -69,7 +76,7 @@ export const CensorVehicleColumn = (): ColumnsType<CensorVehicleDTO> => {
     //   },
     // },
     {
-      title: () => <TableHeaderCell key='action' label={''} />,
+      title: () => <TableHeaderCell key='action' label={'Hành Động'} />,
       key: 'action',
       render: ({ ...props }: CensorVehicleDTO) => (
         <>

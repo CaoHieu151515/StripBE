@@ -8,7 +8,7 @@ import { CensorDriverRequestDTO } from '@/@types/dto/censorDriverRequestDTO';
 import useCensorDriverRequestData from '@/data/services/api/censorDriverRequest/useCensorDriverRequestData';
 
 export default function CensorDriverRequestList() {
-  const { CensorDriverRequestData, isLoading } = useCensorDriverRequestData();
+  const { CensorDriverRequestData, isFetching } = useCensorDriverRequestData();
 
   return (
     <div className='flex flex-col gap-5'>
@@ -17,11 +17,11 @@ export default function CensorDriverRequestList() {
         rowKey='userId'
         columns={CensorDriverRequestColumn()}
         data={CensorDriverRequestData?.content ?? []}
-        isLoading={isLoading}
+        isLoading={isFetching}
       />
       <CustomTablePagination
         totalItems={CensorDriverRequestData?.totalElements || 1}
-        queryKey={PARAM_FIELD.CURRENT_PAGE}
+        queryKey={PARAM_FIELD.PAGE}
         isScrollAfterPageChange
       />
     </div>

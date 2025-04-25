@@ -45,7 +45,7 @@ export default function CreatePakageModal({ open, setOpen }: CreatePakageModalPr
 
   return (
     <CustomModal
-      title='Create Package'
+      title='Tạo Gói'
       open={open}
       className='!w-[520px]'
       setOpen={setOpen}
@@ -61,7 +61,7 @@ export default function CreatePakageModal({ open, setOpen }: CreatePakageModalPr
         <CustomTextFieldWithLabel
           control={control}
           name='packageName'
-          label='Package Name'
+          label='Tên Gói'
           placeholder='Enter package name'
           className='w-full'
         />
@@ -82,7 +82,7 @@ export default function CreatePakageModal({ open, setOpen }: CreatePakageModalPr
         <CustomTextFieldWithLabel
           control={control}
           name='packagePrice'
-          label='Package Price (VND)'
+          label='Giá Gói (VND)'
           placeholder='Enter package price'
           type='number'
           min={1000}

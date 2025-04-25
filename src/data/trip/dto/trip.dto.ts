@@ -10,4 +10,5 @@ export interface TripDTO {
   price: number;
   status: TRIP_STATUS;
   totalTime: number;
+  tripHandleId: string;
 }

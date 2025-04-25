@@ -1,3 +1,4 @@
+import { PagedResponse } from '@/@types/dto/pagedResponse';
 import axiosClient from '../../axiosClient';
 import { PackageGetAllDTO } from '@/@types/dto/packageDTO';
 
@@ -7,15 +8,23 @@ import { PackageGetAllDTO } from '@/@types/dto/packageDTO';
 // }
 
 export const packageApi = {
-  getAll: async (params?: { firstName?: string; lastName?: string }) => {
-    const response: PackageGetAllDTO[] = await axiosClient.get('/mobile/user/view/allpackages', { params });
+  getAll: async (params?: {
+    name?: string;
+    price?: number;
+    time?: number;
+    page?: number;
+    size?: number;
+  }): Promise<PagedResponse<PackageGetAllDTO>> => {
+    const response: PagedResponse<PackageGetAllDTO> = await axiosClient.get('manager/packages/getAllPackage', {
+      params,
+    });
     return response;
   },
 
   create: async (data: { name: string; price: number; time: number; bonus: number; description: string }) => {
     const response = await axiosClient.post('/manager/packages/createPackage', {
       id: 0,
-      packageID: crypto.randomUUID(),
+      // packageID: crypto.randomUUID(),
       name: data.name,
       price: data.price,
       time: data.time,

@@ -10,37 +10,37 @@ export const UserColumn = (): ColumnsType<UserGetAllDTO> => {
   const navigate = useNavigate();
 
   return [
+    // {
+    //   title: () => <TableHeaderCell key='userId' label={'ID'} sortKey='userId' />,
+    //   key: 'userId',
+    //   render: ({ ...props }: UserGetAllDTO) => {
+    //     // console.log("UserColumn");
+    //     return <div>{props?.userId}</div>;
+    //   },
+    // },
+    // {
+    //   title: () => <TableHeaderCell key='username' label={'Full Name'} sortKey='username' />,
+    //   key: 'username',
+    //   render: ({ ...props }: UserGetAllDTO) => {
+    //     return <div>{props?.username}</div>;
+    //   },
+    // },
     {
-      title: () => <TableHeaderCell key='userId' label={'ID'} sortKey='userId' />,
-      key: 'userId',
-      render: ({ ...props }: UserGetAllDTO) => {
-        // console.log("UserColumn");
-        return <div>{props?.userId}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='username' label={'Full Name'} sortKey='username' />,
-      key: 'username',
-      render: ({ ...props }: UserGetAllDTO) => {
-        return <div>{props?.username}</div>;
-      },
-    },
-    {
-      title: () => <TableHeaderCell key='firstName' label={'firstName'} sortKey='firstName' />,
+      title: () => <TableHeaderCell key='firstName' label={'Họ'} sortKey='firstName' />,
       key: 'firstName',
       render: ({ ...props }: UserGetAllDTO) => {
         return <div>{props?.firstName}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='lastName' label={'lastName'} sortKey='lastName' />,
+      title: () => <TableHeaderCell key='lastName' label={'Tên'} sortKey='lastName' />,
       key: 'lastName',
       render: ({ ...props }: UserGetAllDTO) => {
         return <div>{props?.lastName}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='phoneNumber' label={'Phone Number'} sortKey='phoneNumber' />,
+      title: () => <TableHeaderCell key='phoneNumber' label={'Số Điện Thoại'} sortKey='phoneNumber' />,
       key: 'phoneNumber',
       render: ({ ...props }: UserGetAllDTO) => {
         // return <div>{formatPhoneNumber(props?.phoneNumber)}</div>;
@@ -55,14 +55,14 @@ export const UserColumn = (): ColumnsType<UserGetAllDTO> => {
       },
     },
     {
-      title: () => <TableHeaderCell key='gender' label={'Gender'} />,
+      title: () => <TableHeaderCell key='gender' label={'Giới tính'} />,
       key: 'gender',
       render: ({ ...props }: UserGetAllDTO) => {
         return <div className='capitalize'>{props?.gender}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='status' label={'Status'} />,
+      title: () => <TableHeaderCell key='status' label={'Trạng Thái'} />,
       key: 'status',
       render: ({ ...props }: UserGetAllDTO) => {
         return (
@@ -107,7 +107,7 @@ export const UserColumn = (): ColumnsType<UserGetAllDTO> => {
     //   },
     // },
     {
-      title: () => <TableHeaderCell key='action' label={''} />,
+      title: () => <TableHeaderCell key='action' label={'Hành Động'} />,
       key: 'action',
       render: ({ ...props }: UserGetAllDTO) => (
         <div className='flex w-full justify-start'>

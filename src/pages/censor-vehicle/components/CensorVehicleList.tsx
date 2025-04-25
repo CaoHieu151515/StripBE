@@ -7,19 +7,19 @@ import useCensorVehicleData from '@/data/services/api/censorVehicle/useCensorVeh
 import { CensorVehicleDTO } from '@/@types/dto/censorVehicleDTO';
 
 export default function CensorVehicleList() {
-  const { CensorVehicleData, isLoading } = useCensorVehicleData();
+  const { CensorVehicleData, isFetching } = useCensorVehicleData();
   return (
     <div className='flex flex-col gap-5'>
       <CensorVehicleFilter />
       <TableBuilder<CensorVehicleDTO>
         rowKey='driverId'
         columns={CensorVehicleColumn()}
-        data={CensorVehicleData ?? []}
-        isLoading={isLoading}
+        data={CensorVehicleData?.content ?? []}
+        isLoading={isFetching}
       />
       <CustomTablePagination
-        totalItems={CensorVehicleData?.length || 1}
-        queryKey={PARAM_FIELD.CURRENT_PAGE}
+        totalItems={CensorVehicleData?.totalElements || 1}
+        queryKey={PARAM_FIELD.PAGE}
         isScrollAfterPageChange
       />
     </div>

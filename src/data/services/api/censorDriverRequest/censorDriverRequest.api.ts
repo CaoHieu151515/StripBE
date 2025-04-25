@@ -10,8 +10,17 @@ import { PagedResponse } from '@/@types/dto/pagedResponse';
 // };
 
 export const censorDriverRequestApi = {
-  getAll: async (params?: { page?: number; size?: number }): Promise<PagedResponse<CensorDriverRequestDTO>> => {
-    const response: PagedResponse<CensorDriverRequestDTO> = await axiosClient.get('manager/drivers/confirming/getAll');
+  getAll: async (params?: {
+    // firstName?: string;
+    // lastName?: string;
+    // email?: string;
+    // phone?: string;
+    page?: number;
+    size?: number;
+  }): Promise<PagedResponse<CensorDriverRequestDTO>> => {
+    const response: PagedResponse<CensorDriverRequestDTO> = await axiosClient.get('manager/drivers/confirming/getAll', {
+      params,
+    });
     return response;
   },
 

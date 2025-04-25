@@ -80,7 +80,9 @@ export default function FeedbackDetailModal({ open, setOpen, data }: FeedbackDet
         </div>
         <div>
           <div>
-            <h3 className='text-xl font-bold text-primary-700'>Thông tin chuyến đi</h3>
+            <h3 className='text-xl font-bold text-primary-700'>
+              Thông tin chuyến đi - <span>{data?.tripId}</span>
+            </h3>
             <span className='text-sm font-normal text-gray-500'>(Thông tin chi tiết chuyến đi)</span>
           </div>
           <Divider className='mt-1' />

@@ -32,4 +32,6 @@ export enum PARAM_FIELD {
   END_LOCATION = 'endLocation',
   WALLET_TYPE = 'walletType',
   DRIVER_ID = 'driverId',
+  PRICE = 'price',
+  TIME = 'time',
 }

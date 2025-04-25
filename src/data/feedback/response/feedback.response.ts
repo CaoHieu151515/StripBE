@@ -12,4 +12,5 @@ export type GetFeedbackRESP = {
   trip: TripDetailDTO;
   driver: DriverInfo;
   user: UserDTO;
+  tripId: string;
 };

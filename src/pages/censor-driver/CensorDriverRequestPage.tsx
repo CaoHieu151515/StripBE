@@ -5,7 +5,7 @@ import CensorDriverRequestList from './components/CensorDriverRequestList';
 export default function CensorDriverRequestPage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='Censor Driver Request'>
+      <DefaultContainer title='Kiểm Duyệt Tài Xế'>
         <CensorDriverRequestList />
       </DefaultContainer>
     </TableUtilProvider>

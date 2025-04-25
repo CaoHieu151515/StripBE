@@ -8,14 +8,14 @@ export const PackageColumn = (): ColumnsType<PackageGetAllDTO> => {
 
   return [
     {
-      title: () => <TableHeaderCell key='name' label={'name'} sortKey='name' />,
+      title: () => <TableHeaderCell key='name' label={'Tên Gói'} sortKey='name' />,
       key: 'name',
       render: ({ ...props }: PackageGetAllDTO) => {
         return <div>{props?.name}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='price' label={'price'} sortKey='price' />,
+      title: () => <TableHeaderCell key='price' label={'Giá'} sortKey='price' />,
       key: 'price',
       render: ({ ...props }: PackageGetAllDTO) => {
         return <div>{props?.price}</div>;

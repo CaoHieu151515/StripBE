@@ -10,6 +10,7 @@ export type GetTripRESP = {
   price: number;
   status: TRIP_STATUS;
   totalTime: number;
+  tripHandleId: string;
 };
 
 export type GetTripDetailRESP = {
@@ -31,6 +32,7 @@ export type GetTripDetailRESP = {
   driver: DriverInfo;
   vehicle: VehicleInfo;
   stoplocation: StopLocation[];
+  tripHandleId: string;
 };
 
 export type TripDetailDTO = GetTripDetailRESP;

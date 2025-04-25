@@ -22,6 +22,13 @@ export const FeedbackColumn = (): ColumnsType<FeedbackDTO> => {
       },
     },
     {
+      title: () => <TableHeaderCell key='tripID' label={'Mã phản hồi'} sortKey='tripID' />,
+      key: 'tripID',
+      render: ({ ...props }: FeedbackDTO) => {
+        return <div>{props?.tripId}</div>;
+      },
+    },
+    {
       title: () => <TableHeaderCell key='name' label={'Tên người phản hồi'} sortKey='name' />,
       key: 'name',
       render: ({ ...props }: FeedbackDTO) => {

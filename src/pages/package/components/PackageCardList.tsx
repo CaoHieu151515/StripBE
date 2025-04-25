@@ -5,43 +5,9 @@ import { PackageColumn } from '../column/PackageColumn';
 import PackageFilter from './PackageFilter';
 import usePackageData from '@/data/services/api/package/usePackageData';
 import { PackageGetAllDTO } from '@/@types/dto/packageDTO';
-import { useAppSelector } from '@/hooks/reduxHook';
-import { RootState } from '@/data';
-import { GlobalState } from '@/data/global/global.slice';
-
-// const PACKAGE_DATA = [
-//   {
-//     id: '1',
-//     packageName: 'Bronze Package',
-//     packageTime: 1,
-//     packageBonusTime: 0,
-//     packagePrice: 2000000,
-//   },
-//   {
-//     id: '2',
-//     packageName: 'Silver Package',
-//     packageTime: 3,
-//     packageBonusTime: 1,
-//     packagePrice: 6000000,
-//   },
-//   {
-//     id: '3',
-//     packageName: 'Gold Package',
-//     packageTime: 6,
-//     packageBonusTime: 3,
-//     packagePrice: 12000000,
-//   },
-// ];
 
 export default function PackageCardList() {
-  const { PackageData, isLoading } = usePackageData();
-
-  // const userInfo: UserGetMeDTO | undefined = useAppSelector(
-  //     (state: RootState) => state.auth.userInfo
-  //   );
-
-  const { userInfo }: GlobalState = useAppSelector((state: RootState) => state.global);
-  console.log('userInfo', userInfo);
+  const { PackageData, isFetching } = usePackageData();
 
   return (
     <div className='flex flex-col gap-5'>
@@ -49,12 +15,12 @@ export default function PackageCardList() {
       <TableBuilder<PackageGetAllDTO>
         rowKey='id'
         columns={PackageColumn()}
-        data={PackageData ?? []}
-        isLoading={false}
+        data={PackageData?.content ?? []}
+        isLoading={isFetching}
       />
       <CustomTablePagination
-        totalItems={PackageData?.length || 1}
-        queryKey={PARAM_FIELD.CURRENT_PAGE}
+        totalItems={PackageData?.totalElements || 1}
+        queryKey={PARAM_FIELD.PAGE}
         isScrollAfterPageChange
       />
     </div>

@@ -20,8 +20,9 @@ export default function FeedbackFilter() {
     <div>
       <div className='flex flex-wrap items-center justify-start gap-5'>
         <CustomSelectQueryWithLabel
-          label={'Status'}
+          label={'Trạng thái'}
           queryKey={PARAM_FIELD.STATUS}
+          placeholder='Chọn trạng thái'
           options={[
             {
               label: 'Đã xử lý',

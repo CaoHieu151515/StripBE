@@ -31,6 +31,7 @@ const useTransactionHistoryData = () => {
     ...rest
   } = useQuery(queryKey, fetchTransactionHistoryDataFunction, {
     onError: (err) => console.log('error at hook', err),
+    keepPreviousData: true,
   });
 
   return {

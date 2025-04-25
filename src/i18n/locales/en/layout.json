@@ -2,19 +2,19 @@
   "home": "Home",
   "type": {
     "sidebar_group_title_code": {
-      "dashboard": "dashboard",
-      "user": "User",
-      "view-user-account": "View User Account",
-      "censor-driver-request": "Censor Driver Request",
-      "trip": "Trip",
-      "feedback": "Feedback",
-      "package": "Package",
-      "wallet": "Wallet",
+      "dashboard": "Bảng Điều Khiển",
+      "user": "Người Dùng",
+      "view-user-account": "Tài Khoản",
+      "censor-driver-request": "Kiểm Duyệt Tài Xế",
+      "trip": "Chuyến Đi",
+      "feedback": "Phản Hồi",
+      "package": "Gói",
+      "wallet": "Ví",
       "report": "Report",
-      "transaction-history": "Transaction History",
-      "censor-vehicle": "Censor Vehicle",
+      "transaction-history": "Lợi Nhuận Hệ Thống",
+      "censor-vehicle": "Kiểm Duyệt Phương Tiện",
       "rate-driver": "Rate Driver",
-      "staff": "Staff"
+      "staff": "Nhân Viên"
     }
   }
 }

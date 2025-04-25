@@ -21,6 +21,13 @@ export const TripColumn = (): ColumnsType<TripDTO> => {
       },
     },
     {
+      title: () => <TableHeaderCell key='tripID' label={'Mã chuyến đi'} />,
+      key: 'tripID',
+      render: ({ ...props }: TripDTO) => {
+        return <div>{props?.tripHandleId}</div>;
+      },
+    },
+    {
       title: () => <TableHeaderCell key='startLocation' label={'Điểm khởi hành'} />,
       key: 'startLocation',
       render: ({ ...props }: TripDTO) => {

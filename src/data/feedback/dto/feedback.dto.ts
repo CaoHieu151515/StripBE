@@ -12,4 +12,5 @@ export interface FeedbackDTO {
   trip: TripDetailDTO;
   driver: DriverInfo;
   user: UserDTO;
+  tripId: string;
 }

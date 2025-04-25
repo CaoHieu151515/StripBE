@@ -1,5 +1,4 @@
 import CustomSearchInputQueryWithLabel from '@/components/form-related/CustomSearchInputQueryWithLabel';
-import CustomSelectQueryWithLabel from '@/components/form-related/CustomSelectQueryWithLabel';
 import CirclePlusIcon from '@/components/icons/CirclePlusIcon';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
 import { Button } from 'antd';
@@ -13,8 +12,10 @@ export default function PackageFilter() {
     <>
       <div className='flex items-center justify-between gap-5'>
         <div className='flex flex-wrap items-center justify-start gap-5'>
-          <CustomSearchInputQueryWithLabel label={'Search'} searchParamName={PARAM_FIELD.SEARCH_KEYWORD} />
-          <CustomSelectQueryWithLabel
+          <CustomSearchInputQueryWithLabel label={'Tên gói'} searchParamName={PARAM_FIELD.NAME} />
+          <CustomSearchInputQueryWithLabel label={'Giá'} searchParamName={PARAM_FIELD.PRICE} />
+          <CustomSearchInputQueryWithLabel label={'Thời Gian'} searchParamName={PARAM_FIELD.TIME} />
+          {/* <CustomSelectQueryWithLabel
             label={'Search by'}
             queryKey={PARAM_FIELD.SEARCH_BY}
             options={[
@@ -78,14 +79,14 @@ export default function PackageFilter() {
               },
             ]}
             className='w-40'
-          />
+          /> */}
         </div>
         <Button
           type='primary'
           icon={<CirclePlusIcon className='size-5 text-white' />}
           className='flex items-center gap-2'
           onClick={() => setIsModalCreatePackageOpen(true)}>
-          Create Package
+          Tạo Gói
         </Button>
       </div>
       {isModalCreatePackageOpen && (

@@ -1,19 +1,24 @@
 import { useQuery } from 'react-query';
 import { censorVehicleApi } from './censorVehicle.api';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
+import { PAGE_SIZE } from '@/utils/constants/shared.constant';
 
 const useCensorVehicleData = () => {
-  // const [pagination, setPagination] = useState<PaginationState>({
-  //   pageIndex: 0,
-  //   pageSize: 10,
-  // });
-  // const [sortState, setSortState] = useState<SortingState>([]);
-  // const [keyword, setKeyword] = useState<string>();
-  // const [totalRows, setTotalRows] = useState<number>(0);
-  // const [filter, setFilter] = useState({});
+  const location = useLocation();
+  const params = queryString.parse(location.search);
+  const page = +(params.page ?? 1);
+
   const fetchCensorVehicleDataFunction = async () => {
     try {
-      const response = await censorVehicleApi.getAll();
-      // console.log(response);
+      const response = await censorVehicleApi.getAll({
+        firstName: params.firstName as string,
+        lastName: params.lastName as string,
+        email: params.email as string,
+        phone: params.phone as string,
+        page: page - 1,
+        size: PAGE_SIZE,
+      });
       return response;
     } catch (e) {
       console.log(e);
@@ -22,7 +27,7 @@ const useCensorVehicleData = () => {
   };
 
   // TODO: use debounce technique to prevent many calls at a short time
-  const queryKey = ['CensorVehicles'];
+  const queryKey = ['CensorVehicles', params.firstName, params.lastName, params.email, params.phone, page];
 
   const {
     data: CensorVehicleData,
@@ -30,17 +35,12 @@ const useCensorVehicleData = () => {
     ...rest
   } = useQuery(queryKey, fetchCensorVehicleDataFunction, {
     onError: (err) => console.log('error at hook', err),
+    keepPreviousData: true,
   });
 
   return {
     CensorVehicleData,
     refreshCensorVehicleData,
-    // setSortState,
-    // setKeyword,
-    // setPagination,
-    // setFilter,
-    // keyword,
-    // totalRows,
     ...rest,
   };
 };

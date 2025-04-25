@@ -11,6 +11,10 @@ const useCensorDriverRequestData = () => {
   const fetchCensorDriverRequestDataFunction = async () => {
     try {
       const response = await censorDriverRequestApi.getAll({
+        // firstName: params.firstName as string,
+        // lastName: params.lastName as string,
+        // email: params.email as string,
+        // phone: params.phone as string,
         page: page - 1,
         size: PAGE_SIZE,
       });
@@ -23,7 +27,7 @@ const useCensorDriverRequestData = () => {
   };
 
   // TODO: use debounce technique to prevent many calls at a short time
-  const queryKey = ['censorDriverRequests'];
+  const queryKey = ['censorDriverRequests', params];
 
   const {
     data: CensorDriverRequestData,
@@ -31,6 +35,7 @@ const useCensorDriverRequestData = () => {
     ...rest
   } = useQuery(queryKey, fetchCensorDriverRequestDataFunction, {
     onError: (err) => console.log('error at hook', err),
+    keepPreviousData: true,
   });
 
   return {

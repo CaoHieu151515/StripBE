@@ -5,7 +5,7 @@ import UserAccountList from './components/UserAccountList';
 export default function UserAccountPage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='User Account'>
+      <DefaultContainer title='Danh Sách Người Dùng'>
         <UserAccountList />
       </DefaultContainer>
     </TableUtilProvider>

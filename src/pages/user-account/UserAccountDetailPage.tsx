@@ -3,7 +3,7 @@ import { UserAccountDetail } from './components/UserAccountDetail';
 
 export const UserAccountDetailPage = () => {
   return (
-    <DefaultContainer title='User Account Detail'>
+    <DefaultContainer title='Thông Tin Chi Tiết Người Dùng'>
       <UserAccountDetail />
     </DefaultContainer>
   );
