@@ -253,28 +253,66 @@ public class UsermanageService {
         return Optional.of(dto);
     }
 
-    public List<ConfirmingVehicleDriverDTO> getAllConfirmingVehicles() {
-        List<Vehicle> confirmingVehicles = vehicleRepository.findByStatus(VehicleStatus.CONFIRMING);
+    public Page<ConfirmingVehicleDriverDTO> getAllConfirmingVehicles(
+        Pageable pageable,
+        String firstName,
+        String lastName,
+        String email,
+        String phone
+    ) {
+        List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRaw();
 
-        return confirmingVehicles
+        // 🔍 Filter theo từng trường
+        List<ConfirmingVehicleDriverDTO> filtered = all
             .stream()
-            .map(vehicle -> {
-                Driver driver = vehicle.getDriver();
-                if (driver == null || driver.getUser() == null) {
-                    return null; // Skip nếu không đủ thông tin liên kết
-                }
+            .filter(dto -> firstName == null || dto.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
+            .filter(dto -> lastName == null || dto.getLastName().toLowerCase().contains(lastName.toLowerCase()))
+            .filter(dto -> email == null || dto.getEmail().toLowerCase().contains(email.toLowerCase()))
+            .filter(dto -> phone == null || dto.getPhone().toLowerCase().contains(phone.toLowerCase()))
+            .toList();
 
-                User user = driver.getUser();
-
-                // Lấy UserDetail (có thể null)
-                UserDetail userDetail = userDetailRepository.findByUserId(user.getId()).orElse(null);
-
-                // Map DTO
-                ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
-                return dto;
+        // ↕️ Sort
+        Comparator<ConfirmingVehicleDriverDTO> comparator = pageable
+            .getSort()
+            .stream()
+            .map(order -> {
+                Comparator<ConfirmingVehicleDriverDTO> c =
+                    switch (order.getProperty()) {
+                        case "firstName" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getFirstName, String.CASE_INSENSITIVE_ORDER);
+                        case "lastName" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getLastName, String.CASE_INSENSITIVE_ORDER);
+                        case "email" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getEmail, String.CASE_INSENSITIVE_ORDER);
+                        case "phone" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getPhone, String.CASE_INSENSITIVE_ORDER);
+                        case "rating" -> Comparator.comparingDouble(ConfirmingVehicleDriverDTO::getRating);
+                        case "driverId" -> Comparator.comparing(
+                            ConfirmingVehicleDriverDTO::getDriverId,
+                            Comparator.nullsLast(UUID::compareTo)
+                        );
+                        default -> null;
+                    };
+                return (c != null && order.isDescending()) ? c.reversed() : c;
             })
-            .filter(Objects::nonNull) // loại bỏ các bản ghi không đủ thông tin
-            .collect(Collectors.toList());
+            .filter(Objects::nonNull)
+            .reduce(Comparator::thenComparing)
+            .orElse(null);
+
+        if (comparator != null) {
+            filtered = filtered.stream().sorted(comparator).toList();
+        }
+
+        // 📄 Pagination
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+        List<ConfirmingVehicleDriverDTO> pageContent = (start <= end) ? filtered.subList(start, end) : List.of();
+
+        return new PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
+    public <T> Page<T> toPage(List<T> list, Pageable pageable) {
+        int total = list.size();
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), total);
+        List<T> content = (start > end) ? List.of() : list.subList(start, end);
+        return new PageImpl<>(content, pageable, total);
     }
 
     public boolean approveVehicle(UUID vehicleId) {

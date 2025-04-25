@@ -68,6 +68,14 @@ public class ManagerResource {
     );
     private static final List<String> ALLOWED_ORDERED_PROPERTIES_FEEDBACK = List.of("feedbackStatus", "feedbackType", "feedbackRating");
 
+    private static final List<String> ALLOWED_ORDERED_PROPERTIES_VEHICLE = List.of(
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "rating",
+        "driverId"
+    );
     // private static final List<String> ALLOWED_ORDERED_PROPERTIES_REPORT =
     // List.of("reportID", "date", "reportType", "reportStatus");
 
@@ -122,11 +130,23 @@ public class ManagerResource {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/vehicles/pending-approval")
-    // @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.STAFF + "\")")
-    public ResponseEntity<List<ConfirmingVehicleDriverDTO>> getAllPendingApprovalVehicles() {
-        log.debug("REST request to get all vehicles pending approval (CONFIRMING)");
-        List<ConfirmingVehicleDriverDTO> vehicles = usermanageService.getAllConfirmingVehicles();
-        return ResponseEntity.ok().body(vehicles);
+    public ResponseEntity<CustomPageDTO<ConfirmingVehicleDriverDTO>> getAllPendingApprovalVehicles(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(required = false) String firstName,
+        @RequestParam(required = false) String lastName,
+        @RequestParam(required = false) String email,
+        @RequestParam(required = false) String phone
+    ) {
+        if (!onlyContainsAllowedPropertiesVehicle(pageable)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<ConfirmingVehicleDriverDTO> page = usermanageService.getAllConfirmingVehicles(pageable, firstName, lastName, email, phone);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
+    }
+
+    private boolean onlyContainsAllowedPropertiesVehicle(Pageable pageable) {
+        return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_VEHICLE::contains);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
