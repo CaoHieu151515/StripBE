@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.OpenStreetMapActivity;
+import com.example.strip.Activities.Trip.EditTripActivity;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Request.TripCreateRequest;
 
@@ -189,11 +190,6 @@ public class AddTripActivity extends AppCompatActivity{
 
             datePickerDialog.show();
         });
-
-
-
-
-
     }
     private void createTrip() {
         String driverId = user.getDriver().getDriverID();
@@ -215,6 +211,10 @@ public class AddTripActivity extends AppCompatActivity{
             @Override
             public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    TripDetail createdTrip = response.body();
+                    Intent intent = new Intent(AddTripActivity.this, EditTripActivity.class);
+                    intent.putExtra("tripId", createdTrip.getTripID()); // Pass tripId to detail activity
+                    startActivity(intent);
                     Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.e("Failed", "Failed to create trips!" + response.code());

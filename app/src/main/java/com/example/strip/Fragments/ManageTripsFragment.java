@@ -29,7 +29,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ManageTripsFragment extends Fragment {
-    private RecyclerView recyclerViewTrips;
     private RecyclerView recyclerView;
     private TripActiveAdapter tripActiveAdapter;
     private List<TripActiveResponse> tripList = new ArrayList<>();

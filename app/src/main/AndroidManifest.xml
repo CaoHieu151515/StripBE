@@ -130,6 +130,10 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".Activities.Trip.TripActiveDetailActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".Activities.Trip.TripPickActivity"
             android:exported="true">
         </activity>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/input_field_bg"
+    android:layout_marginTop="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/txtStartLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:layout_weight="1"
+            android:textStyle="bold"/>
+
+        <TextView android:id="@+id/txtEndLocation"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="End"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/txtStatus"
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Status" />
+        <TextView android:id="@+id/txtLuggage"
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Luggage " />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/txtFee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:text="Fee" />
+
+        <TextView android:id="@+id/txtPickupTime"
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Pickup" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/txtCheckIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:text="Check-In" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCheckIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:textAllCaps="false"
+            android:text="CheckIn" />
+        <TextView android:id="@+id/txtCheckOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:text="Check-Out " />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCheckOut"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="CheckOut" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAccept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:background="@drawable/input_field_bg"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/green"
+            android:layout_marginRight="10dp"
+            android:text="Accept" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReject"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:background="@drawable/input_field_bg"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/red_orange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reject" />
+    </LinearLayout>
+</LinearLayout>

@@ -11,9 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.strip.Activities.Trip.EditTripActivity;
+import com.example.strip.Activities.Trip.TripActiveDetailActivity;
 import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.Models.Trip;
 import com.example.strip.R;
+import com.example.strip.Utils.DateFormatter;
 
 import java.util.List;
 
@@ -37,12 +39,14 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         TripActiveResponse trip = tripList.get(position);
-        holder.startLocation.setText(trip.getStartLocation());
-        holder.endLocation.setText(trip.getEndlocation());
-        holder.price.setText(String.valueOf(trip.getPrice()));
-        holder.status.setText(trip.getStatus());
+        holder.startLocation.setText("From: " + trip.getStartLocation());
+        holder.endLocation.setText("To: " + trip.getEndlocation());
+        holder.price.setText("Price: "+trip.getPrice());
+        holder.status.setText("Status: "+trip.getStatus());
+        holder.startDate.setText("Start Date: "+DateFormatter.formatDate(trip.getStartDay()));
+        holder.endDate.setText("End date: " + DateFormatter.formatDate(trip.getEndDay()));
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, EditTripActivity.class);
+            Intent intent = new Intent(context, TripActiveDetailActivity.class);
             intent.putExtra("tripId", trip.getStripID()); // Pass tripId to detail activity
             context.startActivity(intent);
         });
@@ -54,7 +58,7 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView startLocation, endLocation, price, status;
+        TextView startLocation, endLocation, price, status, startDate, endDate;
 
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +66,8 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
             endLocation = itemView.findViewById(R.id.endLocation);
             price = itemView.findViewById(R.id.price);
             status = itemView.findViewById(R.id.status);
+            startDate = itemView.findViewById(R.id.startDate);
+            endDate = itemView.findViewById(R.id.endDate);
         }
     }
 }

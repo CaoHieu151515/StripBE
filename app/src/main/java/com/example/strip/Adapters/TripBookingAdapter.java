@@ -44,7 +44,7 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
             for (StopLocationBookingResponse stop : trip.stopLocationBookingResponseList) {
                 TextView stopView = new TextView(holder.itemView.getContext());
                 stopView.setText("Stop " + stop.stoplocaPosition + ": " + stop.stopLoca +
-                        " \n(" + String.format("%.2f km, ~", stop.estimatedKM) + String.format("%d mins)", stop.estimatedTime));
+                        " \n(" + String.format("%.2f km, ~ ", stop.estimatedKM) + String.format("%d mins)", stop.estimatedTime));
                 stopView.setPadding(16, 8, 16, 8);
                 holder.stopLocationContainer.addView(stopView);
             }

@@ -288,7 +288,7 @@ public class EditTripActivity extends AppCompatActivity {
                         e.printStackTrace();
                         tvStartDate.setText("Invalid date");
                     }
-                    String originalDateString2 = trip.getStartDate(); // Example: "2025-04-16T13:45:00" (ISO format)
+                    String originalDateString2 = trip.getEndDate(); // Example: "2025-04-16T13:45:00" (ISO format)
                     SimpleDateFormat originalFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                     SimpleDateFormat displayFormat2 = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
                     try {
