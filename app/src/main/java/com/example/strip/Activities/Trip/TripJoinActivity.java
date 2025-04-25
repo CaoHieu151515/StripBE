@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.strip.Adapters.TripStopAdapter;
+import com.example.strip.Adapters.TripStopTwoAdapter;
 import com.example.strip.Models.Request.JoinTripRequest;
 import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
@@ -85,7 +85,7 @@ public class TripJoinActivity extends AppCompatActivity {
         });
         btnJoinTrip = findViewById(R.id.btnJoinTrip);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(TripJoinActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(TripJoinActivity.this, LinearLayoutManager.VERTICAL, false);
         recyclerTripStops.setLayoutManager(layoutManager);
 
         tripId = getIntent().getStringExtra("tripId");
@@ -131,12 +131,12 @@ public class TripJoinActivity extends AppCompatActivity {
                     tvEndLocation.setText(trip.getEndLocation());
                     List<StopLocation> stops = trip.getStopLocations();
                     if (stops != null && !stops.isEmpty()) {
-                        TripStopAdapter adapter = new TripStopAdapter(TripJoinActivity.this, stops, selectedStop -> {
+                        TripStopTwoAdapter adapter = new TripStopTwoAdapter(TripJoinActivity.this, stops, selectedStop -> {
                             if (lastClicked.equals("start")) {
-                                tvStartLocaId.setText(selectedStop.getStopLoca()); // assuming StopLocation has getName()
+                                tvStartLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca()); // assuming StopLocation has getName()
                                 selectedStartLocaId = selectedStop.getStopLocaID();
                             } else if (lastClicked.equals("end")) {
-                                tvEndLocaId.setText(selectedStop.getStopLoca());
+                                tvEndLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca());
                                 selectedEndLocaId = selectedStop.getStopLocaID();
                             } else {
                                 Toast.makeText(TripJoinActivity.this, "Please select Start or End button first", Toast.LENGTH_SHORT).show();

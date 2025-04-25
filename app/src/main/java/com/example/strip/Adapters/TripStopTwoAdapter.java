@@ -2,7 +2,9 @@ package com.example.strip.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,19 +13,16 @@ import com.example.strip.Models.StopLocation;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
 
-import android.view.View;
-import android.widget.TextView;
-
 import java.util.List;
 
-public class TripStopAdapter extends RecyclerView.Adapter<TripStopAdapter.TripStopViewHolder> {
+public class TripStopTwoAdapter extends RecyclerView.Adapter<TripStopTwoAdapter.TripStopViewHolder> {
 
     private List<StopLocation> stopLocations;
     private Context context;
 
     private final OnStopClickListener listener;
 
-    public TripStopAdapter(Context context, List<StopLocation> stopLocations, OnStopClickListener listener) {
+    public TripStopTwoAdapter(Context context, List<StopLocation> stopLocations, OnStopClickListener listener) {
         this.context = context;
         this.stopLocations = stopLocations;
         this.listener = listener;
@@ -35,7 +34,7 @@ public class TripStopAdapter extends RecyclerView.Adapter<TripStopAdapter.TripSt
     @NonNull
     @Override
     public TripStopViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.trip_stop_location_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.trip_stop_location_item2, parent, false);
         return new TripStopViewHolder(view);
     }
 

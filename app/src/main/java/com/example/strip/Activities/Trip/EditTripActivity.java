@@ -211,7 +211,7 @@ public class EditTripActivity extends AppCompatActivity {
                 displayStop.setStopLocaStatus(newStop.getStopLocaStatus());
                 displayStop.setEstimatedTime(newStop.getEstimatedTime());
                 displayStop.setEstimatedKM(newStop.getEstimatedKM());
-                displayStop.setStoplocaPosition(newStop.getStoplocaPosition());
+                displayStop.setTripPositon(newStop.getStoplocaPosition());
 
                 // Get current adapter list
                 List<StopLocation> currentList = ((TripStopAdapter) recyclerTripStops.getAdapter()).getStopList();

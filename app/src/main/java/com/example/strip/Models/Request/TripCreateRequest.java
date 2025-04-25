@@ -6,6 +6,7 @@ public class TripCreateRequest {
     private byte[] tripImg;
     private String tripImgContentType;
     private int pricePerSeat;
+    private int currentSeat;
     private int maxSeat;
     private String startDate;
     private String endDate;
@@ -19,6 +20,7 @@ public class TripCreateRequest {
                              byte[] tripImg,
                              String tripImgContentType,
                              int pricePerSeat,
+                             int currentSeat,
                              int maxSeat,
                              String endDate,
                              String startDate,
@@ -31,6 +33,7 @@ public class TripCreateRequest {
         this.tripImg = tripImg;
         this.tripImgContentType = tripImgContentType;
         this.pricePerSeat = pricePerSeat;
+        this.currentSeat = currentSeat;
         this.maxSeat = maxSeat;
         this.endDate = endDate;
         this.startDate = startDate;
@@ -118,5 +121,29 @@ public class TripCreateRequest {
 
     public void setCondition(String condition) {
         this.condition = condition;
+    }
+
+    public byte[] getTripImg() {
+        return tripImg;
+    }
+
+    public void setTripImg(byte[] tripImg) {
+        this.tripImg = tripImg;
+    }
+
+    public String getTripImgContentType() {
+        return tripImgContentType;
+    }
+
+    public void setTripImgContentType(String tripImgContentType) {
+        this.tripImgContentType = tripImgContentType;
+    }
+
+    public int getCurrentSeat() {
+        return currentSeat;
+    }
+
+    public void setCurrentSeat(int currentSeat) {
+        this.currentSeat = currentSeat;
     }
 }

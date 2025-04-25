@@ -7,7 +7,7 @@ public class StopLocation {
     private String stopLocaTime;
     private String stopLocaStatus;
 
-    private int stoplocaPosition;
+    private int tripPositon;
     private int estimatedTime;
     private double estimatedKM;
 
@@ -51,12 +51,12 @@ public class StopLocation {
         this.stopLocaStatus = stopLocaStatus;
     }
 
-    public int getStoplocaPosition() {
-        return stoplocaPosition;
+    public int getTripPositon() {
+        return tripPositon;
     }
 
-    public void setStoplocaPosition(int stoplocaPosition) {
-        this.stoplocaPosition = stoplocaPosition;
+    public void setTripPositon(int tripPositon) {
+        this.tripPositon = tripPositon;
     }
 
     public int getEstimatedTime() {

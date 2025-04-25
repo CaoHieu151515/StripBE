@@ -20,6 +20,7 @@ import com.example.strip.Activities.StripActivity;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
@@ -32,8 +33,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TripDetailActivity extends AppCompatActivity {
-    private TextView tvStartLocation, tvEndLocation, tvPrice, tvDescription, tvPricePerSeat, tvSeats,tvVehicleNumber;
-    private ImageView ivTripImage, ivVehicleImage;
+    private TextView tvStartLocation, tvEndLocation, tvPrice, tvDescription, tvPricePerSeat, tvSeats,
+            tvDistance,
+            txtTime1, txtTitle1, txtTime2, txtTitle2,
+            txtRating, txtRatingPlace, tvDriverName,
+            tvVehicleType, tvVehicleColor, tvVehicleBrand;
+    private ImageView ivTripImage, ivDriverImage, ivVehicleImage;
     private ITripMobileApiService tripService;
     private Button btnBook;
     private String tripId;
@@ -42,6 +47,9 @@ public class TripDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_detail); // Update with your actual XML file name
         ImageView btnBack = findViewById(R.id.imgBack);
+        tvVehicleType = findViewById(R.id.tvVehicleType);
+        tvVehicleColor = findViewById(R.id.tvVehicleColor);
+        tvVehicleBrand = findViewById(R.id.tvVehicleBrand);
         // Initialize UI components
         tvStartLocation = findViewById(R.id.tvStartLocation);
         tvEndLocation = findViewById(R.id.tvEndLocation);
@@ -49,12 +57,18 @@ public class TripDetailActivity extends AppCompatActivity {
         tvDescription = findViewById(R.id.tvDescription);
         tvPricePerSeat = findViewById(R.id.tvPricePerSeat);
         tvSeats = findViewById(R.id.tvSeats);
-        tvVehicleNumber = findViewById(R.id.tvVehicleNumber);
+        tvDistance = findViewById(R.id.tvDistance);
         ivTripImage = findViewById(R.id.ivTripImage);
-        ivVehicleImage = findViewById(R.id.ivVehicleImage);
+        ivDriverImage = findViewById(R.id.ivDriverImage);
         btnBook = findViewById(R.id.btnBook);
-
-
+        txtTime1 = findViewById(R.id.txtTime1);
+        txtTitle1 = findViewById(R.id.txtTitle1);
+        txtTime2 = findViewById(R.id.txtTime2);
+        txtTitle2 = findViewById(R.id.txtTitle2);
+        txtRating = findViewById(R.id.txtRating);
+        txtRatingPlace = findViewById(R.id.txtRatingPlace);
+        tvDriverName = findViewById(R.id.tvDriverName);
+        ivVehicleImage = findViewById(R.id.ivVehicleImage);
         // Get tripId from intent
         tripId = getIntent().getStringExtra("tripId");
         if (tripId == null) {
@@ -110,13 +124,34 @@ public class TripDetailActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<TripDetail> call, @NonNull Response<TripDetail> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     TripDetail trip = response.body();
-                    tvStartLocation.setText(trip.getStartLocation());
-                    tvEndLocation.setText(trip.getEndLocation());
+                    tvStartLocation.setText(trip.getStartLocation() + "");
+                    tvEndLocation.setText(trip.getEndLocation() + "");
                     tvPrice.setText("" + trip.getPricePerSeat());
                     tvDescription.setText("" + trip.getDescription());
-                    tvPricePerSeat.setText("" + trip.getPricePerSeat());
-                    tvVehicleNumber.setText("" + trip.getVehicleNumber());
-                    tvSeats.setText("" + trip.getCurrentSeat() + "/" + trip.getMaxSeat());
+                    tvPricePerSeat.setText("" + trip.getPricePerSeat() + " VND");
+                    tvSeats.setText("" + trip.getCurrentSeat() + "/" + trip.getMaxSeat() + " seats");
+                    tvDistance.setText(trip.getTotalDistance() + " km");
+                    tvDriverName.setText(trip.getDriverOfTripDetail().getLastName() + "");
+                    txtRating.setText(trip.getDriverOfTripDetail().getRating() + "★");
+                    txtRatingPlace.setText(trip.getVehicleOfTripDetail().getVehicleNumber() + "");
+
+                    txtTime1.setText(DateFormatter.formatDate(trip.getStartDate()) + "");
+                    txtTime2.setText(DateFormatter.formatDate(trip.getEndDate()) + "");
+
+                    txtTitle1.setText(trip.getStartLocation() + "");
+                    txtTitle2.setText(trip.getEndLocation() + "");
+                    tvVehicleType.setText(trip.getVehicleOfTripDetail().getVehicleType() + "");
+                    tvVehicleBrand.setText(trip.getVehicleOfTripDetail().getVehicleBrand() + "");
+                    tvVehicleColor.setText(trip.getVehicleOfTripDetail().getVehicleColor() + "");
+
+                    String imageUrlVehicle = trip.getTripImgUrl();
+                    if (imageUrlVehicle != null && !imageUrlVehicle.isEmpty()) {
+                        if (imageUrlVehicle.startsWith("https://localhost")) {
+                            imageUrlVehicle = imageUrlVehicle.replace("https://localhost", "http://10.0.2.2");
+                        }
+                        Glide.with(TripDetailActivity.this).load(imageUrlVehicle).into(ivVehicleImage);
+                    }
+
 
                     // Load trip image
                     String imageUrlTrip = trip.getTripImgUrl();
@@ -126,12 +161,13 @@ public class TripDetailActivity extends AppCompatActivity {
                         }
                         Glide.with(TripDetailActivity.this).load(imageUrlTrip).into(ivTripImage);
                     }
-                    String imageUrlVehicle = trip.getVehicleImageUrl();
-                    if (imageUrlVehicle != null && !imageUrlVehicle.isEmpty()) {
-                        if (imageUrlVehicle.startsWith("https://localhost")) {
-                            imageUrlVehicle = imageUrlVehicle.replace("https://localhost", "http://10.0.2.2");
+
+                    String imageUrlDriver = trip.getDriverOfTripDetail().getAvatarUrl();
+                    if (imageUrlDriver != null && !imageUrlDriver.isEmpty()) {
+                        if (imageUrlDriver.startsWith("https://localhost")) {
+                            imageUrlDriver = imageUrlDriver.replace("https://localhost", "http://10.0.2.2");
                         }
-                        Glide.with(TripDetailActivity.this).load(imageUrlVehicle).into(ivVehicleImage);
+                        Glide.with(TripDetailActivity.this).load(imageUrlDriver).into(ivDriverImage);
                     }
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());

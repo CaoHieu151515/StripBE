@@ -126,71 +126,110 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
+    <TextView
+        android:id="@+id/tvStopInstructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select start and end stop from the list"
+        android:textSize="15sp"
+        android:textColor="@color/gray"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/cardLocationInfo"
+        app:layout_constraintStart_toStartOf="parent" />
     <!-- RecyclerView for trip stop items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerTripStops"
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:layout_margin="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/cardLocationInfo"
+        app:layout_constraintTop_toBottomOf="@+id/tvStopInstructions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btnUpdateLocations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update Stops"
-        app:layout_constraintTop_toBottomOf="@id/recyclerTripStops"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"/>
 
-    <LinearLayout
-        android:id="@+id/inputStopContainer"
+    <EditText
+        android:id="@+id/etNumberOfSeats"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Number of Seats"
+        android:inputType="number"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerTripStops"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/etLuggageDescription"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Luggage Description"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/etNumberOfSeats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutStartEndLoca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/btnUpdateLocations"
-        android:padding="16dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:paddingHorizontal="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/etLuggageDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:id="@+id/edtStopLoca"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Stop Location" />
+        <TextView
+            android:id="@+id/tvStartLocaId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="StartLocaId"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/edtStopLocaTime"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Stop Time (e.g. 08:00)" />
-
-        <EditText
-            android:id="@+id/edtEstimatedTime"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Estimated Time (e.g. 10 mins)" />
-
-        <EditText
-            android:id="@+id/edtEstimatedKM"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Estimated KM (e.g. 5.0)"
-            android:inputType="numberDecimal" />
-
-        <EditText
-            android:id="@+id/edtStopLocaPosition"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Stop Position"
-            android:inputType="number" />
+        <TextView
+            android:id="@+id/tvEndLocaId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EndLocaId"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnAddStop"
-            android:layout_width="match_parent"
+            android:id="@+id/btnStartLocation"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Stop Temporarily" />
-    </LinearLayout>
+            android:text="Pick Start"
+            app:layout_constraintStart_toStartOf="@+id/tvStartLocaId"
+            app:layout_constraintTop_toBottomOf="@+id/tvStartLocaId"
+            android:layout_marginTop="4dp"/>
+
+        <Button
+            android:id="@+id/btnEndLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick End"
+            app:layout_constraintEnd_toEndOf="@+id/tvEndLocaId"
+            app:layout_constraintTop_toBottomOf="@+id/tvEndLocaId"
+            android:layout_marginTop="4dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- Join Trip Button below Start/End Location -->
+    <Button
+        android:id="@+id/btnJoinTrip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Trip"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/layoutStartEndLoca"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

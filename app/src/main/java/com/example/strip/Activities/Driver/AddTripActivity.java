@@ -208,7 +208,7 @@ public class AddTripActivity extends AppCompatActivity{
         String condition = etCondition.getText().toString().trim();
 
         TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, ImageBytes, "image/png",
-                pricePerSeat, maxSeat,startDate ,endDate, startLocation, endLocation, description, condition);
+                pricePerSeat, 0,maxSeat,startDate ,endDate, startLocation, endLocation, description, condition);
 
         ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {

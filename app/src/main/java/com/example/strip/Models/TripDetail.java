@@ -18,15 +18,12 @@ public class TripDetail {
     private String tripStatus;
     private String cancelReason;
     private String tripImgUrl;
-    private String driverName;
-    private String driverPhone;
-    private String vehicleID;
-    private String vehicleType;
-    private String vehicleNumber;
-    private int numberOfSeats;
-    private String vehicleColor;
-    private String vehicleBrand;
-    private String vehicleImageUrl;
+    private int totalTime;
+    private int totalDistance;
+    @SerializedName("driver")
+    private DriverOfTripDetail driverOfTripDetail;
+    @SerializedName("vehicle")
+    private VehicleOfTripDetail vehicleOfTripDetail;
     @SerializedName("stoplocation")
 
     private List<StopLocation> stopLocations;
@@ -143,75 +140,35 @@ public class TripDetail {
         this.stopLocations = stopLocations;
     }
 
-    public String getVehicleImageUrl() {
-        return vehicleImageUrl;
+    public int getTotalTime() {
+        return totalTime;
     }
 
-    public void setVehicleImageUrl(String vehicleImageUrl) {
-        this.vehicleImageUrl = vehicleImageUrl;
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
     }
 
-    public String getVehicleBrand() {
-        return vehicleBrand;
+    public int getTotalDistance() {
+        return totalDistance;
     }
 
-    public void setVehicleBrand(String vehicleBrand) {
-        this.vehicleBrand = vehicleBrand;
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
-    public String getVehicleColor() {
-        return vehicleColor;
+    public DriverOfTripDetail getDriverOfTripDetail() {
+        return driverOfTripDetail;
     }
 
-    public void setVehicleColor(String vehicleColor) {
-        this.vehicleColor = vehicleColor;
+    public void setDriverOfTripDetail(DriverOfTripDetail driverOfTripDetail) {
+        this.driverOfTripDetail = driverOfTripDetail;
     }
 
-    public int getNumberOfSeats() {
-        return numberOfSeats;
+    public VehicleOfTripDetail getVehicleOfTripDetail() {
+        return vehicleOfTripDetail;
     }
 
-    public void setNumberOfSeats(int numberOfSeats) {
-        this.numberOfSeats = numberOfSeats;
-    }
-
-    public String getVehicleNumber() {
-        return vehicleNumber;
-    }
-
-    public void setVehicleNumber(String vehicleNumber) {
-        this.vehicleNumber = vehicleNumber;
-    }
-
-    public String getVehicleType() {
-        return vehicleType;
-    }
-
-    public void setVehicleType(String vehicleType) {
-        this.vehicleType = vehicleType;
-    }
-
-    public String getVehicleID() {
-        return vehicleID;
-    }
-
-    public void setVehicleID(String vehicleID) {
-        this.vehicleID = vehicleID;
-    }
-
-    public String getDriverPhone() {
-        return driverPhone;
-    }
-
-    public void setDriverPhone(String driverPhone) {
-        this.driverPhone = driverPhone;
-    }
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
+    public void setVehicleOfTripDetail(VehicleOfTripDetail vehicleOfTripDetail) {
+        this.vehicleOfTripDetail = vehicleOfTripDetail;
     }
 }
