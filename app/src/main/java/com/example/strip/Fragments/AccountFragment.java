@@ -125,7 +125,7 @@ public class AccountFragment extends Fragment {
                     tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "N/A");
                     tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "N/A");
                     tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "N/A");
-                    tvDob.setText(DateFormatter.formatDatePrimary(user.getUserDetailsCusDTO().getDob()));
+                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? DateFormatter.formatDatePrimary(user.getUserDetailsCusDTO().getDob()) : "N/A");
                     // Hiển thị ảnh nếu có
                     String ivImageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (ivImageUrl != null && !ivImageUrl.isEmpty()) {

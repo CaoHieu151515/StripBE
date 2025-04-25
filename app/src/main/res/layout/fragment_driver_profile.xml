@@ -337,30 +337,30 @@
                     android:textSize="16sp"
                     android:textColor="@color/black"/>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:layout_marginTop="8dp">-->
 
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:text="Driver Status"
-                    android:textSize="16sp"
-                    android:drawablePadding="5dp"
-                    android:drawableStart="@drawable/driver_man"
-                    android:textColor="@color/orange"/>
+<!--                <TextView-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Driver Status"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:drawablePadding="5dp"-->
+<!--                    android:drawableStart="@drawable/driver_man"-->
+<!--                    android:textColor="@color/orange"/>-->
 
-                <TextView
-                    android:id="@+id/tvDriverStatus"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="N/A"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"/>
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/tvDriverStatus"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:text="N/A"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textColor="@color/black"/>-->
+<!--            </LinearLayout>-->
         </LinearLayout>
     </androidx.cardview.widget.CardView>
     <!-- Vehicle List Section -->

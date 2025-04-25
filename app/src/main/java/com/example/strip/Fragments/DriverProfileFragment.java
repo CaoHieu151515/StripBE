@@ -35,7 +35,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DriverProfileFragment extends Fragment {
-    private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvCountTrip, tvBannedDay, tvDriverStatus;
+    private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvCountTrip, tvBannedDay;
     private ImageView ivProfile, ivChangeToPassenger;
     private RecyclerView rvVehicles;
     private VehicleAdapter vehicleAdapter;
@@ -48,7 +48,6 @@ public class DriverProfileFragment extends Fragment {
         ImageView btnBack = view.findViewById(R.id.backButton);
         tvCountTrip = view.findViewById(R.id.tvCountTrip);
         tvBannedDay = view.findViewById(R.id.tvBannedDay);
-        tvDriverStatus = view.findViewById(R.id.tvDriverStatus);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvFullName = view.findViewById(R.id.tvFullName);
         tvPhone = view.findViewById(R.id.tvPhone);
@@ -97,7 +96,6 @@ public class DriverProfileFragment extends Fragment {
                     int driverPoint = (user.getDriver() != null) ? user.getDriver().getDriverPoint() : -1;
                     tvCountTrip.setText(driverPoint >= 0 ? "" + driverPoint : "N/A");
                     tvBannedDay.setText(user.getDriver().getBannedDay() != null ? user.getDriver().getBannedDay() : "N/A");
-                    tvDriverStatus.setText(user.getDriver().getDriverStatus() != null ? user.getDriver().getDriverStatus() : "N/A");
                     // Hiển thị ảnh nếu có
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {

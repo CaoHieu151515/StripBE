@@ -3,25 +3,65 @@ package com.example.strip.Fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.strip.Adapters.TripBookingAdapter;
+import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.R;
+import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.network.ApiClient;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TripsFragment extends Fragment {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
+    private RecyclerView recyclerView;
+    private TripBookingAdapter adapter;
+    private List<TripBookingResponse> tripList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_trips, container, false);
+        recyclerView = view.findViewById(R.id.recyclerViewTrips);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new TripBookingAdapter(tripList);
+        recyclerView.setAdapter(adapter);
+        fetchTrips();
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trips, container, false);
+        return view;
+    }
+    private void fetchTrips() {
+        IUserMobileApiService tripService = ApiClient.getClientWithToken(getContext()).create(IUserMobileApiService.class);
+        String token = "Bearer your_access_token_here"; // replace with real token
+
+        Call<List<TripBookingResponse>> call = tripService.getBookedTrips();
+        call.enqueue(new Callback<List<TripBookingResponse>>() {
+            @Override
+            public void onResponse(Call<List<TripBookingResponse>> call, Response<List<TripBookingResponse>> response) {
+                if (response.isSuccessful()) {
+                    tripList.clear();
+                    tripList.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TripBookingResponse>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

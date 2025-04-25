@@ -6,6 +6,7 @@ import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.Models.Response.DriverResponse;
+import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 
@@ -41,4 +42,7 @@ public interface IUserMobileApiService {
     Call<ConfirmDriverResponse> getConfirmDriver();
     @POST("api/mobile/user/packages/{packageId}/buy")
     Call<Void> buyPackage(@Path("packageId") String packageId);
+
+    @GET("api/mobile/user/trips/booking")
+    Call<List<TripBookingResponse>> getBookedTrips();
 }
