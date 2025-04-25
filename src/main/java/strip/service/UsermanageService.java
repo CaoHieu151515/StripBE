@@ -457,17 +457,51 @@ public class UsermanageService {
         log.debug("Driver {} rejected successfully", driverId);
     }
 
-    public List<PackageDriverDTO> getAllPackagesWithFilter(String name, Double price, Integer time, PackageDriverStatus status) {
-        List<PackageDriver> all = packageDriverRepository.findAll();
-
-        return all
+    public Page<PackageDriverDTO> getAllPackagesWithFilter(
+        Pageable pageable,
+        String name,
+        Double price,
+        Integer time,
+        PackageDriverStatus status
+    ) {
+        List<PackageDriverDTO> filtered = packageDriverRepository
+            .findAll()
             .stream()
             .filter(pkg -> name == null || pkg.getName().toLowerCase().contains(name.toLowerCase()))
             .filter(pkg -> price == null || Objects.equals(pkg.getPrice(), price))
             .filter(pkg -> time == null || Objects.equals(pkg.getTime(), time))
             .filter(pkg -> status == null || pkg.getStatus() == status)
             .map(packageDriverMapper::toDto)
-            .collect(Collectors.toList());
+            .toList();
+
+        // 🔀 Sort theo pageable
+        Comparator<PackageDriverDTO> comparator = pageable
+            .getSort()
+            .stream()
+            .map(order -> {
+                Comparator<PackageDriverDTO> c =
+                    switch (order.getProperty()) {
+                        case "name" -> Comparator.comparing(PackageDriverDTO::getName, String.CASE_INSENSITIVE_ORDER);
+                        case "price" -> Comparator.comparing(PackageDriverDTO::getPrice);
+                        case "time" -> Comparator.comparing(PackageDriverDTO::getTime);
+                        default -> null;
+                    };
+                return (c != null && order.isDescending()) ? c.reversed() : c;
+            })
+            .filter(Objects::nonNull)
+            .reduce(Comparator::thenComparing)
+            .orElse(null);
+
+        if (comparator != null) {
+            filtered = filtered.stream().sorted(comparator).toList();
+        }
+
+        // 📄 Paging
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+        List<PackageDriverDTO> pageContent = (start <= end) ? filtered.subList(start, end) : List.of();
+
+        return new PageImpl<>(pageContent, pageable, filtered.size());
     }
 
     public PackageDriverDTO createPackage(PackageDriverDTO packageDriverDTO) {

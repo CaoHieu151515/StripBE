@@ -213,14 +213,15 @@ public class ManagerResource {
 
     @GetMapping("/packages/getAllPackage")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    public ResponseEntity<List<PackageDriverDTO>> getAllPackages(
+    public ResponseEntity<CustomPageDTO<PackageDriverDTO>> getAllPackages(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         @RequestParam(required = false) String name,
         @RequestParam(required = false) Double price,
         @RequestParam(required = false) Integer time,
         @RequestParam(required = false) PackageDriverStatus status
     ) {
-        List<PackageDriverDTO> results = usermanageService.getAllPackagesWithFilter(name, price, time, status);
-        return ResponseEntity.ok(results);
+        Page<PackageDriverDTO> page = usermanageService.getAllPackagesWithFilter(pageable, name, price, time, status);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
