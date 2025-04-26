@@ -697,6 +697,7 @@ public class TripCustomService {
             driverTx.setUserWallet(driverWallet);
             driverTx.setTransactionThirdPartyID(trip.getTripID().toString());
             driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
+            requestTripRepository.save(request);
             userWalletRepository.save(driverWallet);
         }
     }
