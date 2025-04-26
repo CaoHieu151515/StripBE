@@ -20,6 +20,11 @@ export default function TripFilter() {
   return (
     <div className='flex flex-wrap items-center justify-start gap-5'>
       <CustomSearchInputQueryWithLabel
+        label={'Mã chuyến đi'}
+        searchParamName={PARAM_FIELD.TRIP_HANDLE_ID}
+        placeholder='Nhập mã chuyến'
+      />
+      <CustomSearchInputQueryWithLabel
         label={'Điểm khởi hành'}
         searchParamName={PARAM_FIELD.START_LOCATION}
         placeholder='Nhập điểm khởi hành'

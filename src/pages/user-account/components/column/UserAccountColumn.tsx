@@ -68,12 +68,12 @@ export const UserColumn = (): ColumnsType<UserGetAllDTO> => {
         return (
           <div className='capitalize'>
             {props?.active ? (
-              <Tag color='success' className='w-20 text-center'>
-                Active
+              <Tag color='success' className='w-25 text-center'>
+                Đang Hoạt động
               </Tag>
             ) : (
-              <Tag color='error' className='w-20 text-center'>
-                Inactive
+              <Tag color='error' className='w-25 text-center'>
+                Ngưng hoạt động
               </Tag>
             )}
           </div>

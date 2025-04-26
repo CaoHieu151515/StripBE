@@ -5,7 +5,7 @@ import PackageCardList from './components/PackageCardList';
 export default function PackagePage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='Package'>
+      <DefaultContainer title='Gói'>
         <PackageCardList />
       </DefaultContainer>
     </TableUtilProvider>

@@ -24,35 +24,35 @@ export const TransactionColumn = (): ColumnsType<WalletDTO> => {
     //   },
     // },
     {
-      title: () => <TableHeaderCell key='fromOwner' label={'fromOwner'} sortKey='fromOwner' />,
+      title: () => <TableHeaderCell key='fromOwner' label={'Người gửi'} sortKey='fromOwner' />,
       key: 'fromOwner',
       render: ({ ...props }: WalletDTO) => {
         return <div>{props?.fromOwner}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='amount' label={'amount (vnd)'} sortKey='amount' />,
+      title: () => <TableHeaderCell key='amount' label={'Khoản tiền (vnd)'} sortKey='amount' />,
       key: 'amount',
       render: ({ ...props }: WalletDTO) => {
         return <div>{props?.amount}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='toOwner' label={'toOwner'} sortKey='toOwner' />,
+      title: () => <TableHeaderCell key='toOwner' label={'Người nhận'} sortKey='toOwner' />,
       key: 'toOwner',
       render: ({ ...props }: WalletDTO) => {
         return <div>{props?.toOwner}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='createdDate' label={'createdDate'} sortKey='createdDate' />,
+      title: () => <TableHeaderCell key='createdDate' label={'Ngày gửi'} sortKey='createdDate' />,
       key: 'createdDate',
       render: ({ ...props }: WalletDTO) => {
         return <div>{dayjs(props?.createdDate).format('DD/MM/YYYY HH:mm')}</div>;
       },
     },
     {
-      title: () => <TableHeaderCell key='description' label={'description'} sortKey='description' />,
+      title: () => <TableHeaderCell key='description' label={'Mô tả'} sortKey='description' />,
       key: 'description',
       render: ({ ...props }: WalletDTO) => {
         return <div>{props?.description}</div>;

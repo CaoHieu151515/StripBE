@@ -6,7 +6,7 @@ import WalletOverview from './components/WalletOverview';
 export default function WalletPage() {
   return (
     <TableUtilProvider>
-      <DefaultContainer title='Wallet'>
+      <DefaultContainer title='Ví'>
         <div className='flex max-w-full flex-col gap-6'>
           <WalletOverview />
           <TransactionList />

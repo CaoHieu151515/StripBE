@@ -34,4 +34,5 @@ export enum PARAM_FIELD {
   DRIVER_ID = 'driverId',
   PRICE = 'price',
   TIME = 'time',
+  TRIP_HANDLE_ID = 'tripHandleId',
 }

@@ -83,7 +83,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                 // setIsShownReasonModal(true)
               }}
               className='bg-red-600 text-white'>
-              Reject
+              Từ chối
             </Button>
             <Button
               onClick={async () => {
@@ -91,7 +91,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                 setOpen(false);
               }}
               className='border-none bg-green-500 text-white'>
-              Approve
+              Duyệt
             </Button>
           </div>
         }>
@@ -140,17 +140,17 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
               />
               <div className='mt-4 grid grid-cols-3 gap-4'>
                 {/* <InfoItem label='Vehicle Id' value={data?.vehicle?.vehicleID} /> */}
-                <InfoItem label='Vehicle Type' value={data?.vehicle?.vehicleType} />
-                <InfoItem label='Vehicle Number' value={data?.vehicle?.vehicleNumber} />
-                <InfoItem label='Vehicle Brand' value={data?.vehicle?.vehicleBrand} />
-                <InfoItem label='NumberOfSeats' value={data?.vehicle?.numberOfSeats} />
-                <InfoItem label='VehicleColor' value={data?.vehicle?.vehicleColor} />
-                <InfoItem label='Status' value={data?.vehicle?.status} />
+                <InfoItem label='Loại phương tiện' value={data?.vehicle?.vehicleType} />
+                <InfoItem label='Số phương tiện' value={data?.vehicle?.vehicleNumber} />
+                <InfoItem label='Hãng phương tiện' value={data?.vehicle?.vehicleBrand} />
+                <InfoItem label='Số ghế' value={data?.vehicle?.numberOfSeats} />
+                <InfoItem label='Màu phương tiện' value={data?.vehicle?.vehicleColor} />
+                <InfoItem label='Trạng thái' value={data?.vehicle?.status} />
               </div>
               <div className='mt-4'>
                 <div className='grid grid-cols-3 gap-4'>
                   <InfoItem
-                    label='Car Insurance'
+                    label='Bảo hiểm phương tiện'
                     value={
                       <Image
                         // src={'https://www.policybazaar.com/pblife/assets/images/pb_life_1650972275.jpg'}
@@ -163,7 +163,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                     }
                   />
                   <InfoItem
-                    label='Carregistration'
+                    label='Giấy phép đăng ký phương tiện'
                     value={
                       <Image
                         src={data?.vehicle?.carregistrationUrl}
@@ -204,7 +204,7 @@ export default function CensorDriverDetailModal({ open, setOpen, data }: CensorD
                 }
               /> */}
                 <InfoItem
-                  label='Vehicle Inspection Certificate'
+                  label='Giấy chứng nhận kiểm định xe'
                   value={
                     <Image
                       src={data?.vehicle?.vehicleInspectionCertificateUrl}

@@ -61,7 +61,7 @@ export const UserAccountDetail = () => {
       <Divider />
 
       <div className='space-y-4'>
-        <h3 className='text-xl font-bold text-primary-500'>List Vehicle</h3>
+        <h3 className='text-xl font-bold text-primary-500'>Danh sách phương tiện</h3>
         {userDetailData?.vehicles?.length ? (
           userDetailData.vehicles.map((v, idx) => (
             <>

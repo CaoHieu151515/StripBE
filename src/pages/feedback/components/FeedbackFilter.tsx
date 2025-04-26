@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import CustomSearchInputQueryWithLabel from '@/components/form-related/CustomSearchInputQueryWithLabel';
 import CustomSelectQueryWithLabel from '@/components/form-related/CustomSelectQueryWithLabel';
 import { FEEDBACK_STATUS } from '@/utils/enum/feedback/feedback-status.enum';
 import { PARAM_FIELD } from '@/utils/enum/param-field.enum';
@@ -19,6 +20,11 @@ export default function FeedbackFilter() {
   return (
     <div>
       <div className='flex flex-wrap items-center justify-start gap-5'>
+        <CustomSearchInputQueryWithLabel
+          label={'Mã chuyến đi'}
+          searchParamName={PARAM_FIELD.TRIP_ID}
+          placeholder='Nhập mã chuyến'
+        />
         <CustomSelectQueryWithLabel
           label={'Trạng thái'}
           queryKey={PARAM_FIELD.STATUS}

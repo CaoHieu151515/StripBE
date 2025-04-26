@@ -22,7 +22,7 @@ export const FeedbackColumn = (): ColumnsType<FeedbackDTO> => {
       },
     },
     {
-      title: () => <TableHeaderCell key='tripID' label={'Mã phản hồi'} sortKey='tripID' />,
+      title: () => <TableHeaderCell key='tripID' label={'Mã chuyến đi'} sortKey='tripID' />,
       key: 'tripID',
       render: ({ ...props }: FeedbackDTO) => {
         return <div>{props?.tripId}</div>;

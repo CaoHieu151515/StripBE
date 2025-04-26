@@ -7,24 +7,24 @@ export default function CensorVehicleFilter() {
   return (
     <div>
       <div className='flex flex-wrap items-center justify-start gap-5'>
-        <CustomSearchInputQueryWithLabel label={'Vehicle Name'} searchParamName={PARAM_FIELD.VEHICLE_NAME} />
-        <CustomSearchInputQueryWithLabel label={'Vehicle Type'} searchParamName={PARAM_FIELD.VEHICLE_TYPE} />
-        <CustomSearchInputQueryWithLabel label={'Vehicle Brand'} searchParamName={PARAM_FIELD.VEHICLE_BRAND} />
-        <CustomSearchInputQueryWithLabel label={'Number Insead'} searchParamName={PARAM_FIELD.NUMBER_INSEAD} />
+        <CustomSearchInputQueryWithLabel label={'Tên phương tiện'} searchParamName={PARAM_FIELD.VEHICLE_NAME} />
+        <CustomSearchInputQueryWithLabel label={'Loại phương tiện'} searchParamName={PARAM_FIELD.VEHICLE_TYPE} />
+        <CustomSearchInputQueryWithLabel label={'Hãng phương tiện'} searchParamName={PARAM_FIELD.VEHICLE_BRAND} />
+        <CustomSearchInputQueryWithLabel label={'Biển số xe'} searchParamName={PARAM_FIELD.NUMBER_INSEAD} />
         <CustomSelectQueryWithLabel
-          label={'Status'}
+          label={'Trạng thái'}
           queryKey={PARAM_FIELD.SEARCH_BY}
           options={[
             {
-              label: 'Approved',
+              label: 'Đã duyệt',
               value: CENSOR_DRIVER_STATUS.APPROVED,
             },
             {
-              label: 'Pending',
+              label: 'Đang chờ',
               value: CENSOR_DRIVER_STATUS.PENDING,
             },
             {
-              label: 'Declined',
+              label: 'Đã từ chối',
               value: CENSOR_DRIVER_STATUS.DECLINED,
             },
           ]}

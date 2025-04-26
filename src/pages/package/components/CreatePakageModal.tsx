@@ -51,9 +51,9 @@ export default function CreatePakageModal({ open, setOpen }: CreatePakageModalPr
       setOpen={setOpen}
       footer={
         <div className='mt-6 flex justify-end gap-3'>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={() => setOpen(false)}>Hủy</Button>
           <Button type='primary' className='border-none' onClick={handleSubmit(onSubmit)}>
-            Create
+            Tạo
           </Button>
         </div>
       }>
@@ -62,28 +62,28 @@ export default function CreatePakageModal({ open, setOpen }: CreatePakageModalPr
           control={control}
           name='packageName'
           label='Tên Gói'
-          placeholder='Enter package name'
+          placeholder='Nhập tên gói'
           className='w-full'
         />
         <CustomTextFieldWithLabel
           control={control}
           name='packageTime'
-          label='Package Time (Month)'
-          placeholder='Enter package time'
+          label='Thời gian gói (Tháng)'
+          placeholder='Nhập thời gian gói'
           type='number'
         />
         <CustomTextFieldWithLabel
           control={control}
           name='packageBonusTime'
-          label='Package Bonus Time (Month)'
-          placeholder='Enter package bonus time'
+          label='Thời gian tặng thêm cho gói (Tháng)'
+          placeholder='Nhập thời gian tặng thêm cho gói'
           type='number'
         />
         <CustomTextFieldWithLabel
           control={control}
           name='packagePrice'
           label='Giá Gói (VND)'
-          placeholder='Enter package price'
+          placeholder='Nhập giá gói'
           type='number'
           min={1000}
           max={1000000000}
