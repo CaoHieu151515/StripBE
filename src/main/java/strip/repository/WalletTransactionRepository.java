@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import strip.domain.User;
 import strip.domain.UserWallet;
@@ -42,5 +43,20 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
         String transactionThirdPartyID,
         WalletTransactionType walletType,
         TransactionStatus transStatus
+    );
+
+    @Query(
+        "SELECT t FROM WalletTransaction t " +
+        "WHERE (:walletType IS NULL OR t.walletType = :walletType) " +
+        "AND (:walletStatus IS NULL OR t.transStatus = :walletStatus) " +
+        "AND (:fromDate IS NULL OR t.date >= :fromDate) " +
+        "AND (:toDate IS NULL OR t.date <= :toDate)"
+    )
+    Page<WalletTransaction> searchWalletTransactions(
+        @Param("walletType") WalletTransactionType walletType,
+        @Param("walletStatus") TransactionStatus walletStatus,
+        @Param("fromDate") Instant fromDate,
+        @Param("toDate") Instant toDate,
+        Pageable pageable
     );
 }

@@ -34,6 +34,7 @@ import strip.domain.enumeration.FeedbackType;
 import strip.domain.enumeration.PackageDriverStatus;
 import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.TripStatus;
+import strip.domain.enumeration.WalletIncomeType;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
@@ -401,11 +402,16 @@ public class ManagerResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<CustomPageDTO<WalletTransactionAdminDTO>> getSystemIncomeTransactions(
         @ParameterObject Pageable pageable,
-        @RequestParam(required = false) WalletTransactionType walletType,
+        @RequestParam(required = false) WalletIncomeType walletType,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate
     ) {
-        Page<WalletTransactionAdminDTO> page = usermanageService.getSystemIncomeTransactions(pageable, walletType, fromDate, toDate);
+        Page<WalletTransactionAdminDTO> page = usermanageService.getSystemIncomeTransactions(
+            pageable,
+            walletType != null ? WalletTransactionType.valueOf(walletType.name()) : null,
+            fromDate,
+            toDate
+        );
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 }

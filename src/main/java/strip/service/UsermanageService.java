@@ -934,6 +934,7 @@ public class UsermanageService {
         driverRepository.save(driver);
     }
 
+    @Transactional(readOnly = true)
     public Page<WalletTransactionAdminDTO> getSystemTransactions(
         Pageable pageable,
         WalletTransactionType walletType,
@@ -1046,6 +1047,7 @@ public class UsermanageService {
         };
     }
 
+    @Transactional(readOnly = true)
     public Page<WalletTransactionAdminDTO> getSystemIncomeTransactions(
         Pageable pageable,
         WalletTransactionType walletType,
@@ -1059,16 +1061,30 @@ public class UsermanageService {
             WalletTransactionType.SYSTEM_GAIN_PACKAGE_FEE
         );
 
-        List<WalletTransactionType> typesToFilter = (walletType != null && incomeTypes.contains(walletType))
-            ? List.of(walletType)
-            : incomeTypes;
+        // ✅ Xác định types cần lọc
+        List<WalletTransactionType> typesToFilter;
+        if (walletType != null) {
+            if (incomeTypes.contains(walletType)) {
+                typesToFilter = List.of(walletType);
+            } else {
+                throw new BadRequestAlertException(
+                    "WalletType không hợp lệ cho thu nhập hệ thống",
+                    "walletTransaction",
+                    "invalid-income-type"
+                );
+            }
+        } else {
+            typesToFilter = incomeTypes;
+        }
 
-        // 👇 Gán mặc định nếu không truyền vào
+        // ✅ Gán mặc định from/to nếu thiếu
         Instant from = (fromDate != null) ? fromDate : Instant.EPOCH;
         Instant to = (toDate != null) ? toDate : Instant.now();
 
+        // ✅ Truy vấn từ DB
         Page<WalletTransaction> txPage = walletTransactionRepository.findByWalletTypeInAndDateBetween(typesToFilter, from, to, pageable);
 
+        // ✅ Map sang DTO
         return txPage.map(this::mapToDTO);
     }
 
