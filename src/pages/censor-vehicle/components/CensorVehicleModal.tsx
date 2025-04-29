@@ -1,7 +1,15 @@
 import { CensorVehicleDTO } from '@/@types/dto/censorVehicleDTO';
 import InfoItem from '@/components/common/InfoItem';
+import CustomConfirmModal from '@/components/modal/CustomConfirmModal';
 import CustomModal from '@/components/modal/CustomModal';
-import { Image } from 'antd';
+import { censorVehicleApi } from '@/data/services/api/censorVehicle/censorVehicle.api';
+import queryClient from '@/data/services/queryClient';
+import { baseSchema } from '@/helpers/form-schemas/AllFormSchema';
+import { CENSOR_VEHICLE_STATUS } from '@/utils/enum/censor-vehicle/censor-vehicle.enum';
+import { Button, Image } from 'antd';
+import { enqueueSnackbar } from 'notistack';
+import { useState } from 'react';
+import * as yup from 'yup';
 
 type CensorVehicleModalProps = {
   open: boolean;
@@ -9,9 +17,102 @@ type CensorVehicleModalProps = {
   data: CensorVehicleDTO;
 };
 
+const reasonSchema = yup.object().shape({
+  reason: baseSchema.yupString,
+});
+
 export default function CensorVehicleModal({ open, setOpen, data }: CensorVehicleModalProps) {
+  const [isAccept, setIsAccept] = useState(false);
+  const [isReject, setIsReject] = useState(false);
+
+  // const [putAcceptTrip, { isLoading: isLoadingAccept }] = usePutAcceptTripMutation();
+  // const [putRejectTrip, { isLoading: isLoadingReject }] = usePutRejectTripMutation();
+  // const { handleSubmit, control } = useForm({
+  //   resolver: yupResolver(reasonSchema),
+  //   defaultValues: reasonSchema.getDefault(),
+  // });
+
+  const handleApproveTrip = async () => {
+    try {
+      await censorVehicleApi.approve(data?.vehicle?.vehicleID ?? '');
+      // await putAcceptTrip(id as string).unwrap();
+      enqueueSnackbar('Duyệt kiểm phương tiện thành công', {
+        variant: 'success',
+        autoHideDuration: 2000,
+      });
+      setIsAccept(false);
+      await queryClient.invalidateQueries(['CensorVehicles']);
+    } catch (error) {
+      console.error('Error approving vehicle:', error);
+    }
+  };
+
+  const handleRejectTrip = async () => {
+    try {
+      await censorVehicleApi.reject(data?.vehicle?.vehicleID ?? '');
+      // await putAcceptTrip(id as string).unwrap();
+      enqueueSnackbar('Huỷ kiểm duyệt thành công', {
+        variant: 'success',
+        autoHideDuration: 2000,
+      });
+      setIsReject(false);
+      await queryClient.invalidateQueries(['CensorVehicles']);
+    } catch (error) {
+      console.error('Error approving vehicle:', error);
+    }
+  };
+
+  // const onSubmit = async (reason: any) => {
+  //   try {
+  //     await censorVehicleApi.reject(data?.vehicle?.vehicleID ?? '');
+  //     enqueueSnackbar('Huỷ kiểm duyệt thành công', {
+  //       variant: 'success',
+  //       autoHideDuration: 2000,
+  //     });
+  //   setIsReject(false);
+  //   await queryClient.invalidateQueries(['CensorVehicles']);
+  //   } catch (error) {
+  //     console.error('Error rejecting vehicle:', error);
+  //   }
+
+  //   // putRejectTrip({ tripId: id as string, reason: reason.reason })
+  //   //   .unwrap()
+  //   //   .then(() => {
+  //   //     enqueueSnackbar('Từ chối chuyến đi thành công', {
+  //   //       variant: 'success',
+  //   //       autoHideDuration: 2000,
+  //   //     });
+  //   //     setIsReject(false);
+  //   //   })
+  //   //   .catch(() => {
+  //   //     enqueueSnackbar('Từ chối chuyến đi thất bại', {
+  //   //       variant: 'error',
+  //   //       autoHideDuration: 2000,
+  //   //     });
+  //   //   });
+  // };
   return (
-    <CustomModal title='Thông tin kiểm duyệt phương tiện' open={open} setOpen={setOpen} className='!w-[1020px]'>
+    <CustomModal
+      title='Thông tin kiểm duyệt phương tiện'
+      open={open}
+      setOpen={setOpen}
+      className='!w-[1020px]'
+      footer={
+        data?.vehicle?.status === CENSOR_VEHICLE_STATUS.CONFIRMING && (
+          <div className='mt-4'>
+            <Button className='mr-2 bg-red-500 text-white' onClick={() => setIsReject(true)}>
+              Từ chối
+            </Button>
+            <Button
+              className='float-right mr-2 bg-blue-500 text-white'
+              onClick={() => setIsAccept(true)}
+              // loading={isLoadingAccept}
+            >
+              Chấp nhận
+            </Button>
+          </div>
+        )
+      }>
       <div>
         <div className='flex w-full gap-4'>
           <Image
@@ -86,6 +187,49 @@ export default function CensorVehicleModal({ open, setOpen, data }: CensorVehicl
           />
         </div>
       </div>
+      <CustomConfirmModal
+        open={isAccept}
+        title='Xác nhận duyệt kiểm Phương tiện'
+        message='Bạn có chắc chắn muốn duyệt kiểm Phương tiện này không?'
+        setOpen={setIsAccept}
+        onConfirm={handleApproveTrip}
+        okText='Duyệt'
+        cancelText='Hủy'
+      />
+      <CustomConfirmModal
+        open={isReject}
+        title='Xác nhận Từ Chối duyệt kiểm Phương tiện'
+        message='Bạn có chắc chắn muốn Từ Chối duyệt kiểm Phương tiện này không?'
+        setOpen={setIsReject}
+        onConfirm={handleRejectTrip}
+        okText='Từ Chối Duyệt Kiểm'
+        cancelText='Hủy'
+      />
+      {/* <CustomModal
+        title='Từ chối duyệt kiểm' open={isReject} setOpen={() => setIsReject(false)} className='!w-[520px]'
+        footer={
+          <div className='mt-6 flex justify-end gap-3'>
+            <Button onClick={() => setIsReject(false)}>Hủy</Button>
+            <Button type='primary' className='border-none bg-red-600 ' htmlType='submit'
+            // loading={isLoadingReject}
+            >
+              Từ chối
+            </Button>
+          </div>
+        }>
+        <form className='mt-10 space-y-4' onSubmit={handleSubmit(onSubmit)}>
+          <CustomTextFieldWithLabel
+            name='reason'
+            type='textarea'
+            control={control}
+            rows={4}
+            label='Lý do từ chối'
+            placeholder='Nhập lý do từ chối'
+            className='w-full'
+          />
+
+        </form>
+      </CustomModal> */}
     </CustomModal>
   );
 }

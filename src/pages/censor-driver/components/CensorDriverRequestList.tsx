@@ -16,7 +16,12 @@ export default function CensorDriverRequestList() {
       <TableBuilder<CensorDriverRequestDTO>
         rowKey='userId'
         columns={CensorDriverRequestColumn()}
-        data={CensorDriverRequestData?.content ?? []}
+        data={
+          CensorDriverRequestData?.content.map((item, idx) => ({
+            ...item,
+            index: CensorDriverRequestData?.page * CensorDriverRequestData?.size + idx + 1,
+          })) ?? []
+        }
         isLoading={isFetching}
       />
       <CustomTablePagination

@@ -11,6 +11,7 @@ type CustomTablePaginationProps = {
   isScrollAfterPageChange?: boolean;
   className?: string;
   pageSize?: number;
+  showSizeChanger?: boolean;
 };
 
 export default function CustomTablePagination({
@@ -19,6 +20,7 @@ export default function CustomTablePagination({
   queryKey,
   isScrollAfterPageChange = true,
   pageSize = PAGE_SIZE,
+  showSizeChanger = false,
   ...props
 }: CustomTablePaginationProps) {
   const page = useGetValuesFromParams([queryKey || PARAM_FIELD.CURRENT_PAGE]);
@@ -49,6 +51,7 @@ export default function CustomTablePagination({
         pageSize={pageSize}
         onChange={(page: number) => handleChangePage(page)}
         className={className}
+        showSizeChanger={showSizeChanger}
         {...props}
       />
       <Button

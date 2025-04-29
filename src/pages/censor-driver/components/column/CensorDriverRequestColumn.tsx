@@ -10,6 +10,13 @@ export const CensorDriverRequestColumn = (): ColumnsType<CensorDriverRequestDTO>
 
   return [
     {
+      title: () => <TableHeaderCell key='STT' label={'STT'} sortKey='STT' />,
+      key: 'STT',
+      render: ({ ...props }: CensorDriverRequestDTO) => {
+        return <div>{props?.index}</div>;
+      },
+    },
+    {
       title: () => <TableHeaderCell key='firstName' label={'Tên'} sortKey='firstName' />,
       key: 'firstName',
       render: ({ ...props }: CensorDriverRequestDTO) => {

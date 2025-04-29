@@ -12,10 +12,10 @@ const useCensorVehicleData = () => {
   const fetchCensorVehicleDataFunction = async () => {
     try {
       const response = await censorVehicleApi.getAll({
-        firstName: params.firstName as string,
         lastName: params.lastName as string,
-        email: params.email as string,
-        phone: params.phone as string,
+        // firstName: params.firstName as string,
+        // email: params.email as string,
+        // phone: params.phone as string,
         page: page - 1,
         size: PAGE_SIZE,
       });
@@ -27,7 +27,7 @@ const useCensorVehicleData = () => {
   };
 
   // TODO: use debounce technique to prevent many calls at a short time
-  const queryKey = ['CensorVehicles', params.firstName, params.lastName, params.email, params.phone, page];
+  const queryKey = ['CensorVehicles', params.lastName, page];
 
   const {
     data: CensorVehicleData,
@@ -36,6 +36,10 @@ const useCensorVehicleData = () => {
   } = useQuery(queryKey, fetchCensorVehicleDataFunction, {
     onError: (err) => console.log('error at hook', err),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 
   return {

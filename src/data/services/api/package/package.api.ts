@@ -34,4 +34,8 @@ export const packageApi = {
     });
     return response;
   },
+
+  toggleStatus: async (id: string) => {
+    await axiosClient.patch(`/manager/package/${id}/toggle-status`, {});
+  },
 };

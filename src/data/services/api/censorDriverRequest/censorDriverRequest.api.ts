@@ -11,10 +11,10 @@ import { PagedResponse } from '@/@types/dto/pagedResponse';
 
 export const censorDriverRequestApi = {
   getAll: async (params?: {
-    // firstName?: string;
-    // lastName?: string;
-    // email?: string;
-    // phone?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
     page?: number;
     size?: number;
   }): Promise<PagedResponse<CensorDriverRequestDTO>> => {

@@ -7,6 +7,7 @@
 // }
 
 export interface CensorDriverRequestDTO {
+  index?: number;
   userId?: string;
   driverId?: string;
   firstName?: string;

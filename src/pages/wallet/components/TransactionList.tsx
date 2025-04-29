@@ -22,7 +22,7 @@ export default function TransactionList() {
       <CustomTablePagination
         totalItems={WalletData?.totalElements || 1}
         queryKey={PARAM_FIELD.PAGE}
-        isScrollAfterPageChange
+        // isScrollAfterPageChange
       />
     </div>
   );

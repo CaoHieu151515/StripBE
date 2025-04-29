@@ -1,4 +1,5 @@
 export interface CensorVehicleDTO {
+  index?: number;
   userId?: string;
   driverId?: string;
   firstName?: string;

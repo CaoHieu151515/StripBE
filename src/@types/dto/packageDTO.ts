@@ -1,4 +1,5 @@
 export interface PackageGetAllDTO {
+  index?: number;
   id?: number;
   packageID?: string;
   price?: number;

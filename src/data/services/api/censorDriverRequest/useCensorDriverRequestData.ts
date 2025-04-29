@@ -11,10 +11,10 @@ const useCensorDriverRequestData = () => {
   const fetchCensorDriverRequestDataFunction = async () => {
     try {
       const response = await censorDriverRequestApi.getAll({
-        // firstName: params.firstName as string,
-        // lastName: params.lastName as string,
-        // email: params.email as string,
-        // phone: params.phone as string,
+        firstName: params.firstName as string,
+        lastName: params.lastName as string,
+        email: params.email as string,
+        phone: params.phone as string,
         page: page - 1,
         size: PAGE_SIZE,
       });
@@ -36,6 +36,10 @@ const useCensorDriverRequestData = () => {
   } = useQuery(queryKey, fetchCensorDriverRequestDataFunction, {
     onError: (err) => console.log('error at hook', err),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 
   return {

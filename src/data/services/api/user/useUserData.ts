@@ -14,6 +14,7 @@ const useUsersData = () => {
       const response = await userApi.getAll({
         firstName: params.firstName as string,
         lastName: params.lastName as string,
+        email: params.email as string,
         page: page - 1,
         size: PAGE_SIZE,
       });
@@ -24,7 +25,7 @@ const useUsersData = () => {
     }
   };
 
-  const queryKey = ['usersData', params.firstName, params.lastName, page];
+  const queryKey = ['usersData', params.firstName, params.lastName, params.email, page];
 
   const {
     data: UserData,
@@ -34,16 +35,16 @@ const useUsersData = () => {
   } = useQuery(queryKey, fetchUserDataFunction, {
     onError: (err) => console.log('error at hook', err),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
-
-  // useEffect(() => {
-  //   refreshUserData();
-  // }, [page, refreshUserData]);
 
   return {
     UserData,
     refreshUserData,
-    isLoading, // Đảm bảo isLoading được trả về đúng khi page thay đổi
+    isLoading,
     ...rest,
   };
 };

@@ -34,6 +34,10 @@ const usePackageData = () => {
   } = useQuery(queryKey, fetchUserDataFunction, {
     onError: (err) => console.log('error at hook', err),
     keepPreviousData: true,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: true,
   });
 
   return {

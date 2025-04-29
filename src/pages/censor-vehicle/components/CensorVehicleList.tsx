@@ -14,7 +14,12 @@ export default function CensorVehicleList() {
       <TableBuilder<CensorVehicleDTO>
         rowKey='driverId'
         columns={CensorVehicleColumn()}
-        data={CensorVehicleData?.content ?? []}
+        data={
+          CensorVehicleData?.content?.map((item, idx) => ({
+            ...item,
+            index: CensorVehicleData?.page * CensorVehicleData?.size + idx + 1,
+          })) ?? []
+        }
         isLoading={isFetching}
       />
       <CustomTablePagination

@@ -10,7 +10,6 @@ export default function TransactionHistoryList() {
   const { TransactionHistoryData, isLoading } = useTransactionHistoryData();
   return (
     <div className='flex max-w-full flex-col gap-5'>
-      {/* <button onClick={()=>{console.log(TransactionHistoryData?.length)}}>TransactionHistoryData</button> */}
       <TransactionFilter />
       <TableBuilder<WalletDTO>
         rowKey='transactionId'

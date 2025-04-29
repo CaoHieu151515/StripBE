@@ -1,0 +1,3 @@
+export enum CENSOR_VEHICLE_STATUS {
+  CONFIRMING = 'CONFIRMING',
+}

@@ -6,6 +6,7 @@ export const userApi = {
   getAll: async (params?: {
     firstName?: string;
     lastName?: string;
+    email?: string;
     page?: number;
     size?: number;
   }): Promise<PagedResponse<UserGetAllDTO>> => {

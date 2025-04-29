@@ -10,6 +10,20 @@ export const CensorVehicleColumn = (): ColumnsType<CensorVehicleDTO> => {
 
   return [
     {
+      title: () => <TableHeaderCell key='STT' label={'STT'} sortKey='STT' />,
+      key: 'STT',
+      render: ({ ...props }: CensorVehicleDTO) => {
+        return <div>{props?.index}</div>;
+      },
+    },
+    {
+      title: () => <TableHeaderCell key='userLastName' label={'Tên Tài Xế'} sortKey='userLastName' />,
+      key: 'Tên',
+      render: ({ ...props }: CensorVehicleDTO) => {
+        return <div>{props?.lastName}</div>;
+      },
+    },
+    {
       title: () => <TableHeaderCell key='vehicleNumber' label={'Số Máy'} sortKey='vehicleNumber' />,
       key: 'vehicleNumber',
       render: ({ ...props }: CensorVehicleDTO) => {
