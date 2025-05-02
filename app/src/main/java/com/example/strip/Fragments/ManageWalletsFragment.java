@@ -23,6 +23,7 @@ import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.DateFormatter;
 import com.example.strip.network.ApiClient;
 
 import java.util.List;
@@ -76,7 +77,7 @@ public class ManageWalletsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     UserMoreResponse user = response.body();
                     tvUserWallet.setText(user.getUserWallet().getUserWallet() != null ? user.getUserWallet().getUserWallet() : "N/A");
-                    tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? user.getUserWallet().getMobifyDate() : "N/A");
+                    tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? DateFormatter.formatDate(user.getUserWallet().getMobifyDate()) : "N/A");
                     tvCurrent.setText(String.format("%.2f", user.getUserWallet().getCurrent()));
                     tvBefore.setText(String.format("%.2f", user.getUserWallet().getBefore()));
                     tvAmount.setText(String.format("%.2f", user.getUserWallet().getAmount()));

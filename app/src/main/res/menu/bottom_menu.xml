@@ -4,23 +4,23 @@
 
     <item
         android:id="@+id/home"
-        android:title="Home"
+        android:title="Trang chủ"
         android:icon="@drawable/home"/>
 
     <item
         android:id="@+id/trips"
-        android:title="Trips"
+        android:title="Xem chuyến đi"
         android:icon="@drawable/car_journey"
         />
 <!--    <item-->
 <!--        android:title=""/>-->
     <item
         android:id="@+id/chat"
-        android:title="Chat"
+        android:title="Trò chuyện"
         android:icon="@drawable/messages"/>
     <item
         android:id="@+id/account"
-        android:title="Account"
+        android:title="Hành khách"
         android:icon="@drawable/users" />
 
 </menu>

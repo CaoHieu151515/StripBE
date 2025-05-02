@@ -14,6 +14,8 @@ import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.TripViewHolder>{
@@ -33,22 +35,32 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         TripBookingResponse trip = tripBookingResponseList.get(position);
-        holder.tvStartLocation.setText("From: " + trip.startLocation);
-        holder.tvEndLocation.setText("To: " + trip.endLocation);
-        holder.tvDriver.setText("Driver: " + trip.driverName);
-        holder.tvStartDate.setText("Start Date: " + DateFormatter.formatDate(trip.startDate));
-        holder.tvEndDate.setText("End Date: " + DateFormatter.formatDate(trip.endDate));
+        holder.tvTripId.setText("Mã chuyến đi: " +trip.tripID);
+        holder.tvStartLocation.setText("Từ: " + trip.startLocation);
+        holder.tvEndLocation.setText("Đến: " + trip.endLocation);
+        holder.tvDriver.setText("Tài xế: " + trip.driverName);
+        holder.tvStartDate.setText("Thời gian khởi hành: " + DateFormatter.formatDate(trip.startDate));
+        holder.tvEndDate.setText("Thời gian kết thúc: " + DateFormatter.formatDate(trip.endDate));
+        holder.tvStatus.setText("Trạng thái chuyến đi: "+ trip.tripStatus);
         holder.stopLocationContainer.removeAllViews();
-
         if (trip.stopLocationBookingResponseList != null && !trip.stopLocationBookingResponseList.isEmpty()) {
+            // Sắp xếp theo stoplocaPosition tăng dần
+            Collections.sort(trip.stopLocationBookingResponseList, new Comparator<StopLocationBookingResponse>() {
+                @Override
+                public int compare(StopLocationBookingResponse o1, StopLocationBookingResponse o2) {
+                    return Integer.compare(o1.stoplocaPosition, o2.stoplocaPosition);
+                }
+            });
+
             for (StopLocationBookingResponse stop : trip.stopLocationBookingResponseList) {
                 TextView stopView = new TextView(holder.itemView.getContext());
-                stopView.setText("Stop " + stop.stoplocaPosition + ": " + stop.stopLoca +
-                        " \n(" + String.format("%.2f km, ~ ", stop.estimatedKM) + String.format("%d mins)", stop.estimatedTime));
+                stopView.setText("Điểm dừng " + stop.stoplocaPosition + ": " + stop.stopLoca +
+                        " \n(" + String.format("%.2f km, ~ ", stop.estimatedKM) + String.format("%d phút)", stop.estimatedTime));
                 stopView.setPadding(16, 8, 16, 8);
                 holder.stopLocationContainer.addView(stopView);
             }
         }
+
     }
 
     @Override
@@ -57,7 +69,7 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView tvStartLocation, tvEndLocation, tvDriver, tvStartDate, tvEndDate;
+        TextView tvStartLocation, tvEndLocation, tvDriver, tvStartDate, tvEndDate, tvStatus, tvTripId;
         LinearLayout stopLocationContainer;
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +79,8 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
             tvStartDate = itemView.findViewById(R.id.tvStartDate);
             tvEndDate = itemView.findViewById(R.id.tvEndDate);
             stopLocationContainer = itemView.findViewById(R.id.stopLocationContainer);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvTripId = itemView.findViewById(R.id.tvTripId);
         }
     }
 }

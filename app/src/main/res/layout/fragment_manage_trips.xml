@@ -4,23 +4,32 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp">
-    <ImageView
-        android:id="@+id/addTripButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/add"
-        android:layout_marginTop="30dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="Add"/>
-    <TextView
-        android:id="@+id/statusTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:layout_marginTop="20dp"
-        android:text="Trip Active List:" />
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/statusTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_weight="5"
+            android:layout_gravity="center"
+            android:textSize="16dp"
+            android:text="Danh sách chuyến đi hoat động" />
+        <ImageView
+            android:id="@+id/addTripButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/add__1_"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Add"/>
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -28,25 +28,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="24dp"/>
     <!-- Agreement Text -->
+
+    <!-- Terms & Conditions Link -->
     <TextView
         android:id="@+id/tvAgreementText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="In order to start using Ride Sharing,\nplease first agree to our"
-        android:textSize="17sp"
+        android:layout_marginTop="28dp"
+        android:paddingHorizontal="20dp"
+        android:text="Để bắt đầu sử dụng Chia Sẻ Chuyến Đi, trước tiên hãy đồng ý với chúng tôi"
         android:textAlignment="center"
         android:textColor="#ADFF2F"
-        app:layout_constraintTop_toBottomOf="@id/centerImage"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"/>
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/centerImage" />
 
-    <!-- Terms & Conditions Link -->
     <TextView
         android:id="@+id/tvTermsConditions"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:text="@string/terms_conditions_text"
+        android:text="Điều khoản và điều kiện"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -87,8 +90,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="I agree to the ride sharing terms and conditions"
-            android:textSize="18dp"
+            android:text="Tôi đồng ý với các điều khoản và điều kiện Chia Sẻ Chuyến Đi"
+            android:textSize="17dp"
             android:textStyle="bold"
             android:textAlignment="center"
             android:textColor="#333"/>

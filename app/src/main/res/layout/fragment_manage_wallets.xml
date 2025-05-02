@@ -23,7 +23,7 @@
         android:id="@+id/walletTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wallet"
+        android:text="Ví tiền"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -37,7 +37,7 @@
         android:id="@+id/walletStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Active"
+        android:text="Đang hoạt động"
         android:textSize="16sp"
         android:textColor="@color/ForestGreen"
         app:layout_constraintTop_toBottomOf="@id/walletTitle"
@@ -62,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Wallet"
+            android:text="Ví người dùng"
             android:textColor="@color/orange"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -87,7 +87,7 @@
                 android:id="@+id/tvMobifyDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mobify Date"
+                android:text="Ngày sửa đổi"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -111,7 +111,7 @@
                 android:id="@+id/tvCurrentLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Current"
+                android:text="Gần đây"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -142,7 +142,7 @@
                 android:id="@+id/tvBeforeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Before"
+                android:text="Trước đó"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -166,7 +166,7 @@
                 android:id="@+id/tvAmountLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amount"
+                android:text="Số tiền "
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -219,7 +219,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Transfer"
+                android:text="Chuyển tiền"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -235,11 +235,11 @@
                 android:id="@+id/ivPayment"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/export"/>
+                android:src="@drawable/add"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Payment"
+                android:text="Nạp tiền"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -256,7 +256,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/send_money"/>
             <TextView
-                android:text="Payout"
+                android:text="Thanh toán"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -273,11 +273,11 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/add"/>
+                android:src="@drawable/export"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Top up"
+                android:text="Chi trả"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -288,24 +288,12 @@
         android:id="@+id/lastTransactionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Last Transaction"
+        android:text="Lịch sử giao dịch"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/transactionButtons"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="20dp"/>
-
-    <TextView
-        android:id="@+id/viewAll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View All"
-        android:textSize="14sp"
-        android:textColor="@color/orange"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/transactionButtons"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="20dp"/>
 
     <!--    &lt;!&ndash; Transactions List &ndash;&gt;-->

@@ -1,5 +1,6 @@
 package com.example.strip.Activities.Trip;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,7 +43,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
     private TextView tvStartLocation, tvEndLocation,
             tvStartDate, tvEndDate, tvTripStatus;
     private ITripMobileApiService tripService;
-
+    private ImageView ivDetail;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +56,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         tvTripStatus = findViewById(R.id.tvTripStatus);
         btnStart = findViewById(R.id.btnStart);
         btnComplete = findViewById(R.id.btnComplete);
+        ivDetail = findViewById(R.id.ivDetail);
         adapter = new TripRequestAdapter(this, tripList, new TripRequestAdapter.OnTripActionListener() {
             @Override
             public void onActionCompleted() {
@@ -72,6 +74,14 @@ public class TripActiveDetailActivity extends AppCompatActivity {
             finish();
             return;
         }
+        ivDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TripActiveDetailActivity.this, EditTripActivity.class);
+                intent.putExtra("tripId", tripId); // Pass tripId to detail activity
+                startActivity(intent);
+            }
+        });
         loadTripDetails();
         fetchTripRequests(tripId);
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +92,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
+                        loadTripDetails();
                         Toast.makeText(TripActiveDetailActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
                     }
 
@@ -100,6 +111,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
+                        loadTripDetails();
                         Toast.makeText(TripActiveDetailActivity.this, "Trip completed", Toast.LENGTH_SHORT).show();
                     }
 

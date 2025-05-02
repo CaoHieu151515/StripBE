@@ -18,11 +18,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.Activities.Account.BeginActivity;
 import com.example.strip.Activities.Customer.ChangePasswordActivity;
 import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
 import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
+import com.example.strip.Activities.StripActivity;
 import com.example.strip.Activities.StripDriverActivity;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
@@ -37,6 +39,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import im.crisp.client.external.Crisp;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -48,7 +51,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AccountFragment extends Fragment {
 
     private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
-    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver;
+    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout;
     private Button btnEditProfile;
     private UserMoreResponse user;
 
@@ -71,6 +74,13 @@ public class AccountFragment extends Fragment {
         ivUpdateToDriver = view.findViewById(R.id.ivUpdateToDriver);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         ivChangeToDriver = view.findViewById(R.id.ivChangeToDriver);
+        ivLogout = view.findViewById(R.id.ivLogout);
+        ivLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleLogout();
+            }
+        });
         ivChangePassword.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ChangePasswordActivity.class);
             startActivity(intent);
@@ -163,5 +173,19 @@ public class AccountFragment extends Fragment {
                 Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+    public void handleLogout() {
+        // Clear chat data for the current user
+        Crisp.resetChatSession(getContext().getApplicationContext());
+
+        // Continue with logout logic, like clearing user data and redirecting to login
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("jwtToken"); // Clear any saved user authentication data
+        editor.apply();
+
+        Intent intent = new Intent(getContext(), BeginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

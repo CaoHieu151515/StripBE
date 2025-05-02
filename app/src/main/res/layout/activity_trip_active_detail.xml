@@ -6,18 +6,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp">
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/back_button2"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="Back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:gravity="center_vertical"
+        android:baselineAligned="false">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/back_button2"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Back" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/ivDetail"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/file_circle_info"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Details" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -89,7 +109,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pickup point"
+                            android:text="Điểm đón"
                             android:textSize="14sp"
                             android:textColor="@color/gray"/>
 
@@ -112,7 +132,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Where to go?"
+                            android:text="Điểm đến"
                             android:textSize="14sp"
                             android:textColor="@color/gray"/>
 
@@ -139,7 +159,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start Date"
+                android:text="Ngày bắt đầu"
                 android:textStyle="bold"
                 android:textSize="16sp" />
 
@@ -157,7 +177,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="End Date"
+                android:text="Ngày kết thúc"
                 android:textSize="16sp"
                 android:layout_marginTop="12dp"
                 android:textStyle="bold"/>
@@ -194,8 +214,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trip Status"
-                android:textSize="14sp"
+                android:text="Trạng thái chuyến đi"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:layout_marginTop="4dp" />
 
@@ -222,7 +242,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start Trip"
+                android:text="Bắt đầu chuyến đi"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="4dp" />
@@ -236,12 +256,12 @@
                 android:background="@drawable/input_field_bg"
                 android:backgroundTint="@color/primary_dark_color"
                 android:textColor="@color/white"
-                android:text="Start" />
+                android:text="Bắt đầu" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Complete"
+                android:text="Hoàn thành chuyến đi"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="4dp" />
@@ -255,7 +275,7 @@
                 android:backgroundTint="@color/green"
                 android:textColor="@color/white"
                 android:textAllCaps="false"
-                android:text="Complete" />
+                android:text="Hoàn thành" />
         </LinearLayout>
     </LinearLayout>
     <TextView
@@ -266,11 +286,11 @@
         android:textStyle="bold"
         android:textSize="16dp"
         android:layout_marginTop="20dp"
-        android:text="Request Trip List:" />
+        android:text="Danh sách yêu cầu chuyến đi" />
     <androidx.recyclerview.widget.RecyclerView
         android:paddingHorizontal="16dp"
         android:id="@+id/recyclerTripRequests"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"/>
 </LinearLayout>

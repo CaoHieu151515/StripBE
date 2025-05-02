@@ -40,7 +40,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
         holder.tvStartLocation.setText(trip.getStartLocation());
         holder.tvEndLocation.setText(trip.getEndLocation());
         holder.tvPrice.setText( trip.getPricePerSeat() + " VND");
-        holder.tvSeats.setText(trip.getCurrentSeat() + "/" + trip.getMaxSeat() + " Seats");
+        holder.tvSeats.setText(trip.getCurrentSeat() + "/" + trip.getMaxSeat() + " Ghế ngồi");
         String imageUrl = trip.getTripImgUrl();
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (imageUrl.startsWith("https://localhost")) {

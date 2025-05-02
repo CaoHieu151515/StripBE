@@ -103,7 +103,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pickup point"
+                                android:text="Điểm đón"
                                 android:textSize="14sp"
                                 android:textColor="@color/gray"/>
 
@@ -127,7 +127,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Where to go?"
+                                android:text="Điểm đến"
                                 android:textSize="14sp"
                                 android:textColor="@color/gray"/>
 
@@ -151,7 +151,7 @@
                 android:id="@+id/tvStopInstructions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select start and end stop from the list"
+                android:text="Chọn điểm dừng để đón và điểm dừng cần đến"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -214,7 +214,7 @@
                     android:layout_width="48dp"
                     android:backgroundTint="@color/Aquamarine"
                     android:layout_height="wrap_content"
-                    android:text="From"
+                    android:text="Từ"
                     android:textSize="18dp"
                     android:textStyle="bold"
                     android:textAllCaps="false"
@@ -228,7 +228,7 @@
                     android:id="@+id/btnEndLocation"
                     android:layout_width="48dp"
                     android:layout_height="wrap_content"
-                    android:text="To"
+                    android:text="Đến"
                     android:textColor="@color/gray"
                     android:textStyle="bold"
                     android:textSize="18dp"
@@ -248,7 +248,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Number of Seats"
+                    android:text="Số ghế ngồi"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:textColor="@color/gray" />
@@ -263,7 +263,7 @@
                 <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Luggage Description"
+                android:text="Miêu tả hành lý"
                 android:textSize="15sp"
                 android:textStyle="bold"
                     android:layout_marginTop="8dp"
@@ -284,7 +284,7 @@
                 android:textStyle="bold"
 
                 android:textSize="16dp"
-                android:text="Join Trip"
+                android:text="Tham gia chuyến đi"
                 android:layout_marginTop="4dp" />
             </LinearLayout>
         </LinearLayout>

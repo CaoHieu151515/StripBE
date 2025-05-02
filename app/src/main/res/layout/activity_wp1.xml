@@ -16,7 +16,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Let's travel together"
+        android:text="Chúng ta hãy cùng nhau chia sẻ chuyến đi"
         android:textSize="30dp"
         android:textStyle="bold"
         android:textColor="#333333"
@@ -45,33 +45,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save money"
+                android:text="Tiết kiệm tiền"
                 android:textStyle="bold"
                 android:textColor="#999999"
                 android:layout_marginStart="6dp"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginRight="15dp"
-                android:src="@drawable/check"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Make passive income"
-                android:textStyle="bold"
-                android:textColor="#999999"
-                android:layout_marginStart="6dp"/>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -88,7 +67,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Make new friends"
+                android:text="Làm quen với những người bạn mới"
                 android:textStyle="bold"
                 android:textColor="#999999"
                 android:layout_marginStart="6dp"/>
@@ -109,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="Overcome traffic congestion"
+                android:text="Khắc phục tình trạng tắc nghẽn giao thông"
                 android:textColor="#999999"
                 android:layout_marginStart="6dp"/>
         </LinearLayout>
@@ -123,9 +102,9 @@
 
         <TextView
             android:id="@+id/tvSkip"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:text="Skip"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="Bỏ qua"
             android:textSize="16sp"
             android:textAlignment="center"
             android:textStyle="bold"

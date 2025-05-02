@@ -1,6 +1,7 @@
 package com.example.strip.Activities.Driver;
 
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -134,6 +135,33 @@ public class AddTripActivity extends AppCompatActivity{
         });
         retrofit = ApiClient.getClientWithToken(this);
         btnCreateTrip.setOnClickListener(v -> createTrip());
+        etCondition.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Chọn điều kiện");
+
+            String[] conditions = {"Không hút thuốc", "Không mang thú cưng", "Không mang hành lý nặng quá 10kg"};
+            boolean[] checkedItems = new boolean[conditions.length]; // Tất cả mặc định là false
+
+            builder.setMultiChoiceItems(conditions, checkedItems, (dialog, which, isChecked) -> {
+                checkedItems[which] = isChecked; // Cập nhật lựa chọn
+            });
+
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                StringBuilder selectedConditions = new StringBuilder();
+                for (int i = 0; i < conditions.length; i++) {
+                    if (checkedItems[i]) {
+                        if (selectedConditions.length() > 0) selectedConditions.append(", ");
+                        selectedConditions.append(conditions[i]);
+                    }
+                }
+                etCondition.setText(selectedConditions.toString());
+            });
+
+            builder.setNegativeButton("Hủy", null);
+
+            builder.show();
+        });
+
         fetchUserInfo();
 
         etStartDate.setOnClickListener(v -> {

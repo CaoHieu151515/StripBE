@@ -48,7 +48,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Choose Vehicle"
+                            android:text="Chọn phương tiên đi lại"
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
@@ -78,7 +78,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Price Per Seat"
+                            android:text="Giá mỗi ghế"
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
@@ -92,7 +92,7 @@
                             android:textSize="16sp"
                             android:textColor="@color/black"
                             android:gravity="center"
-                            android:hint="Enter price" />
+                            android:hint="Nhập giá cả" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -105,7 +105,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Max Seats"
+                            android:text="Số ghế tối đa"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -119,7 +119,7 @@
                             android:textStyle="bold"
                             android:textColor="@color/black"
                             android:gravity="center"
-                            android:hint="Enter max seats" />
+                            android:hint="Nhập số ghế" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -131,7 +131,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Trip Image"
+                    android:text="Hình ảnh chuyến đi"
                     android:textSize="16sp"
                     android:gravity="center"
                     android:textStyle="bold" />
@@ -165,7 +165,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Start Date"
+                    android:text="Ngày bắt đầu"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -191,7 +191,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="End Date"
+                    android:text="Ngày kết thúc"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
                 <EditText
@@ -227,7 +227,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Show Route"
+                    android:text="Xem tuyến đường di chuyển"
+                    android:gravity="center"
                     android:textSize="16sp"
                     android:textColor="@color/gray"
                     android:textStyle="bold"
@@ -243,7 +244,7 @@
                     android:background="@drawable/input_field_bg"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:text="Find Location" />
+                    android:text="Tìm kiếm địa điểm" />
             </LinearLayout>
 
             <!-- Distance & Duration on the right -->
@@ -267,11 +268,12 @@
                         android:id="@+id/tvDistanceLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Distance"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:layout_marginBottom="5dp"
+                        android:text="Khoảng cách"
+                        android:gravity="center"
                         android:textColor="@color/gray"
-                        android:layout_marginBottom="5dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvDistanceValue"
@@ -298,7 +300,8 @@
                         android:id="@+id/tvDurationLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Duration"
+                        android:text="Khoảng thời gian"
+                        android:gravity="center"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/gray"
@@ -334,7 +337,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Start Location"
+                    android:text="Điểm đón"
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -360,7 +363,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="End Location"
+                    android:text="Điểm đến"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
 
@@ -393,7 +396,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Condition"
+                    android:text="Điều kiện"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/gray"
@@ -408,7 +411,7 @@
                     android:textColor="@color/gray"
                     android:textStyle="bold"
                     android:textSize="16dp"
-                    android:hint="Enter condition"
+                    android:hint="Nhập điều kiện"
                     android:inputType="text" />
             </LinearLayout>
 
@@ -421,7 +424,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Description"
+                    android:text="Miêu tả"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/gray"
@@ -453,7 +456,7 @@
                 android:layout_height="48dp"
                 android:textSize="17dp"
                 android:textAllCaps="false"
-                android:text="Create Trip"/>
+                android:text="Tạo chuyến đi"/>
         </LinearLayout>
 
     </LinearLayout>

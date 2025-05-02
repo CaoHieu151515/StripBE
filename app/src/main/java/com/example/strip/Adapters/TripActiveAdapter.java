@@ -39,12 +39,13 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         TripActiveResponse trip = tripList.get(position);
-        holder.startLocation.setText("From: " + trip.getStartLocation());
-        holder.endLocation.setText("To: " + trip.getEndlocation());
-        holder.price.setText("Price: "+trip.getPrice());
-        holder.status.setText("Status: "+trip.getStatus());
-        holder.startDate.setText("Start Date: "+DateFormatter.formatDate(trip.getStartDay()));
-        holder.endDate.setText("End date: " + DateFormatter.formatDate(trip.getEndDay()));
+        holder.codeTrip.setText("Mã chuyến đi: " + trip.getStripID());
+        holder.startLocation.setText("Từ: " + trip.getStartLocation());
+        holder.endLocation.setText("Đến: " + trip.getEndlocation());
+        holder.price.setText("Giá cả: "+trip.getPrice());
+        holder.status.setText("Trạng thái chuyến đi: "+trip.getStatus());
+        holder.startDate.setText("Ngày bắt đầu: "+DateFormatter.formatDate(trip.getStartDay()));
+        holder.endDate.setText("Ngày kết thúc: " + DateFormatter.formatDate(trip.getEndDay()));
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripActiveDetailActivity.class);
             intent.putExtra("tripId", trip.getStripID()); // Pass tripId to detail activity
@@ -58,10 +59,11 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView startLocation, endLocation, price, status, startDate, endDate;
+        TextView startLocation, endLocation, price, status, startDate, endDate, codeTrip;
 
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
+            codeTrip = itemView.findViewById(R.id.codeTrip);
             startLocation = itemView.findViewById(R.id.startLocation);
             endLocation = itemView.findViewById(R.id.endLocation);
             price = itemView.findViewById(R.id.price);

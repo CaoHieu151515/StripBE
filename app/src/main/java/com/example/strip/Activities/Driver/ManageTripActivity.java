@@ -36,7 +36,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ManageTripActivity extends AppCompatActivity {
-    private RecyclerView recyclerViewTrips;
     private RecyclerView recyclerView;
     private TripActiveAdapter tripActiveAdapter;
     private List<TripActiveResponse> tripList = new ArrayList<>();

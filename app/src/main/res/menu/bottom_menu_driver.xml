@@ -4,20 +4,20 @@
 
     <item
         android:id="@+id/homeDriver"
-        android:title="Home"
+        android:title="Trang chủ"
         android:icon="@drawable/home"/>
 
     <item
         android:id="@+id/tripsDriver"
-        android:title="Manage Trips"
+        android:title="Chuyến đi"
         android:icon="@drawable/car_journey" />
     <item
         android:id="@+id/walletsDriver"
-        android:title="Manage Wallet"
+        android:title="Tiền bạc"
         android:icon="@drawable/wallet_buyer"/>
     <item
         android:id="@+id/driver"
-        android:title="Driver Profile"
+        android:title="Tài xế"
         android:icon="@drawable/driver_man" />
 
 </menu>

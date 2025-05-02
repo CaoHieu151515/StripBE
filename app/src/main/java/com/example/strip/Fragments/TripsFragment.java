@@ -25,8 +25,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TripsFragment extends Fragment {
-    private RecyclerView recyclerView;
-    private TripBookingAdapter adapter;
+    private RecyclerView recyclerView, recyclerViewTripsDone;
+    private TripBookingAdapter adapter, adapterDone;
     private List<TripBookingResponse> tripList = new ArrayList<>();
 
     @Override
@@ -37,15 +37,19 @@ public class TripsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new TripBookingAdapter(tripList);
         recyclerView.setAdapter(adapter);
-        fetchTrips();
+
+        recyclerViewTripsDone = view.findViewById(R.id.recyclerViewTripsDone);
+        recyclerViewTripsDone.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDone = new TripBookingAdapter(tripList);
+        recyclerViewTripsDone.setAdapter(adapterDone);
+        fetchTripsWaiting();
+        fetchTripsDone();
         // Inflate the layout for this fragment
         return view;
     }
-    private void fetchTrips() {
+    private void fetchTripsWaiting() {
         IUserMobileApiService tripService = ApiClient.getClientWithToken(getContext()).create(IUserMobileApiService.class);
-        String token = "Bearer your_access_token_here"; // replace with real token
-
-        Call<List<TripBookingResponse>> call = tripService.getBookedTrips();
+        Call<List<TripBookingResponse>> call = tripService.getDoneTrips();
         call.enqueue(new Callback<List<TripBookingResponse>>() {
             @Override
             public void onResponse(Call<List<TripBookingResponse>> call, Response<List<TripBookingResponse>> response) {
@@ -53,6 +57,27 @@ public class TripsFragment extends Fragment {
                     tripList.clear();
                     tripList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(getContext(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TripBookingResponse>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void fetchTripsDone() {
+        IUserMobileApiService tripService = ApiClient.getClientWithToken(getContext()).create(IUserMobileApiService.class);
+        Call<List<TripBookingResponse>> call = tripService.getBookedTrips();
+        call.enqueue(new Callback<List<TripBookingResponse>>() {
+            @Override
+            public void onResponse(Call<List<TripBookingResponse>> call, Response<List<TripBookingResponse>> response) {
+                if (response.isSuccessful()) {
+                    tripList.clear();
+                    tripList.addAll(response.body());
+                    adapterDone.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getContext(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
                 }

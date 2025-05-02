@@ -1,5 +1,6 @@
 package com.example.strip.Activities.Trip;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -31,6 +32,7 @@ import com.example.strip.Activities.Driver.AddTripActivity;
 import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Adapters.TripStopAdapter;
 import com.example.strip.Models.DriverVehicleDTO;
+import com.example.strip.Models.LocationInfo;
 import com.example.strip.Models.Request.StopLocationUpdateRequest;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.StopLocation;
@@ -40,6 +42,8 @@ import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,12 +54,15 @@ import org.osmdroid.views.overlay.Polyline;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -74,8 +81,8 @@ public class EditTripActivity extends AppCompatActivity {
     private ITripMobileApiService tripService;
     private TextView tvStartLocation, tvEndLocation,
             tvStartDate, tvEndDate,
-            tvStopLoca, tvEstimatedTime, tvEstimatedKM, tvStopLocaPosition, tvTripStatus;
-    private Button btnFindLocation, btnAddLocation, btnUpdateTripLocation, btnStart, btnComplete;
+            tvStopLoca, tvEstimatedTime, tvEstimatedKM, tvStopLocaPosition;
+    private Button btnFindLocation, btnAddLocation, btnUpdateTripLocation;
     private String tripId;
     private RecyclerView recyclerTripStops;
     private String lastClicked = "";
@@ -87,6 +94,8 @@ public class EditTripActivity extends AppCompatActivity {
 
     private double distance;
     private int position = 1, duration;
+    private List<LocationInfo> availableLocations = new ArrayList<>();
+    private EditText edtStopLocaTime;
     // Inside EditTripActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +112,60 @@ public class EditTripActivity extends AppCompatActivity {
         btnFindLocation = findViewById(R.id.btnFindLocation);
         btnAddLocation = findViewById(R.id.btnAddLocation);
         btnUpdateTripLocation = findViewById(R.id.btnUpdateTripLocation);
-        tvTripStatus = findViewById(R.id.tvTripStatus);
-        btnStart = findViewById(R.id.btnStart);
-        btnComplete = findViewById(R.id.btnComplete);
         recyclerTripStops = findViewById(R.id.recyclerTripStops);
+        availableLocations = loadLocationInfos(); // Your method to load saved locations
+        edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
 
-        EditText edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
+        tvStopLoca.setOnClickListener(v -> {
+            if (availableLocations.isEmpty()) return;
+
+            String currentStartLocation = tvStartLocation.getText().toString();
+
+            // Filter locations where startLocation contains tvStartLocation's text
+            List<LocationInfo> filteredLocations = new ArrayList<>();
+            for (LocationInfo loc : availableLocations) {
+                if (loc.getStartLocation() != null && loc.getStartLocation().contains(currentStartLocation)) {
+                    filteredLocations.add(loc);
+                }
+            }
+
+            // Sort the filtered list by distance (ascending)
+            Collections.sort(filteredLocations, Comparator.comparingDouble(loc -> parseDistanceToDouble(loc.getDistance())));
+
+            if (filteredLocations.isEmpty()) {
+                Toast.makeText(EditTripActivity.this, "Không có điểm dừng phù hợp!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Prepare items for the AlertDialog
+            String[] locationNames = new String[filteredLocations.size()];
+            for (int i = 0; i < filteredLocations.size(); i++) {
+                locationNames[i] = "Từ: " + filteredLocations.get(i).getStartLocation() + "\n" +
+                        "Đến: " + filteredLocations.get(i).getEndLocation() + "\n" +
+                        "Khoảng thời gian: " + filteredLocations.get(i).getDuration() + "\n" +
+                        "Khoảng cách: " + filteredLocations.get(i).getDistance();
+            }
+
+            new AlertDialog.Builder(EditTripActivity.this)
+                    .setTitle("Lựa chọn điểm dừng chân")
+                    .setItems(locationNames, (dialog, which) -> {
+                        LocationInfo selected = filteredLocations.get(which);
+                        tvStopLoca.setText(selected.getEndLocation());
+                        tvEstimatedTime.setText(selected.getDuration());
+                        tvEstimatedKM.setText(selected.getDistance());
+
+                        duration = parseDurationToInt(selected.getDuration());
+                        distance = parseDistanceToDouble(selected.getDistance());
+                        calculateAndSetStopLocaTime(edtStopLocaTime);
+                    })
+                    .show();
+        });
+
+
+
+
         tvStopLocaPosition.setText("" + position);
+
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(v -> finish());
 
@@ -170,7 +226,8 @@ public class EditTripActivity extends AppCompatActivity {
         btnFindLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EditTripActivity.this, OpenStreetMapActivity.class);
+                Intent intent = new Intent(EditTripActivity.this, TripStoreActivity.class);
+                intent.putExtra("startLocation", tvStartLocation.getText().toString());
                 startActivityForResult(intent, REQUEST_MAP);
             }
         });
@@ -230,43 +287,59 @@ public class EditTripActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid stop info: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ITripMobileApiService apiService = ApiClient.getClientWithToken(EditTripActivity.this).create(ITripMobileApiService.class);
-                Call<Void> call = apiService.startTrip(tripId);
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        Toast.makeText(EditTripActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
-                    }
 
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(EditTripActivity.this, "Failed to start trip", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-        btnComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ITripMobileApiService apiService = ApiClient.getClientWithToken(EditTripActivity.this).create(ITripMobileApiService.class);
-                Call<Void> call = apiService.completeTrip(tripId);
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        Toast.makeText(EditTripActivity.this, "Trip completed", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(EditTripActivity.this, "Failed to complete trip", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
     }
+    private int parseDurationToInt(String durationStr) {
+        // Example: "45 mins" or "45 minutes"
+        return Integer.parseInt(durationStr.replaceAll("[^\\d]", ""));
+    }
+
+    private double parseDistanceToDouble(String distanceStr) {
+        // Example: "12.5 km"
+        return Double.parseDouble(distanceStr.replaceAll("[^\\d.]", ""));
+    }
+    private void calculateAndSetStopLocaTime(EditText edtStopLocaTime) {
+        try {
+            // Get the date string from tvStartDate (e.g., "04/16/2025 01:45:00 PM")
+            String startDateStr = tvStartDate.getText().toString();
+            String durationStr = tvEstimatedTime.getText().toString(); // e.g., "45 mins"
+
+            // Match the format used when displaying tvStartDate
+            SimpleDateFormat sdfInput = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
+            Date startDate = sdfInput.parse(startDateStr);
+
+            // Parse duration in minutes (remove any non-numeric characters)
+            int durationMins = Integer.parseInt(durationStr.replaceAll("[^\\d]", ""));
+
+            // Add the duration to the start date
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+            calendar.add(Calendar.MINUTE, durationMins);
+
+            // Format for display and storage
+            SimpleDateFormat sdfStore = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+            formatTimeStore = sdfStore.format(calendar.getTime());
+
+            SimpleDateFormat sdfShow = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
+            formatTimeShow = sdfShow.format(calendar.getTime());
+
+            // Set the result
+            edtStopLocaTime.setText(formatTimeShow);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid time format: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    private List<LocationInfo> loadLocationInfos() {
+        SharedPreferences prefs = getSharedPreferences("LOCATION_PREFS", MODE_PRIVATE);
+        String json = prefs.getString("location_list", "[]");
+        Type type = new TypeToken<ArrayList<LocationInfo>>(){}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
     private void loadTripDetails() {
         tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.getTripDetails(tripId).enqueue(new Callback<TripDetail>() {
@@ -276,7 +349,6 @@ public class EditTripActivity extends AppCompatActivity {
                     TripDetail trip = response.body();
                     tvStartLocation.setText(trip.getStartLocation());
                     tvEndLocation.setText(trip.getEndLocation());
-                    tvTripStatus.setText(trip.getTripStatus());
                     String originalDateString = trip.getStartDate(); // Example: "2025-04-16T13:45:00" (ISO format)
                     SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                     SimpleDateFormat displayFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());

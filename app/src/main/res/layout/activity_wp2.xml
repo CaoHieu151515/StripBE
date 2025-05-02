@@ -28,7 +28,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Find a ride"
+        android:text="Tìm kiếm chuyến đi"
         android:textSize="30dp"
         android:textStyle="bold"
         android:textColor="#333333"
@@ -51,7 +51,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Request a ride and be picked up on the\nsame route by the driver"
+                android:text="Yêu cầu đi xe và được tài xế đón trên cùng tuyến đường"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textColor="#999999"
@@ -69,9 +69,9 @@
 
         <TextView
             android:id="@+id/tvSkip"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:text="Skip"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="Bỏ qua"
             android:textSize="16sp"
             android:textAlignment="center"
             android:textStyle="bold"

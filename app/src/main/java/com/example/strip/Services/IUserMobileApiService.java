@@ -45,4 +45,7 @@ public interface IUserMobileApiService {
 
     @GET("api/mobile/user/trips/booking")
     Call<List<TripBookingResponse>> getBookedTrips();
+
+    @GET("api/mobile/user/trips/history")
+    Call<List<TripBookingResponse>> getDoneTrips();
 }

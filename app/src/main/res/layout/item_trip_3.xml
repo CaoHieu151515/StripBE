@@ -6,7 +6,12 @@
     android:background="@drawable/input_field_bg"
     android:layout_marginTop="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <TextView android:id="@+id/tvTripId"
+        android:textStyle="bold"
+        android:textColor="@color/red_orange"
+        android:text="Code Trip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <TextView android:id="@+id/tvStartLocation"
         android:textStyle="bold"
         android:text="Start"
@@ -21,6 +26,11 @@
 
     <TextView android:id="@+id/tvDriver"
         android:text="Driver"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView android:id="@+id/tvStatus"
+        android:text="Status"
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
