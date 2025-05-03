@@ -30,7 +30,6 @@
             android:background="@drawable/input_field_bg"
             android:padding="5dp"
             android:orientation="horizontal">
-
             <!-- Left Column -->
             <LinearLayout
                 android:layout_width="0dp"
@@ -38,23 +37,23 @@
                 android:layout_weight="1"
                 android:padding="10dp"
                 android:orientation="vertical">
-
                 <TextView
-                    android:id="@+id/firstNameTextView"
+                    android:id="@+id/emailTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="First Name:" />
+                    android:text="Email:" />
                 <EditText
-                    android:id="@+id/etFullName"
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Full Name"
+                    android:hint="Email"
                     android:background="@drawable/input_field_bg"
                     android:paddingStart="16dp"
                     android:textSize="15sp"
-                    android:inputType="textPersonName" />
+                    android:inputType="textEmailAddress" />
+
                 <TextView
                     android:id="@+id/phoneTextView"
                     android:layout_width="match_parent"
@@ -62,7 +61,7 @@
                     android:layout_marginTop="10dp"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="Phone:" />
+                    android:text="Số điện thoại:" />
 
                 <EditText
                     android:id="@+id/etPhone"
@@ -82,12 +81,29 @@
                 android:layout_weight="1"
                 android:padding="10dp"
                 android:orientation="vertical">
-
+                <TextView
+                    android:id="@+id/firstNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Họ đệm:" />
+                <EditText
+                    android:id="@+id/etFullName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Full Name"
+                    android:background="@drawable/input_field_bg"
+                    android:paddingStart="16dp"
+                    android:textSize="15sp"
+                    android:inputType="textPersonName" />
                 <TextView
                     android:id="@+id/lastNameTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Last Name:"
+                    android:text="Tên:"
+                    android:layout_marginTop="10dp"
+
                     android:textStyle="bold"
                     android:textSize="16sp" />
 
@@ -100,23 +116,6 @@
                     android:paddingStart="16dp"
                     android:textSize="15sp"
                     android:inputType="textPersonName" />
-                <TextView
-                    android:id="@+id/emailTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:text="Email:" />
-                <EditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Email"
-                    android:background="@drawable/input_field_bg"
-                    android:paddingStart="16dp"
-                    android:textSize="15sp"
-                    android:inputType="textEmailAddress" />
             </LinearLayout>
         </LinearLayout>
 
@@ -134,7 +133,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:text="Driver License:"
+                    android:text="Giấy phép lái xe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -153,7 +152,7 @@
             android:id="@+id/btnNext"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Next"
+            android:text="Kế tiếp"
             android:textSize="15sp"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

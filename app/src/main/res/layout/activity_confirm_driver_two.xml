@@ -42,7 +42,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:text="ID Card Face Up:"
+                    android:text="Thẻ căn cước mặt trước:"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -73,7 +73,7 @@
                 android:background="@drawable/input_field_bg"
                 android:orientation="vertical">
                 <TextView
-                    android:text="ID Card Face Down:"
+                    android:text="Thẻ căn cước mặt sau:"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
@@ -91,7 +91,7 @@
             android:id="@+id/btnNext"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Next"
+            android:text="Kế tiếp"
             android:textSize="15sp"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

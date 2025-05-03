@@ -61,11 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
         String login = edLogin.getText().toString();
         String email = edEmail.getText().toString();
         String password = edPassword.getText().toString();
-
         RegisterVM request = new RegisterVM(email, password, login,true,"string");
-
         IAccountApiService apiService = ApiClient.getClient().create(IAccountApiService.class);
-
         Call<Void> call = apiService.register(request);
         call.enqueue(new Callback<Void>() {
             @Override

@@ -31,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class ConfirmDriverThreeActivity extends AppCompatActivity {
-    private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand, etVehicleStatus;
+    private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand;
     private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView;
     private Button btnConfirmDriver;
     private byte[] vehicleImageBytes, carRegistrationImageBytes, inspectionCertificateImageBytes, insuranceImageBytes,
@@ -51,7 +51,6 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         etVehicleNumber = findViewById(R.id.etVehicleNumber);
         etSeats = findViewById(R.id.etSeats);
         etVehicleBrand = findViewById(R.id.etVehicleBrand);
-        etVehicleStatus = findViewById(R.id.etVehicleStatus);
         vehicleImageView = findViewById(R.id.vehicleImageView);
         carRegistrationImageView = findViewById(R.id.carRegistrationImageView);
         inspectionCertificateImageView = findViewById(R.id.inspectionCertificateImageView);
@@ -92,7 +91,6 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     etVehicleNumber.setText("" + data.getVehicleResponse().getVehicleNumber());
                     etSeats.setText("" + data.getVehicleResponse().getNumberOfSeats());
                     etVehicleBrand.setText("" + data.getVehicleResponse().getVehicleBrand());
-                    etVehicleStatus.setText("" + data.getVehicleResponse().getStatus());
 
                     // ✅ Load ảnh đơn giản hơn nhiều
                     loadImageWithFixHost(data.getDriverLicenseUrl(), vehicleImageView);
