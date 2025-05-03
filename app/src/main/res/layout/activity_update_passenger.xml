@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Edit Profile"
+                android:text="Cập nhật hồ sơ"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="First Name"
+                android:text="Họ"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"
@@ -85,7 +85,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Last Name"
+                android:text="Tên"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
@@ -103,7 +103,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Phone"
+                android:text="Số điện thoại"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
@@ -121,7 +121,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Address"
+                android:text="Địa chỉ"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
@@ -139,7 +139,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date of birth"
+                android:text="Ngày sinh"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
@@ -160,7 +160,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gender"
+                android:text="Giới tính"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black"/>
@@ -182,7 +182,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:text="Save changes"
+                android:text="Lưu"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textColor="@android:color/white"

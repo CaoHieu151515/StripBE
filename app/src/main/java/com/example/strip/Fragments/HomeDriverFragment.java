@@ -19,6 +19,7 @@ import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.network.ApiClient;
 
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -50,7 +51,12 @@ public class HomeDriverFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<List<Trip>> call, @NonNull Response<List<Trip>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    tripAdapter = new TripAdapter(getContext(), response.body());
+                    List<Trip> trips = response.body();
+
+                    // Sort newest first (descending), assuming getCreatedDate() returns a Date or LocalDateTime
+                    Collections.sort(trips, (t1, t2) -> t2.getStartDate().compareTo(t1.getStartDate()));
+
+                    tripAdapter = new TripAdapter(getContext(), trips);
                     recyclerViewTrips.setAdapter(tripAdapter);
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());

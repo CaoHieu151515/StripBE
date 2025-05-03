@@ -76,18 +76,18 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     @Override
     public void onBindViewHolder(@NonNull TripRequestAdapter.ViewHolder holder, int position) {
         RequestTripResponse trip = requestTripList.get(position);
-        holder.txtStartLocation.setText("Start: " + trip.startLoca.stopLoca);
-        holder.txtEndLocation.setText("End: " + trip.endLoca.stopLoca);
-        holder.txtStatus.setText("Status: " + trip.status);
-        holder.txtLuggage.setText("Luggage: " + trip.luggageDescription);
-        holder.txtFee.setText("Fee: " + trip.amountApproveFee + " VND");
+        holder.txtStartLocation.setText("Bắt đầu: " + trip.startLoca.stopLoca);
+        holder.txtEndLocation.setText("Kết thúc: " + trip.endLoca.stopLoca);
+        holder.txtStatus.setText("Trạng thái : " + trip.status);
+        holder.txtLuggage.setText("Hành lý: " + trip.luggageDescription);
+        holder.txtFee.setText("Phí: " + trip.amountApproveFee + " VND");
 
         String pickUp = trip.pickUpTime != null ? DateFormatter.formatDate(trip.pickUpTime) : "N/A";
         String checkIn = trip.checkInTime != null ? DateFormatter.formatDate(trip.checkInTime) : "N/A";
         String checkOut = trip.checkOutTIme != null ? DateFormatter.formatDate(trip.checkOutTIme) : "N/A";
-        holder.txtCheckIn.setText("Check-In: " + checkIn);
-        holder.txtCheckOut.setText("Check-Out: " + checkOut);
-        holder.txtPickupTime.setText("Pickup: " + pickUp);
+        holder.txtCheckIn.setText("Lên xe lúc: " + checkIn);
+        holder.txtCheckOut.setText("Xuống xe lúc: " + checkOut);
+        holder.txtPickupTime.setText("Thời gian đón: " + pickUp);
 
         holder.btnAccept.setOnClickListener(v -> {
             // Call API to accept trip

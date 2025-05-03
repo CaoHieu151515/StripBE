@@ -53,11 +53,11 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PackageDriver pack = packageList.get(position);
         holder.tvName.setText(pack.getName());
-        holder.tvPrice.setText("$" + pack.getPrice());
-        holder.tvTime.setText("/" + pack.getTime() + " days");
-        holder.tvDescription.setText("Description: " + pack.getDescription());
-        holder.tvBonus.setText("Bonus: " + pack.getBonus());
-        holder.tvStatus.setText("Status: " + pack.getStatus());
+        holder.tvPrice.setText( + pack.getPrice() + "VND");
+        holder.tvTime.setText("/" + pack.getTime() + " ngày");
+        holder.tvDescription.setText("Miêu tả: " + pack.getDescription());
+        holder.tvBonus.setText("Thơi gian thêm: " + pack.getBonus());
+        holder.tvStatus.setText("Trạng thái gói: " + pack.getStatus());
         holder.btnSubscribe.setOnClickListener(v -> {
             String packageId = pack.getPackageID(); // Assuming you have getId()
             buyPackage(packageId, v);

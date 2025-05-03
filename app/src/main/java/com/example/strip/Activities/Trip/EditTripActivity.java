@@ -119,37 +119,22 @@ public class EditTripActivity extends AppCompatActivity {
         tvStopLoca.setOnClickListener(v -> {
             if (availableLocations.isEmpty()) return;
 
-            String currentStartLocation = tvStartLocation.getText().toString();
+            // Sort by distance (ascending)
+            Collections.sort(availableLocations, Comparator.comparingDouble(loc -> parseDistanceToDouble(loc.getDistance())));
 
-            // Filter locations where startLocation contains tvStartLocation's text
-            List<LocationInfo> filteredLocations = new ArrayList<>();
-            for (LocationInfo loc : availableLocations) {
-                if (loc.getStartLocation() != null && loc.getStartLocation().contains(currentStartLocation)) {
-                    filteredLocations.add(loc);
-                }
-            }
-
-            // Sort the filtered list by distance (ascending)
-            Collections.sort(filteredLocations, Comparator.comparingDouble(loc -> parseDistanceToDouble(loc.getDistance())));
-
-            if (filteredLocations.isEmpty()) {
-                Toast.makeText(EditTripActivity.this, "Không có điểm dừng phù hợp!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Prepare items for the AlertDialog
-            String[] locationNames = new String[filteredLocations.size()];
-            for (int i = 0; i < filteredLocations.size(); i++) {
-                locationNames[i] = "Từ: " + filteredLocations.get(i).getStartLocation() + "\n" +
-                        "Đến: " + filteredLocations.get(i).getEndLocation() + "\n" +
-                        "Khoảng thời gian: " + filteredLocations.get(i).getDuration() + "\n" +
-                        "Khoảng cách: " + filteredLocations.get(i).getDistance();
+            String[] locationNames = new String[availableLocations.size()];
+            for (int i = 0; i < availableLocations.size(); i++) {
+                locationNames[i] = "\n" +
+                        "Từ: " + availableLocations.get(i).getStartLocation() + "\n" +
+                        "Đến: " + availableLocations.get(i).getEndLocation() + "\n" +
+                        "Khoảng thời gian: " + availableLocations.get(i).getDuration() + "\n" +
+                        "Khoảng cách: " + availableLocations.get(i).getDistance() + "\n";
             }
 
             new AlertDialog.Builder(EditTripActivity.this)
                     .setTitle("Lựa chọn điểm dừng chân")
                     .setItems(locationNames, (dialog, which) -> {
-                        LocationInfo selected = filteredLocations.get(which);
+                        LocationInfo selected = availableLocations.get(which);
                         tvStopLoca.setText(selected.getEndLocation());
                         tvEstimatedTime.setText(selected.getDuration());
                         tvEstimatedKM.setText(selected.getDistance());

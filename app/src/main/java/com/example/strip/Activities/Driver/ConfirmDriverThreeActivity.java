@@ -1,5 +1,6 @@
 package com.example.strip.Activities.Driver;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -63,6 +64,28 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 finish();
             }
+        });
+        etVehicleType.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Chọn Loại Xe");
+
+            String[] genders = {"BIKE", "CAR"};
+            builder.setItems(genders, (dialog, which) -> {
+                etVehicleType.setText(genders[which]);
+            });
+
+            builder.show();
+        });
+        etVehicleBrand.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Chọn Hãng Xe");
+
+            String[] genders = {"Honda", "Suzuki", "Vision"};
+            builder.setItems(genders, (dialog, which) -> {
+                etVehicleBrand.setText(genders[which]);
+            });
+
+            builder.show();
         });
         vehicleImageView.setOnClickListener(v -> {
             openVehicleImageViewicker();

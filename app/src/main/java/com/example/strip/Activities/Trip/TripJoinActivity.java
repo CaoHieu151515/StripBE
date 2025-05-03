@@ -29,6 +29,8 @@ import com.example.strip.network.ApiClient;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -131,9 +133,12 @@ public class TripJoinActivity extends AppCompatActivity {
                     tvEndLocation.setText(trip.getEndLocation());
                     List<StopLocation> stops = trip.getStopLocations();
                     if (stops != null && !stops.isEmpty()) {
+                        // Sort stops by tripPosition
+                        Collections.sort(stops, Comparator.comparingInt(StopLocation::getTripPositon));
+
                         TripStopTwoAdapter adapter = new TripStopTwoAdapter(TripJoinActivity.this, stops, selectedStop -> {
                             if (lastClicked.equals("start")) {
-                                tvStartLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca()); // assuming StopLocation has getName()
+                                tvStartLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca());
                                 selectedStartLocaId = selectedStop.getStopLocaID();
                             } else if (lastClicked.equals("end")) {
                                 tvEndLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca());

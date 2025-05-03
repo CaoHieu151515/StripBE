@@ -7,6 +7,7 @@ import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.Models.Response.DriverResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
+import com.example.strip.Models.Response.TripDoneResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 
@@ -47,5 +48,5 @@ public interface IUserMobileApiService {
     Call<List<TripBookingResponse>> getBookedTrips();
 
     @GET("api/mobile/user/trips/history")
-    Call<List<TripBookingResponse>> getDoneTrips();
+    Call<List<TripDoneResponse>> getDoneTrips();
 }
