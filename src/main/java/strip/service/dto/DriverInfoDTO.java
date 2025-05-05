@@ -27,6 +27,8 @@ public class DriverInfoDTO implements Serializable {
     // ✅ Danh sách phương tiện
     private Set<DriverVehicleDTO> vehicles;
 
+    private Set<DriverRatingDetailDTO> ratings;
+
     public UUID getUserId() {
         return userId;
     }
@@ -147,5 +149,13 @@ public class DriverInfoDTO implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Set<DriverRatingDetailDTO> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<DriverRatingDetailDTO> ratings) {
+        this.ratings = ratings;
     }
 }

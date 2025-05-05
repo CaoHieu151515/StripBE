@@ -3,6 +3,7 @@ package strip.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -14,11 +15,43 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.config.ApplicationProperties;
-import strip.domain.*;
-import strip.domain.enumeration.*;
-import strip.repository.*;
+import strip.domain.Driver;
+import strip.domain.Feedback;
+import strip.domain.Rating;
+import strip.domain.RequestTrip;
+import strip.domain.SystemWallet;
+import strip.domain.Trip;
+import strip.domain.TripStopLocation;
+import strip.domain.User;
+import strip.domain.UserDetail;
+import strip.domain.UserWallet;
+import strip.domain.Vehicle;
+import strip.domain.WalletTransaction;
+import strip.domain.enumeration.FeedbackStatus;
+import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.PassengerStatus;
+import strip.domain.enumeration.RatingType;
+import strip.domain.enumeration.TransactionStatus;
+import strip.domain.enumeration.TripStatus;
+import strip.domain.enumeration.VehicleStatus;
+import strip.domain.enumeration.WalletTransactionType;
+import strip.repository.DriverRepository;
+import strip.repository.FeedbackRepository;
+import strip.repository.RatingRepository;
+import strip.repository.RequestTripRepository;
+import strip.repository.SystemWalletRepository;
+import strip.repository.TripRepository;
+import strip.repository.TripStopLocationRepository;
+import strip.repository.UserDetailRepository;
+import strip.repository.UserRepository;
+import strip.repository.UserWalletRepository;
+import strip.repository.VehicleRepository;
+import strip.repository.WalletTransactionRepository;
 import strip.security.SecurityUtils;
+import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.DriverRatingDetailDTO;
 import strip.service.dto.DriverRawDTO;
+import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.FeedbackCreateDTO;
 import strip.service.dto.FeedbackDTO;
 import strip.service.dto.RequestTripCusDTO;
@@ -31,6 +64,7 @@ import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 import strip.service.dto.VehicleRawDTO;
+import strip.service.mapper.DriverInfoMapper;
 import strip.service.mapper.FeedbackMapper;
 import strip.service.mapper.TripCusMapper;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
@@ -61,6 +95,7 @@ public class TripCustomService {
     private final RatingRepository ratingRepository;
     private final FeedbackRepository feedbackRepository;
     private final FeedbackMapper feedbackMapper;
+    private final DriverInfoMapper driverInfoMapper;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -80,7 +115,8 @@ public class TripCustomService {
         TripCusMapper tripCusMapper,
         RatingRepository ratingRepository,
         FeedbackRepository feedbackRepository,
-        FeedbackMapper feedbackMapper
+        FeedbackMapper feedbackMapper,
+        DriverInfoMapper driverInfoMapper
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -100,6 +136,7 @@ public class TripCustomService {
         this.ratingRepository = ratingRepository;
         this.feedbackRepository = feedbackRepository;
         this.feedbackMapper = feedbackMapper;
+        this.driverInfoMapper = driverInfoMapper;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -949,5 +986,81 @@ public class TripCustomService {
         ratingRepository.save(rating);
 
         return feedbackMapper.toDto(feedback);
+    }
+
+    @Transactional(readOnly = true)
+    public DriverInfoDTO getDriverInfoWithRatings(UUID driverId) {
+        // B1: Tìm Driver
+        Driver driver = driverRepository
+            .findByDriverID(driverId)
+            .orElseThrow(() -> new BadRequestAlertException("Driver not found", "driver", "notfound"));
+
+        User user = driver.getUser();
+        Optional<UserDetail> userDetailOpt = userDetailRepository.findByUserId(user.getId());
+
+        // B2: Map DriverInfoDTO từ mapper
+        DriverInfoDTO dto = driverInfoMapper.toDriverInfoDTO(user, userDetailOpt.orElse(null), driver);
+
+        dto.setDriverLicenseUrl(imageUrlService.buildDriverLicenseUrl(driverId));
+        dto.setIdentityCardFaceUpUrl(imageUrlService.buildIdentityCardFaceUpUrl(driverId));
+        dto.setIdentityCardFaceDownUrl(imageUrlService.buildIdentityCardFaceDownUrl(driverId));
+
+        userDetailOpt.ifPresent(ud -> {
+            dto.setAvatar(imageUrlService.buildUserAvatarUrl(ud.getAppUserDetail()));
+        });
+
+        // B3: Map Vehicles
+        Set<DriverVehicleDTO> vehicleDTOs = driver
+            .getVehicles()
+            .stream()
+            .map(vehicle -> {
+                DriverVehicleDTO vdto = driverInfoMapper.toDriverVehicleDTO(vehicle);
+                UUID vehicleId = vehicle.getVehicleID();
+                vdto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicleId));
+                vdto.setCarRegistrationUrl(imageUrlService.buildCarRegistrationUrl(vehicleId));
+                vdto.setVehicleInspectionCertificateUrl(imageUrlService.buildInspectionCertificateUrl(vehicleId));
+                vdto.setCarInsuranceUrl(imageUrlService.buildCarInsuranceUrl(vehicleId));
+                return vdto;
+            })
+            .collect(Collectors.toSet());
+        dto.setVehicles(vehicleDTOs);
+
+        // B4: Ratings + Feedbacks
+        List<Rating> ratings = ratingRepository.findByDriver_DriverIDAndRatingType(driver.getDriverID(), RatingType.USER_TO_DRIVER);
+        List<Feedback> feedbacks = feedbackRepository.findByDriver_DriverIDAndFeedbackType(
+            driver.getDriverID(),
+            FeedbackType.USER_TO_DRIVER
+        );
+        Map<UUID, Feedback> feedbackMap = feedbacks.stream().collect(Collectors.toMap(f -> f.getTrip().getTripID(), f -> f, (a, b) -> a));
+
+        Set<DriverRatingDetailDTO> ratingDetails = ratings
+            .stream()
+            .map(r -> {
+                DriverRatingDetailDTO rdto = new DriverRatingDetailDTO();
+                User passenger = r.getUser();
+                rdto.setUserName(passenger.getLogin());
+                rdto.setRatingDate(r.getRatingTime());
+                rdto.setRatingValue(r.getRatingDriver());
+
+                // Avatar
+                Optional<UserDetail> passengerDetail = userDetailRepository.findByUserId(passenger.getId());
+                passengerDetail.ifPresent(ud -> {
+                    rdto.setAvatarUser(imageUrlService.buildUserAvatarUrl(ud.getAppUserDetail()));
+                });
+
+                // Feedback content nếu có
+                Feedback fb = feedbackMap.get(r.getTrip().getTripID());
+                if (fb != null) {
+                    rdto.setFeedbackContent(fb.getFeedbackDescription());
+                }
+                return rdto;
+            })
+            .collect(Collectors.toSet());
+        dto.setRatings(ratingDetails);
+
+        // B5: Average rating
+        dto.setAverageRating(Optional.ofNullable(ratingRepository.findAverageRatingByDriverId(driver.getDriverID())).orElse(0.0));
+
+        return dto;
     }
 }

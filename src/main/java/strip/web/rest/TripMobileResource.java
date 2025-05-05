@@ -10,11 +10,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.RequestTrip;
 import strip.domain.Trip;
 import strip.service.TripCustomService;
+import strip.service.dto.DriverInfoDTO;
 import strip.service.dto.FeedbackCreateDTO;
 import strip.service.dto.FeedbackDTO;
 import strip.service.dto.RequestTripCusDTO;
@@ -141,6 +148,13 @@ public class TripMobileResource {
     @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
     public ResponseEntity<FeedbackDTO> giveFeedbackForDriver(@PathVariable UUID tripId, @RequestBody FeedbackCreateDTO dto) {
         FeedbackDTO result = tripCustomService.createPassengerFeedbackForDriver(tripId, dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/drivers/{driverId}/info")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER', 'ROLE_ADMIN', 'ROLE_STAFF')")
+    public ResponseEntity<DriverInfoDTO> getDriverInfoWithRatings(@PathVariable UUID driverId) {
+        DriverInfoDTO result = tripCustomService.getDriverInfoWithRatings(driverId);
         return ResponseEntity.ok(result);
     }
 }
