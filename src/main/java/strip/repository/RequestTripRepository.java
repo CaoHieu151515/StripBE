@@ -32,4 +32,6 @@ public interface RequestTripRepository extends JpaRepository<RequestTrip, Long> 
 
     @Query("SELECT COUNT(r) > 0 FROM RequestTrip r WHERE r.trip = :trip AND r.user = :user AND r.status NOT IN ('CANCEL', 'REJECTED')")
     boolean hasJoinedActiveTrip(@Param("trip") Trip trip, @Param("user") User user);
+
+    List<RequestTrip> findByTrip_TripIDAndUser_Id(UUID tripId, Long userId);
 }

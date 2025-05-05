@@ -19,6 +19,8 @@ import strip.domain.enumeration.*;
 import strip.repository.*;
 import strip.security.SecurityUtils;
 import strip.service.dto.DriverRawDTO;
+import strip.service.dto.FeedbackCreateDTO;
+import strip.service.dto.FeedbackDTO;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
@@ -29,6 +31,7 @@ import strip.service.dto.TripStopLocationSkipTripDTO;
 import strip.service.dto.TripStopLocationUpdateDTO;
 import strip.service.dto.TripUpdateDTO;
 import strip.service.dto.VehicleRawDTO;
+import strip.service.mapper.FeedbackMapper;
 import strip.service.mapper.TripCusMapper;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
@@ -56,6 +59,8 @@ public class TripCustomService {
     private final UsermanageMapper usermanageMapper;
     private final TripCusMapper tripCusMapper;
     private final RatingRepository ratingRepository;
+    private final FeedbackRepository feedbackRepository;
+    private final FeedbackMapper feedbackMapper;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -73,7 +78,9 @@ public class TripCustomService {
         ImageUrlService imageUrlService,
         UsermanageMapper usermanageMapper,
         TripCusMapper tripCusMapper,
-        RatingRepository ratingRepository
+        RatingRepository ratingRepository,
+        FeedbackRepository feedbackRepository,
+        FeedbackMapper feedbackMapper
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -91,6 +98,8 @@ public class TripCustomService {
         this.usermanageMapper = usermanageMapper;
         this.tripCusMapper = tripCusMapper;
         this.ratingRepository = ratingRepository;
+        this.feedbackRepository = feedbackRepository;
+        this.feedbackMapper = feedbackMapper;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -165,7 +174,9 @@ public class TripCustomService {
         trip.setTripStatus(TripStatus.CONFIRMING);
         trip.setDriver(driver);
         trip.setTripImg(dto.getTripImg());
+        trip.setTripImgContentType(dto.getTripImgContentType());
         trip.setVehicle(vehicle);
+        trip.setTotalDistance(dto.getTotalDistance());
         return trip;
     }
 
@@ -721,9 +732,20 @@ public class TripCustomService {
             throw new BadRequestAlertException("Bạn không phải tài xế của chuyến này", "trip", "not-owner");
         }
 
+        // ✅ Đánh dấu Trip DONE
         trip.setTripStatus(TripStatus.DONE);
         trip.setEndDate(Instant.now());
         tripRepository.save(trip);
+
+        // ✅ Update các RequestTrip liên quan
+        List<RequestTrip> requests = requestTripRepository.findAllByTrip_TripID(tripId);
+        for (RequestTrip req : requests) {
+            // Chỉ update nếu đang BOOKED (hoặc trạng thái nào Tèo muốn)
+            if (req.getStatus() == PassengerStatus.BOOKED) {
+                req.setStatus(PassengerStatus.DONE);
+            }
+        }
+        requestTripRepository.saveAll(requests);
     }
 
     public void payoutToDriver(Trip trip) {
@@ -880,5 +902,52 @@ public class TripCustomService {
     public double getAverageRatingForDriver(UUID driverId) {
         Double avg = ratingRepository.findAverageRatingByDriverId(driverId);
         return avg != null ? avg : 0.0;
+    }
+
+    @Transactional
+    public FeedbackDTO createPassengerFeedbackForDriver(UUID tripId, FeedbackCreateDTO dto) {
+        Trip trip = tripRepository
+            .findByTripID(tripId)
+            .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
+
+        if (trip.getTripStatus() != TripStatus.DONE) {
+            throw new BadRequestAlertException("Trip is not DONE yet", "trip", "invalid-status");
+        }
+
+        // Check Passenger đã tham gia chuyến này chưa
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
+
+        List<RequestTrip> userRequests = requestTripRepository.findByTrip_TripIDAndUser_Id(tripId, currentUser.getId());
+        boolean joined = userRequests.stream().anyMatch(r -> r.getStatus() == PassengerStatus.DONE);
+        if (!joined) {
+            throw new BadRequestAlertException("You did not join this trip", "trip", "not-joined");
+        }
+
+        // ✅ Tạo feedback
+        Feedback feedback = new Feedback();
+        feedback.setFeedbackID(UUID.randomUUID());
+        feedback.setFeedbackDescription(dto.getFeedbackDescription());
+        feedback.setFeedbackRating(dto.getFeedbackRating());
+        feedback.setFeedbackStatus(FeedbackStatus.DONE);
+        feedback.setFeedbackType(FeedbackType.USER_TO_DRIVER);
+        feedback.setTrip(trip);
+        feedback.setDriver(trip.getDriver());
+        feedback.setUser(currentUser);
+
+        feedbackRepository.save(feedback);
+
+        Rating rating = new Rating();
+        rating.setRatingID(UUID.randomUUID());
+        rating.setRatingTime(Instant.now());
+        rating.setRatingDriver(dto.getFeedbackRating());
+        rating.setRatingType(RatingType.USER_TO_DRIVER);
+        rating.setTrip(trip);
+        rating.setDriver(trip.getDriver());
+        rating.setUser(currentUser);
+        ratingRepository.save(rating);
+
+        return feedbackMapper.toDto(feedback);
     }
 }

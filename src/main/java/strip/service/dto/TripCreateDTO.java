@@ -22,6 +22,8 @@ public class TripCreateDTO {
     private Set<TripStopLocationDTO> stopLocations;
     private UUID vehicleId;
 
+    private Double totalDistance;
+
     public UUID getTripID() {
         return tripID;
     }
@@ -140,5 +142,13 @@ public class TripCreateDTO {
 
     public void setVehicleId(UUID vehicleId) {
         this.vehicleId = vehicleId;
+    }
+
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 }

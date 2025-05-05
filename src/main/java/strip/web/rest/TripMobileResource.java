@@ -15,6 +15,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.RequestTrip;
 import strip.domain.Trip;
 import strip.service.TripCustomService;
+import strip.service.dto.FeedbackCreateDTO;
+import strip.service.dto.FeedbackDTO;
 import strip.service.dto.RequestTripCusDTO;
 import strip.service.dto.TripCardDTO;
 import strip.service.dto.TripCreateDTO;
@@ -133,5 +135,12 @@ public class TripMobileResource {
     public ResponseEntity<Void> startTrip(@PathVariable UUID tripId) {
         tripCustomService.startTrip(tripId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/trips/{tripId}/feedback")
+    @PreAuthorize("hasAuthority('ROLE_PASSENGER')")
+    public ResponseEntity<FeedbackDTO> giveFeedbackForDriver(@PathVariable UUID tripId, @RequestBody FeedbackCreateDTO dto) {
+        FeedbackDTO result = tripCustomService.createPassengerFeedbackForDriver(tripId, dto);
+        return ResponseEntity.ok(result);
     }
 }
