@@ -1,9 +1,11 @@
 package strip.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import strip.domain.RequestTrip;
@@ -34,4 +36,12 @@ public interface RequestTripRepository extends JpaRepository<RequestTrip, Long> 
     boolean hasJoinedActiveTrip(@Param("trip") Trip trip, @Param("user") User user);
 
     List<RequestTrip> findByTrip_TripIDAndUser_Id(UUID tripId, Long userId);
+
+    @Query(
+        "SELECT COUNT(r), FUNCTION('DATE', r.appliedAt) " +
+        "FROM RequestTrip r " +
+        "WHERE r.appliedAt BETWEEN :from AND :to " +
+        "GROUP BY FUNCTION('DATE', r.appliedAt)"
+    )
+    List<Object[]> countTripRegistrationsByDate(@Param("from") Instant from, @Param("to") Instant to);
 }
