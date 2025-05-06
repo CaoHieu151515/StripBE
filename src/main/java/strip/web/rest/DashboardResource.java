@@ -41,12 +41,11 @@ public class DashboardResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<RegistrationStatResponseDTO> getRegistrations(
         @RequestParam RegistrationStatType type,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant targetDate,
         @RequestParam(required = false) Integer month,
         @RequestParam(required = false) Integer year
     ) {
-        RegistrationStatResponseDTO result = dashboardService.getRegistrations(type, fromDate, toDate, month, year);
+        RegistrationStatResponseDTO result = dashboardService.getRegistrations(type, targetDate, month, year);
         return ResponseEntity.ok(result);
     }
 
@@ -54,12 +53,11 @@ public class DashboardResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<List<List<PackageSalesSimpleStatDTO>>> getPackageSalesMultiList(
         @RequestParam RegistrationStatType type,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant targetDate,
         @RequestParam(required = false) Integer month,
         @RequestParam(required = false) Integer year
     ) {
-        List<List<PackageSalesSimpleStatDTO>> stats = dashboardService.getPackageSalesMultiList(type, fromDate, toDate, month, year);
+        List<List<PackageSalesSimpleStatDTO>> stats = dashboardService.getPackageSalesMultiList(type, targetDate, month, year);
         return ResponseEntity.ok(stats);
     }
 
@@ -67,12 +65,11 @@ public class DashboardResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<List<SimpleStatDTO>> getTripRegistrations(
         @RequestParam RegistrationStatType type,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant targetDate,
         @RequestParam(required = false) Integer month,
         @RequestParam(required = false) Integer year
     ) {
-        List<SimpleStatDTO> stats = dashboardService.getTripRegistrations(type, fromDate, toDate, month, year);
+        List<SimpleStatDTO> stats = dashboardService.getTripRegistrations(type, targetDate, month, year);
         return ResponseEntity.ok(stats);
     }
 
@@ -80,12 +77,11 @@ public class DashboardResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<MultiListProfitStatDTO> getMultiListProfitStats(
         @RequestParam RegistrationStatType type,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant targetDate,
         @RequestParam(required = false) Integer month,
         @RequestParam(required = false) Integer year
     ) {
-        MultiListProfitStatDTO stats = dashboardService.getMultiListProfitStats(type, fromDate, toDate, month, year);
+        MultiListProfitStatDTO stats = dashboardService.getMultiListProfitStats(type, targetDate, month, year);
         return ResponseEntity.ok(stats);
     }
 
@@ -93,12 +89,11 @@ public class DashboardResource {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<List<TripCreateStatDTO>> getTripCreateStats(
         @RequestParam RegistrationStatType type,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fromDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant toDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant targetDate,
         @RequestParam(required = false) Integer month,
         @RequestParam(required = false) Integer year
     ) {
-        List<TripCreateStatDTO> stats = dashboardService.getTripCreateStats(type, fromDate, toDate, month, year);
+        List<TripCreateStatDTO> stats = dashboardService.getTripCreateStats(type, targetDate, month, year);
         return ResponseEntity.ok(stats);
     }
 }

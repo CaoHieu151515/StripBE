@@ -28,6 +28,7 @@ import strip.service.dto.dashboard.RegistrationStatDTO;
 import strip.service.dto.dashboard.RegistrationStatResponseDTO;
 import strip.service.dto.dashboard.SimpleStatDTO;
 import strip.service.dto.dashboard.TripCreateStatDTO;
+import strip.ultil.DashboardDateUtil;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -51,17 +52,14 @@ public class DashboardService {
         this.walletTransactionRepository = walletTransactionRepository;
     }
 
-    @Transactional(readOnly = true)
-    public RegistrationStatResponseDTO getRegistrations(
-        RegistrationStatType type,
-        Instant fromDate,
-        Instant toDate,
-        Integer month,
-        Integer year
-    ) {
+    public RegistrationStatResponseDTO getRegistrations(RegistrationStatType type, Instant targetDate, Integer month, Integer year) {
         switch (type) {
             case WEEK:
-                return getRegistrationsByWeek(fromDate, toDate);
+                if (targetDate == null) {
+                    throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
+                }
+                DashboardDateUtil.DateRange weekRange = DashboardDateUtil.getWeekRange(targetDate);
+                return getRegistrationsByWeek(weekRange.getFromDate(), weekRange.getToDate());
             case MONTH:
                 return getRegistrationsByMonth(month, year);
             case YEAR:
@@ -196,16 +194,16 @@ public class DashboardService {
     @Transactional(readOnly = true)
     public List<List<PackageSalesSimpleStatDTO>> getPackageSalesMultiList(
         RegistrationStatType type,
-        Instant fromDate,
-        Instant toDate,
+        Instant targetDate,
         Integer month,
         Integer year
     ) {
         if (type == RegistrationStatType.WEEK) {
-            if (fromDate == null || toDate == null) {
-                throw new BadRequestAlertException("fromDate and toDate are required", "dashboard", "missing-dates");
+            if (targetDate == null) {
+                throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
             }
-            return buildMultiListByWeek(fromDate, toDate);
+            DashboardDateUtil.DateRange weekRange = DashboardDateUtil.getWeekRange(targetDate);
+            return buildMultiListByWeek(weekRange.getFromDate(), weekRange.getToDate());
         } else if (type == RegistrationStatType.MONTH) {
             if (month == null || year == null) {
                 throw new BadRequestAlertException("month and year are required", "dashboard", "missing-params");
@@ -342,18 +340,13 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public List<SimpleStatDTO> getTripRegistrations(
-        RegistrationStatType type,
-        Instant fromDate,
-        Instant toDate,
-        Integer month,
-        Integer year
-    ) {
+    public List<SimpleStatDTO> getTripRegistrations(RegistrationStatType type, Instant targetDate, Integer month, Integer year) {
         if (type == RegistrationStatType.WEEK) {
-            if (fromDate == null || toDate == null) {
-                throw new BadRequestAlertException("fromDate and toDate are required", "dashboard", "missing-dates");
+            if (targetDate == null) {
+                throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
             }
-            return buildTripRegByWeek(fromDate, toDate);
+            DashboardDateUtil.DateRange weekRange = DashboardDateUtil.getWeekRange(targetDate);
+            return buildTripRegByWeek(weekRange.getFromDate(), weekRange.getToDate());
         } else if (type == RegistrationStatType.MONTH) {
             if (month == null || year == null) {
                 throw new BadRequestAlertException("month and year are required", "dashboard", "missing-params");
@@ -452,18 +445,13 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public MultiListProfitStatDTO getMultiListProfitStats(
-        RegistrationStatType type,
-        Instant fromDate,
-        Instant toDate,
-        Integer month,
-        Integer year
-    ) {
+    public MultiListProfitStatDTO getMultiListProfitStats(RegistrationStatType type, Instant targetDate, Integer month, Integer year) {
         if (type == RegistrationStatType.WEEK) {
-            if (fromDate == null || toDate == null) {
-                throw new BadRequestAlertException("fromDate and toDate are required", "dashboard", "missing-dates");
+            if (targetDate == null) {
+                throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
             }
-            return buildMultiListProfitByWeek(fromDate, toDate);
+            DashboardDateUtil.DateRange weekRange = DashboardDateUtil.getWeekRange(targetDate);
+            return buildMultiListProfitByWeek(weekRange.getFromDate(), weekRange.getToDate());
         } else if (type == RegistrationStatType.MONTH) {
             if (month == null || year == null) {
                 throw new BadRequestAlertException("month and year are required", "dashboard", "missing-params");
@@ -608,18 +596,13 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public List<TripCreateStatDTO> getTripCreateStats(
-        RegistrationStatType type,
-        Instant fromDate,
-        Instant toDate,
-        Integer month,
-        Integer year
-    ) {
+    public List<TripCreateStatDTO> getTripCreateStats(RegistrationStatType type, Instant targetDate, Integer month, Integer year) {
         if (type == RegistrationStatType.WEEK) {
-            if (fromDate == null || toDate == null) {
-                throw new BadRequestAlertException("fromDate and toDate are required", "dashboard", "missing-dates");
+            if (targetDate == null) {
+                throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
             }
-            return buildTripCreateStatsByWeek(fromDate, toDate);
+            DashboardDateUtil.DateRange weekRange = DashboardDateUtil.getWeekRange(targetDate);
+            return buildTripCreateStatsByWeek(weekRange.getFromDate(), weekRange.getToDate());
         } else if (type == RegistrationStatType.MONTH) {
             if (month == null || year == null) {
                 throw new BadRequestAlertException("month and year are required", "dashboard", "missing-params");
