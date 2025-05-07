@@ -26,6 +26,7 @@ import strip.domain.Feedback;
 import strip.domain.PackageDriver;
 import strip.domain.Rating;
 import strip.domain.Report;
+import strip.domain.SystemWallet;
 import strip.domain.Trip;
 import strip.domain.User;
 import strip.domain.UserDetail;
@@ -51,6 +52,7 @@ import strip.repository.FeedbackRepository;
 import strip.repository.PackageDriverRepository;
 import strip.repository.RatingRepository;
 import strip.repository.ReportRepository;
+import strip.repository.SystemWalletRepository;
 import strip.repository.TripRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
@@ -109,6 +111,7 @@ public class UsermanageService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
     private final RatingRepository ratingRepository;
+    private final SystemWalletRepository systemWalletRepository;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -128,7 +131,8 @@ public class UsermanageService {
         ReportRepository reportRepository,
         WalletTransactionRepository walletTransactionRepository,
         TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
-        RatingRepository ratingRepository
+        RatingRepository ratingRepository,
+        SystemWalletRepository systemWalletRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -148,6 +152,7 @@ public class UsermanageService {
         this.walletTransactionRepository = walletTransactionRepository;
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
         this.ratingRepository = ratingRepository;
+        this.systemWalletRepository = systemWalletRepository;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -1121,5 +1126,10 @@ public class UsermanageService {
             return " (Gói: " + tx.getPayment().getPackageDriver().getName() + ")";
         }
         return "";
+    }
+
+    @Transactional(readOnly = true)
+    public double getSystemWalletBalance() {
+        return systemWalletRepository.findTopByOrderByMobifyDateDesc().map(SystemWallet::getCurrent).orElse(0.0);
     }
 }

@@ -45,6 +45,7 @@ import strip.service.dto.FeedbackCusDTO;
 import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.RejectTripDTO;
+import strip.service.dto.SystemWalletBalanceDTO;
 import strip.service.dto.TripDetailDTO;
 import strip.service.dto.TripListDTO;
 import strip.service.dto.UsermanageDTO;
@@ -413,5 +414,12 @@ public class ManagerResource {
             toDate
         );
         return ResponseEntity.ok(new CustomPageDTO<>(page));
+    }
+
+    @GetMapping("/wallet/system-balance")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<SystemWalletBalanceDTO> getSystemWalletBalance() {
+        double totalBalance = usermanageService.getSystemWalletBalance();
+        return ResponseEntity.ok(new SystemWalletBalanceDTO(totalBalance));
     }
 }
