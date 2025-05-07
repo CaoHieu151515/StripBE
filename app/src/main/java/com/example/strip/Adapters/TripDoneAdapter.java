@@ -1,8 +1,11 @@
 package com.example.strip.Adapters;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,23 +17,33 @@ import com.example.strip.Models.Response.StopLocationDoneResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.Models.Response.TripDoneResponse;
 import com.example.strip.R;
+import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.network.ApiClient;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripViewHolder>{
+    private Context context;
+
     private List<TripDoneResponse> tripDoneResponseList;
 
-    public TripDoneAdapter(List<TripDoneResponse> tripDoneResponseList) {
+    public TripDoneAdapter(Context context, List<TripDoneResponse> tripDoneResponseList) {
+        this.context = context;
         this.tripDoneResponseList = tripDoneResponseList;
     }
 
     @NonNull
     @Override
     public TripDoneAdapter.TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_2, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_trip_2, parent, false);
         return new TripDoneAdapter.TripViewHolder(view);
     }
 
@@ -44,6 +57,12 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
         holder.tvStartDate.setText("Thời gian khởi hành: " + DateFormatter.formatDate(trip.startDate));
         holder.tvEndDate.setText("Thời gian kết thúc: " + DateFormatter.formatDate(trip.endDate));
         holder.tvStatus.setText("Trạng thái chuyến đi: "+ trip.tripStatus);
+        holder.btnFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                feedback(trip.tripID);
+            }
+        });
         holder.stopLocationContainer.removeAllViews();
         if (trip.stopLocationDoneResponseList != null && !trip.stopLocationDoneResponseList.isEmpty()) {
             // Sắp xếp theo stoplocaPosition tăng dần
@@ -73,6 +92,7 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
     public static class TripViewHolder extends RecyclerView.ViewHolder {
         TextView tvStartLocation, tvEndLocation, tvDriver, tvStartDate, tvEndDate, tvStatus, tvTripId;
         LinearLayout stopLocationContainer;
+        Button btnFeedback;
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
             tvStartLocation = itemView.findViewById(R.id.tvStartLocation);
@@ -83,6 +103,34 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
             stopLocationContainer = itemView.findViewById(R.id.stopLocationContainer);
             tvStatus = itemView.findViewById(R.id.tvStatus);
             tvTripId = itemView.findViewById(R.id.tvTripId);
+            btnFeedback = itemView.findViewById(R.id.btnFeedback);
         }
+    }
+    private void feedback(String tripId) {
+        ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
+        Call<ResponseBody> call = tripService.sendFeedbackToDriver(tripId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    // Success, you can handle it here
+                    try {
+                        String responseBody = response.body().string();
+                        // Show success or do something
+                        Log.d("Feedback", "Success: " + responseBody);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    // Request failed but got a response from server (e.g., 400, 404, etc.)
+                    Log.e("Feedback", "Failed: " + response.code());
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Network error, server unreachable, etc.
+                Log.e("Feedback", "Error: " + t.getMessage());
+            }
+        });
     }
 }

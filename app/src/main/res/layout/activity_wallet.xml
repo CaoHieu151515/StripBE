@@ -4,18 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/back_button2"
-        android:layout_gravity="start"
-        android:layout_margin="15dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:contentDescription="Back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Profile Picture -->
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
@@ -34,7 +23,7 @@
         android:id="@+id/walletTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wallet"
+        android:text="Ví tiền"
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -48,7 +37,7 @@
         android:id="@+id/walletStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Active"
+        android:text="Đang hoạt động"
         android:textSize="16sp"
         android:textColor="@color/ForestGreen"
         app:layout_constraintTop_toBottomOf="@id/walletTitle"
@@ -73,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Wallet"
+            android:text="Ví người dùng"
             android:textColor="@color/orange"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -98,7 +87,7 @@
                 android:id="@+id/tvMobifyDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mobify Date"
+                android:text="Ngày sửa đổi"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -122,7 +111,7 @@
                 android:id="@+id/tvCurrentLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Current"
+                android:text="Gần đây"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -153,7 +142,7 @@
                 android:id="@+id/tvBeforeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Before"
+                android:text="Trước đó"
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -177,7 +166,7 @@
                 android:id="@+id/tvAmountLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amount"
+                android:text="Số tiền "
                 android:textColor="@color/orange"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -230,7 +219,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Transfer"
+                android:text="Chuyển tiền"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -246,11 +235,11 @@
                 android:id="@+id/ivPayment"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/export"/>
+                android:src="@drawable/add"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Payment"
+                android:text="Nạp tiền"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -267,7 +256,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/send_money"/>
             <TextView
-                android:text="Payout"
+                android:text="Thanh toán"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
@@ -284,11 +273,11 @@
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/add"/>
+                android:src="@drawable/export"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Top up"
+                android:text="Chi trả"
                 android:textSize="14sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
@@ -299,7 +288,7 @@
         android:id="@+id/lastTransactionTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Last Transaction"
+        android:text="Lịch sử giao dịch"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -307,82 +296,70 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="20dp"/>
 
-    <TextView
-        android:id="@+id/viewAll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View All"
-        android:textSize="14sp"
-        android:textColor="@color/orange"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/transactionButtons"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="20dp"/>
+    <!--    &lt;!&ndash; Transactions List &ndash;&gt;-->
+    <!--    <LinearLayout-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:orientation="vertical"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/lastTransactionTitle"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        android:layout_marginHorizontal="20dp">-->
 
-<!--    &lt;!&ndash; Transactions List &ndash;&gt;-->
-<!--    <LinearLayout-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/lastTransactionTitle"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        android:layout_marginHorizontal="20dp">-->
+    <!--        &lt;!&ndash; Single Transaction Item &ndash;&gt;-->
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:orientation="horizontal"-->
+    <!--            android:gravity="center_vertical"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:background="@drawable/bg_contanier_two"-->
+    <!--            android:paddingVertical="10dp">-->
 
-<!--        &lt;!&ndash; Single Transaction Item &ndash;&gt;-->
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:background="@drawable/bg_contanier_two"-->
-<!--            android:paddingVertical="10dp">-->
+    <!--            &lt;!&ndash; Left: Transaction Image &ndash;&gt;-->
+    <!--            <ImageView-->
+    <!--                android:layout_width="60dp"-->
+    <!--                android:layout_height="60dp"-->
+    <!--                android:src="@drawable/logo"-->
+    <!--                android:scaleType="centerCrop"-->
+    <!--                android:layout_marginStart="12dp"-->
+    <!--                android:layout_marginEnd="12dp"/>-->
 
-<!--            &lt;!&ndash; Left: Transaction Image &ndash;&gt;-->
-<!--            <ImageView-->
-<!--                android:layout_width="60dp"-->
-<!--                android:layout_height="60dp"-->
-<!--                android:src="@drawable/logo"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                android:layout_marginStart="12dp"-->
-<!--                android:layout_marginEnd="12dp"/>-->
+    <!--            &lt;!&ndash; Middle: Transaction Details &ndash;&gt;-->
+    <!--            <LinearLayout-->
+    <!--                android:layout_width="0dp"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="vertical"-->
+    <!--                android:layout_weight="1">-->
 
-<!--            &lt;!&ndash; Middle: Transaction Details &ndash;&gt;-->
-<!--            <LinearLayout-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:layout_weight="1">-->
+    <!--                <TextView-->
+    <!--                    android:text="Netflix"-->
+    <!--                    android:textSize="20sp"-->
+    <!--                    android:textStyle="bold"-->
+    <!--                    android:textColor="@color/black"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"/>-->
 
-<!--                <TextView-->
-<!--                    android:text="Netflix"-->
-<!--                    android:textSize="20sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"/>-->
+    <!--                <TextView-->
+    <!--                    android:text="Month subscription"-->
+    <!--                    android:textSize="15sp"-->
+    <!--                    android:textColor="@color/secondary_text_color"-->
+    <!--                    android:layout_width="wrap_content"-->
+    <!--                    android:layout_height="wrap_content"/>-->
+    <!--            </LinearLayout>-->
 
-<!--                <TextView-->
-<!--                    android:text="Month subscription"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:textColor="@color/secondary_text_color"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"/>-->
-<!--            </LinearLayout>-->
+    <!--            &lt;!&ndash; Right: Transaction Price &ndash;&gt;-->
+    <!--            <TextView-->
+    <!--                android:text="100.000 VND"-->
+    <!--                android:textSize="20sp"-->
+    <!--                android:textStyle="bold"-->
+    <!--                android:textColor="@color/black"-->
+    <!--                android:layout_marginEnd="12dp"-->
+    <!--                android:layout_width="wrap_content"-->
+    <!--                android:layout_height="wrap_content"/>-->
+    <!--        </LinearLayout>-->
 
-<!--            &lt;!&ndash; Right: Transaction Price &ndash;&gt;-->
-<!--            <TextView-->
-<!--                android:text="100.000 VND"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:layout_marginEnd="12dp"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"/>-->
-<!--        </LinearLayout>-->
-
-<!--    </LinearLayout>-->
+    <!--    </LinearLayout>-->
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="0dp"
@@ -393,11 +370,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="20dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

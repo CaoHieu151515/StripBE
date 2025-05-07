@@ -26,6 +26,7 @@ import com.example.strip.Activities.Customer.ViewPackagesActivity;
 import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Activities.StripDriverActivity;
+import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -51,7 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AccountFragment extends Fragment {
 
     private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
-    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout;
+    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout, ivWallet;
     private Button btnEditProfile;
     private UserMoreResponse user;
 
@@ -75,6 +76,14 @@ public class AccountFragment extends Fragment {
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         ivChangeToDriver = view.findViewById(R.id.ivChangeToDriver);
         ivLogout = view.findViewById(R.id.ivLogout);
+        ivWallet = view.findViewById(R.id.ivWallet);
+        ivWallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PaymentActivity.class);
+                startActivity(intent);
+            }
+        });
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

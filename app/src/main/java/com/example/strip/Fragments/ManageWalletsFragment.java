@@ -15,13 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Activities.Driver.WalletActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
+import com.example.strip.Adapters.RatingAdapter;
 import com.example.strip.Adapters.TransactionAdapter;
+import com.example.strip.Models.Response.DriverInfoResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
+import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
 import com.example.strip.network.ApiClient;
@@ -35,39 +39,30 @@ import retrofit2.Retrofit;
 
 
 public class ManageWalletsFragment extends Fragment {
-
-    private TextView tvUserWallet, tvMobifyDate, tvCurrent, tvBefore, tvAmount;
-    private ImageView ivProfile,ivPayment;
-    private RecyclerView recyclerView;
-    private TransactionAdapter transactionAdapter;
+    private ImageView imgAvatar;
+    private TextView txtName, txtPhone, txtEmail, txtAddress, txtRating;
+    private RecyclerView rvRatings;
+    private UserMoreResponse user;
+    private String driverId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_manage_wallets, container, false);
-        tvUserWallet = view.findViewById(R.id.tvUserWallet);
-        tvMobifyDate =  view.findViewById(R.id.tvMobifyDate);
-        tvCurrent =  view.findViewById(R.id.tvCurrent);
-        tvBefore =  view.findViewById(R.id.tvBefore);
-        tvAmount =  view.findViewById(R.id.tvAmount);
-        ivProfile =  view.findViewById(R.id.profileImage);
-        ivPayment =  view.findViewById(R.id.ivPayment);
-        ivPayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), PaymentActivity.class);
-                startActivity(intent);
-            }
-        });
+        imgAvatar = view.findViewById(R.id.imgAvatar);
+        txtName = view.findViewById(R.id.txtName);
+        txtPhone = view.findViewById(R.id.txtPhone);
+        txtEmail = view.findViewById(R.id.txtEmail);
+        txtAddress = view.findViewById(R.id.txtAddress);
+        txtRating = view.findViewById(R.id.txtRating);
+        rvRatings = view.findViewById(R.id.rvRatings);
 
-        fetchWalletInfo();
-        recyclerView =  view.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        fetchTransactionsList();
-        // Inflate the layout for this fragment
+        rvRatings.setLayoutManager(new LinearLayoutManager(getContext()));
+        fetchUserInfo();
+        fetchDriverWithRating(driverId);
         return view;
     }
-    private void fetchWalletInfo() {
-        Retrofit retrofit = ApiClient.getClientWithToken(getContext());
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -75,21 +70,9 @@ public class ManageWalletsFragment extends Fragment {
             @Override
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    UserMoreResponse user = response.body();
-                    tvUserWallet.setText(user.getUserWallet().getUserWallet() != null ? user.getUserWallet().getUserWallet() : "N/A");
-                    tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? DateFormatter.formatDate(user.getUserWallet().getMobifyDate()) : "N/A");
-                    tvCurrent.setText(String.format("%.2f", user.getUserWallet().getCurrent()));
-                    tvBefore.setText(String.format("%.2f", user.getUserWallet().getBefore()));
-                    tvAmount.setText(String.format("%.2f", user.getUserWallet().getAmount()));
-                    String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
-                    if (imageUrl != null && !imageUrl.isEmpty()) {
-                        if (imageUrl.contains("localhost")) {
-                            imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
-                        }
-                        Glide.with(getContext())
-                                .load(imageUrl)
-                                .into(ivProfile);
-                    }
+                    user = response.body();
+                    driverId = user.getDriver().getDriverID();
+
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
@@ -109,27 +92,31 @@ public class ManageWalletsFragment extends Fragment {
             }
         });
     }
-    private void fetchTransactionsList() {
-        Retrofit retrofit = ApiClient.getClientWithToken(getContext());
-        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
-        Call<WalletResponse> call = apiService.getWalletDetails();
-        call.enqueue(new Callback<WalletResponse>() {
-            @Override
-            public void onResponse(Call<WalletResponse> call, Response<WalletResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Transaction> transactions = response.body().getTransactions();
-                    transactionAdapter = new TransactionAdapter(transactions);
-                    recyclerView.setAdapter(transactionAdapter);
-                } else {
-                    Toast.makeText(getContext(), "Failed to load data", Toast.LENGTH_SHORT).show();
-                }
-            }
+    private void fetchDriverWithRating(String driverId) {
+        ITripMobileApiService api = ApiClient.getClientWithToken(getContext()).create(ITripMobileApiService.class);
+        api.getDriverInfo(driverId)
+                .enqueue(new Callback<DriverInfoResponse>() {
+                    @Override
+                    public void onResponse(Call<DriverInfoResponse> call, Response<DriverInfoResponse> response) {
+                        if (response.isSuccessful()) {
+                            DriverInfoResponse driver = response.body();
+                            txtName.setText(driver.firstName + " " + driver.lastName);
+                            txtPhone.setText(driver.phone);
+                            txtEmail.setText(driver.email);
+                            txtAddress.setText(driver.address);
+                            txtRating.setText("Rating: " + driver.averageRating);
+                            Glide.with(getContext()).load(driver.avatar).into(imgAvatar);
 
-            @Override
-            public void onFailure(Call<WalletResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(getContext(), "API request failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+                            RatingAdapter adapter = new RatingAdapter(driver.ratingOfDriverInfoResponseList);
+                            rvRatings.setAdapter(adapter);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DriverInfoResponse> call, Throwable t) {
+                        Toast.makeText(getContext(), "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 }

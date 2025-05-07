@@ -3,6 +3,7 @@ package com.example.strip.Services;
 import com.example.strip.Models.Request.JoinTripRequest;
 import com.example.strip.Models.Request.StopLocationUpdateRequest;
 import com.example.strip.Models.Request.TripCreateRequest;
+import com.example.strip.Models.Response.DriverInfoResponse;
 import com.example.strip.Models.Response.RequestTripResponse;
 import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.Models.Trip;
@@ -53,4 +54,9 @@ public interface ITripMobileApiService {
     Call<ResponseBody> acceptRequestTrip(@Path("requestTripId") String requestTripId);
     @PUT("api/mobile/trips/request-trips/{requestTripId}/reject")
     Call<ResponseBody> rejectRequestTrip(@Path("requestTripId") String requestTripId);
+    @GET("api/mobile/trips/drivers/{driverId}/info")
+    Call<DriverInfoResponse> getDriverInfo(@Path("driverId") String driverId);
+
+    @POST("api/mobile/trips/drivers/{tripId}/feedback")
+    Call<ResponseBody> sendFeedbackToDriver(@Path("tripId") String tripId);
 }

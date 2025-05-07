@@ -45,7 +45,7 @@ public class TripsFragment extends Fragment {
 
         recyclerViewTripsDone = view.findViewById(R.id.recyclerViewTripsDone);
         recyclerViewTripsDone.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapterDone = new TripDoneAdapter(tripDoneResponseList);
+        adapterDone = new TripDoneAdapter(getContext(),tripDoneResponseList);
         recyclerViewTripsDone.setAdapter(adapterDone);
         fetchTripsDone();
         // Inflate the layout for this fragment

@@ -34,6 +34,18 @@
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnFeedback"
+        android:text="Feedback"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/azure"
+        android:background="@drawable/input_field_bg"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+    </androidx.appcompat.widget.AppCompatButton>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
