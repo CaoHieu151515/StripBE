@@ -64,13 +64,7 @@ public class WalletActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        ImageView btnBack = findViewById(R.id.backButton);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
         fetchWalletInfo();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

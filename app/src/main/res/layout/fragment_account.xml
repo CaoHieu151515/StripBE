@@ -313,12 +313,12 @@
                 android:text="Cài đặt"
                 android:textSize="20dp"
                 android:textColor="@android:color/holo_blue_dark"/>
-            <ImageView
-                android:id="@+id/ivWallet"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/wallet_buyer"/>
+<!--            <ImageView-->
+<!--                android:id="@+id/ivWallet"-->
+<!--                android:layout_width="30dp"-->
+<!--                android:layout_height="30dp"-->
+<!--                android:layout_marginRight="10dp"-->
+<!--                android:src="@drawable/wallet_buyer"/>-->
             <ImageView
                 android:id="@+id/ivLogout"
                 android:layout_width="30dp"

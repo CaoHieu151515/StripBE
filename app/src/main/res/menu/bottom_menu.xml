@@ -16,8 +16,8 @@
 <!--        android:title=""/>-->
     <item
         android:id="@+id/chat"
-        android:title="Trò chuyện"
-        android:icon="@drawable/messages"/>
+        android:title="Ví tiền"
+        android:icon="@drawable/wallet_buyer"/>
     <item
         android:id="@+id/account"
         android:title="Hành khách"
