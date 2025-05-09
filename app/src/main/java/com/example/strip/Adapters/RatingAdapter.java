@@ -33,8 +33,8 @@ public class RatingAdapter extends RecyclerView.Adapter<RatingAdapter.RatingView
     public void onBindViewHolder(@NonNull RatingViewHolder holder, int position) {
         RatingOfDriverInfoResponse rating = ratingList.get(position);
         holder.txtUser.setText(rating.userName);
-        holder.txtFeedback.setText(rating.feedbackContent);
-        holder.txtValue.setText("Rating: " + rating.ratingValue);
+        holder.txtFeedback.setText("Phản hồi: " + rating.feedbackContent);
+        holder.txtValue.setText("Xếp hạng: " + rating.ratingValue);
         Glide.with(holder.itemView.getContext()).load(rating.avatarUser).into(holder.imgUser);
     }
 

@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"/>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnFeedback"
-        android:text="Feedback"
+        android:text="Phản hồi"
         android:textAllCaps="false"
         android:backgroundTint="@color/azure"
         android:background="@drawable/input_field_bg"

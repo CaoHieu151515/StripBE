@@ -9,17 +9,24 @@
         android:layout_height="wrap_content">
 
         <!-- Driver Avatar -->
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
+            android:background="@drawable/input_field_bg"
             android:id="@+id/imgAvatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/logo" />
-
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/input_field_bg"
+        android:padding="10dp"
+        android:layout_height="wrap_content">
         <!-- Driver Info -->
         <TextView android:id="@+id/txtName"
-            android:text="Name"
+            android:text="Thông tin tài xế"
             android:textStyle="bold"
             android:textSize="18sp"
             android:layout_marginTop="8dp"
@@ -45,12 +52,19 @@
             android:text="Rating: 0.0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
+        </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/input_field_bg"
+        android:padding="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content">
         <!-- Rating List -->
         <TextView
-            android:text="Ratings:"
+            android:text="Phản hồi từ hành khách:"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"
+            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -58,6 +72,6 @@
             android:id="@+id/rvRatings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
+    </LinearLayout>
     </LinearLayout>
 </ScrollView>

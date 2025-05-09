@@ -100,11 +100,11 @@ public class ManageWalletsFragment extends Fragment {
                     public void onResponse(Call<DriverInfoResponse> call, Response<DriverInfoResponse> response) {
                         if (response.isSuccessful()) {
                             DriverInfoResponse driver = response.body();
-                            txtName.setText(driver.firstName + " " + driver.lastName);
-                            txtPhone.setText(driver.phone);
-                            txtEmail.setText(driver.email);
-                            txtAddress.setText(driver.address);
-                            txtRating.setText("Rating: " + driver.averageRating);
+                            txtName.setText("Họ và tên: "+ driver.firstName + " " + driver.lastName);
+                            txtPhone.setText("Số điện thoại: "+driver.phone);
+                            txtEmail.setText("Email: "+driver.email);
+                            txtAddress.setText("Địa chỉ: "+driver.address);
+                            txtRating.setText("Xếp hạng: " + driver.averageRating);
                             Glide.with(getContext()).load(driver.avatar).into(imgAvatar);
 
                             RatingAdapter adapter = new RatingAdapter(driver.ratingOfDriverInfoResponseList);
