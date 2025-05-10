@@ -14,7 +14,7 @@ public class TripCreateRequest {
     private String endLocation;
     private String description;
     private String condition;
-
+    private double totalDistance;
     public TripCreateRequest(String driverId,
                              String vehicleId,
                              byte[] tripImg,
@@ -27,7 +27,8 @@ public class TripCreateRequest {
                              String startLocation,
                              String endLocation,
                              String description,
-                             String condition) {
+                             String condition,
+                             double totalDistance) {
         this.driverId = driverId;
         this.vehicleId = vehicleId;
         this.tripImg = tripImg;
@@ -41,6 +42,15 @@ public class TripCreateRequest {
         this.endLocation = endLocation;
         this.description = description;
         this.condition = condition;
+        this.totalDistance = totalDistance;
+    }
+
+    public double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(double totalDistance) {
+        this.totalDistance = totalDistance;
     }
 
     public int getPricePerSeat() {

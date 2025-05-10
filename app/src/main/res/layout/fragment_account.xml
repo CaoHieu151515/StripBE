@@ -333,7 +333,7 @@
         android:id="@+id/btnEditProfile"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:text="Edit Profile"
+        android:text="Sửa hồ sơ"
         android:textSize="20sp"
         android:textColor="@android:color/white"
         android:background="@drawable/button_signup_bg"

@@ -13,8 +13,8 @@
         android:icon="@drawable/car_journey" />
     <item
         android:id="@+id/walletsDriver"
-        android:title="Tiền bạc"
-        android:icon="@drawable/wallet_buyer"/>
+        android:title="Phản hồi"
+        android:icon="@drawable/thumbs_up_trust"/>
     <item
         android:id="@+id/driver"
         android:title="Tài xế"

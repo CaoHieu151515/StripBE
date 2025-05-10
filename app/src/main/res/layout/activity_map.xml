@@ -56,7 +56,7 @@
                 android:id="@+id/titleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hi EveryOne,\nWhere do you will go?"
+                android:text="Chào bạn,\nBạn muốn đi đâu?"
                 android:textSize="24sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
@@ -86,9 +86,10 @@
                     android:id="@+id/tvDistanceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Distance"
-                    android:textSize="16sp"
+                    android:text="Khoảng cách"
+                    android:textSize="17sp"
                     android:textStyle="bold"
+                    android:gravity="center"
                     android:textColor="@color/white"
                     android:layout_marginBottom="5dp" />
 
@@ -117,8 +118,9 @@
                     android:id="@+id/tvDurationLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Duration"
-                    android:textSize="16sp"
+                    android:text="Khoảng thơi gian"
+                    android:textSize="17sp"
+                    android:gravity="center"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     android:layout_marginBottom="5dp" />
@@ -179,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:background="@drawable/input_field_no_bg"
-                    android:text="Ben Thanh Market, Ho Chi Minh City"
+                    android:hint="Nhập điểm bắt đầu"
                     android:textSize="18sp"
                     android:textColor="@color/gray"
                     android:layout_marginStart="8dp"/>
@@ -207,7 +209,7 @@
                     android:id="@+id/etEndLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:text="Tan Son Nhat Airport, Ho Chi Minh City"
+                    android:hint="Nhập điểm kết thúc"
                     android:textSize="18sp"
                     android:background="@drawable/input_field_no_bg"
                     android:textColor="@color/gray"
@@ -219,7 +221,7 @@
                 android:id="@+id/btnSearchLocation"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Search Location"
+                android:text="Tìm kiếm địa điểm"
                 android:textSize="16sp"
                 android:textAllCaps="false"
                 android:textStyle="bold"
@@ -252,6 +254,6 @@
             android:textSize="17dp"
             android:textAllCaps="false"
             android:backgroundTint="@color/azure"
-            android:text="Choose Location"/>
+            android:text="Chọn địa điểm"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

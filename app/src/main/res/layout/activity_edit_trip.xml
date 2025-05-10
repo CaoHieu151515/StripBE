@@ -359,7 +359,7 @@
                     android:backgroundTint="@color/azure"
                     android:textColor="@color/white"
                     android:background="@drawable/input_field_bg"
-                    android:text="Find" />
+                    android:text="Bản đồ" />
                 <TextView
                     android:layout_marginTop="4dp"
                     android:layout_width="match_parent"
@@ -378,7 +378,7 @@
                     android:backgroundTint="@color/red_orange"
                     android:textColor="@color/white"
                     android:background="@drawable/input_field_bg"
-                    android:text="Add" />
+                    android:text="Thêm" />
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
@@ -391,7 +391,7 @@
                 android:layout_height="48dp"
                 android:textSize="17dp"
                 android:textAllCaps="false"
-                android:text="Update Stop Location"/>
+                android:text="Cật nhật điểm dừng"/>
         </LinearLayout>
 
 

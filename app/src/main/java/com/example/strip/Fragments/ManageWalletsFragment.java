@@ -58,7 +58,7 @@ public class ManageWalletsFragment extends Fragment {
 
         rvRatings.setLayoutManager(new LinearLayoutManager(getContext()));
         fetchUserInfo();
-        fetchDriverWithRating(driverId);
+
         return view;
     }
     private void fetchUserInfo() {
@@ -71,8 +71,8 @@ public class ManageWalletsFragment extends Fragment {
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
-                    driverId = user.getDriver().getDriverID();
-
+                    driverId = user.getDriver().getDriverID().toString();
+                    fetchDriverWithRating(driverId);
                 } else {
                     try {
                         String errorBody = response.errorBody().string();

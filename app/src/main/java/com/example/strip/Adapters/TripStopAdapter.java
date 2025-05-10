@@ -45,8 +45,8 @@ public class TripStopAdapter extends RecyclerView.Adapter<TripStopAdapter.TripSt
         holder.tvStopLocaTime.setText(DateFormatter.formatDate(stopLocation.getStopLocaTime()) + "");
         holder.tvStopLoca.setText(stopLocation.getStopLoca());
         holder.tvStopLocaStatus.setText(stopLocation.getStopLocaStatus());
-        holder.tvEstimatedTime.setText("Khoảng thời gian: " + String.format("%.2f km", stopLocation.getEstimatedTime()) + " phút");
-        holder.tvEstimatedKM.setText("Khoảng cách: " +  String.format("%.2f km", stopLocation.getEstimatedKM()) + " km");
+        holder.tvEstimatedTime.setText("Khoảng thời gian: " + String.format("%d phút", stopLocation.getEstimatedTime()));
+        holder.tvEstimatedKM.setText("Khoảng cách: " +  String.format("%.2f km", stopLocation.getEstimatedKM()));
         holder.tvPosition.setText("" + stopLocation.getTripPositon());
         holder.itemView.setOnClickListener(v -> {
             listener.onStopClick(stopLocation); // 'stop' is your current StopLocation item

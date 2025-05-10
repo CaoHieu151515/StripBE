@@ -230,9 +230,9 @@ public class AddTripActivity extends AppCompatActivity{
         String endLocation = tvEndLocation.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String condition = etCondition.getText().toString().trim();
-
+        double totalDistance = Double.parseDouble(String.format("%.2f", distance));
         TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, ImageBytes, "image/png",
-                pricePerSeat, 0,maxSeat,startDate ,endDate, startLocation, endLocation, description, condition);
+                pricePerSeat, 0,maxSeat,startDate ,endDate, startLocation, endLocation, description, condition, totalDistance);
 
         ITripMobileApiService tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);
         tripService.createTrip(tripRequest).enqueue(new Callback<TripDetail>() {
