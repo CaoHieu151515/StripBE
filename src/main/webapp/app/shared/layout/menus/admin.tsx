@@ -28,6 +28,9 @@ const adminMenuItems = () => (
     <MenuItem icon="credit-card" to="/braintree-test">
       Braintree Test
     </MenuItem>
+    <MenuItem icon="credit-card" to="/nofitytest">
+      notify
+    </MenuItem>
     {/* jhipster-needle-add-element-to-admin-menu - JHipster will add entities to the admin menu here */}
   </>
 );

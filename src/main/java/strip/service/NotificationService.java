@@ -1,6 +1,9 @@
 package strip.service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -8,9 +11,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Notification;
+import strip.domain.User;
+import strip.domain.UserDetail;
 import strip.repository.NotificationRepository;
+import strip.repository.UserDetailRepository;
+import strip.repository.UserRepository;
+import strip.service.dto.NotificationCreateDTO;
 import strip.service.dto.NotificationDTO;
+import strip.service.dto.NotificationNewDTO;
 import strip.service.mapper.NotificationMapper;
+import strip.web.rest.errors.BadRequestAlertException;
+import strip.web.websocket.NotificationMessageService;
 
 /**
  * Service Implementation for managing {@link strip.domain.Notification}.
@@ -25,9 +36,24 @@ public class NotificationService {
 
     private final NotificationMapper notificationMapper;
 
-    public NotificationService(NotificationRepository notificationRepository, NotificationMapper notificationMapper) {
+    private final UserRepository userRepository;
+
+    private final UserDetailRepository userDetailRepository;
+
+    private final NotificationMessageService notificationMessageService;
+
+    public NotificationService(
+        NotificationRepository notificationRepository,
+        NotificationMapper notificationMapper,
+        UserRepository userRepository,
+        UserDetailRepository userDetailRepository,
+        NotificationMessageService notificationMessageService
+    ) {
         this.notificationRepository = notificationRepository;
         this.notificationMapper = notificationMapper;
+        this.userRepository = userRepository;
+        this.userDetailRepository = userDetailRepository;
+        this.notificationMessageService = notificationMessageService;
     }
 
     /**
@@ -108,5 +134,66 @@ public class NotificationService {
     public void delete(Long id) {
         LOG.debug("Request to delete Notification : {}", id);
         notificationRepository.deleteById(id);
+    }
+
+    public void createNotification(NotificationCreateDTO dto) {
+        if (dto.getUserId() == null) {
+            throw new BadRequestAlertException("User ID is required", "notification", "user-id-null");
+        }
+
+        UserDetail detail = userDetailRepository
+            .findByAppUserDetail(dto.getUserId())
+            .orElseThrow(() -> new BadRequestAlertException("UserDetail not found", "notification", "user-detail-not-found"));
+
+        User user = userRepository
+            .findById(detail.getUser().getId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "notification", "user-not-found"));
+
+        if (user == null) {
+            throw new BadRequestAlertException("User not linked to this UserDetail", "notification", "user-not-linked");
+        }
+
+        Notification notify = new Notification();
+        notify.setTitle(dto.getTitle());
+        notify.setContent(dto.getContent());
+        notify.setDate(Instant.now());
+        notify.setCreatedDate(Instant.now());
+        notify.setIsRead(false);
+        notify.setUser(user);
+
+        notificationRepository.save(notify);
+        notificationMessageService.notifyUser(user.getLogin());
+    }
+
+    public List<NotificationNewDTO> getMyNotifications(Long userId) {
+        return notificationRepository.findAllByUser_IdOrderByCreatedDateDesc(userId).stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public void markAsRead(Long id) {
+        Notification notify = notificationRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Notification not found", "notification", "not-found"));
+        notify.setIsRead(true);
+        notificationRepository.save(notify);
+    }
+
+    private NotificationNewDTO toDto(Notification entity) {
+        NotificationNewDTO dto = new NotificationNewDTO();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setContent(entity.getContent());
+        dto.setDate(entity.getDate());
+        dto.setCreatedDate(entity.getCreatedDate());
+        dto.setIsRead(entity.getIsRead());
+        dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
+        return dto;
+    }
+
+    public List<NotificationNewDTO> getMyNotificationsByLogin(String login) {
+        User user = userRepository
+            .findOneByLogin(login)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "notification", "user-not-found"));
+
+        return notificationRepository.findAllByUser_IdOrderByCreatedDateDesc(user.getId()).stream().map(this::toDto).toList();
     }
 }

@@ -48,6 +48,9 @@
     <include file="config/liquibase/changelog/20250317024432_added_entity_constraints_DriverPackageSubscription.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250327163402_added_entity_constraints_WalletDeposit.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250403135721_added_entity_constraints_DriverPointHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250512214500_added_fields_to_notification.xml" relativeToChangelogFile="false"/>
+
+
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

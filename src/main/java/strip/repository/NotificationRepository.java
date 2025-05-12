@@ -13,4 +13,6 @@ import strip.domain.Notification;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     @Query("select notification from Notification notification where notification.user.login = ?#{authentication.name}")
     List<Notification> findByUserIsCurrentUser();
+
+    List<Notification> findAllByUser_IdOrderByCreatedDateDesc(Long userId);
 }

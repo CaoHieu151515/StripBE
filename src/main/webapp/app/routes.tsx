@@ -16,6 +16,7 @@ import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
 import { sendActivity } from 'app/config/websocket-middleware';
 import BraintreeDropIn from 'app/modules/braintree/braintree-test';
+import UserNotificationWebSocket from 'app/modules/notifitest/UserNotificationWebSocket';
 
 const loading = <div>loading ...</div>;
 
@@ -65,6 +66,7 @@ const AppRoutes = () => {
           }
         />
         <Route path="braintree-test" element={<BraintreeDropIn />} />
+        <Route path="nofitytest" element={<UserNotificationWebSocket />} />
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>
     </div>

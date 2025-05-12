@@ -36,6 +36,17 @@ public class ActivityService implements ApplicationListener<SessionDisconnectEve
         return activityDTO;
     }
 
+    @MessageMapping("/topic/activity-native")
+    @SendTo("/topic/tracker-native")
+    public ActivityDTO sendActivityNative(@Payload ActivityDTO activityDTO, StompHeaderAccessor stompHeaderAccessor, Principal principal) {
+        activityDTO.setUserLogin(principal != null ? principal.getName() : "anonymous");
+        activityDTO.setSessionId(stompHeaderAccessor.getSessionId());
+        activityDTO.setIpAddress(stompHeaderAccessor.getSessionAttributes().get(IP_ADDRESS).toString());
+        activityDTO.setTime(Instant.now());
+        log.info("🔄 Sending to /topic/tracker-native: {}", activityDTO);
+        return activityDTO;
+    }
+
     @Override
     public void onApplicationEvent(SessionDisconnectEvent event) {
         ActivityDTO activityDTO = new ActivityDTO();

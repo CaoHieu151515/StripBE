@@ -29,21 +29,45 @@ public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer 
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");
+        config.enableSimpleBroker("/topic", "/queue");
+        config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/user");
     }
+
+    // @Override
+    // public void configureMessageBroker(MessageBrokerRegistry config) {
+    //     config.enableSimpleBroker("/topic");
+    // }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         String[] allowedOrigins = Optional.ofNullable(jHipsterProperties.getCors().getAllowedOrigins())
             .map(origins -> origins.toArray(new String[0]))
             .orElse(new String[0]);
+
+        // ✅ Endpoint cũ để tracker hoạt động
         registry
             .addEndpoint("/websocket/tracker")
             .setHandshakeHandler(defaultHandshakeHandler())
             .setAllowedOrigins(allowedOrigins)
             .withSockJS()
             .setInterceptors(httpSessionHandshakeInterceptor());
+
+        // ✅ Endpoint mới để client nhận thông báo
+        registry
+            .addEndpoint("/websocket/notifications")
+            .setHandshakeHandler(defaultHandshakeHandler())
+            .setAllowedOrigins(allowedOrigins)
+            .withSockJS()
+            .setInterceptors(httpSessionHandshakeInterceptor());
+
+        registry.addEndpoint("/websocket/native-tracker").setAllowedOriginPatterns("*");
     }
+
+    // @Override
+    // public void configureClientInboundChannel(ChannelRegistration registration) {
+    //     registration.interceptors(webSocketAuthInterceptor);
+    // }
 
     @Bean
     public HandshakeInterceptor httpSessionHandshakeInterceptor() {

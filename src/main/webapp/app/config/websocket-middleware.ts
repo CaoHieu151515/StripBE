@@ -36,6 +36,7 @@ export const sendActivity = (page: string) => {
 const subscribe = () => {
   connection.then(() => {
     subscriber = stompClient.subscribe('/topic/tracker', data => {
+      console.log('📥 RAW MESSAGE:', data.body);
       listenerObserver.next(JSON.parse(data.body));
     });
   });
@@ -92,8 +93,8 @@ const unsubscribe = () => {
 export default store => next => action => {
   if (getAccount.fulfilled.match(action)) {
     connect();
-    const isAdmin = action.payload.data.authorities.includes('ROLE_ADMIN');
-    if (!alreadyConnectedOnce && isAdmin) {
+
+    if (!alreadyConnectedOnce) {
       subscribe();
       receive().subscribe(activity => {
         return store.dispatch(websocketActivityMessage(activity));

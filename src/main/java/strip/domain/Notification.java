@@ -28,10 +28,19 @@ public class Notification implements Serializable {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead = false;
+
+    @Column(name = "created_date", nullable = false)
+    private Instant createdDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here
+    // --- Getters and Setters ---
 
     public Long getId() {
         return this.id;
@@ -72,6 +81,45 @@ public class Notification implements Serializable {
         this.content = content;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public Notification title(String title) {
+        this.setTitle(title);
+        return this;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Boolean getIsRead() {
+        return isRead;
+    }
+
+    public Notification isRead(Boolean isRead) {
+        this.setIsRead(isRead);
+        return this;
+    }
+
+    public void setIsRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public Notification createdDate(Instant createdDate) {
+        this.setCreatedDate(createdDate);
+        return this;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -84,8 +132,6 @@ public class Notification implements Serializable {
         this.setUser(user);
         return this;
     }
-
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -100,17 +146,29 @@ public class Notification implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "Notification{" +
-            "id=" + getId() +
-            ", date='" + getDate() + "'" +
-            ", content='" + getContent() + "'" +
-            "}";
+        return (
+            "Notification{" +
+            "id=" +
+            getId() +
+            ", date='" +
+            getDate() +
+            "'" +
+            ", content='" +
+            getContent() +
+            "'" +
+            ", title='" +
+            getTitle() +
+            "'" +
+            ", isRead=" +
+            getIsRead() +
+            ", createdDate=" +
+            getCreatedDate() +
+            "}"
+        );
     }
 }
