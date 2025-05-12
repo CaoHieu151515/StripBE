@@ -87,4 +87,7 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
         @Param("from") Instant from,
         @Param("to") Instant to
     );
+
+    @Query("SELECT COALESCE(SUM(wt.amount), 0) FROM WalletTransaction wt " + "WHERE wt.walletType IN :types AND wt.transStatus = :status")
+    double sumAmountByWalletTypesAndStatus(@Param("types") List<WalletTransactionType> types, @Param("status") TransactionStatus status);
 }

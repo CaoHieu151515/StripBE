@@ -31,6 +31,8 @@ import strip.service.dto.TripCusDTO;
 import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
+import strip.service.dto.VehicleCreateDTO;
+import strip.service.dto.VehicleDTO;
 import strip.service.dto.WithdrawRequestDTO;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.vm.KeyAndPasswordVM;
@@ -173,6 +175,12 @@ public class UserMobileResource {
         log.debug("REST request to join trip: {}", requestDTO);
 
         RequestTripDTO result = userMobileService.joinTrip(requestDTO);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/driver/vehicles/add")
+    public ResponseEntity<VehicleDTO> createVehicle(@RequestBody VehicleCreateDTO dto) {
+        VehicleDTO result = userMobileService.createVehicleForCurrentDriver(dto);
         return ResponseEntity.ok(result);
     }
 }

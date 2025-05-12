@@ -16,12 +16,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.enumeration.RegistrationStatType;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.DriverPackageSubscriptionRepository;
 import strip.repository.RequestTripRepository;
 import strip.repository.UserRepository;
 import strip.repository.WalletTransactionRepository;
+import strip.service.dto.dashboard.DashboardSummaryStatDTO;
 import strip.service.dto.dashboard.MultiListProfitStatDTO;
+import strip.service.dto.dashboard.PackageSalesPieStatDTO;
 import strip.service.dto.dashboard.PackageSalesSimpleStatDTO;
 import strip.service.dto.dashboard.ProfitSingleItemDTO;
 import strip.service.dto.dashboard.RegistrationStatDTO;
@@ -702,5 +705,58 @@ public class DashboardService {
         }
 
         return new ArrayList<>(map.values());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PackageSalesPieStatDTO> getPackageSalesPieStats(
+        RegistrationStatType type,
+        Instant targetDate,
+        Integer month,
+        Integer year
+    ) {
+        Instant fromDate, toDate;
+
+        switch (type) {
+            case WEEK:
+                if (targetDate == null) throw new BadRequestAlertException("targetDate is required", "dashboard", "missing-date");
+                var week = DashboardDateUtil.getWeekRange(targetDate);
+                fromDate = week.getFromDate();
+                toDate = week.getToDate();
+                break;
+            case MONTH:
+                if (month == null || year == null) throw new BadRequestAlertException(
+                    "month/year required",
+                    "dashboard",
+                    "missing-month-year"
+                );
+                var monthRange = DashboardDateUtil.getMonthRange(month, year);
+                fromDate = monthRange.getFromDate();
+                toDate = monthRange.getToDate();
+                break;
+            case YEAR:
+                if (year == null) throw new BadRequestAlertException("year is required", "dashboard", "missing-year");
+                var yearRange = DashboardDateUtil.getYearRange(year);
+                fromDate = yearRange.getFromDate();
+                toDate = yearRange.getToDate();
+                break;
+            default:
+                throw new BadRequestAlertException("Invalid type", "dashboard", "invalid-type");
+        }
+
+        return driverPackageSubscriptionRepository.getTotalSoldByPackageInRange(fromDate, toDate);
+    }
+
+    @Transactional(readOnly = true)
+    public DashboardSummaryStatDTO getDashboardSummary() {
+        long totalUsers = userRepository.countByAuthorities_Name("ROLE_PASSENGER");
+
+        double totalRevenue = walletTransactionRepository.sumAmountByWalletTypesAndStatus(
+            List.of(WalletTransactionType.SYSTEM_GAIN_DONE_TRIP_FEE, WalletTransactionType.SYSTEM_GAIN_PACKAGE_FEE),
+            TransactionStatus.SUCCESS
+        );
+
+        long totalPackagesSold = driverPackageSubscriptionRepository.count();
+
+        return new DashboardSummaryStatDTO(totalUsers, totalRevenue, totalPackagesSold);
     }
 }

@@ -67,9 +67,12 @@ import strip.service.dto.UpdateUserProfileDTO;
 import strip.service.dto.UserDetailsCusDTO;
 import strip.service.dto.UserProfileDTO;
 import strip.service.dto.UserWalletWithTransactionsDTO;
+import strip.service.dto.VehicleCreateDTO;
+import strip.service.dto.VehicleDTO;
 import strip.service.dto.WithdrawRequestDTO;
 import strip.service.mapper.RequestTripMapper;
 import strip.service.mapper.TripCusMapper;
+import strip.service.mapper.VehicleMapper;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -94,6 +97,7 @@ public class UserMobileService {
     private final TripRepository tripRepository;
     private final RequestTripMapper requestTripMapper;
     private final PaymentRepository paymentRepository;
+    private final VehicleMapper vehicleMapper;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -112,7 +116,8 @@ public class UserMobileService {
         RequestTripRepository requestTripRepository,
         TripRepository tripRepository,
         RequestTripMapper requestTripMapper,
-        PaymentRepository paymentRepository
+        PaymentRepository paymentRepository,
+        VehicleMapper vehicleMapper
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -131,6 +136,7 @@ public class UserMobileService {
         this.tripRepository = tripRepository;
         this.requestTripMapper = requestTripMapper;
         this.paymentRepository = paymentRepository;
+        this.vehicleMapper = vehicleMapper;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -698,6 +704,7 @@ public class UserMobileService {
                 TripCusDTO dto = tripCusMapper.toDto(trip, driver, vehicle);
 
                 // Bổ sung field phức tạp
+                dto.setDriverID(driver.getDriverID());
                 dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
                 dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicle.getVehicleID()));
                 if (driver != null && driver.getUser() != null) {
@@ -759,6 +766,7 @@ public class UserMobileService {
                 TripCusDTO dto = tripCusMapper.toDto(trip, driver, vehicle);
 
                 // Bổ sung field phức tạp
+                dto.setDriverID(driver.getDriverID());
                 dto.setTripImgUrl(imageUrlService.buildTripImageUrl(trip.getTripID()));
                 dto.setVehicleImageUrl(imageUrlService.buildVehicleImageUrl(vehicle.getVehicleID()));
                 if (driver != null && driver.getUser() != null) {
@@ -894,7 +902,8 @@ public class UserMobileService {
         dto.setAmountApproveFee(trip.getPricePerSeat() * dto.getNumberOfSeats());
 
         // ✅ FE gửi lên luôn số tiền cần thanh toán
-        // double totalFee = dto.getAmountApproveFee() != null ? dto.getAmountApproveFee() : 0.0;
+        // double totalFee = dto.getAmountApproveFee() != null ?
+        // dto.getAmountApproveFee() : 0.0;
         double totalFee = dto.getAmountApproveFee();
         if (totalFee <= 0) {
             throw new BadRequestAlertException("Amount must be greater than 0", "requestTrip", "invalidAmount");
@@ -1051,5 +1060,43 @@ public class UserMobileService {
         Page<Trip> trips = tripRepository.findByDriver_User_LoginAndTripStatusIn(login, historyStatuses, pageable);
 
         return trips.map(tripCusMapper::toTripListDTO);
+    }
+
+    @Transactional
+    public VehicleDTO createVehicleForCurrentDriver(VehicleCreateDTO dto) {
+        User user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "vehicle", "user-not-found"));
+
+        Driver driver = driverRepository
+            .findByUser_id(user.getId())
+            .orElseThrow(() -> new BadRequestAlertException("Driver not found", "vehicle", "driver-not-found"));
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleID(UUID.randomUUID());
+        vehicle.setDriver(driver);
+        vehicle.setVehicleType(dto.getVehicleType());
+
+        vehicle.setVehicleImage(dto.getVehicleImage());
+        vehicle.setVehicleImageContentType(dto.getVehicleImageContentType());
+
+        vehicle.setCarregistration(dto.getCarregistration());
+        vehicle.setCarregistrationContentType(dto.getCarregistrationContentType());
+
+        vehicle.setVehicleInspectionCertificate(dto.getVehicleInspectionCertificate());
+        vehicle.setVehicleInspectionCertificateContentType(dto.getVehicleInspectionCertificateContentType());
+
+        vehicle.setCarInsurance(dto.getCarInsurance());
+        vehicle.setCarInsuranceContentType(dto.getCarInsuranceContentType());
+
+        vehicle.setVehicleNumber(dto.getVehicleNumber());
+        vehicle.setNumberOfSeats(dto.getNumberOfSeats());
+        vehicle.setVehicleColor(dto.getVehicleColor());
+        vehicle.setVehicleBrand(dto.getVehicleBrand());
+
+        vehicle.setStatus(VehicleStatus.CONFIRMING);
+
+        vehicle = vehicleRepository.save(vehicle);
+        return vehicleMapper.toDto(vehicle);
     }
 }

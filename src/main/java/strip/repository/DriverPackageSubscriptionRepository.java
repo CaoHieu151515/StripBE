@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import strip.domain.DriverPackageSubscription;
+import strip.service.dto.dashboard.PackageSalesPieStatDTO;
 
 /**
  * Spring Data JPA repository for the DriverPackageSubscription entity.
@@ -37,4 +38,13 @@ public interface DriverPackageSubscriptionRepository extends JpaRepository<Drive
         "WHERE s.purchaseDate BETWEEN :from AND :to"
     )
     List<Object[]> findPackagesInTimeRange(@Param("from") Instant from, @Param("to") Instant to);
+
+    @Query(
+        "SELECT new strip.service.dto.dashboard.PackageSalesPieStatDTO(p.name, COUNT(s)) " +
+        "FROM DriverPackageSubscription s " +
+        "JOIN s.packageDriver p " +
+        "WHERE s.purchaseDate BETWEEN :from AND :to " +
+        "GROUP BY p.name"
+    )
+    List<PackageSalesPieStatDTO> getTotalSoldByPackageInRange(@Param("from") Instant from, @Param("to") Instant to);
 }

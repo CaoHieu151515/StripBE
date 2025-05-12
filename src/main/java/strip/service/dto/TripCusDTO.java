@@ -9,6 +9,7 @@ import strip.domain.enumeration.VehicleType;
 public class TripCusDTO {
 
     private UUID tripID;
+    private UUID DriverID;
     private String startLocation;
     private String endLocation;
     private String description;
@@ -233,6 +234,14 @@ public class TripCusDTO {
     public void setStopLocations(List<TripStopLocationDTO> stopLocations) {
         this.stopLocations = stopLocations;
     }
+
     // ✅ Các getters/setters...
 
+    public UUID getDriverID() {
+        return DriverID;
+    }
+
+    public void setDriverID(UUID driverID) {
+        DriverID = driverID;
+    }
 }
