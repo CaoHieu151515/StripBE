@@ -230,7 +230,10 @@ entity Payment {
 
 entity Notification {
   date Instant,
-  content String
+  content String,
+  title String,
+  isread Boolean,
+  createddate Instant
 }
 
 entity Report {

@@ -65,4 +65,7 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
     List<Trip> findByTripStatusAndEndDateBefore(TripStatus status, Instant before);
 
     Page<Trip> findByDriver_User_LoginAndTripStatusIn(String login, List<TripStatus> statuses, Pageable pageable);
+
+    @Query("SELECT t FROM Trip t LEFT JOIN FETCH t.tripStopLocations WHERE t.tripID = :tripId")
+    Optional<Trip> findByTripIDWithStops(@Param("tripId") UUID tripId);
 }

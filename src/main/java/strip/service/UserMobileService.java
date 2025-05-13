@@ -927,7 +927,7 @@ public class UserMobileService {
 
     private Trip getAndValidateTrip(UUID tripId) {
         Trip trip = tripRepository
-            .findByTripID(tripId)
+            .findByTripIDWithStops(tripId)
             .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
 
         if (!trip.getTripStatus().equals(TripStatus.UPCOMING)) {
