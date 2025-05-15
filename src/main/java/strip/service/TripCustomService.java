@@ -251,6 +251,7 @@ public class TripCustomService {
         systemTx.setTransStatus(TransactionStatus.SUCCESS);
         systemTx.setTransactionThirdPartyID(trip.getTripID().toString());
         systemTx.setSystemWallet(systemWallet);
+        systemTx.setUserWallet(userWallet);
         systemWallet.addWalletTransactionAndUpdateBalance(systemTx);
         systemWalletRepository.save(systemWallet);
     }

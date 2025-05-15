@@ -1137,12 +1137,12 @@ public class UsermanageService {
             if (optionalTrip.isPresent()) {
                 Trip trip = optionalTrip.get();
                 String shortCode = TripCodeUtils.encode(trip.getId());
-                return " (" + shortCode + ")";
+                return " (Trip: " + shortCode + ")";
             } else {
-                return " (Trip UUID: " + rawUuid + ")";
+                return " (Trip đã xóa - UUID: " + rawUuid + ")";
             }
         } catch (IllegalArgumentException e) {
-            return " (Invalid Trip UUID)";
+            return " (Trip UUID không hợp lệ)";
         }
     }
 
