@@ -28,7 +28,7 @@ import strip.service.dto.UsermanageDetailsDTO;
 import strip.service.dto.VehicleRawDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = strip.ultil.TripCodeUtils.class)
 public interface UsermanageMapper {
     @Mapping(source = "user.login", target = "username")
     @Mapping(source = "user.firstName", target = "firstName")
@@ -98,6 +98,7 @@ public interface UsermanageMapper {
     @Mapping(source = "pricePerSeat", target = "price")
     @Mapping(source = "tripStatus", target = "status")
     @Mapping(source = "totalTime", target = "totalTime")
+    @Mapping(target = "tripHandleId", expression = "java(TripCodeUtils.encode(trip.getId()))")
     TripListDTO toTripListDTO(Trip trip);
 
     TripDTO toTripDTO(Trip trip);

@@ -119,6 +119,7 @@ public class TripMobileResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/trips/history")
     public ResponseEntity<List<TripListDTO>> getDriverTripHistory(@ParameterObject Pageable pageable) {
         Page<TripListDTO> page = tripCustomService.getTripHistoryForDriver(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);

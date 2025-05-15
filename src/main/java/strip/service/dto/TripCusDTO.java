@@ -10,6 +10,7 @@ public class TripCusDTO {
 
     private UUID tripID;
     private UUID DriverID;
+    private String tripHandleID;
     private String startLocation;
     private String endLocation;
     private String description;
@@ -243,5 +244,13 @@ public class TripCusDTO {
 
     public void setDriverID(UUID driverID) {
         DriverID = driverID;
+    }
+
+    public String getTripHandleID() {
+        return tripHandleID;
+    }
+
+    public void setTripHandleID(String tripHandleID) {
+        this.tripHandleID = tripHandleID;
     }
 }

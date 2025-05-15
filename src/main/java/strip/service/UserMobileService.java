@@ -73,6 +73,7 @@ import strip.service.dto.WithdrawRequestDTO;
 import strip.service.mapper.RequestTripMapper;
 import strip.service.mapper.TripCusMapper;
 import strip.service.mapper.VehicleMapper;
+import strip.ultil.TripCodeUtils;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -736,7 +737,7 @@ public class UserMobileService {
                         )
                         .collect(Collectors.toList())
                 );
-
+                dto.setTripHandleID(TripCodeUtils.encode(trip.getId()));
                 return dto;
             })
             .collect(Collectors.toList());
@@ -799,6 +800,7 @@ public class UserMobileService {
                         .collect(Collectors.toList())
                 );
 
+                dto.setTripHandleID(TripCodeUtils.encode(trip.getId()));
                 return dto;
             })
             .collect(Collectors.toList());
