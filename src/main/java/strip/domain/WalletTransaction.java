@@ -49,6 +49,12 @@ public class WalletTransaction implements Serializable {
     @Column(name = "transaction_third_party_id")
     private String transactionThirdPartyID;
 
+    @Column(name = "before")
+    private Double before;
+
+    @Column(name = "current")
+    private Double current;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "walletTransactions" }, allowSetters = true)
     private SystemWallet systemWallet;
@@ -193,7 +199,34 @@ public class WalletTransaction implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    public Double getBefore() {
+        return before;
+    }
+
+    public void setBefore(Double before) {
+        this.before = before;
+    }
+
+    public WalletTransaction before(Double before) {
+        this.setBefore(before);
+        return this;
+    }
+
+    public Double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Double current) {
+        this.current = current;
+    }
+
+    public WalletTransaction current(Double current) {
+        this.setCurrent(current);
+        return this;
+    }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -208,7 +241,8 @@ public class WalletTransaction implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -216,13 +250,13 @@ public class WalletTransaction implements Serializable {
     @Override
     public String toString() {
         return "WalletTransaction{" +
-            "id=" + getId() +
-            ", transID='" + getTransID() + "'" +
-            ", amount=" + getAmount() +
-            ", date='" + getDate() + "'" +
-            ", walletType='" + getWalletType() + "'" +
-            ", transStatus='" + getTransStatus() + "'" +
-            ", transactionThirdPartyID='" + getTransactionThirdPartyID() + "'" +
-            "}";
+                "id=" + getId() +
+                ", transID='" + getTransID() + "'" +
+                ", amount=" + getAmount() +
+                ", date='" + getDate() + "'" +
+                ", walletType='" + getWalletType() + "'" +
+                ", transStatus='" + getTransStatus() + "'" +
+                ", transactionThirdPartyID='" + getTransactionThirdPartyID() + "'" +
+                "}";
     }
 }

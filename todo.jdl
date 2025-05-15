@@ -263,7 +263,9 @@ entity WalletTransaction
     date Instant,
     walletType WalletTransactionType,
     transStatus TransactionStatus,
-    transactionThirdPartyID String
+    transactionThirdPartyID String,
+    before Double,
+    current Double
 
 }
 

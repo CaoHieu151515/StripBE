@@ -50,6 +50,8 @@
     <include file="config/liquibase/changelog/20250403135721_added_entity_constraints_DriverPointHistory.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250512214500_added_fields_to_notification.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250515160400_added_fields_to_PackageDriver.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20250515170000_add_before_current_to_wallet_transaction.xml" relativeToChangelogFile="false"/>
+
 
 
 

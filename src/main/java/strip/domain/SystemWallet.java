@@ -201,7 +201,9 @@ public class SystemWallet implements Serializable {
         }
 
         // ✅ Lưu lại số dư trước giao dịch
-        this.before = this.current;
+        double beforeBalance = this.current;
+        this.before = beforeBalance;
+        transaction.setBefore(beforeBalance);
 
         switch (type) {
             case SYSTEM_GAIN_CREATE_TRIP_FEE:
@@ -211,6 +213,7 @@ public class SystemWallet implements Serializable {
                 this.current += amount;
                 break;
             case SYSTEM_GAIN_DONE_TRIP_FEE:
+                this.current += amount;
                 break;
             case SYSTEM_GAIN_PACKAGE_FEE:
                 this.current += amount;
@@ -227,6 +230,9 @@ public class SystemWallet implements Serializable {
                 // ❗Nếu type không liên quan hệ thống → không tác động số dư
                 break;
         }
+
+        double afterBalance = this.current;
+        transaction.setCurrent(afterBalance);
 
         this.amount = isDebit ? -amount : amount;
         this.mobifyDate = transaction.getDate() != null ? transaction.getDate() : Instant.now();

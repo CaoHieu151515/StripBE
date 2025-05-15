@@ -234,48 +234,51 @@ public class UserWallet implements Serializable {
                 this.current = 0.0;
             }
 
-            this.before = this.current;
+            double beforeBalance = this.current;
+            this.before = beforeBalance;
+            transaction.setBefore(beforeBalance);
 
             // Kiểm tra số dư đủ cho giao dịch rút tiền khi PENDING và WITHDRAW
             if (type == WalletTransactionType.WITHDRAW && this.current < amount) {
                 throw new BadRequestAlertException("Số dư không đủ để rút tiền", "wallet", "insufficientBalance");
             }
+
             switch (type) {
                 case DRIVER_CREATE_TRIP_FEE:
-                    this.current -= amount;
                     isDebit = true;
                     break;
                 case DRIVER_DONE_TRIP_FEE:
-                    this.current -= amount;
                     isDebit = true;
                     break;
                 case PASSENGER_APPROVE_FEE:
-                    this.current -= amount;
                     isDebit = true;
                     break;
                 case DRIVER_BUY_PACKAGE:
-                    this.current -= amount;
                     isDebit = true;
                     break;
                 case WITHDRAW:
-                    this.current -= amount;
                     isDebit = true;
                     break;
                 // Những loại giao dịch cộng tiền vào ví người dùng
                 case DEPOSIT:
-                    this.current += amount;
+                    isDebit = false;
                     break;
                 case REFUND:
-                    this.current += amount;
+                    isDebit = false;
                     break;
                 case DRIVER_DONE_TRIP_REFUND:
-                    this.current += amount;
+                    isDebit = false;
                     break;
                 default:
                     break;
             }
 
+            double afterBalance = isDebit ? beforeBalance - amount : beforeBalance + amount;
+
+            this.current = afterBalance;
             this.amount = isDebit ? -amount : amount;
+
+            transaction.setCurrent(afterBalance);
         }
 
         this.mobifyDate = Instant.now();
@@ -310,7 +313,8 @@ public class UserWallet implements Serializable {
         this.current = newCurrent;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -325,7 +329,8 @@ public class UserWallet implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -333,12 +338,12 @@ public class UserWallet implements Serializable {
     @Override
     public String toString() {
         return "UserWallet{" +
-            "id=" + getId() +
-            ", userWallet='" + getUserWallet() + "'" +
-            ", before=" + getBefore() +
-            ", amount=" + getAmount() +
-            ", current=" + getCurrent() +
-            ", mobifyDate='" + getMobifyDate() + "'" +
-            "}";
+                "id=" + getId() +
+                ", userWallet='" + getUserWallet() + "'" +
+                ", before=" + getBefore() +
+                ", amount=" + getAmount() +
+                ", current=" + getCurrent() +
+                ", mobifyDate='" + getMobifyDate() + "'" +
+                "}";
     }
 }
