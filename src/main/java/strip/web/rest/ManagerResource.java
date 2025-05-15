@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import strip.domain.PackageDriver;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
@@ -40,9 +38,10 @@ import strip.service.UsermanageService;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.CustomPageDTO;
 import strip.service.dto.DriverInfoDTO;
-import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.DriverPenaltyRequestDTO;
+import strip.service.dto.DriverPointHistoryListDTO;
+import strip.service.dto.DriverPointHistoryRefundDTO;
 import strip.service.dto.FeedbackCusDTO;
-import strip.service.dto.HandleReportDTO;
 import strip.service.dto.PackageDriverDTO;
 import strip.service.dto.RejectTripDTO;
 import strip.service.dto.SystemWalletBalanceDTO;
@@ -52,7 +51,6 @@ import strip.service.dto.UsermanageDTO;
 import strip.service.dto.WalletTransactionAdminDTO;
 import strip.service.dto.WithdrawalRequestManageDTO;
 import strip.web.rest.errors.BadRequestAlertException;
-import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
 @RequestMapping("/api/manager")
@@ -336,24 +334,6 @@ public class ManagerResource {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_FEEDBACK::contains);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/driver-point/getonedriver")
-    public ResponseEntity<List<DriverPointHistoryDTO>> getDriverPointHistoryByUserDetail(
-        @RequestParam UUID userDetailId,
-        @ParameterObject Pageable pageable
-    ) {
-        Page<DriverPointHistoryDTO> page = usermanageService.getPointHistoryByUserDetail(userDetailId, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PostMapping("/driver-point/{pointId}/refund")
-    public ResponseEntity<DriverPointHistoryDTO> refundDriverPoint(@PathVariable UUID pointId) {
-        DriverPointHistoryDTO dto = usermanageService.refundByHistory(pointId);
-        return ResponseEntity.ok(dto);
-    }
-
     // @GetMapping("/reports/gettall")
     // public ResponseEntity<List<ReportCusDTO>> getAllReports(
     // @ParameterObject Pageable pageable,
@@ -380,15 +360,16 @@ public class ManagerResource {
     // pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES_REPORT::contains);
     // }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PatchMapping("/feedback/{id}/handle")
-    public ResponseEntity<Void> handleReport(@PathVariable UUID id, @RequestBody HandleReportDTO dto) {
-        log.debug("REST request to handle report: {}", id);
+    // @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    // @PatchMapping("/feedback/{id}/handle")
+    // public ResponseEntity<Void> handleReport(@PathVariable UUID id, @RequestBody
+    // HandleReportDTO dto) {
+    // log.debug("REST request to handle report: {}", id);
 
-        usermanageService.handleReport(id, dto.getReason(), dto.getPoint());
+    // usermanageService.handleReport(id, dto.getReason(), dto.getPoint());
 
-        return ResponseEntity.noContent().build(); // HTTP 204
-    }
+    // return ResponseEntity.noContent().build(); // HTTP 204
+    // }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/wallet-transactions")
@@ -431,5 +412,29 @@ public class ManagerResource {
     public ResponseEntity<SystemWalletBalanceDTO> getSystemWalletBalance() {
         double totalBalance = usermanageService.getSystemWalletBalance();
         return ResponseEntity.ok(new SystemWalletBalanceDTO(totalBalance));
+    }
+
+    @PostMapping("/driver-point/{id}/penalize")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<Void> penalizeDriver(@PathVariable("id") UUID feedbackId, @RequestBody DriverPenaltyRequestDTO request) {
+        usermanageService.penalizeDriverByFeedback(feedbackId, request.getReason());
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @GetMapping("/driver-point/by-driver")
+    public ResponseEntity<CustomPageDTO<DriverPointHistoryListDTO>> getDriverPointHistoryByUserDetail(
+        @RequestParam UUID driveruuId,
+        @ParameterObject Pageable pageable
+    ) {
+        Page<DriverPointHistoryListDTO> page = usermanageService.getPointHistoryListByUserDetail(driveruuId, pageable);
+        return ResponseEntity.ok(new CustomPageDTO<>(page));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PostMapping("/driver-point/{pointId}/refund")
+    public ResponseEntity<DriverPointHistoryRefundDTO> refundDriverPoint(@PathVariable UUID pointId) {
+        DriverPointHistoryRefundDTO dto = usermanageService.refundByHistory(pointId);
+        return ResponseEntity.ok(dto);
     }
 }

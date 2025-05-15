@@ -4,16 +4,13 @@ import java.time.Instant;
 import java.util.UUID;
 import strip.domain.enumeration.DriverPointHistoryStatus;
 
-public class DriverPointHistoryDTO {
+public class DriverPointHistoryRefundDTO {
 
     private UUID pointId;
     private Integer point;
     private String reason;
     private Instant date;
     private DriverPointHistoryStatus status;
-
-    private UUID driverId;
-    private UUID userId;
 
     public UUID getPointId() {
         return pointId;
@@ -53,21 +50,5 @@ public class DriverPointHistoryDTO {
 
     public void setStatus(DriverPointHistoryStatus status) {
         this.status = status;
-    }
-
-    public UUID getDriverId() {
-        return driverId;
-    }
-
-    public void setDriverId(UUID driverId) {
-        this.driverId = driverId;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 }

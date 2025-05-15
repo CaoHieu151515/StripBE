@@ -317,13 +317,14 @@ public class Driver implements Serializable {
     }
 
     public void addDriverPointHistory(DriverPointHistory history) {
-        driverPointHistories.add(history);
+        this.driverPointHistories.add(history);
         history.setDriver(this);
 
+        int current = this.driverPoint != null ? this.driverPoint : 0;
         if (history.getStatus() == DriverPointHistoryStatus.DONE) {
-            this.driverPoint = this.driverPoint - history.getPoint();
+            this.driverPoint = Math.max(0, current - history.getPoint());
         } else if (history.getStatus() == DriverPointHistoryStatus.REFUND) {
-            this.driverPoint = this.driverPoint + history.getPoint();
+            this.driverPoint = Math.min(14, current + history.getPoint());
         }
     }
 

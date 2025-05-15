@@ -944,38 +944,47 @@ public class TripCustomService {
 
     @Transactional
     public FeedbackDTO createPassengerFeedbackForDriver(UUID tripId, FeedbackCreateDTO dto) {
+        // ✅ Tìm chuyến đi
         Trip trip = tripRepository
             .findByTripID(tripId)
             .orElseThrow(() -> new BadRequestAlertException("Trip not found", "trip", "notfound"));
 
+        // ✅ Chỉ cho feedback nếu chuyến đã hoàn thành
         if (trip.getTripStatus() != TripStatus.DONE) {
             throw new BadRequestAlertException("Trip is not DONE yet", "trip", "invalid-status");
         }
 
-        // Check Passenger đã tham gia chuyến này chưa
+        // ✅ Xác thực người dùng hiện tại
         User currentUser = SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
 
+        // ✅ Kiểm tra user có tham gia chuyến hay không
         List<RequestTrip> userRequests = requestTripRepository.findByTrip_TripIDAndUser_Id(tripId, currentUser.getId());
         boolean joined = userRequests.stream().anyMatch(r -> r.getStatus() == PassengerStatus.DONE);
         if (!joined) {
             throw new BadRequestAlertException("You did not join this trip", "trip", "not-joined");
         }
 
-        // ✅ Tạo feedback
+        // ✅ Tạo Feedback
         Feedback feedback = new Feedback();
         feedback.setFeedbackID(UUID.randomUUID());
         feedback.setFeedbackDescription(dto.getFeedbackDescription());
         feedback.setFeedbackRating(dto.getFeedbackRating());
-        feedback.setFeedbackStatus(FeedbackStatus.DONE);
+
+        if (dto.getFeedbackRating() >= 3) {
+            feedback.setFeedbackStatus(FeedbackStatus.DONE);
+        } else {
+            feedback.setFeedbackStatus(FeedbackStatus.WAITING);
+        }
+
         feedback.setFeedbackType(FeedbackType.USER_TO_DRIVER);
         feedback.setTrip(trip);
         feedback.setDriver(trip.getDriver());
         feedback.setUser(currentUser);
-
         feedbackRepository.save(feedback);
 
+        // ✅ Ghi rating song song (nếu có sử dụng để thống kê sao)
         Rating rating = new Rating();
         rating.setRatingID(UUID.randomUUID());
         rating.setRatingTime(Instant.now());

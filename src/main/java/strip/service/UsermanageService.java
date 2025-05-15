@@ -2,6 +2,7 @@ package strip.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.time.Instant;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -60,10 +61,12 @@ import strip.repository.UserWalletRepository;
 import strip.repository.VehicleRepository;
 import strip.repository.WalletDepositRepository;
 import strip.repository.WalletTransactionRepository;
+import strip.security.SecurityUtils;
 import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.DriverInfoDTO;
-import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.DriverPointHistoryListDTO;
+import strip.service.dto.DriverPointHistoryRefundDTO;
 import strip.service.dto.DriverRawDTO;
 import strip.service.dto.DriverVehicleDTO;
 import strip.service.dto.FeedbackCusDTO;
@@ -880,13 +883,31 @@ public class UsermanageService {
         return dto;
     }
 
-    public Page<DriverPointHistoryDTO> getPointHistoryByUserDetail(UUID userDetailId, Pageable pageable) {
-        Page<DriverPointHistory> histories = driverPointHistoryRepository.findByUserDetail_AppUserDetail(userDetailId, pageable);
-        return histories.map(usermanageMapper::toDto);
+    @Transactional(readOnly = true)
+    public Page<DriverPointHistoryListDTO> getPointHistoryListByUserDetail(UUID userDetailId, Pageable pageable) {
+        Page<DriverPointHistory> page = driverPointHistoryRepository.findByDriver_DriverID(userDetailId, pageable);
+
+        return page.map(history -> {
+            // 👉 Map các field cơ bản (không bao gồm userName)
+            DriverPointHistoryListDTO dto = usermanageMapper.toListDtoBase(history);
+
+            // 👉 Truy vấn userName theo userID từ userDetail (nếu có)
+            if (history.getUserDetail() != null && history.getUserDetail().getUser().getId() != null) {
+                userRepository
+                    .findById(history.getUserDetail().getUser().getId())
+                    .ifPresent(user -> {
+                        dto.setUserName(user.getLogin());
+                    });
+            } else {
+                dto.setUserName("Hệ thống");
+            }
+
+            return dto;
+        });
     }
 
     @Transactional
-    public DriverPointHistoryDTO refundByHistory(UUID pointId) {
+    public DriverPointHistoryRefundDTO refundByHistory(UUID pointId) {
         DriverPointHistory original = driverPointHistoryRepository
             .findByPointId(pointId)
             .orElseThrow(() -> new BadRequestAlertException("History not found", "pointHistory", "notfound"));
@@ -897,25 +918,59 @@ public class UsermanageService {
 
         Instant now = Instant.now();
         Instant expiredTime = original.getDate().plus(48, ChronoUnit.HOURS);
-
         if (now.isAfter(expiredTime)) {
-            throw new BadRequestAlertException("Refund expired. Only allowed within 48 hours", "driverPointHistory", "expired");
+            throw new BadRequestAlertException("Refund expired. Only allowed within 48 hours", "pointHistory", "expired");
         }
 
         Driver driver = original.getDriver();
         if (driver == null) {
-            throw new BadRequestAlertException("Driver not found for history", "driver", "null");
+            throw new BadRequestAlertException("Driver not found", "driver", "null");
         }
 
-        // ✅ Cộng điểm lại
-        driver.setDriverPoint(driver.getDriverPoint() + original.getPoint());
-        driverRepository.save(driver); // hoặc không cần nếu có @Transactional
-
-        // ✅ Cập nhật trạng thái bản ghi
+        // ✅ Đánh dấu bản ghi đã được refund
         original.setStatus(DriverPointHistoryStatus.REFUND);
-        driverPointHistoryRepository.save(original);
+        driver.addDriverPointHistory(original);
 
+        // ✅ Tính tổng điểm bị trừ thực tế trong tháng
+        int netPenalty = calculateMonthlyNetPenalty(driver);
+
+        int banThreshold = 14;
+
+        // ✅ Gỡ banned nếu đủ điều kiện
+        if (
+            driver.getDriverStatus() == DriverStatus.BANNED &&
+            driver.getBannedDay() != null &&
+            Instant.now().isBefore(driver.getBannedDay()) &&
+            netPenalty < banThreshold
+        ) {
+            driver.setDriverStatus(DriverStatus.ACTIVE);
+            driver.setBannedDay(null);
+        }
+
+        driverRepository.save(driver);
         return usermanageMapper.toDto(original);
+    }
+
+    private int calculateMonthlyNetPenalty(Driver driver) {
+        YearMonth currentMonth = YearMonth.now();
+
+        int totalPenalty = driver
+            .getDriverPointHistories()
+            .stream()
+            .filter(h -> h.getStatus() == DriverPointHistoryStatus.DONE)
+            .filter(h -> YearMonth.from(h.getDate()).equals(currentMonth))
+            .mapToInt(DriverPointHistory::getPoint)
+            .sum();
+
+        int totalRefund = driver
+            .getDriverPointHistories()
+            .stream()
+            .filter(h -> h.getStatus() == DriverPointHistoryStatus.REFUND)
+            .filter(h -> YearMonth.from(h.getDate()).equals(currentMonth))
+            .mapToInt(DriverPointHistory::getPoint)
+            .sum();
+
+        return totalPenalty - totalRefund;
     }
 
     public Page<ReportCusDTO> getAllReports(Pageable pageable, ReportStatus status, ReportType type) {
@@ -1005,6 +1060,8 @@ public class UsermanageService {
         dto.setFromOwner(resolveFrom(tx));
         dto.setToOwner(resolveTo(tx));
         dto.setDescription(buildDescription(tx));
+        dto.setBefore(tx.getBefore());
+        dto.setCurrent(tx.getCurrent());
         return dto;
     }
 
@@ -1156,5 +1213,57 @@ public class UsermanageService {
     @Transactional(readOnly = true)
     public double getSystemWalletBalance() {
         return systemWalletRepository.findTopByOrderByMobifyDateDesc().map(SystemWallet::getCurrent).orElse(0.0);
+    }
+
+    @Transactional
+    public void penalizeDriverByFeedback(UUID feedbackId, String reason) {
+        Feedback feedback = feedbackRepository
+            .findByFeedbackID(feedbackId)
+            .orElseThrow(() -> new BadRequestAlertException("Feedback not found", "feedback", "notfound"));
+
+        if (feedback.getFeedbackStatus() != FeedbackStatus.WAITING) {
+            throw new BadRequestAlertException("Feedback has already been processed", "feedback", "already-processed");
+        }
+
+        Driver driver = feedback.getDriver();
+        if (driver == null) {
+            throw new BadRequestAlertException("Driver not found in feedback", "driver", "notfound");
+        }
+
+        int rating = feedback.getFeedbackRating();
+        int minusPoint = (rating == 1) ? 2 : (rating == 2) ? 1 : 0;
+
+        if (minusPoint <= 0) {
+            throw new BadRequestAlertException("Không cần xử phạt với đánh giá này", "feedback", "no-penalty");
+        }
+
+        User currentUser = SecurityUtils.getCurrentUserLogin()
+            .flatMap(userRepository::findOneByLogin)
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "user", "notfound"));
+        UserDetail currentUserDetail = userDetailRepository
+            .findByUser(currentUser)
+            .orElseThrow(() -> new BadRequestAlertException("UserDetail not found", "userDetail", "notfound"));
+
+        // ✅ Ghi lịch sử phạt
+        DriverPointHistory history = new DriverPointHistory();
+        history.setPoint(minusPoint);
+        history.setReason(reason);
+        history.setDate(Instant.now());
+        history.setStatus(DriverPointHistoryStatus.DONE);
+        history.setUserDetail(currentUserDetail);
+
+        driver.addDriverPointHistory(history);
+
+        // ✅ Nếu hết điểm thì chuyển trạng thái và ban 1 tháng
+        if (driver.getDriverPoint() <= 0) {
+            driver.setDriverStatus(DriverStatus.BANNED);
+            driver.setBannedDay(Instant.now().plus(30, ChronoUnit.DAYS));
+        }
+
+        // ✅ Đánh dấu feedback đã xử lý
+        feedback.setFeedbackStatus(FeedbackStatus.DONE);
+
+        driverRepository.save(driver);
+        feedbackRepository.save(feedback);
     }
 }

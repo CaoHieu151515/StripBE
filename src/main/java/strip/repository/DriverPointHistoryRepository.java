@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
+import strip.domain.Driver;
 import strip.domain.DriverPointHistory;
 
 /**
@@ -18,4 +19,8 @@ public interface DriverPointHistoryRepository extends JpaRepository<DriverPointH
     Optional<DriverPointHistory> findByPointId(UUID driverID);
 
     Page<DriverPointHistory> findByUserDetail_AppUserDetail(UUID userDetailId, Pageable pageable);
+
+    List<DriverPointHistory> findByDriver(Driver driver);
+
+    Page<DriverPointHistory> findByDriver_DriverID(UUID driverId, Pageable pageable);
 }

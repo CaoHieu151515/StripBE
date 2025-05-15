@@ -15,6 +15,8 @@ public class WalletTransactionAdminDTO {
     private String toOwner;
     private Instant createdDate;
     private String description;
+    private Double current;
+    private Double before;
 
     public UUID getTransactionId() {
         return transactionId;
@@ -22,6 +24,22 @@ public class WalletTransactionAdminDTO {
 
     public void setTransactionId(UUID transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public Double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Double current) {
+        this.current = current;
+    }
+
+    public Double getBefore() {
+        return before;
+    }
+
+    public void setBefore(Double before) {
+        this.before = before;
     }
 
     public String getFromOwner() {

@@ -14,7 +14,8 @@ import strip.domain.Vehicle;
 import strip.domain.WalletDeposit;
 import strip.service.dto.ConfirmingVehicleDTO;
 import strip.service.dto.DriverDTO;
-import strip.service.dto.DriverPointHistoryDTO;
+import strip.service.dto.DriverPointHistoryListDTO;
+import strip.service.dto.DriverPointHistoryRefundDTO;
 import strip.service.dto.DriverRawDTO;
 import strip.service.dto.ReportCusDTO;
 import strip.service.dto.TripCusDTO;
@@ -82,9 +83,7 @@ public interface UsermanageMapper {
     @Mapping(target = "trip", ignore = true) // chỉ map tripID nếu cần
     TripStopLocationDTO toTripStopLocationDTO(TripStopLocation stopLocation);
 
-    @Mapping(target = "userId", source = "userDetail.appUserDetail")
-    @Mapping(target = "driverId", source = "driver.driverID")
-    DriverPointHistoryDTO toDto(DriverPointHistory entity);
+    DriverPointHistoryRefundDTO toDto(DriverPointHistory entity);
 
     @Mapping(source = "trip.tripID", target = "tripId")
     @Mapping(target = "userId", ignore = true)
@@ -151,4 +150,7 @@ public interface UsermanageMapper {
     @Mapping(target = "avatarUrl", ignore = true)
     @Mapping(target = "rating", ignore = true)
     DriverRawDTO toRawDTO(Driver driver, UserDetail userDetail);
+
+    @Mapping(target = "userName", ignore = true)
+    DriverPointHistoryListDTO toListDtoBase(DriverPointHistory entity);
 }
