@@ -2,6 +2,7 @@ package strip.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 import strip.domain.enumeration.PackageDriverStatus;
@@ -28,6 +29,26 @@ public class PackageDriverDTO implements Serializable {
     private Integer bonus;
 
     private PackageDriverStatus status;
+
+    private Instant createdDate;
+
+    private Instant expireDate;
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Instant getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(Instant expireDate) {
+        this.expireDate = expireDate;
+    }
 
     public Long getId() {
         return id;

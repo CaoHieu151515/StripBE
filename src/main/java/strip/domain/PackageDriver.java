@@ -3,6 +3,7 @@ package strip.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -50,6 +51,12 @@ public class PackageDriver implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private PackageDriverStatus status;
+
+    @Column(name = "created_date")
+    private Instant createdDate;
+
+    @Column(name = "expire_date")
+    private Instant expireDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "packageDriver")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -171,6 +178,32 @@ public class PackageDriver implements Serializable {
         return this.payments;
     }
 
+    public Instant getCreatedDate() {
+        return this.createdDate;
+    }
+
+    public PackageDriver createdDate(Instant createdDate) {
+        this.setCreatedDate(createdDate);
+        return this;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Instant getExpireDate() {
+        return this.expireDate;
+    }
+
+    public PackageDriver expireDate(Instant expireDate) {
+        this.setExpireDate(expireDate);
+        return this;
+    }
+
+    public void setExpireDate(Instant expireDate) {
+        this.expireDate = expireDate;
+    }
+
     public void setPayments(Set<Payment> payments) {
         if (this.payments != null) {
             this.payments.forEach(i -> i.setPackageDriver(null));
@@ -229,7 +262,8 @@ public class PackageDriver implements Serializable {
         return this;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and
+    // setters here
 
     @Override
     public boolean equals(Object o) {
@@ -244,7 +278,8 @@ public class PackageDriver implements Serializable {
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        // see
+        // https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
         return getClass().hashCode();
     }
 
@@ -252,14 +287,14 @@ public class PackageDriver implements Serializable {
     @Override
     public String toString() {
         return "PackageDriver{" +
-            "id=" + getId() +
-            ", packageID='" + getPackageID() + "'" +
-            ", price=" + getPrice() +
-            ", name='" + getName() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", time=" + getTime() +
-            ", bonus=" + getBonus() +
-            ", status='" + getStatus() + "'" +
-            "}";
+                "id=" + getId() +
+                ", packageID='" + getPackageID() + "'" +
+                ", price=" + getPrice() +
+                ", name='" + getName() + "'" +
+                ", description='" + getDescription() + "'" +
+                ", time=" + getTime() +
+                ", bonus=" + getBonus() +
+                ", status='" + getStatus() + "'" +
+                "}";
     }
 }

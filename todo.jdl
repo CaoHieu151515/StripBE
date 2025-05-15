@@ -217,7 +217,9 @@ entity PackageDriver {
   description String,
   time Integer,
   bonus Integer,
-  status PackageDriverStatus
+  status PackageDriverStatus,
+  createdDate Instant,
+  expireDate Instant
 }
 
 entity Payment {

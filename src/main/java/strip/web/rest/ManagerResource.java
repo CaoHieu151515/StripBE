@@ -220,9 +220,19 @@ public class ManagerResource {
         @RequestParam(required = false) String name,
         @RequestParam(required = false) Double price,
         @RequestParam(required = false) Integer time,
-        @RequestParam(required = false) PackageDriverStatus status
+        @RequestParam(required = false) PackageDriverStatus status,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant expireDate
     ) {
-        Page<PackageDriverDTO> page = usermanageService.getAllPackagesWithFilter(pageable, name, price, time, status);
+        Page<PackageDriverDTO> page = usermanageService.getAllPackagesWithFilter(
+            pageable,
+            name,
+            price,
+            time,
+            status,
+            createdDate,
+            expireDate
+        );
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 

@@ -467,7 +467,9 @@ public class UsermanageService {
         String name,
         Double price,
         Integer time,
-        PackageDriverStatus status
+        PackageDriverStatus status,
+        Instant createdDate,
+        Instant expireDate
     ) {
         List<PackageDriverDTO> filtered = packageDriverRepository
             .findAll()
@@ -476,6 +478,8 @@ public class UsermanageService {
             .filter(pkg -> price == null || Objects.equals(pkg.getPrice(), price))
             .filter(pkg -> time == null || Objects.equals(pkg.getTime(), time))
             .filter(pkg -> status == null || pkg.getStatus() == status)
+            .filter(pkg -> createdDate == null || (pkg.getCreatedDate() != null && pkg.getCreatedDate().equals(createdDate)))
+            .filter(pkg -> expireDate == null || (pkg.getExpireDate() != null && pkg.getExpireDate().equals(expireDate)))
             .map(packageDriverMapper::toDto)
             .toList();
 
@@ -489,6 +493,8 @@ public class UsermanageService {
                         case "name" -> Comparator.comparing(PackageDriverDTO::getName, String.CASE_INSENSITIVE_ORDER);
                         case "price" -> Comparator.comparing(PackageDriverDTO::getPrice);
                         case "time" -> Comparator.comparing(PackageDriverDTO::getTime);
+                        case "createdDate" -> Comparator.comparing(PackageDriverDTO::getCreatedDate);
+                        case "expireDate" -> Comparator.comparing(PackageDriverDTO::getExpireDate);
                         default -> null;
                     };
                 return (c != null && order.isDescending()) ? c.reversed() : c;
@@ -511,8 +517,27 @@ public class UsermanageService {
 
     public PackageDriverDTO createPackage(PackageDriverDTO packageDriverDTO) {
         PackageDriver packageDriver = packageDriverMapper.toEntity(packageDriverDTO);
+
+        Instant now = Instant.now();
+
+        // Nếu expireDate được gửi từ FE
+        if (packageDriver.getExpireDate() != null) {
+            if (packageDriver.getExpireDate().isBefore(now)) {
+                throw new BadRequestAlertException("Ngày hết hạn không được nằm trong quá khứ", "packageDriver", "expireDate-past");
+            }
+            if (packageDriver.getCreatedDate() != null && packageDriver.getExpireDate().isBefore(packageDriver.getCreatedDate())) {
+                throw new BadRequestAlertException("Ngày hết hạn phải sau ngày tạo", "packageDriver", "expireDate-before-created");
+            }
+        }
+
         packageDriver.setPackageID(UUID.randomUUID());
         packageDriver.setStatus(PackageDriverStatus.ACTIVE);
+
+        // Nếu FE không set createdDate → gán mặc định
+        if (packageDriver.getCreatedDate() == null) {
+            packageDriver.setCreatedDate(now);
+        }
+
         packageDriver = packageDriverRepository.save(packageDriver);
         return packageDriverMapper.toDto(packageDriver);
     }
