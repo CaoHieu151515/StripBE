@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.User;
@@ -79,5 +80,27 @@ public class DriverStatusScheduler {
             user.getAuthorities().remove(driverRole);
             userRepository.save(user);
         }
+    }
+
+    @Scheduled(fixedRate = 3600000) // mỗi giờ
+    @Transactional
+    public void unbanEligibleDrivers() {
+        Instant now = Instant.now();
+
+        List<Driver> bannedDrivers = driverRepository.findByDriverStatusAndBannedDayBefore(DriverStatus.BANNED, now);
+
+        for (Driver driver : bannedDrivers) {
+            if (driver.getExpirationDate() != null && driver.getExpirationDate().isAfter(now)) {
+                driver.setDriverStatus(DriverStatus.ACTIVE);
+                log.info("✅ Gỡ ban: tài xế {} có expiredDate hợp lệ đến {}", driver.getDriverID(), driver.getExpirationDate());
+            } else {
+                driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+                log.info("✅ Gỡ ban: tài xế {} nhưng không còn gói → NOT_DRIVER", driver.getDriverID());
+            }
+
+            driver.setBannedDay(null);
+        }
+
+        driverRepository.saveAll(bannedDrivers);
     }
 }

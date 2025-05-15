@@ -25,4 +25,6 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
     Optional<Driver> findByDriverID(UUID driverID);
 
     List<Driver> findAllByDriverStatusAndExpirationDateBefore(DriverStatus status, Instant time);
+
+    List<Driver> findByDriverStatusAndBannedDayBefore(DriverStatus status, Instant time);
 }
