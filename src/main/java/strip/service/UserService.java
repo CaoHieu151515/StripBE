@@ -36,6 +36,7 @@ import strip.security.SecurityUtils;
 import strip.service.dto.AdminUserDTO;
 import strip.service.dto.ChangeAvatarDTO;
 import strip.service.dto.CurrentUserDTO;
+import strip.service.dto.RegisterWithoutOTPDTO;
 import strip.service.dto.UpdateUserProfileNoImageDTO;
 import strip.service.dto.UserDTO;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -546,5 +547,45 @@ public class UserService {
             userDetail.setUserimageContentType(dto.getUserImageContentType());
         }
         userDetailRepository.save(userDetail);
+    }
+
+    @Transactional
+    public User registerUserWithoutOTP(RegisterWithoutOTPDTO dto) {
+        // Check email trùng
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(dto.getEmail());
+        if (existingUser.isPresent()) {
+            throw new EmailAlreadyUsedException();
+        }
+
+        // Generate login ngẫu nhiên
+        String login;
+        do {
+            login = RandomUsername.generateRandomCode(9);
+        } while (userRepository.findOneByLogin(login).isPresent());
+
+        String encryptedPassword = passwordEncoder.encode(dto.getPassword());
+
+        User newUser = new User();
+        newUser.setLogin(login);
+        newUser.setEmail(dto.getEmail().toLowerCase());
+        newUser.setPassword(encryptedPassword);
+        newUser.setFirstName(dto.getFirstName());
+        newUser.setLastName(dto.getLastName());
+        newUser.setImageUrl(dto.getImageUrl());
+        newUser.setLangKey(dto.getLangKey());
+        newUser.setActivated(true);
+        newUser.setActivationKey(null);
+
+        // Gán quyền PASSENGER mặc định
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.PASSENGER).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+
+        userRepository.save(newUser);
+        clearUserCaches(newUser);
+        initializeUserData(newUser);
+
+        log.debug("Created test user without OTP: {}", newUser);
+        return newUser;
     }
 }

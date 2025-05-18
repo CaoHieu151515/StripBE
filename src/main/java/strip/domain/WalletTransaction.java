@@ -49,10 +49,10 @@ public class WalletTransaction implements Serializable {
     @Column(name = "transaction_third_party_id")
     private String transactionThirdPartyID;
 
-    @Column(name = "before")
+    @Column(name = "`before`")
     private Double before;
 
-    @Column(name = "current")
+    @Column(name = "`current`")
     private Double current;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -82,7 +82,7 @@ public class DriverStatusScheduler {
         }
     }
 
-    @Scheduled(fixedRate = 3600000) // mỗi giờ
+    @Scheduled(fixedRate = 3600000)
     @Transactional
     public void unbanEligibleDrivers() {
         Instant now = Instant.now();

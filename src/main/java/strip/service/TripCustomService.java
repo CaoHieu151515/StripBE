@@ -69,6 +69,7 @@ import strip.service.mapper.FeedbackMapper;
 import strip.service.mapper.TripCusMapper;
 import strip.service.mapper.TripStopLocationSkipTripMapper;
 import strip.service.mapper.UsermanageMapper;
+import strip.ultil.TripCodeUtils;
 import strip.web.rest.errors.BadRequestAlertException;
 
 @Service
@@ -567,6 +568,7 @@ public class TripCustomService {
             .map(trip -> {
                 TripCardDTO dto = new TripCardDTO();
                 dto.setTripID(trip.getTripID());
+                dto.setHandleId(TripCodeUtils.encode(trip.getId()));
                 dto.setStartLocation(trip.getStartLocation());
                 dto.setEndLocation(trip.getEndLocation());
                 dto.setStartDate(trip.getStartDate());
@@ -964,6 +966,15 @@ public class TripCustomService {
         boolean joined = userRequests.stream().anyMatch(r -> r.getStatus() == PassengerStatus.DONE);
         if (!joined) {
             throw new BadRequestAlertException("You did not join this trip", "trip", "not-joined");
+        }
+
+        boolean alreadyFeedback = feedbackRepository.existsByTrip_TripIDAndUser_IdAndFeedbackType(
+            tripId,
+            currentUser.getId(),
+            FeedbackType.USER_TO_DRIVER
+        );
+        if (alreadyFeedback) {
+            throw new BadRequestAlertException("You have already given feedback for this trip", "feedback", "already-exists");
         }
 
         // ✅ Tạo Feedback

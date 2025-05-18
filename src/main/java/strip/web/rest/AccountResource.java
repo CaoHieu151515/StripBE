@@ -22,7 +22,9 @@ import strip.service.UserService;
 import strip.service.dto.AdminUserDTO;
 import strip.service.dto.ChangeAvatarDTO;
 import strip.service.dto.PasswordChangeDTO;
+import strip.service.dto.RegisterWithoutOTPDTO;
 import strip.service.dto.UpdateUserProfileNoImageDTO;
+import strip.service.dto.UserDTO;
 import strip.web.rest.errors.EmailAlreadyUsedException;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.errors.LoginAlreadyUsedException;
@@ -255,5 +257,11 @@ public class AccountResource {
     public ResponseEntity<Void> changeAvatar(@RequestBody ChangeAvatarDTO dto) {
         userService.updateAvatar(dto);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/public/register-without-otp")
+    public ResponseEntity<UserDTO> registerUserWithoutOTP(@RequestBody RegisterWithoutOTPDTO dto) {
+        User user = userService.registerUserWithoutOTP(dto);
+        return ResponseEntity.ok(new UserDTO(user));
     }
 }

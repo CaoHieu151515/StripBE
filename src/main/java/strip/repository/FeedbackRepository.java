@@ -40,4 +40,6 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     Optional<Feedback> findByFeedbackID(UUID feedbackID);
 
     List<Feedback> findByDriver_DriverIDAndFeedbackType(UUID driverId, FeedbackType type);
+
+    boolean existsByTrip_TripIDAndUser_IdAndFeedbackType(UUID tripId, Long userId, FeedbackType feedbackType);
 }

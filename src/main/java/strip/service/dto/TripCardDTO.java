@@ -7,6 +7,7 @@ import strip.domain.enumeration.VehicleType;
 public class TripCardDTO {
 
     private UUID tripID;
+    private String handleId;
     private String startLocation;
     private String endLocation;
     private Instant startDate;
@@ -97,5 +98,13 @@ public class TripCardDTO {
 
     public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
+    }
+
+    public String getHandleId() {
+        return handleId;
+    }
+
+    public void setHandleId(String handleId) {
+        this.handleId = handleId;
     }
 }
