@@ -227,3 +227,6 @@ application:
     merchantId: dfw566wbpz3sp7st
     publicKey: twq69wpt67wdfm98
     privateKey: 5521277e2d4895bc87c314dcce0ac64d
+  paypal:
+    client-id: AfrsEQWb5mcAnMLr8BnRunkr4eogf1TWI38Yt218xLxcsS6cNz3rSZ3b09p5XdZwejxjsQxn1oOhS8b9
+    secret: EFEUjHEshRu23K2I8qnNH-lvhOSrZZ0PqjehTXjPfeUHUgMsje3_gkuU-rfA6rCJOUSpkFWdZNod-CMQ

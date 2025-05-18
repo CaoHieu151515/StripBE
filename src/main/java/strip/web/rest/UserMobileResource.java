@@ -22,6 +22,7 @@ import strip.domain.User;
 import strip.service.MailService;
 import strip.service.UserMobileService;
 import strip.service.UserService;
+import strip.service.WithdrawService;
 import strip.service.dto.ConfirmingDriverDTO;
 import strip.service.dto.ConfirmingVehicleDriverDTO;
 import strip.service.dto.JoinTripRequestDTO;
@@ -34,6 +35,7 @@ import strip.service.dto.UserWalletWithTransactionsDTO;
 import strip.service.dto.VehicleCreateDTO;
 import strip.service.dto.VehicleDTO;
 import strip.service.dto.WithdrawRequestDTO;
+import strip.service.dto.WithdrawRequestPaypalDTO;
 import strip.web.rest.errors.InvalidPasswordException;
 import strip.web.rest.vm.KeyAndPasswordVM;
 import strip.web.rest.vm.ManagedUserVM;
@@ -57,10 +59,18 @@ public class UserMobileResource {
 
     private final MailService mailService;
 
-    public UserMobileResource(UserMobileService userMobileService, UserService userService, MailService mailService) {
+    private final WithdrawService withdrawService;
+
+    public UserMobileResource(
+        UserMobileService userMobileService,
+        UserService userService,
+        MailService mailService,
+        WithdrawService withdrawService
+    ) {
         this.userMobileService = userMobileService;
         this.userService = userService;
         this.mailService = mailService;
+        this.withdrawService = withdrawService;
     }
 
     @GetMapping("/getme")
@@ -182,5 +192,17 @@ public class UserMobileResource {
     public ResponseEntity<VehicleDTO> createVehicle(@RequestBody VehicleCreateDTO dto) {
         VehicleDTO result = userMobileService.createVehicleForCurrentDriver(dto);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/withdraw/test-create")
+    public ResponseEntity<Void> testCreateWithdrawRequest() {
+        withdrawService.testCreateWithdrawRequest();
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/withdraw/request")
+    public ResponseEntity<Void> requestWithdraw(@RequestBody WithdrawRequestPaypalDTO dto) {
+        withdrawService.requestWithdraw(dto);
+        return ResponseEntity.ok().build();
     }
 }

@@ -14,6 +14,7 @@ public class ApplicationProperties {
     private final Liquibase liquibase = new Liquibase();
     private final Trip trip = new Trip();
     private final Braintree braintree = new Braintree();
+    private final Paypal paypal = new Paypal();
 
     // jhipster-needle-application-properties-property
 
@@ -27,6 +28,10 @@ public class ApplicationProperties {
 
     public Braintree getBraintree() {
         return braintree;
+    }
+
+    public Paypal getPaypal() {
+        return paypal;
     }
 
     // jhipster-needle-application-properties-property-getter
@@ -113,6 +118,28 @@ public class ApplicationProperties {
 
         public void setPrivateKey(String privateKey) {
             this.privateKey = privateKey;
+        }
+    }
+
+    public static class Paypal {
+
+        private String clientId;
+        private String secret;
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getSecret() {
+            return secret;
+        }
+
+        public void setSecret(String secret) {
+            this.secret = secret;
         }
     }
     // jhipster-needle-application-properties-property-class

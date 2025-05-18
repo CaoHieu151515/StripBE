@@ -1,0 +1,41 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="20250518-01" author="teo">
+        <createTable tableName="withdraw_request">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="uuid" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="amount" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="varchar(255)"/>
+            <column name="request_date" type="timestamp"/>
+            <column name="processed_date" type="timestamp"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="withdraw_request"
+                                 baseColumnNames="user_id"
+                                 referencedTableName="jhi_user"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_withdraw_request_user"/>
+    </changeSet>
+</databaseChangeLog>
