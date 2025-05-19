@@ -28,4 +28,6 @@ public interface RatingRepository extends JpaRepository<Rating, Long> {
     Double findAverageRatingByDriverId(@Param("driverId") UUID driverId);
 
     List<Rating> findByDriver_DriverIDAndRatingType(UUID driverId, RatingType type);
+
+    List<Rating> findByTrip_TripID(UUID tripId);
 }

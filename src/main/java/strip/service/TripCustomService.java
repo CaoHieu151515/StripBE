@@ -2,6 +2,7 @@
 package strip.service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1083,5 +1084,53 @@ public class TripCustomService {
         dto.setAverageRating(Optional.ofNullable(ratingRepository.findAverageRatingByDriverId(driver.getDriverID())).orElse(0.0));
 
         return dto;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DriverRatingDetailDTO> getTripFeedbacksForTrip(UUID tripId) {
+        if (!tripRepository.existsByTripID(tripId)) {
+            throw new BadRequestAlertException("Trip not found", "trip", "notfound");
+        }
+
+        List<Feedback> feedbacks = feedbackRepository.findByTrip_TripID(tripId);
+        List<Rating> ratings = ratingRepository.findByTrip_TripID(tripId);
+
+        // Dùng appUserDetail (UUID thực tế của user) làm key
+        Map<UUID, Rating> ratingMap = new HashMap<>();
+        for (Rating rating : ratings) {
+            userDetailRepository
+                .findByUserId(rating.getUser().getId())
+                .ifPresent(ud -> {
+                    UUID appUserId = ud.getAppUserDetail();
+                    if (appUserId != null && !ratingMap.containsKey(appUserId)) {
+                        ratingMap.put(appUserId, rating);
+                    }
+                });
+        }
+
+        return feedbacks
+            .stream()
+            .map(fb -> {
+                DriverRatingDetailDTO dto = new DriverRatingDetailDTO();
+                User user = fb.getUser();
+                dto.setUserName(user.getFirstName() + " " + user.getLastName());
+
+                userDetailRepository
+                    .findByUserId(user.getId())
+                    .ifPresent(ud -> {
+                        UUID appUserId = ud.getAppUserDetail();
+                        dto.setAvatarUser(imageUrlService.buildUserAvatarUrl(appUserId));
+
+                        Rating rating = ratingMap.get(appUserId);
+                        if (rating != null) {
+                            dto.setRatingValue(rating.getRatingDriver());
+                            dto.setRatingDate(rating.getRatingTime());
+                        }
+                    });
+
+                dto.setFeedbackContent(fb.getFeedbackDescription());
+                return dto;
+            })
+            .collect(Collectors.toList());
     }
 }

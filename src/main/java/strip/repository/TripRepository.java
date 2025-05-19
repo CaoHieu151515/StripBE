@@ -68,4 +68,6 @@ public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificat
 
     @Query("SELECT t FROM Trip t LEFT JOIN FETCH t.tripStopLocations WHERE t.tripID = :tripId")
     Optional<Trip> findByTripIDWithStops(@Param("tripId") UUID tripId);
+
+    boolean existsByTripID(UUID tripId);
 }

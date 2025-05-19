@@ -19,6 +19,7 @@ import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.service.dto.NotificationCreateDTO;
 import strip.service.dto.NotificationDTO;
+import strip.service.dto.NotificationListResponseDTO;
 import strip.service.dto.NotificationNewDTO;
 import strip.service.mapper.NotificationMapper;
 import strip.web.rest.errors.BadRequestAlertException;
@@ -190,11 +191,20 @@ public class NotificationService {
         return dto;
     }
 
-    public List<NotificationNewDTO> getMyNotificationsByLogin(String login) {
+    public NotificationListResponseDTO getMyNotificationsByLogin(String login) {
         User user = userRepository
             .findOneByLogin(login)
             .orElseThrow(() -> new BadRequestAlertException("User not found", "notification", "user-not-found"));
 
-        return notificationRepository.findAllByUser_IdOrderByCreatedDateDesc(user.getId()).stream().map(this::toDto).toList();
+        List<NotificationNewDTO> list = notificationRepository
+            .findAllByUser_IdOrderByCreatedDateDesc(user.getId())
+            .stream()
+            .map(this::toDto)
+            .toList();
+
+        Long count = notificationRepository.countByUser_IdAndIsReadFalse(user.getId());
+        long unreadCount = (count != null) ? count : 0;
+
+        return new NotificationListResponseDTO(list, unreadCount);
     }
 }

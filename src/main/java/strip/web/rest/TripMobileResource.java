@@ -22,6 +22,7 @@ import strip.domain.RequestTrip;
 import strip.domain.Trip;
 import strip.service.TripCustomService;
 import strip.service.dto.DriverInfoDTO;
+import strip.service.dto.DriverRatingDetailDTO;
 import strip.service.dto.FeedbackCreateDTO;
 import strip.service.dto.FeedbackDTO;
 import strip.service.dto.RequestTripCusDTO;
@@ -157,5 +158,12 @@ public class TripMobileResource {
     public ResponseEntity<DriverInfoDTO> getDriverInfoWithRatings(@PathVariable UUID driverId) {
         DriverInfoDTO result = tripCustomService.getDriverInfoWithRatings(driverId);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{tripId}/feedbackByTrip")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER', 'ROLE_ADMIN', 'ROLE_STAFF')")
+    public ResponseEntity<List<DriverRatingDetailDTO>> getTripFeedbacks(@PathVariable UUID tripId) {
+        List<DriverRatingDetailDTO> feedbacks = tripCustomService.getTripFeedbacksForTrip(tripId);
+        return ResponseEntity.ok(feedbacks);
     }
 }
