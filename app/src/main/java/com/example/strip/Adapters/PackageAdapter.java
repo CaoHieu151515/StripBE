@@ -2,6 +2,7 @@ package com.example.strip.Adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,15 @@ import com.example.strip.Models.PackageDriver;
 
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
+import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -34,7 +41,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     private List<PackageDriver> packageList;
     private Context context;
     private OnPackagePurchaseListener purchaseListener;
-
+    private NotificationPopup notificationPopup;
     public PackageAdapter(Context context, List<PackageDriver> packageList, OnPackagePurchaseListener purchaseListener) {
         this.context = context;
         this.packageList = packageList;
@@ -53,11 +60,13 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PackageDriver pack = packageList.get(position);
         holder.tvName.setText(pack.getName());
-        holder.tvPrice.setText( + pack.getPrice() + "VND");
+        DecimalFormat format = new DecimalFormat("#,###");
+        String formattedPrice = format.format(pack.getPrice());
+        holder.tvPrice.setText(formattedPrice + " VND");
         holder.tvTime.setText("/" + pack.getTime() + " ngày");
         holder.tvDescription.setText("Miêu tả: " + pack.getDescription());
         holder.tvBonus.setText("Thơi gian thêm: " + pack.getBonus());
-        holder.tvStatus.setText("Trạng thái gói: " + pack.getStatus());
+        holder.tvStatus.setText("Trạng thái gói: " + TripStatusTranslate.translateStatus(pack.getStatus()));
         holder.btnSubscribe.setOnClickListener(v -> {
             String packageId = pack.getPackageID(); // Assuming you have getId()
             buyPackage(packageId, v);
@@ -112,6 +121,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
 //    }
 
     private void buyPackage(String packageId, View view) {
+        notificationPopup = new NotificationPopup(context);
         Retrofit retrofit = ApiClient.getClientWithToken(context);
 
         IUserMobileApiService api = retrofit.create(IUserMobileApiService.class);
@@ -126,13 +136,28 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
                     }
 
                 } else {
-                    Toast.makeText(view.getContext(), "Purchase failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e("Failed", "Failed to buy package!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Mua gói thất bại! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Mua gói thất bại! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Mua gói thất bại! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(view.getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }

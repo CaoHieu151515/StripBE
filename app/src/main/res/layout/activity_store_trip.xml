@@ -184,7 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:background="@drawable/input_field_no_bg"
-                    android:text="Ben Thanh Market, Ho Chi Minh City"
+                    android:text="Nhập điểm đi"
                     android:textSize="16sp"
                     android:textColor="@color/gray"
                     android:layout_marginStart="8dp"/>
@@ -212,7 +212,7 @@
                     android:id="@+id/etEndLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
-                    android:text="Tan Son Nhat Airport, Ho Chi Minh City"
+                    android:text="Nhập điểm đến"
                     android:textSize="16sp"
                     android:background="@drawable/input_field_no_bg"
                     android:textColor="@color/gray"

@@ -40,6 +40,7 @@ import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 import com.google.gson.Gson;
@@ -96,6 +97,7 @@ public class EditTripActivity extends AppCompatActivity {
     private int position = 1, duration;
     private List<LocationInfo> availableLocations = new ArrayList<>();
     private EditText edtStopLocaTime;
+    private NotificationPopup notificationPopup;
     // Inside EditTripActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,36 +117,51 @@ public class EditTripActivity extends AppCompatActivity {
         recyclerTripStops = findViewById(R.id.recyclerTripStops);
         availableLocations = loadLocationInfos(); // Your method to load saved locations
         edtStopLocaTime = findViewById(R.id.edtStopLocaTime);
-
+        notificationPopup = new NotificationPopup(this);
         tvStopLoca.setOnClickListener(v -> {
             if (availableLocations.isEmpty()) return;
 
-            // Sort by distance (ascending)
-            Collections.sort(availableLocations, Comparator.comparingDouble(loc -> parseDistanceToDouble(loc.getDistance())));
+            String selectedStartLocation = tvStartLocation.getText().toString();
 
-            String[] locationNames = new String[availableLocations.size()];
-            for (int i = 0; i < availableLocations.size(); i++) {
-                locationNames[i] = "\n" +
-                        "Từ: " + availableLocations.get(i).getStartLocation() + "\n" +
-                        "Đến: " + availableLocations.get(i).getEndLocation() + "\n" +
-                        "Khoảng thời gian: " + availableLocations.get(i).getDuration() + "\n" +
-                        "Khoảng cách: " + availableLocations.get(i).getDistance() + "\n";
+            // Filter locations by matching start location
+            List<LocationInfo> filteredLocations = new ArrayList<>();
+            for (LocationInfo loc : availableLocations) {
+                if (loc.getStartLocation().equalsIgnoreCase(selectedStartLocation)) {
+                    filteredLocations.add(loc);
+                }
+            }
+
+            if (filteredLocations.isEmpty()) {
+                notificationPopup.showPopup("Không có điểm dừng phù hợp với điểm đi đã chọn.\n Làm ơn thêm điểm dừng!",true);
+                return;
+            }
+
+            // Sort by distance (ascending)
+            Collections.sort(filteredLocations, Comparator.comparingDouble(loc -> parseDistanceToDouble(loc.getDistance())));
+
+            String[] locationNames = new String[filteredLocations.size()];
+            for (int i = 0; i < filteredLocations.size(); i++) {
+                locationNames[i] =
+                        "Từ: " + filteredLocations.get(i).getStartLocation() + "\n" +
+                        "Đến: " + filteredLocations.get(i).getEndLocation() + "\n" +
+                        "Khoảng thời gian: " + filteredLocations.get(i).getDuration() + "\n" +
+                        "Khoảng cách: " + filteredLocations.get(i).getDistance() + "\n";
             }
 
             new AlertDialog.Builder(EditTripActivity.this)
                     .setTitle("Lựa chọn điểm dừng chân")
                     .setItems(locationNames, (dialog, which) -> {
-                        LocationInfo selected = availableLocations.get(which);
+                        LocationInfo selected = filteredLocations.get(which);
                         tvStopLoca.setText(selected.getEndLocation());
                         tvEstimatedTime.setText(selected.getDuration());
                         tvEstimatedKM.setText(selected.getDistance());
-
                         duration = parseDurationToInt(selected.getDuration());
                         distance = parseDistanceToDouble(selected.getDistance());
                         calculateAndSetStopLocaTime(edtStopLocaTime);
                     })
                     .show();
         });
+
 
 
 
@@ -228,7 +245,7 @@ public class EditTripActivity extends AppCompatActivity {
 
         btnUpdateTripLocation.setOnClickListener(v -> {
             if (tempStopList.isEmpty()) {
-                Toast.makeText(this, "Chưa có điểm dừng nào để cập nhật!", Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Chưa có điểm dừng nào để cập nhật!",true);
                 return;
             }
             updateTripStops();
@@ -239,7 +256,7 @@ public class EditTripActivity extends AppCompatActivity {
                 StopLocationUpdateRequest newStop = new StopLocationUpdateRequest();
                 newStop.setStopLoca(tvStopLoca.getText().toString());
                 newStop.setStopLocaTime(formatTimeStore);
-                newStop.setStopLocaStatus("UPCOMMING");
+                newStop.setStopLocaStatus("UPCOMING");
                 newStop.setEstimatedTime(duration);
                 newStop.setEstimatedKM(distance);
                 newStop.setStoplocaPosition(position);
@@ -261,15 +278,15 @@ public class EditTripActivity extends AppCompatActivity {
                 tripStopAdapter.notifyItemInserted(currentList.size() - 1);
                 loadTripDetails();
 
-                tvStopLoca.setText("Stop Location");
-                tvEstimatedTime.setText(" - mins");
-                tvEstimatedKM.setText(" - km");
-                edtStopLocaTime.setText("DD-MM-YYYY\n hh:mm:ss tt");
+                tvStopLoca.setText("");
+                tvEstimatedTime.setText("");
+                tvEstimatedKM.setText("");
+                edtStopLocaTime.setText("");
                 position++;
                 tvStopLocaPosition.setText("" + position);
 
             } catch (Exception ex) {
-                Toast.makeText(this, "Invalid stop info: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Thông tin điểm dừng không hợp lệ!" + ex.getMessage(),true);
             }
         });
 
@@ -358,6 +375,9 @@ public class EditTripActivity extends AppCompatActivity {
                     }
                     List<StopLocation> stops = trip.getStopLocations();
                     if (stops != null && !stops.isEmpty()) {
+                        // Sort stops by tripPosition in ascending order
+                        stops.sort(Comparator.comparingInt(StopLocation::getTripPositon));
+
                         TripStopAdapter adapter = new TripStopAdapter(EditTripActivity.this, stops, selectedStop -> {
                             if (lastClicked.equals("start")) {
                                 selectedStartLocaId = selectedStop.getStopLocaID();
@@ -367,9 +387,11 @@ public class EditTripActivity extends AppCompatActivity {
                                 Toast.makeText(EditTripActivity.this, "Please select Start or End button first", Toast.LENGTH_SHORT).show();
                             }
                         });
+
                         recyclerTripStops.setAdapter(adapter);
                         tvStopLocaPosition.setText(String.valueOf(position));
                     }
+
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());
                     Toast.makeText(EditTripActivity.this, "Failed to load trip details!", Toast.LENGTH_SHORT).show();

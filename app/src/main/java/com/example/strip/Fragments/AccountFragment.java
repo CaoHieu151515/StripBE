@@ -24,11 +24,14 @@ import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
 import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
+import com.example.strip.Activities.NotificationListActivity;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Activities.StripDriverActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
+import com.example.strip.Models.Response.NotificationResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
+import com.example.strip.Services.INotificationApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.UnsafeOkHttpClient;
@@ -37,6 +40,7 @@ import com.example.strip.network.ApiClient;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -51,8 +55,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
 
-    private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
-    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout;
+    private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvNotificationBadge;
+    private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout, ivNotification;
     private Button btnEditProfile;
     private UserMoreResponse user;
 
@@ -69,6 +73,7 @@ public class AccountFragment extends Fragment {
         tvGender = view.findViewById(R.id.tvGender);
         tvAddress = view.findViewById(R.id.tvAddress);
         tvDob = view.findViewById(R.id.tvDob);
+        tvNotificationBadge = view.findViewById(R.id.tvNotificationBadge);
         ivProfile = view.findViewById(R.id.ivProfile);
         ivConfirmDriver = view.findViewById(R.id.ivConfirmDriver);
         ivChangePassword = view.findViewById(R.id.ivChangePassword);
@@ -76,6 +81,14 @@ public class AccountFragment extends Fragment {
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         ivChangeToDriver = view.findViewById(R.id.ivChangeToDriver);
         ivLogout = view.findViewById(R.id.ivLogout);
+        ivNotification = view.findViewById(R.id.ivNotification);
+        ivNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), NotificationListActivity.class);
+                startActivity(intent);
+            }
+        });
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +124,7 @@ public class AccountFragment extends Fragment {
         });
         // Gọi API để lấy dữ liệu
         fetchUserInfo();
-
+        fetchNotifications();
         return view;
     }
     private void fetchUserInfo() {
@@ -189,4 +202,41 @@ public class AccountFragment extends Fragment {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+    private void fetchNotifications() {
+        Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
+        INotificationApiService apiService = retrofit.create(INotificationApiService.class);
+
+        Call<List<NotificationResponse>> call = apiService.getMyNotifications();
+
+        call.enqueue(new Callback<List<NotificationResponse>>() {
+            @Override
+            public void onResponse(Call<List<NotificationResponse>> call, Response<List<NotificationResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<NotificationResponse> notifications = response.body();
+
+                    // Count unread notifications (assuming `isRead` field exists)
+                    long unreadCount = notifications.stream()
+                            .filter(n -> !n.isRead()) // or n.getIsRead() == false depending on your model
+                            .count();
+
+                    // Show unread count in a TextView, Badge, etc.
+                    if (unreadCount > 0) {
+                        // Example: update a TextView next to the bell icon
+                        TextView tvNotificationCount = requireView().findViewById(R.id.tvNotificationBadge);
+                        tvNotificationCount.setVisibility(View.VISIBLE);
+                        tvNotificationCount.setText(String.valueOf(unreadCount));
+                    }
+
+                } else {
+                    Log.e("NotificationError", "Error getting notifications: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<NotificationResponse>> call, Throwable t) {
+                Log.e("NotificationError", "API failure: " + t.getMessage());
+            }
+        });
+    }
+
 }

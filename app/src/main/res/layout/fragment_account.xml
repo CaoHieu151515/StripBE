@@ -313,12 +313,36 @@
                 android:text="Cài đặt"
                 android:textSize="20dp"
                 android:textColor="@android:color/holo_blue_dark"/>
-<!--            <ImageView-->
-<!--                android:id="@+id/ivWallet"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:src="@drawable/wallet_buyer"/>-->
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp">
+
+                <ImageView
+                    android:id="@+id/ivNotification"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/bell"
+                    android:contentDescription="Notifications" />
+
+                <TextView
+                    android:id="@+id/tvNotificationBadge"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignTop="@id/ivNotification"
+                    android:layout_alignEnd="@id/ivNotification"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:background="@drawable/badge_background"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+
             <ImageView
                 android:id="@+id/ivLogout"
                 android:layout_width="30dp"

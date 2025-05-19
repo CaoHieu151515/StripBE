@@ -32,6 +32,16 @@ public class Trip {
 
     @SerializedName("vehicleType")
     private String vehicleType;
+    @SerializedName("handleId")
+    private  String handleId;
+
+    public String getHandleId() {
+        return handleId;
+    }
+
+    public void setHandleId(String handleId) {
+        this.handleId = handleId;
+    }
 
     public String getTripID() {
         return tripID;

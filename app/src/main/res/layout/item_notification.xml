@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@drawable/input_field_bg"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/notificationReadIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/bell" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_field_bg"
+        android:padding="5dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/notificationTitle"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/notificationContent"
+            android:textSize="15sp"
+            android:text="Content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/notificationDate"
+            android:text="Date"
+            android:textSize="14sp"
+            android:textColor="@color/red_orange"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>

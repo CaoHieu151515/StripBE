@@ -61,9 +61,18 @@ public class TripBookingResponse {
 
     @SerializedName("vehicleImageUrl")
     public String vehicleImageUrl;
-
+    @SerializedName("tripHandleID")
+    public String tripHandleID;
     @SerializedName("stopLocations")
     public List<StopLocationBookingResponse> stopLocationBookingResponseList;
+
+    public String getTripHandleID() {
+        return tripHandleID;
+    }
+
+    public void setTripHandleID(String tripHandleID) {
+        this.tripHandleID = tripHandleID;
+    }
 
     public String getTripID() {
         return tripID;

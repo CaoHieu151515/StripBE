@@ -16,6 +16,7 @@ import com.example.strip.Models.Response.TripActiveResponse;
 import com.example.strip.Models.Trip;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.TripStatusTranslate;
 
 import java.util.List;
 
@@ -39,13 +40,13 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         TripActiveResponse trip = tripList.get(position);
-        holder.codeTrip.setText("Mã chuyến đi: " + trip.getStripID());
         holder.startLocation.setText("Từ: " + trip.getStartLocation());
         holder.endLocation.setText("Đến: " + trip.getEndlocation());
         holder.price.setText("Giá cả: "+trip.getPrice());
-        holder.status.setText("Trạng thái chuyến đi: "+trip.getStatus());
+        holder.status.setText("Trạng thái chuyến đi: \n" + TripStatusTranslate.translateStatus(trip.getStatus()));
         holder.startDate.setText("Ngày bắt đầu: "+DateFormatter.formatDate(trip.getStartDay()));
         holder.endDate.setText("Ngày kết thúc: " + DateFormatter.formatDate(trip.getEndDay()));
+        holder.handleTripId.setText("Mã chuyến đi: " + trip.getTripHandleId());
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, TripActiveDetailActivity.class);
             intent.putExtra("tripId", trip.getStripID()); // Pass tripId to detail activity
@@ -59,17 +60,17 @@ public class TripActiveAdapter extends RecyclerView.Adapter<TripActiveAdapter.Tr
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView startLocation, endLocation, price, status, startDate, endDate, codeTrip;
+        TextView startLocation, endLocation, price, status, startDate, endDate, handleTripId;
 
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
-            codeTrip = itemView.findViewById(R.id.codeTrip);
             startLocation = itemView.findViewById(R.id.startLocation);
             endLocation = itemView.findViewById(R.id.endLocation);
             price = itemView.findViewById(R.id.price);
             status = itemView.findViewById(R.id.status);
             startDate = itemView.findViewById(R.id.startDate);
             endDate = itemView.findViewById(R.id.endDate);
+            handleTripId = itemView.findViewById(R.id.handleTripId);
         }
     }
 }

@@ -3,6 +3,8 @@ package com.example.strip.Activities.Account;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +19,11 @@ import com.example.strip.Models.Request.LoginVM;
 import com.example.strip.Models.Response.ResponseToken;
 import com.example.strip.R;
 import com.example.strip.Services.IAuthenticateApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +32,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText edEmail, edPassword;
+    private NotificationPopup notificationPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.btnSignIn);
         edEmail = findViewById(R.id.etUsername);
         edPassword = findViewById(R.id.etPassword);
+        notificationPopup = new NotificationPopup(this);
 
         // Set an OnClickListener for the ImageView
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -72,27 +80,38 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("jwtToken", jwtToken); // Use the same key as in CartFragment
                     editor.apply();
 
-                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, StripActivity.class);
-                    startActivity(intent);
-                    finish();
+                    notificationPopup.showPopup("Đăng nhập thành công!", false);
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Intent intent = new Intent(LoginActivity.this, StripActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }, 1500);
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
                         Log.e("Failed", "Đăng nhập thất bại: " + errorBody);
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + errorBody, Toast.LENGTH_LONG).show();
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Đăng nhập thất bại: \n" + translated, true);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: Không thể lấy thông báo lỗi", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Đăng nhập thất bại: \n Không thể lấy thông báo lỗi", true);
                     }
+
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseToken> call, Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
+
 }

@@ -26,6 +26,16 @@ public class TripActiveResponse {
 
     @SerializedName("totalTime")
     private int totalTime;
+    @SerializedName("tripHandleId")
+    private String tripHandleId;
+
+    public String getTripHandleId() {
+        return tripHandleId;
+    }
+
+    public void setTripHandleId(String tripHandleId) {
+        this.tripHandleId = tripHandleId;
+    }
 
     public String getStripID() {
         return stripID;

@@ -54,7 +54,7 @@ public class HomeDriverFragment extends Fragment {
                     List<Trip> trips = response.body();
 
                     // Sort newest first (descending), assuming getCreatedDate() returns a Date or LocalDateTime
-                    Collections.sort(trips, (t1, t2) -> t2.getStartDate().compareTo(t1.getStartDate()));
+                    Collections.sort(trips, (t1, t2) -> t2.getHandleId().compareTo(t1.getHandleId()));
 
                     tripAdapter = new TripAdapter(getContext(), trips);
                     recyclerViewTrips.setAdapter(tripAdapter);

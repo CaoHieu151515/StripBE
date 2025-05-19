@@ -24,8 +24,12 @@ import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -55,6 +59,7 @@ public class TripJoinActivity extends AppCompatActivity {
     private Button btnPickStartLoca, btnPickEndLoca;
     private String selectedStartLocaId = "", selectedEndLocaId = "";
     private String lastClicked = ""; // "start" or "end"
+    private NotificationPopup notificationPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,7 @@ public class TripJoinActivity extends AppCompatActivity {
         tvEndLocaId = findViewById(R.id.tvEndLocaId);
         btnPickStartLoca = findViewById(R.id.btnStartLocation);
         btnPickEndLoca = findViewById(R.id.btnEndLocation);
+        notificationPopup = new NotificationPopup(this);
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,21 +150,34 @@ public class TripJoinActivity extends AppCompatActivity {
                                 tvEndLocaId.setText(selectedStop.getTripPositon() + ". " + selectedStop.getStopLoca());
                                 selectedEndLocaId = selectedStop.getStopLocaID();
                             } else {
-                                Toast.makeText(TripJoinActivity.this, "Please select Start or End button first", Toast.LENGTH_SHORT).show();
+                                notificationPopup.showPopup("Làm ơn chọn điểm đi và điểm đến", true);
                             }
                         });
                         recyclerTripStops.setAdapter(adapter);
                     }
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());
-                    Toast.makeText(TripJoinActivity.this, "Failed to load trip details!", Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không tải được chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không tải được chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không tải được chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<TripDetail> call, @NonNull Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(TripJoinActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -182,17 +201,31 @@ public class TripJoinActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(TripJoinActivity.this, "Successfully joined trip!", Toast.LENGTH_LONG).show();
+                    notificationPopup.showPopup("Tham gia chuyến đi thành công", false);
                     finish(); // or navigate somewhere
                 } else {
-                    Toast.makeText(TripJoinActivity.this, "Failed to join: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e("Failed", "Thất bại khi tham gia chuyến đi!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Thất bại khi tham gia chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Thất bại khi tham gia chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Thất bại khi tham gia chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(TripJoinActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);            }
         });
     }
 }

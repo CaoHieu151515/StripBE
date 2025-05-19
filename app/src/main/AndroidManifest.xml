@@ -161,6 +161,10 @@
             android:name=".Activities.Customer.ConfirmDriverActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".Activities.NotificationListActivity"
+            android:exported="true">
+        </activity>
         <meta-data
             android:name="browserSwitchReturnUrlScheme"
             android:value="com.example.strip.braintree" />

@@ -14,13 +14,15 @@
         android:focusable="true"
         android:contentDescription="Back"/>
     <TextView
-        android:text="Danh sách các gói tài xế"
+        android:text="Danh sách các thông báo"
         android:textStyle="bold"
         android:textSize="20dp"
+        android:paddingHorizontal="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/recyclerViewNotifications"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:padding="12dp"/>
 </LinearLayout>

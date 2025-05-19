@@ -13,7 +13,10 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,9 +32,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.strip.Activities.Account.LoginActivity;
 import com.example.strip.Activities.OpenStreetMapActivity;
+import com.example.strip.Activities.StripActivity;
 import com.example.strip.Activities.Trip.EditTripActivity;
 import com.example.strip.Models.DriverVehicleDTO;
+import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Request.TripCreateRequest;
 
 import com.example.strip.Models.Response.UserMoreResponse;
@@ -40,6 +46,9 @@ import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
+import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
@@ -54,11 +63,14 @@ import org.osmdroid.views.overlay.Polyline;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -90,6 +102,7 @@ public class AddTripActivity extends AppCompatActivity{
     private double distance;
     private int duration;
     private String formatTimeShow, formatTimeStore, formatTimeStoreTwo;
+    private NotificationPopup notificationPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,14 +122,12 @@ public class AddTripActivity extends AppCompatActivity{
         tvDistance = findViewById(R.id.tvDistanceValue);
         tvDuration = findViewById(R.id.tvDurationValue);
         btnShowRoute = findViewById(R.id.btnShowRoute);
-
+        notificationPopup = new NotificationPopup(this);
         // Initialize MapView
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddTripActivity.this, ManageTripActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
@@ -136,30 +147,11 @@ public class AddTripActivity extends AppCompatActivity{
         retrofit = ApiClient.getClientWithToken(this);
         btnCreateTrip.setOnClickListener(v -> createTrip());
         etCondition.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Chọn điều kiện");
+            ArrayList<String> conditionList = new ArrayList<>(Arrays.asList(
+                    "Không hút thuốc", "Không mang thú cưng", "Không mang hành lý nặng quá 10kg"
+            ));
 
-            String[] conditions = {"Không hút thuốc", "Không mang thú cưng", "Không mang hành lý nặng quá 10kg"};
-            boolean[] checkedItems = new boolean[conditions.length]; // Tất cả mặc định là false
-
-            builder.setMultiChoiceItems(conditions, checkedItems, (dialog, which, isChecked) -> {
-                checkedItems[which] = isChecked; // Cập nhật lựa chọn
-            });
-
-            builder.setPositiveButton("OK", (dialog, which) -> {
-                StringBuilder selectedConditions = new StringBuilder();
-                for (int i = 0; i < conditions.length; i++) {
-                    if (checkedItems[i]) {
-                        if (selectedConditions.length() > 0) selectedConditions.append(", ");
-                        selectedConditions.append(conditions[i]);
-                    }
-                }
-                etCondition.setText(selectedConditions.toString());
-            });
-
-            builder.setNegativeButton("Hủy", null);
-
-            builder.show();
+            showConditionDialog(conditionList);
         });
 
         fetchUserInfo();
@@ -219,7 +211,57 @@ public class AddTripActivity extends AppCompatActivity{
             datePickerDialog.show();
         });
     }
+
+    private void showConditionDialog(ArrayList<String> conditionList) {
+        boolean[] checkedItems = new boolean[conditionList.size()];
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Chọn điều kiện");
+
+        builder.setMultiChoiceItems(conditionList.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
+            checkedItems[which] = isChecked;
+        });
+
+        builder.setNeutralButton("Thêm điều kiện", (dialog, which) -> {
+            // Hiển thị hộp thoại nhập điều kiện mới
+            AlertDialog.Builder inputDialog = new AlertDialog.Builder(this);
+            inputDialog.setTitle("Nhập điều kiện mới");
+
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            inputDialog.setView(input);
+
+            inputDialog.setPositiveButton("Thêm", (dialog1, which1) -> {
+                String newCondition = input.getText().toString().trim();
+                if (!newCondition.isEmpty()) {
+                    conditionList.add(newCondition);
+
+                    // Gọi lại dialog với danh sách mới
+                    showConditionDialog(conditionList);
+                }
+            });
+
+            inputDialog.setNegativeButton("Hủy", null);
+            inputDialog.show();
+        });
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            StringBuilder selectedConditions = new StringBuilder();
+            for (int i = 0; i < conditionList.size(); i++) {
+                if (checkedItems[i]) {
+                    if (selectedConditions.length() > 0) selectedConditions.append(", ");
+                    selectedConditions.append(conditionList.get(i));
+                }
+            }
+            etCondition.setText(selectedConditions.toString());
+        });
+
+        builder.setNegativeButton("Hủy", null);
+
+        builder.show();
+    }
     private void createTrip() {
+        String userId = user.getDriver().getUserId();
         String driverId = user.getDriver().getDriverID();
         String vehicleId = selectedVehicleId;
         int pricePerSeat = Integer.parseInt(etPricePerSeat.getText().toString().trim());
@@ -230,7 +272,7 @@ public class AddTripActivity extends AppCompatActivity{
         String endLocation = tvEndLocation.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String condition = etCondition.getText().toString().trim();
-        double totalDistance = Double.parseDouble(String.format("%.2f", distance));
+        int totalDistance = (int) Math.round(distance);
         TripCreateRequest tripRequest = new TripCreateRequest(driverId, vehicleId, ImageBytes, "image/png",
                 pricePerSeat, 0,maxSeat,startDate ,endDate, startLocation, endLocation, description, condition, totalDistance);
 
@@ -240,20 +282,50 @@ public class AddTripActivity extends AppCompatActivity{
             public void onResponse(Call<TripDetail> call, Response<TripDetail> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     TripDetail createdTrip = response.body();
-                    Intent intent = new Intent(AddTripActivity.this, EditTripActivity.class);
-                    intent.putExtra("tripId", createdTrip.getTripID()); // Pass tripId to detail activity
-                    startActivity(intent);
-                    Toast.makeText(AddTripActivity.this, "Trip Created Successfully!", Toast.LENGTH_SHORT).show();
+                    // Create and send notification
+
+                    NotificationRequest notiRequest = new NotificationRequest(
+                            "Bạn đã tạo một chuyến đi thành công!", // title or message
+                            "Mã chuyến đi: " + createdTrip.getTripID(), // detailed message
+                            userId // or other target
+                    );
+                    notificationPopup.createNotification(notiRequest);
+
+                    notificationPopup.showPopup("Tạo chuyến đi thành công", false);
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Intent intent = new Intent(AddTripActivity.this, EditTripActivity.class);
+                        intent.putExtra("tripId", createdTrip.getTripID()); // Pass tripId to detail activity
+                        startActivity(intent);
+                    }, 1500);
+
+//                    Intent intent = new Intent(AddTripActivity.this, EditTripActivity.class);
+//                    intent.putExtra("tripId", createdTrip.getTripID()); // Pass tripId to detail activity
+//                    startActivity(intent);
+
                 } else {
                     Log.e("Failed", "Failed to create trips!" + response.code());
-                    Toast.makeText(AddTripActivity.this, "Failed to Create Trip!", Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Lỗi khi tạo chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Lỗi khi tạo chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi tạo chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<TripDetail> call, Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(AddTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -267,13 +339,18 @@ public class AddTripActivity extends AppCompatActivity{
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
+
 //                    tvDriverId.setText(user.getDriver().getDriverID() != null ? user.getDriver().getDriverID() : "N/A");
                     vehicles = user.getDriverVehicleDTO(); // List<DriverVehicleDTO>
 
 // Create a list of vehicle IDs (or any display name)
                     List<String> vehicleIds = new ArrayList<>();
                     for (DriverVehicleDTO dto : vehicles) {
-                        vehicleIds.add(dto.getVehicleNumber()); // or use dto.getLicensePlate() or something else more readable
+                        vehicleIds.add(
+                                TripStatusTranslate.translateVehicle(
+                                        dto.getVehicleType()) + ". Biển số xe: " +
+                                        dto.getVehicleNumber() + ". Số chỗ: "+
+                                        dto.getNumberOfSeats()); // or use dto.getLicensePlate() or something else more readable
                     }
 
 // IMPORTANT: use AddTripActivity.this as context
@@ -290,6 +367,7 @@ public class AddTripActivity extends AppCompatActivity{
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                             selectedVehicleId = vehicles.get(position).getVehicleId(); // Store selected vehicleId
+                            etMaxSeat.setText(vehicles.get(position).getNumberOfSeats() + "");
                         }
 
                         @Override
@@ -301,11 +379,12 @@ public class AddTripActivity extends AppCompatActivity{
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
+
                         Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
                         Toast.makeText(AddTripActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(AddTripActivity.this, "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
                     }
                 }
             }
@@ -313,7 +392,7 @@ public class AddTripActivity extends AppCompatActivity{
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(AddTripActivity.this, "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -351,7 +430,7 @@ public class AddTripActivity extends AppCompatActivity{
             tvStartLocation.setText("" + startLocation);
             tvEndLocation.setText("" + endLocation);
             tvDistance.setText(String.format("%.2f km", distance));
-            tvDuration.setText(String.format("%d mins", duration));
+            tvDuration.setText(String.format("%d phút", duration));
 
             // Do something with the returned data
         }

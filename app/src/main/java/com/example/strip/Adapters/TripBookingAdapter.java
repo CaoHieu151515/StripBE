@@ -13,6 +13,7 @@ import com.example.strip.Models.Response.StopLocationBookingResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.TripStatusTranslate;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,13 +36,13 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
         TripBookingResponse trip = tripBookingResponseList.get(position);
-        holder.tvTripId.setText("Mã chuyến đi: " +trip.tripID);
         holder.tvStartLocation.setText("Từ: " + trip.startLocation);
         holder.tvEndLocation.setText("Đến: " + trip.endLocation);
         holder.tvDriver.setText("Tài xế: " + trip.driverName);
         holder.tvStartDate.setText("Thời gian khởi hành: " + DateFormatter.formatDate(trip.startDate));
         holder.tvEndDate.setText("Thời gian kết thúc: " + DateFormatter.formatDate(trip.endDate));
-        holder.tvStatus.setText("Trạng thái chuyến đi: "+ trip.tripStatus);
+        holder.tvStatus.setText("Trạng thái chuyến đi: "+ TripStatusTranslate.translateStatus(trip.tripStatus));
+        holder.tvHandleTripId.setText("Mã chuyến đi: " +trip.tripHandleID);
         holder.stopLocationContainer.removeAllViews();
         if (trip.stopLocationBookingResponseList != null && !trip.stopLocationBookingResponseList.isEmpty()) {
             // Sắp xếp theo stoplocaPosition tăng dần
@@ -69,7 +70,7 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView tvStartLocation, tvEndLocation, tvDriver, tvStartDate, tvEndDate, tvStatus, tvTripId;
+        TextView tvStartLocation, tvEndLocation, tvDriver, tvStartDate, tvEndDate, tvStatus, tvHandleTripId;
         LinearLayout stopLocationContainer;
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,7 +81,7 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
             tvEndDate = itemView.findViewById(R.id.tvEndDate);
             stopLocationContainer = itemView.findViewById(R.id.stopLocationContainer);
             tvStatus = itemView.findViewById(R.id.tvStatus);
-            tvTripId = itemView.findViewById(R.id.tvTripId);
+            tvHandleTripId = itemView.findViewById(R.id.tvHandleTripId);
         }
     }
 }

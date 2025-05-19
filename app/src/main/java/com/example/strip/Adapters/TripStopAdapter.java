@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.strip.Models.StopLocation;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.TripStatusTranslate;
 
 import android.view.View;
 import android.widget.TextView;
@@ -44,9 +45,9 @@ public class TripStopAdapter extends RecyclerView.Adapter<TripStopAdapter.TripSt
         StopLocation stopLocation = stopLocations.get(position);
         holder.tvStopLocaTime.setText(DateFormatter.formatDate(stopLocation.getStopLocaTime()) + "");
         holder.tvStopLoca.setText(stopLocation.getStopLoca());
-        holder.tvStopLocaStatus.setText(stopLocation.getStopLocaStatus());
-        holder.tvEstimatedTime.setText("Khoảng thời gian: " + String.format("%d phút", stopLocation.getEstimatedTime()));
-        holder.tvEstimatedKM.setText("Khoảng cách: " +  String.format("%.2f km", stopLocation.getEstimatedKM()));
+        holder.tvStopLocaStatus.setText(TripStatusTranslate.translateStatus(stopLocation.getStopLocaStatus()));
+        holder.tvEstimatedTime.setText("Khoảng thời gian: \n" + String.format("%d phút", stopLocation.getEstimatedTime()));
+        holder.tvEstimatedKM.setText("Khoảng cách: \n" +  String.format("%.2f km", stopLocation.getEstimatedKM()));
         holder.tvPosition.setText("" + stopLocation.getTripPositon());
         holder.itemView.setOnClickListener(v -> {
             listener.onStopClick(stopLocation); // 'stop' is your current StopLocation item

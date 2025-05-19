@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.strip.R;
+import com.example.strip.Utils.NotificationPopup;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,6 +40,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
     private TextView tvDistanceValue, tvDurationValue;
     private double distance;
     private int duration;
+    private NotificationPopup notificationPopup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +52,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
         tvDistanceValue = findViewById(R.id.tvDistanceValue);
         tvDurationValue = findViewById(R.id.tvDurationValue);
         ivExit = findViewById(R.id.ivExit);
+        notificationPopup = new NotificationPopup(this);
         Configuration.getInstance().setUserAgentValue("MyAppName/1.0 (Android)");
 
         // Initialize MapView
@@ -111,7 +114,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
 
         new GetRouteTask().execute(routeUrl);
         tvDistanceValue.setText(String.format("%.2f km", distance));
-        tvDurationValue.setText(String.format("%d mins", duration));
+        tvDurationValue.setText(String.format("%d phút", duration));
     }
     private GeoPoint getLocationFromAddress(Context context, String strAddress) {
         Geocoder coder = new Geocoder(context);
@@ -177,8 +180,7 @@ public class OpenStreetMapActivity extends AppCompatActivity {
                         duration = route.optInt("duration") / 60;
                         tvDistanceValue.setText(String.format("%.2f km", distance));
                         tvDurationValue.setText(duration + " mins");
-                        Toast.makeText(OpenStreetMapActivity.this, "Distance: " + distance + " km\nDuration: " + duration + " min", Toast.LENGTH_LONG).show();
-
+                        notificationPopup.showPopup("Lấy thông tin từ OpenStreetMap!\n"+"Khoảng cách: " + distance + " km\nKhoảng thời gian: " + duration + " phút", false);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

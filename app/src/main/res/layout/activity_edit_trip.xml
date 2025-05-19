@@ -95,7 +95,7 @@
                             android:id="@+id/tvStartLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ben Thanh Market, Ho Chi Minh City"
+                            android:text="Điểm đón"
                             android:textSize="16sp"
                             android:textColor="@color/black"
                             android:textStyle="bold"/>
@@ -118,7 +118,7 @@
                             android:id="@+id/tvEndLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tan Son Nhat Airport, Ho Chi Minh City"
+                            android:text="Điểm đến"
                             android:textSize="16sp"
                             android:textColor="@color/black"
                             android:textStyle="bold"/>
@@ -281,7 +281,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/input_field_bg"
                     android:gravity="center"
-                    android:text="Stop Location"
+                    android:text="Địa điểm điểm dừng"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />

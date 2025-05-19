@@ -22,8 +22,12 @@ import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,7 @@ public class DriverProfileActivity extends AppCompatActivity {
     private RecyclerView rvVehicles;
     private VehicleAdapter vehicleAdapter;
     private List<DriverVehicleDTO> vehicleList = new ArrayList<>();
+    private NotificationPopup notificationPopup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,17 +118,17 @@ public class DriverProfileActivity extends AppCompatActivity {
                             (user.getUser().getLastName() != null ? " " + user.getUser().getLastName() : "");
 
                     if (fullName.trim().isEmpty()) {
-                        fullName = "N/A";
+                        fullName = "Chưa có thông tin";
                     }
                     tvFullName.setText(fullName);
-                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "N/A");
-                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "N/A");
-                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "N/A");
-                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? user.getUserDetailsCusDTO().getDob() : "N/A");
+                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "Chưa có thông tin");
+                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "Chưa có thông tin");
+                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "Chưa có thông tin");
+                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? user.getUserDetailsCusDTO().getDob() : "Chưa có thông tin");
                     int driverPoint = (user.getDriver() != null) ? user.getDriver().getDriverPoint() : -1;
-                    tvCountTrip.setText(driverPoint >= 0 ? "" + driverPoint : "N/A");
-                    tvBannedDay.setText(user.getDriver().getBannedDay() != null ? user.getDriver().getBannedDay() : "N/A");
-                    tvDriverStatus.setText(user.getDriver().getDriverStatus() != null ? user.getDriver().getDriverStatus() : "N/A");
+                    tvCountTrip.setText(driverPoint >= 0 ? "" + driverPoint : "Chưa có thông tin");
+                    tvBannedDay.setText(user.getDriver().getBannedDay() != null ? user.getDriver().getBannedDay() : "Chưa có thông tin");
+                    tvDriverStatus.setText(user.getDriver().getDriverStatus() != null ? user.getDriver().getDriverStatus() : "Chưa có thông tin");
                     // Hiển thị ảnh nếu có
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -143,19 +148,25 @@ public class DriverProfileActivity extends AppCompatActivity {
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
-                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
-                        Toast.makeText(DriverProfileActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                        Log.e("Failed", "Thất bại khi tham gia chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Thất bại khi cập nhật hồ sơ! \n" + translated, true);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(DriverProfileActivity.this, "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
+                        notificationPopup.showPopup("Thất bại khi cập nhật hồ sơ! \n Không thể lấy thông báo lỗi", true);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
-                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(DriverProfileActivity.this, "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }

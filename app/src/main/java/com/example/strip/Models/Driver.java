@@ -2,12 +2,20 @@ package com.example.strip.Models;
 
 public class Driver {
     private int id;
+    private String userId;
     private String driverId;
     private boolean usedtoDriver;
     private String expirationDate;
     private String driverStatus;
     private int driverPoint;
     private String bannedDay;
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public int getId() {
         return id;

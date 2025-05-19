@@ -21,7 +21,12 @@ import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
+import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +49,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
             tvStartDate, tvEndDate, tvTripStatus;
     private ITripMobileApiService tripService;
     private ImageView ivDetail;
+    private NotificationPopup notificationPopup;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +63,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         btnStart = findViewById(R.id.btnStart);
         btnComplete = findViewById(R.id.btnComplete);
         ivDetail = findViewById(R.id.ivDetail);
+        notificationPopup = new NotificationPopup(this);
         adapter = new TripRequestAdapter(this, tripList, new TripRequestAdapter.OnTripActionListener() {
             @Override
             public void onActionCompleted() {
@@ -93,12 +100,12 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         loadTripDetails();
-                        Toast.makeText(TripActiveDetailActivity.this, "Trip started", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Trip started",false);
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(TripActiveDetailActivity.this, "Failed to start trip", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Failed to start trip",true);
                     }
                 });
             }
@@ -112,12 +119,12 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         loadTripDetails();
-                        Toast.makeText(TripActiveDetailActivity.this, "Trip completed", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Trip completed",false);
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Toast.makeText(TripActiveDetailActivity.this, "Failed to complete trip", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Failed to complete trip",true);
                     }
                 });
             }
@@ -133,14 +140,28 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.setData(response.body());
                 } else {
-                    Toast.makeText(TripActiveDetailActivity.this, "Failed to load trip requests", Toast.LENGTH_SHORT).show();
+                    Log.e("Failed", "Failed to load trip requests!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không tải được yêu cầu chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không tải được yêu cầu chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không tải được yêu cầu chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<RequestTripResponse>> call, Throwable t) {
-                Toast.makeText(TripActiveDetailActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);            }
         });
     }
     private void loadTripDetails() {
@@ -152,7 +173,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                     TripDetail trip = response.body();
                     tvStartLocation.setText(trip.getStartLocation());
                     tvEndLocation.setText(trip.getEndLocation());
-                    tvTripStatus.setText(trip.getTripStatus());
+                    tvTripStatus.setText(TripStatusTranslate.translateStatus(trip.getTripStatus()));
                     String originalDateString = trip.getStartDate(); // Example: "2025-04-16T13:45:00" (ISO format)
                     SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
                     SimpleDateFormat displayFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a", Locale.getDefault());
@@ -176,15 +197,28 @@ public class TripActiveDetailActivity extends AppCompatActivity {
                         tvEndDate.setText("Invalid date");
                     }
                 } else {
-                    Log.e("Failed", "Failed to load trips!" + response.code());
-                    Toast.makeText(TripActiveDetailActivity.this, "Failed to load trip details!", Toast.LENGTH_SHORT).show();
+                    Log.e("Failed", "Failed to load trips detail!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không tải được chi tiết chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không tải được chi tiết chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không tải được chi tiết chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<TripDetail> call, @NonNull Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(TripActiveDetailActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }

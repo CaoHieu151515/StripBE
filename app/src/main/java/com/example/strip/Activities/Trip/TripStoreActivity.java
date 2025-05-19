@@ -23,6 +23,7 @@ import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Adapters.LocationAdapter;
 import com.example.strip.Models.LocationInfo;
 import com.example.strip.R;
+import com.example.strip.Utils.NotificationPopup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -50,6 +51,7 @@ public class TripStoreActivity extends AppCompatActivity {
     private double distance;
     private int duration;
     private RecyclerView recyclerView;
+    private NotificationPopup notificationPopup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +64,7 @@ public class TripStoreActivity extends AppCompatActivity {
         tvDistanceValue = findViewById(R.id.tvDistanceValue);
         tvDurationValue = findViewById(R.id.tvDurationValue);
         ivExit = findViewById(R.id.ivExit);
-
+        notificationPopup = new NotificationPopup(this);
         recyclerView = findViewById(R.id.recyclerView); // <-- Add this line!
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List<LocationInfo> trips = loadLocationInfos();

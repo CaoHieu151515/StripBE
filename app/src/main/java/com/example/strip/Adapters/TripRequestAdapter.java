@@ -15,7 +15,11 @@ import com.example.strip.Models.Response.RequestTripResponse;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -30,7 +34,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     private Context context;
 
     private List<RequestTripResponse> requestTripList;
-
+    private NotificationPopup notificationPopup;
     public TripRequestAdapter(Context context, List<RequestTripResponse> requestTripList, OnTripActionListener listener) {
         this.context = context;
         this.requestTripList = requestTripList;
@@ -118,6 +122,8 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     private void acceptTrip(String requestTripId) {
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.acceptRequestTrip(requestTripId);
+        notificationPopup = new NotificationPopup(context);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -127,21 +133,34 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     }
                     // Success, you can handle it here
                     try {
-                        String responseBody = response.body().string();
-                        // Show success or do something
-                        Log.d("AcceptTrip", "Success: " + responseBody);
+                        notificationPopup.showPopup("Chấp nhận chuyến đi thành công!", false);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
-                    // Request failed but got a response from server (e.g., 400, 404, etc.)
-                    Log.e("AcceptTrip", "Failed: " + response.code());
+                    Log.e("Failed", "Failed to accept trip!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không chấp nhận được chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không chấp nhận được chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không chấp nhận được chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Network error, server unreachable, etc.
-                Log.e("AcceptTrip", "Error: " + t.getMessage());
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -149,6 +168,8 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     private void rejectTrip(String requestTripId) {
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.rejectRequestTrip(requestTripId);
+        notificationPopup = new NotificationPopup(context);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -158,21 +179,35 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     }
                     // Success, you can handle it here
                     try {
-                        String responseBody = response.body().string();
                         // Show success or do something
-                        Log.d("RejectTrip", "Success: " + responseBody);
+                        notificationPopup.showPopup("Từ chối chuyến đi thành công!", false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
                     // Request failed but got a response from server (e.g., 400, 404, etc.)
-                    Log.e("RejectTrip", "Failed: " + response.code());
+                    Log.e("Failed", "Failed to reject trip!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không từ chối được chuyến đi! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không từ chối được chuyến đi! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không từ chối được chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Network error, server unreachable, etc.
-                Log.e("RejectTrip", "Error: " + t.getMessage());
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -180,6 +215,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     private void checkInTrip(String requestTripId) {
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.checkInRequestTrip(requestTripId);
+        notificationPopup = new NotificationPopup(context);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -191,19 +227,34 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     try {
                         String responseBody = response.body().string();
                         // Show success or do something
-                        Log.d("CheckIn", "Success: " + responseBody);
+                        notificationPopup.showPopup("Cho lên xe thành công!", false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
                     // Request failed but got a response from server (e.g., 400, 404, etc.)
-                    Log.e("CheckIn", "Failed: " + response.code());
+                    Log.e("Failed", "Failed to checkIn trip!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không cho lên xe được! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không cho lên xe được! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không cho lên xe được! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Network error, server unreachable, etc.
-                Log.e("CheckIn", "Error: " + t.getMessage());
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }
@@ -211,6 +262,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     private void checkOutTrip(String requestTripId) {
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.checkOutRequestTrip(requestTripId);
+        notificationPopup = new NotificationPopup(context);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -222,19 +274,35 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     try {
                         String responseBody = response.body().string();
                         // Show success or do something
-                        Log.d("CheckOut", "Success: " + responseBody);
+                        notificationPopup.showPopup("Cho xuống xe thành công!", false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
+
                     // Request failed but got a response from server (e.g., 400, 404, etc.)
                     Log.e("CheckOut", "Failed: " + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Không cho xuống xe được! " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Không cho xuống xe được! \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Không cho xuống xe được! \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Network error, server unreachable, etc.
-                Log.e("CheckOut", "Error: " + t.getMessage());
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,10 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.strip.Activities.Account.LoginActivity;
+import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.PackageAdapter;
 import com.example.strip.Fragments.AccountFragment;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 
 import java.util.List;
@@ -35,9 +40,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ViewPackagesActivity extends AppCompatActivity implements PackageAdapter.OnPackagePurchaseListener{
     private RecyclerView recyclerView;
     private PackageAdapter packageAdapter;
+    private NotificationPopup notificationPopup;
     @Override
     public void onPackagePurchased() {
-        Toast.makeText(this, "Package purchased! (from activity)", Toast.LENGTH_SHORT).show();
+        notificationPopup.showPopup("Mua gói thành công!",false);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            finish();
+        }, 1500);
     }
 
     @Override
@@ -47,6 +56,7 @@ public class ViewPackagesActivity extends AppCompatActivity implements PackageAd
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        notificationPopup = new NotificationPopup(this);
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override

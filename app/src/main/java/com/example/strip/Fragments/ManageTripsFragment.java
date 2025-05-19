@@ -69,7 +69,7 @@ public class ManageTripsFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     tripList.clear();
                     List<TripActiveResponse> trips = response.body();
-                    Collections.sort(trips, (t1, t2) -> t2.getStartDay().compareTo(t1.getStartDay()));
+                    Collections.sort(trips, (t1, t2) -> t2.getTripHandleId().compareTo(t1.getTripHandleId()));
                     tripList.addAll(response.body());
                     tripActiveAdapter.notifyDataSetChanged();
                 }

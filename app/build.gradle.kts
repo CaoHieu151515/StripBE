@@ -92,4 +92,6 @@ dependencies {
     implementation("com.braintreepayments.api:card:4.38.0")
     implementation("androidx.activity:activity:1.7.2")
 
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 }

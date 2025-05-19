@@ -6,10 +6,10 @@
     android:background="@drawable/input_field_bg"
     android:layout_marginTop="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <TextView android:id="@+id/tvTripId"
+    <TextView android:id="@+id/tvHandleTripId"
         android:textStyle="bold"
         android:textColor="@color/red_orange"
-        android:text="Code Trip"
+        android:text="Trip Id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView android:id="@+id/tvStartLocation"
