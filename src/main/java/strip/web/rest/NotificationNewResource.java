@@ -43,13 +43,18 @@ public class NotificationNewResource {
      * POST /api/notifications : Create a new notification
      */
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Void> createNotification(@RequestBody NotificationCreateDTO dto) {
         if (dto.getTitle() == null || dto.getContent() == null || dto.getUserId() == null) {
             throw new BadRequestAlertException("Missing fields", "notification", "missing-fields");
         }
 
         notificationService.createNotification(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/notifications/system")
+    public ResponseEntity<Void> createSystemNoti(@RequestBody NotificationCreateDTO dto) {
+        notificationService.createSystemNotification(dto);
         return ResponseEntity.ok().build();
     }
 
@@ -61,5 +66,12 @@ public class NotificationNewResource {
     public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
         notificationService.markAsRead(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/notifications/system")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<List<NotificationNewDTO>> getSystemNotifications() {
+        List<NotificationNewDTO> result = notificationService.getAllSystemNotifications();
+        return ResponseEntity.ok(result);
     }
 }

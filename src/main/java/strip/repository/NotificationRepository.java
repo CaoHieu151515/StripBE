@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 import strip.domain.Notification;
+import strip.domain.enumeration.NotificationSourceType;
 
 /**
  * Spring Data JPA repository for the Notification entity.
@@ -17,4 +18,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllByUser_IdOrderByCreatedDateDesc(Long userId);
 
     long countByUser_IdAndIsReadFalse(Long userId);
+
+    List<Notification> findAllBySourceTypeOrderByCreatedDateDesc(NotificationSourceType sourceType);
 }

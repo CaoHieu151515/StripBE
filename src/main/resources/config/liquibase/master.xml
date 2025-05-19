@@ -55,6 +55,10 @@
     <include file="config/liquibase/changelog/20250519010000_create_exchange_rate.xml" relativeToChangelogFile="false"/>    
     <include file="config/liquibase/changelog/20250519012000_add_usd_conversion_columns_to_withdraw_request.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250519-03_add_paypal_id_to_withdraw_request.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240519_add_type_relatedid_notification.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240519_add_source_type_notification.xml" relativeToChangelogFile="false"/>
+
+
 
 
 

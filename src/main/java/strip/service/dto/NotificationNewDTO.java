@@ -1,6 +1,9 @@
 package strip.service.dto;
 
 import java.time.Instant;
+import java.util.UUID;
+import strip.domain.enumeration.NotificationSourceType;
+import strip.domain.enumeration.NotificationType;
 
 public class NotificationNewDTO {
 
@@ -9,8 +12,34 @@ public class NotificationNewDTO {
     private String content;
     private Boolean isRead;
     private Instant createdDate;
-    private Instant date;
+    private NotificationType type;
+    private UUID relatedId;
+    private NotificationSourceType sourceType;
     private Long userId;
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public void setType(NotificationType type) {
+        this.type = type;
+    }
+
+    public UUID getRelatedId() {
+        return relatedId;
+    }
+
+    public void setRelatedId(UUID relatedId) {
+        this.relatedId = relatedId;
+    }
+
+    public NotificationSourceType getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(NotificationSourceType sourceType) {
+        this.sourceType = sourceType;
+    }
 
     public Long getId() {
         return id;
@@ -50,14 +79,6 @@ public class NotificationNewDTO {
 
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public Instant getDate() {
-        return date;
-    }
-
-    public void setDate(Instant date) {
-        this.date = date;
     }
 
     public Long getUserId() {

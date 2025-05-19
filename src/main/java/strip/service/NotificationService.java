@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Notification;
 import strip.domain.User;
 import strip.domain.UserDetail;
+import strip.domain.enumeration.NotificationSourceType;
 import strip.repository.NotificationRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
@@ -151,9 +152,35 @@ public class NotificationService {
             .findById(detail.getUser().getId())
             .orElseThrow(() -> new BadRequestAlertException("User not found", "notification", "user-not-found"));
 
-        if (user == null) {
-            throw new BadRequestAlertException("User not linked to this UserDetail", "notification", "user-not-linked");
+        Notification notify = new Notification();
+        notify.setTitle(dto.getTitle());
+        notify.setContent(dto.getContent());
+        notify.setDate(Instant.now());
+        notify.setCreatedDate(Instant.now());
+        notify.setIsRead(false);
+        notify.setUser(user);
+
+        // ✅ Gán type và relatedId nếu có
+        notify.setType(dto.getType());
+        notify.setRelatedId(dto.getRelatedId());
+        notify.setSourceType(NotificationSourceType.USER);
+
+        notificationRepository.save(notify);
+        notificationMessageService.notifyUser(user.getLogin());
+    }
+
+    public void createSystemNotification(NotificationCreateDTO dto) {
+        if (dto.getUserId() == null) {
+            throw new BadRequestAlertException("User ID is required", "notification", "user-id-null");
         }
+
+        UserDetail detail = userDetailRepository
+            .findByAppUserDetail(dto.getUserId())
+            .orElseThrow(() -> new BadRequestAlertException("UserDetail not found", "notification", "user-detail-not-found"));
+
+        User user = userRepository
+            .findById(detail.getUser().getId())
+            .orElseThrow(() -> new BadRequestAlertException("User not found", "notification", "user-not-found"));
 
         Notification notify = new Notification();
         notify.setTitle(dto.getTitle());
@@ -162,6 +189,12 @@ public class NotificationService {
         notify.setCreatedDate(Instant.now());
         notify.setIsRead(false);
         notify.setUser(user);
+
+        notify.setType(dto.getType());
+        notify.setRelatedId(dto.getRelatedId());
+
+        // ✅ Gán cứng hệ thống
+        notify.setSourceType(NotificationSourceType.SYSTEM);
 
         notificationRepository.save(notify);
         notificationMessageService.notifyUser(user.getLogin());
@@ -184,7 +217,7 @@ public class NotificationService {
         dto.setId(entity.getId());
         dto.setTitle(entity.getTitle());
         dto.setContent(entity.getContent());
-        dto.setDate(entity.getDate());
+        dto.setCreatedDate(entity.getDate());
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setIsRead(entity.getIsRead());
         dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
@@ -202,9 +235,17 @@ public class NotificationService {
             .map(this::toDto)
             .toList();
 
-        Long count = notificationRepository.countByUser_IdAndIsReadFalse(user.getId());
-        long unreadCount = (count != null) ? count : 0;
+        long unreadCount = notificationRepository.countByUser_IdAndIsReadFalse(user.getId());
 
         return new NotificationListResponseDTO(list, unreadCount);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NotificationNewDTO> getAllSystemNotifications() {
+        return notificationRepository
+            .findAllBySourceTypeOrderByCreatedDateDesc(NotificationSourceType.SYSTEM)
+            .stream()
+            .map(this::toDto)
+            .toList();
     }
 }

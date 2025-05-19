@@ -3,7 +3,7 @@ import Stomp from 'webstomp-client';
 import { Observable } from 'rxjs';
 import { Storage } from 'react-jhipster';
 
-type NotificationDTO = {
+export type NotificationDTO = {
   id: number;
   title: string;
   content: string;
@@ -11,17 +11,22 @@ type NotificationDTO = {
   createdDate: string;
 };
 
+export type NotificationListResponseDTO = {
+  notifications: NotificationDTO[];
+  unreadCount: number;
+};
+
 let stompClient = null;
 let subscriber = null;
 let connection: Promise<any>;
 let connectedPromise: any = null;
-let listener: Observable<NotificationDTO[]>;
+let listener: Observable<NotificationListResponseDTO>;
 let listenerObserver: any;
 let alreadyConnectedOnce = false;
 
 const createConnection = (): Promise<any> => new Promise(resolve => (connectedPromise = resolve));
 
-const createListener = (): Observable<NotificationDTO[]> =>
+const createListener = (): Observable<NotificationListResponseDTO> =>
   new Observable(observer => {
     listenerObserver = observer;
   });
@@ -35,11 +40,10 @@ export const sendNotificationListRequest = () => {
 const subscribe = () => {
   connection.then(() => {
     subscriber = stompClient.subscribe('/user/queue/notification-list', data => {
-      const notifications: NotificationDTO[] = JSON.parse(data.body);
-      listenerObserver.next(notifications);
+      const response: NotificationListResponseDTO = JSON.parse(data.body);
+      listenerObserver.next(response); // ✅ Trả đúng kiểu object
     });
 
-    // Gửi yêu cầu lấy danh sách
     sendNotificationListRequest();
   });
 };
@@ -79,7 +83,7 @@ export const disconnectNotificationWebSocket = () => {
   alreadyConnectedOnce = false;
 };
 
-export const receiveNotifications = () => listener;
+export const receiveNotifications = (): Observable<NotificationListResponseDTO> => listener;
 
 export const unsubscribeNotificationWebSocket = () => {
   if (subscriber !== null) {
