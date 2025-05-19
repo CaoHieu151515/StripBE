@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import strip.domain.Trip;
+import strip.domain.enumeration.PassengerStatus;
 import strip.domain.enumeration.TripStatus;
 
 /**
@@ -18,6 +19,8 @@ import strip.domain.enumeration.TripStatus;
 @SuppressWarnings("unused")
 @Repository
 public interface TripRepository extends JpaRepository<Trip, Long>, JpaSpecificationExecutor<Trip> {
+    List<Trip> findByTripStatus(TripStatus tripStatus);
+
     @Query("SELECT t FROM Trip t WHERE t.driver.driverID = :driverId " + "AND t.startDate <= :endDate AND t.endDate >= :startDate")
     List<Trip> findOverlappingTripsByDriver(
         @Param("driverId") UUID driverId,

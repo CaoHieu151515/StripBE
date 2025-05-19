@@ -90,4 +90,13 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
 
     @Query("SELECT COALESCE(SUM(wt.amount), 0) FROM WalletTransaction wt " + "WHERE wt.walletType IN :types AND wt.transStatus = :status")
     double sumAmountByWalletTypesAndStatus(@Param("types") List<WalletTransactionType> types, @Param("status") TransactionStatus status);
+
+    boolean existsByWalletTypeAndTransactionThirdPartyID(WalletTransactionType walletType, String transactionThirdPartyID);
+
+    boolean existsByWalletTypeAndTransactionThirdPartyIDAndUserWallet_User_IdAndTransStatus(
+        WalletTransactionType type,
+        String transactionThirdPartyId,
+        Long userId,
+        TransactionStatus status
+    );
 }

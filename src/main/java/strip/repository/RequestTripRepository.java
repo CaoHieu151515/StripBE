@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -44,4 +45,12 @@ public interface RequestTripRepository extends JpaRepository<RequestTrip, Long> 
         "GROUP BY FUNCTION('DATE', r.appliedAt)"
     )
     List<Object[]> countTripRegistrationsByDate(@Param("from") Instant from, @Param("to") Instant to);
+
+    @Modifying
+    @Query("UPDATE RequestTrip rt SET rt.status = :newStatus WHERE rt.trip.tripID = :tripId AND rt.status = :currentStatus")
+    int updateStatusByTripAndCurrentStatus(
+        @Param("tripId") UUID tripId,
+        @Param("currentStatus") PassengerStatus currentStatus,
+        @Param("newStatus") PassengerStatus newStatus
+    );
 }
