@@ -99,4 +99,10 @@ public interface WalletTransactionRepository extends JpaRepository<WalletTransac
         Long userId,
         TransactionStatus status
     );
+
+    boolean existsByWalletTypeAndTransactionThirdPartyIDAndTransStatus(
+        WalletTransactionType walletType,
+        String transactionThirdPartyID,
+        TransactionStatus transStatus
+    );
 }

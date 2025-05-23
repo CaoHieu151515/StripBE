@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Trip;
 import strip.domain.enumeration.PassengerStatus;
+import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.RequestTripRepository;
@@ -50,9 +51,10 @@ public class TripPayoutScheduler {
         for (Trip trip : trips) {
             String tripId = trip.getTripID().toString();
 
-            boolean alreadyPaid = walletTransactionRepository.existsByWalletTypeAndTransactionThirdPartyID(
+            boolean alreadyPaid = walletTransactionRepository.existsByWalletTypeAndTransactionThirdPartyIDAndTransStatus(
                 WalletTransactionType.DRIVER_DONE_TRIP_REFUND,
-                tripId
+                trip.getTripID().toString(),
+                TransactionStatus.SUCCESS
             );
 
             log.info("👉 alreadyPaid = {} for trip {}", alreadyPaid, tripId);

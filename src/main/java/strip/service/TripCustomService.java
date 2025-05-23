@@ -683,7 +683,7 @@ public class TripCustomService {
 
         LOG.info("🔄 Đang tính refund: createFee = {}, gainFee = {}, refund = {}", createFee, gainFee, refund);
 
-        if (refund > 0) {
+        if (refund >= 0) {
             LOG.info("✅ Thực hiện hoàn lại {} cho tài xế (trip = {})", refund, trip.getTripID());
 
             WalletTransaction sysTx = new WalletTransaction();
