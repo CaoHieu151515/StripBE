@@ -3,6 +3,7 @@ package strip.service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,6 +220,10 @@ public class NotificationService {
         dto.setContent(entity.getContent());
         dto.setCreatedDate(entity.getDate());
         dto.setCreatedDate(entity.getCreatedDate());
+        dto.setType(entity.getType());
+        dto.setSourceType(NotificationSourceType.SYSTEM);
+        dto.setRelatedId(entity.getRelatedId());
+
         dto.setIsRead(entity.getIsRead());
         dto.setUserId(entity.getUser() != null ? entity.getUser().getId() : null);
         return dto;

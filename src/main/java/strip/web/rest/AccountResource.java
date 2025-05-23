@@ -264,4 +264,10 @@ public class AccountResource {
         User user = userService.registerUserWithoutOTP(dto);
         return ResponseEntity.ok(new UserDTO(user));
     }
+
+    @PostMapping("/public/register-driver")
+    public ResponseEntity<UserDTO> registerDriverWithExpiry(@RequestBody RegisterWithoutOTPDTO dto) {
+        User user = userService.registerDriverWithExpiry(dto);
+        return ResponseEntity.ok(new UserDTO(user));
+    }
 }

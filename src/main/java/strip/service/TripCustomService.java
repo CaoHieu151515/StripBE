@@ -226,7 +226,7 @@ public class TripCustomService {
                 stop.setStopLocaID(UUID.randomUUID());
                 stop.setStopLoca(stopDTO.getStopLoca());
                 stop.setStopLocaTime(stopDTO.getStopLocaTime());
-                stop.setStopLocaStatus(stopDTO.getStopLocaStatus());
+                stop.setStopLocaStatus("UPCOMMING");
                 stop.setTrip(trip);
                 tripStopLocationRepository.save(stop);
             }

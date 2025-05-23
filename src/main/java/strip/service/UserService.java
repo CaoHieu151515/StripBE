@@ -1,7 +1,10 @@
 package strip.service;
 
+import jakarta.persistence.EntityManager;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 import strip.config.Constants;
 import strip.domain.Authority;
 import strip.domain.Driver;
+import strip.domain.DriverPackageSubscription;
+import strip.domain.PackageDriver;
 import strip.domain.User;
 import strip.domain.UserDetail;
 import strip.domain.UserWallet;
 import strip.domain.enumeration.DriverStatus;
 import strip.repository.AuthorityRepository;
 import strip.repository.DriverRepository;
+import strip.repository.PackageDriverRepository;
 import strip.repository.UserDetailRepository;
 import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
@@ -69,6 +75,10 @@ public class UserService {
 
     private final ImageUrlService imageUrlService;
 
+    private final PackageDriverRepository packageDriverRepository;
+
+    private final EntityManager entityManager;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
@@ -78,7 +88,9 @@ public class UserService {
         UserDetailRepository userDetailRepository,
         DriverRepository driverRepository,
         UserWalletRepository userWalletRepository,
-        ImageUrlService imageUrlService
+        ImageUrlService imageUrlService,
+        PackageDriverRepository packageDriverRepository,
+        EntityManager entityManager
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -89,6 +101,8 @@ public class UserService {
         this.driverRepository = driverRepository;
         this.userWalletRepository = userWalletRepository;
         this.imageUrlService = imageUrlService;
+        this.packageDriverRepository = packageDriverRepository;
+        this.entityManager = entityManager;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -485,15 +499,49 @@ public class UserService {
         wallet.setMobifyDate(Instant.now());
         userWalletRepository.save(wallet);
 
-        // Driver (mặc định là NOT_DRIVER)
-        Driver driver = new Driver();
-        driver.setDriverID(UUID.randomUUID());
-        driver.setUser(user);
-        driver.setDriverPoint(14);
-        driver.setUsedtoDriver(false);
-        driver.setDriverStatus(DriverStatus.NOT_DRIVER);
-        driver.setDriverPoint(0);
-        driverRepository.save(driver);
+        UUID packageID = UUID.fromString("529eb83b-3256-4cff-bdd8-b9dbd073a9cd");
+        PackageDriver Addpackage = packageDriverRepository
+            .findByPackageID(packageID)
+            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
+
+        // Driver nếu có quyền DRIVER
+        if (user.getAuthorities().stream().anyMatch(auth -> AuthoritiesConstants.DRIVER.equals(auth.getName()))) {
+            int totalMonths = Addpackage.getBonus() + Addpackage.getTime();
+            LocalDate expiryDate = LocalDate.now().plusMonths(totalMonths);
+            Instant expiryInstant = expiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+            Driver driver = new Driver();
+            driver.setDriverID(UUID.randomUUID());
+            driver.setUser(user);
+            driver.setExpirationDate(expiryInstant);
+            driver.setDriverPoint(14);
+            driver.setUsedtoDriver(true);
+            driver.setDriverStatus(DriverStatus.ACTIVE);
+
+            DriverPackageSubscription subPackage = new DriverPackageSubscription();
+            subPackage.setId(UUID.randomUUID());
+            subPackage.setActive(true);
+            subPackage.setPurchaseDate(Instant.now());
+            subPackage.setPackagePrice(Addpackage.getPrice());
+            PackageDriver managedPackage = entityManager.merge(Addpackage);
+            subPackage.setPackageDriver(managedPackage);
+            subPackage.setExpirationDate(expiryInstant);
+
+            driverRepository.save(driver);
+            driver.addDriverPackageSubscription(subPackage);
+
+            // Lưu driver, Hibernate sẽ cascade lưu luôn subscription
+            driverRepository.save(driver);
+        } else {
+            // Mặc định NOT_DRIVER
+            Driver driver = new Driver();
+            driver.setDriverID(UUID.randomUUID());
+            driver.setUser(user);
+            driver.setDriverPoint(0);
+            driver.setUsedtoDriver(false);
+            driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+            driverRepository.save(driver);
+        }
     }
 
     @Transactional
@@ -586,6 +634,46 @@ public class UserService {
         initializeUserData(newUser);
 
         log.debug("Created test user without OTP: {}", newUser);
+        return newUser;
+    }
+
+    @Transactional
+    public User registerDriverWithExpiry(RegisterWithoutOTPDTO dto) {
+        // Check email trùng
+        Optional<User> existingUser = userRepository.findOneByEmailIgnoreCase(dto.getEmail());
+        if (existingUser.isPresent()) {
+            throw new EmailAlreadyUsedException();
+        }
+
+        // Generate login ngẫu nhiên
+        String login;
+        do {
+            login = RandomUsername.generateRandomCode(9);
+        } while (userRepository.findOneByLogin(login).isPresent());
+
+        String encryptedPassword = passwordEncoder.encode(dto.getPassword());
+
+        User newUser = new User();
+        newUser.setLogin(login);
+        newUser.setEmail(dto.getEmail().toLowerCase());
+        newUser.setPassword(encryptedPassword);
+        newUser.setFirstName(dto.getFirstName());
+        newUser.setLastName(dto.getLastName());
+        newUser.setImageUrl(dto.getImageUrl());
+        newUser.setLangKey(dto.getLangKey());
+        newUser.setActivated(true);
+        newUser.setActivationKey(null);
+
+        // Gán quyền DRIVER
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.DRIVER).ifPresent(authorities::add);
+        newUser.setAuthorities(authorities);
+
+        userRepository.save(newUser);
+        clearUserCaches(newUser);
+        initializeUserData(newUser);
+
+        log.debug("Created driver with 1-year expiry: {}", newUser);
         return newUser;
     }
 }
