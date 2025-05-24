@@ -8,6 +8,7 @@ public class RegisterWithoutOTPDTO {
     private String lastName;
     private String imageUrl;
     private String langKey;
+    private String phone;
 
     public String getEmail() {
         return email;
@@ -56,6 +57,14 @@ public class RegisterWithoutOTPDTO {
     public void setLangKey(String langKey) {
         this.langKey = langKey;
     }
+
     // Getters & setters
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

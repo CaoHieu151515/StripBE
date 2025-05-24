@@ -203,6 +203,7 @@ public class UserService {
 
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
+        String phone = userDTO.getPhone();
 
         newUser.setLogin(login);
         newUser.setEmail(userDTO.getEmail().toLowerCase());
@@ -223,7 +224,7 @@ public class UserService {
         this.clearUserCaches(newUser);
 
         // 👉 Khởi tạo các entity liên quan
-        initializeUserData(newUser);
+        initializeUserData(newUser, phone);
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -482,10 +483,11 @@ public class UserService {
     }
 
     @Transactional
-    public void initializeUserData(User user) {
+    public void initializeUserData(User user, String phone) {
         // UserDetail
         UserDetail detail = new UserDetail();
         detail.setAppUserDetail(UUID.randomUUID());
+        detail.setPhone(phone);
         detail.setUser(user);
         userDetailRepository.save(detail);
 
@@ -631,7 +633,7 @@ public class UserService {
 
         userRepository.save(newUser);
         clearUserCaches(newUser);
-        initializeUserData(newUser);
+        initializeUserData(newUser, dto.getPhone());
 
         log.debug("Created test user without OTP: {}", newUser);
         return newUser;
@@ -671,7 +673,7 @@ public class UserService {
 
         userRepository.save(newUser);
         clearUserCaches(newUser);
-        initializeUserData(newUser);
+        initializeUserData(newUser, dto.getPhone());
 
         log.debug("Created driver with 1-year expiry: {}", newUser);
         return newUser;
