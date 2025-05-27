@@ -13,6 +13,8 @@ public class ErrorTranslate {
                 return "Xác nhận tài xế đã được gửi trước đó";
             case "error.already-exists":
                 return "Phản hồi này đã được gửi trước đó";
+            case "error.alreadyJoined":
+                return "Bạn đã tham gia chuyến đi này rồi";
             case "Bad credentials":
                 return "Sai tài khoản hoặc mật khẩu";
             case "User is disabled":

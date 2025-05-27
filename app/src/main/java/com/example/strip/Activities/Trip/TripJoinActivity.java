@@ -227,19 +227,47 @@ public class TripJoinActivity extends AppCompatActivity {
                     }, 1500);
                 } else {
                     Log.e("Failed", "Thất bại khi tham gia chuyến đi!" + response.code());
+
                     try {
                         String errorBody = response.errorBody().string();
-                        Log.e("Failed", "Thất bại khi tham gia chuyến đi! " + errorBody);
+                        Log.e("Failed", "Không thể tham gia chuyến đi. " + errorBody);
 
                         JSONObject jsonObject = new JSONObject(errorBody);
-                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
-                        // Dịch sang tiếng Việt
-                        String translated = ErrorTranslate.translateError(detailMessage);
 
-                        notificationPopup.showPopup("Thất bại khi tham gia chuyến đi! \n" + translated, true);
+                        String errorMessageCode = "";
+
+                        // Trường hợp 1: properties là JSONObject
+                        if (jsonObject.has("properties")) {
+                            Object props = jsonObject.get("properties");
+
+                            if (props instanceof JSONObject) {
+                                errorMessageCode = ((JSONObject) props).optString("message", "");
+                            } else if (props instanceof String) {
+                                // Trường hợp 2: properties là chuỗi như {message=error.already-exists, params=feedback}
+                                String propsStr = (String) props;
+                                // Chuyển sang dạng JSON hợp lệ
+                                propsStr = propsStr.replace("=", "\":\"").replace(", ", "\", \"").replace("{", "{\"").replace("}", "\"}");
+
+                                try {
+                                    JSONObject propsJson = new JSONObject(propsStr);
+                                    errorMessageCode = propsJson.optString("message", "");
+                                } catch (Exception e) {
+                                    errorMessageCode = "Lỗi không xác định";
+                                }
+                            }
+                        }
+                        // Fallback nếu không có message
+                        if (errorMessageCode.isEmpty()) {
+                            errorMessageCode = jsonObject.optString("message", "Lỗi không xác định");
+                        }
+
+                        // Dịch lỗi
+                        String translated = ErrorTranslate.translateError(errorMessageCode);
+                        notificationPopup.showPopup("Không thể tham gia chuyến đi.\n" + translated, true);
+
                     } catch (Exception e) {
                         e.printStackTrace();
-                        notificationPopup.showPopup("Thất bại khi tham gia chuyến đi! \n Không thể lấy thông báo lỗi", true);
+                        notificationPopup.showPopup("Không thể tham gia chuyến đi.\nKhông thể lấy thông báo lỗi", true);
                     }
                 }
             }

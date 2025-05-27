@@ -16,6 +16,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+
             <!-- Profile Header -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -140,6 +141,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"/>
+            <TextView
+                android:id="@+id/tvLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Loading..."
+                android:textSize="18sp"
+                android:visibility="visible"
+                android:layout_gravity="center"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewTrips"
                 android:layout_width="match_parent"
