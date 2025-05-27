@@ -11,6 +11,7 @@ public class DriverPointHistoryListDTO {
     private String reason;
     private Instant date;
     private DriverPointHistoryStatus status;
+    private Boolean disable;
     private String userName; // Người xử lý (staff/admin)
 
     // Getters & Setters
@@ -53,6 +54,14 @@ public class DriverPointHistoryListDTO {
 
     public void setStatus(DriverPointHistoryStatus status) {
         this.status = status;
+    }
+
+    public Boolean getDisable() {
+        return disable;
+    }
+
+    public void setDisable(Boolean disable) {
+        this.disable = disable;
     }
 
     public String getUserName() {

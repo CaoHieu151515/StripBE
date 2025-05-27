@@ -887,9 +887,11 @@ public class UsermanageService {
     public Page<DriverPointHistoryListDTO> getPointHistoryListByUserDetail(UUID userDetailId, Pageable pageable) {
         Page<DriverPointHistory> page = driverPointHistoryRepository.findByDriver_DriverID(userDetailId, pageable);
 
+        Instant now = Instant.now();
         return page.map(history -> {
             // 👉 Map các field cơ bản (không bao gồm userName)
             DriverPointHistoryListDTO dto = usermanageMapper.toListDtoBase(history);
+            dto.setDisable(false);
 
             // 👉 Truy vấn userName theo userID từ userDetail (nếu có)
             if (history.getUserDetail() != null && history.getUserDetail().getUser().getId() != null) {
@@ -898,6 +900,10 @@ public class UsermanageService {
                     .ifPresent(user -> {
                         dto.setUserName(user.getLogin());
                     });
+                Instant expiredTime = history.getDate().plus(48, ChronoUnit.HOURS);
+                if (now.isAfter(expiredTime)) {
+                    dto.setDisable(true);
+                }
             } else {
                 dto.setUserName("Hệ thống");
             }
