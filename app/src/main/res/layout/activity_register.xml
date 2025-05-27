@@ -32,47 +32,23 @@
         app:layout_constraintStart_toStartOf="parent"
         android:gravity="start"/>
 
-    <!-- Profile Image -->
-    <ImageView
-        android:id="@+id/ivProfile"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/user"
-        android:background="@drawable/circle_background"
-        android:scaleType="centerCrop"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        android:padding="10dp"
-        android:layout_marginTop="24dp"/>
-
-    <!-- Camera Icon -->
-    <ImageView
-        android:id="@+id/ivCamera"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/camera"
-        android:background="@drawable/circle_background"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="@id/ivProfile"
-        app:layout_constraintEnd_toEndOf="@id/ivProfile"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"/>
 
     <!--
     Full Name Input -->
     <EditText
-        android:id="@+id/etLogin"
+        android:id="@+id/etPhone"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:hint="Full Name"
+        android:hint="Số điện thoại"
         android:background="@drawable/input_field_bg"
         android:paddingStart="16dp"
         android:textSize="16sp"
-        android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@id/ivProfile"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="30dp"/>
+
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="0dp"
@@ -82,34 +58,43 @@
         android:paddingStart="16dp"
         android:textSize="16sp"
         android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@id/etLogin"
+        app:layout_constraintTop_toBottomOf="@id/etPhone"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent" />
     <!-- Phone Number Input Group -->
-    <LinearLayout
-        android:id="@+id/llPhoneNumber"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/etEmail"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp">
+
 
         <!-- Phone Number Input -->
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="Password"
+            android:layout_height="60dp"
+            android:hint="Mật khẩu"
             android:background="@drawable/input_field_bg"
             android:paddingStart="16dp"
             android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEmail"
             android:inputType="textPassword"
-            />
-    </LinearLayout>
+            tools:ignore="MissingConstraints" />
+    <EditText
+        android:id="@+id/etConfirmPassword"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:hint="Mật khẩu xác nhận"
+        android:background="@drawable/input_field_bg"
+        android:paddingStart="16dp"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etPassword"
+        android:inputType="textPassword"
+        tools:ignore="MissingConstraints" />
+
 
     <!-- Sign Up Button -->
     <androidx.appcompat.widget.AppCompatButton
@@ -121,7 +106,7 @@
         android:textSize="18sp"
         android:textColor="@android:color/white"
         android:background="@drawable/button_signup_bg"
-        app:layout_constraintTop_toBottomOf="@id/llPhoneNumber"
+        app:layout_constraintTop_toBottomOf="@id/etConfirmPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="40dp"/>

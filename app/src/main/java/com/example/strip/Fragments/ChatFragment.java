@@ -36,7 +36,7 @@ import retrofit2.Retrofit;
 
 public class ChatFragment extends Fragment {
 
-    private TextView tvUserWallet, tvMobifyDate, tvCurrent, tvBefore, tvAmount;
+    private TextView tvMobifyDate, tvCurrent, tvBefore, tvAmount;
     private ImageView ivProfile,ivPayment;
     private RecyclerView recyclerView;
     private TransactionAdapter transactionAdapter;
@@ -47,7 +47,6 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        tvUserWallet = view.findViewById(R.id.tvUserWallet);
         tvMobifyDate = view.findViewById(R.id.tvMobifyDate);
         tvCurrent = view.findViewById(R.id.tvCurrent);
         tvBefore = view.findViewById(R.id.tvBefore);
@@ -65,6 +64,7 @@ public class ChatFragment extends Fragment {
         fetchWalletInfo();
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         fetchTransactionsList();
         // Inflate the layout for this fragment
         return view;
@@ -79,8 +79,7 @@ public class ChatFragment extends Fragment {
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     UserMoreResponse user = response.body();
-                    tvUserWallet.setText(user.getUserWallet().getUserWallet() != null ? user.getUserWallet().getUserWallet() : "N/A");
-                    tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? DateFormatter.formatDate(user.getUserWallet().getMobifyDate()) : "N/A");
+                    tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? DateFormatter.formatDate(user.getUserWallet().getMobifyDate()) : "");
                     tvCurrent.setText(String.format("%.2f", user.getUserWallet().getCurrent()));
                     tvBefore.setText(String.format("%.2f", user.getUserWallet().getBefore()));
                     tvAmount.setText(String.format("%.2f", user.getUserWallet().getAmount()));

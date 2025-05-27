@@ -1,6 +1,7 @@
 package com.example.strip.Services;
 
 import com.example.strip.Models.PackageDriver;
+import com.example.strip.Models.Request.AddVehicleRequest;
 import com.example.strip.Models.Request.ChangePasswordRequest;
 import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.PassengerProfileRequest;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -49,4 +51,6 @@ public interface IUserMobileApiService {
 
     @GET("api/mobile/user/trips/history")
     Call<List<TripDoneResponse>> getDoneTrips();
+    @POST("api/mobile/user/driver/vehicles/add")
+    Call<ResponseBody> addVehicle(@Body AddVehicleRequest addVehicleRequest);
 }

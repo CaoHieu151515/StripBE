@@ -55,26 +55,26 @@
         app:layout_constraintTop_toBottomOf="@id/walletStatus"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp">
 
         <!-- Tiêu đề -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ví người dùng"
-            android:textColor="@color/orange"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Ví người dùng"-->
+<!--            android:textColor="@color/orange"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold"/>-->
 
-        <TextView
-            android:id="@+id/tvUserWallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="8efc9c76-72c2-4965-993a-7c9a8e594004"
-            android:textColor="@color/white"
-            android:textSize="17sp"
-            android:textStyle="bold"/>
+<!--        <TextView-->
+<!--            android:id="@+id/tvUserWallet"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="8efc9c76-72c2-4965-993a-7c9a8e594004"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="17sp"-->
+<!--            android:textStyle="bold"/>-->
 
         <!-- Sử dụng ConstraintLayout để chia thành 2 cột -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,7 +98,7 @@
                 android:id="@+id/tvMobifyDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2025-03-02T12:54:00Z"
+                android:text="0000-00-00T00:00:00Z"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -122,7 +122,7 @@
                 android:id="@+id/tvCurrent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="8603.83"
+                android:text="0000.00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -153,7 +153,7 @@
                 android:id="@+id/tvBefore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11878.04"
+                android:text="00000.00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -177,7 +177,7 @@
                 android:id="@+id/tvAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="16987.59"
+                android:text="00000.00"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -203,7 +203,7 @@
         android:background="@drawable/bg_contanier_two"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -294,7 +294,8 @@
         android:textColor="@color/black"
         app:layout_constraintTop_toBottomOf="@id/transactionButtons"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="20dp"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"/>
 
     <!--    &lt;!&ndash; Transactions List &ndash;&gt;-->
     <!--    <LinearLayout-->
@@ -361,9 +362,8 @@
 
     <!--    </LinearLayout>-->
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/lastTransactionTitle"
         app:layout_constraintStart_toStartOf="parent"
@@ -373,7 +373,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 

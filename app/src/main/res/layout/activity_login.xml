@@ -62,7 +62,7 @@
         android:id="@+id/etPassword"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:hint="Password"
+        android:hint="Mật khẩu"
         android:background="@drawable/input_field_bg"
         android:paddingStart="16dp"
         android:textSize="16sp"

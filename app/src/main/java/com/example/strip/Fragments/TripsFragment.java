@@ -39,7 +39,7 @@ public class TripsFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewTrips);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TripBookingAdapter(tripList);
+        adapter = new TripBookingAdapter(getContext(),tripList);
         recyclerView.setAdapter(adapter);
         fetchTripsWaiting();
 

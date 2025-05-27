@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,14 +22,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.strip.Activities.Driver.AddTripActivity;
 import com.example.strip.Adapters.TripStopTwoAdapter;
+import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.Request.JoinTripRequest;
+import com.example.strip.Models.Request.NotificationRequest;
+import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
+import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
@@ -33,6 +43,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -60,6 +71,7 @@ public class TripJoinActivity extends AppCompatActivity {
     private String selectedStartLocaId = "", selectedEndLocaId = "";
     private String lastClicked = ""; // "start" or "end"
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +115,7 @@ public class TripJoinActivity extends AppCompatActivity {
             return;
         }
         loadTripDetails();
+        fetchUserInfo();
         btnJoinTrip.setOnClickListener(v -> sendJoinRequest());
     }
 //    private Retrofit getRetrofitClient() {
@@ -182,6 +195,7 @@ public class TripJoinActivity extends AppCompatActivity {
         });
     }
     private void sendJoinRequest() {
+        String userId = user.getDriver().getUserId();
         int seats = Integer.parseInt(etNumberOfSeats.getText().toString());
         String luggage = etLuggageDescription.getText().toString();
         String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
@@ -201,8 +215,16 @@ public class TripJoinActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    NotificationRequest notiRequest = new NotificationRequest(
+                            "Bạn đã tham gia chuyến đi thành công!", // title or message
+                            "Mã chuyến đi: " + tripId, // detailed message
+                            userId // or other target
+                    );
+                    notificationPopup.createNotification(notiRequest);
                     notificationPopup.showPopup("Tham gia chuyến đi thành công", false);
-                    finish(); // or navigate somewhere
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        finish();
+                    }, 1500);
                 } else {
                     Log.e("Failed", "Thất bại khi tham gia chuyến đi!" + response.code());
                     try {
@@ -226,6 +248,36 @@ public class TripJoinActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
                 notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);            }
+        });
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(TripJoinActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
         });
     }
 }

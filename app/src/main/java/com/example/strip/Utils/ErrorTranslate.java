@@ -9,6 +9,10 @@ public class ErrorTranslate {
         // Normalize input
         String normalized = detail.trim();
         switch (normalized) {
+            case "error.usedToDriver":
+                return "Xác nhận tài xế đã được gửi trước đó";
+            case "error.already-exists":
+                return "Phản hồi này đã được gửi trước đó";
             case "Bad credentials":
                 return "Sai tài khoản hoặc mật khẩu";
             case "User is disabled":
@@ -25,6 +29,8 @@ public class ErrorTranslate {
                 return "Không được phép";
             case "Internal Server Error":
                 return "Lỗi máy chủ nội bộ";
+            case "400 BAD_REQUEST":
+                return "Đã xác nhận rồi";
             default:
                 return normalized; // Return original message if no match
         }

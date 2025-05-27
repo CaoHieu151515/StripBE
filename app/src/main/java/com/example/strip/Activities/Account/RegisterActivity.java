@@ -2,6 +2,8 @@ package com.example.strip.Activities.Account;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +20,12 @@ import com.example.strip.Models.Request.RegisterVM;
 import com.example.strip.Models.Response.ResponseMessage;
 import com.example.strip.R;
 import com.example.strip.Services.IAccountApiService;
+import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,17 +34,19 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText edLogin, edEmail, edPassword;
-
+    private EditText edPhone, edEmail, edPassword, edConfirmPassword;
+    private NotificationPopup notificationPopup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         // Find the ImageView by its ID
         Button btnRegister = findViewById(R.id.btnSignUp);
-        edLogin = findViewById(R.id.etLogin);
+        edPhone = findViewById(R.id.etPhone);
         edEmail = findViewById(R.id.etEmail);
         edPassword = findViewById(R.id.etPassword);
+        edConfirmPassword = findViewById(R.id.etConfirmPassword);
+        notificationPopup = new NotificationPopup(this);
         // Set an OnClickListener for the ImageView
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,32 +66,54 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
     private void registerPassenger() {
-        String login = edLogin.getText().toString();
-        String email = edEmail.getText().toString();
-        String password = edPassword.getText().toString();
-        RegisterVM request = new RegisterVM(email, password, login,true,"string");
+        String phone = edPhone.getText().toString().trim();
+        String email = edEmail.getText().toString().trim();
+        String password = edPassword.getText().toString().trim();
+        String confirmPassword = edConfirmPassword.getText().toString().trim();
+
+        if (phone.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            notificationPopup.showPopup("Vui lòng điền đầy đủ thông tin",true);
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            notificationPopup.showPopup("Mật khẩu xác nhận không khớp",true);
+            return;
+        }
+        RegisterVM request = new RegisterVM(email, password, "string",true,"string", phone);
+
         IAccountApiService apiService = ApiClient.getClient().create(IAccountApiService.class);
         Call<Void> call = apiService.register(request);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Intent intent = new Intent(RegisterActivity.this, OTPActivity.class);
-                    intent.putExtra("login", login);
-                    intent.putExtra("email", email);
-                    intent.putExtra("password", password);
-                    startActivity(intent);
-                    finish();
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                    notificationPopup.showPopup("Đăng ký thành công!", false);
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Intent intent = new Intent(RegisterActivity.this, OTPActivity.class);
+                        intent.putExtra("login", "string");
+                        intent.putExtra("email", email);
+                        intent.putExtra("password", password);
+                        intent.putExtra("phone", phone);
+                        startActivity(intent);
+                        finish();
+                    }, 1500);
                 } else {
                     // Log the error response for debugging
+
                     try {
                         String errorBody = response.errorBody().string();
-                        Log.e("RegisterError", "Đăng ký thất bại: " + errorBody);
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: " + errorBody, Toast.LENGTH_LONG).show();
+                        Log.e("Failed", "Đăng ký thất bại: " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Đăng ký thất bại: \n" + translated, true);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại: Không thể lấy thông báo lỗi", Toast.LENGTH_SHORT).show();
+                        notificationPopup.showPopup("Đăng ký thất bại: \n Không thể lấy thông báo lỗi", true);
                     }
                 }
             }
@@ -91,8 +121,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("RegisterFailure", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(RegisterActivity.this, "Lỗi khi gọi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
     }

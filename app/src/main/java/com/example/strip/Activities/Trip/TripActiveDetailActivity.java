@@ -16,11 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.strip.Adapters.TripRequestAdapter;
 import com.example.strip.Adapters.TripStopAdapter;
+import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.RequestTripResponse;
+import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.TripStatusTranslate;
@@ -38,6 +41,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class TripActiveDetailActivity extends AppCompatActivity {
     private RecyclerView recyclerTripRequests;
@@ -50,6 +54,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
     private ITripMobileApiService tripService;
     private ImageView ivDetail;
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,21 +96,29 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         });
         loadTripDetails();
         fetchTripRequests(tripId);
+        fetchUserInfo();
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String userId = user.getDriver().getUserId();
                 ITripMobileApiService apiService = ApiClient.getClientWithToken(TripActiveDetailActivity.this).create(ITripMobileApiService.class);
                 Call<Void> call = apiService.startTrip(tripId);
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         loadTripDetails();
-                        notificationPopup.showPopup("Trip started",false);
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã bắt đầu chuyến đi thành công!", // title or message
+                                "Mã chuyến đi: " + tripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
+                        notificationPopup.showPopup("Chuyến đi bắt đầu thành công",false);
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        notificationPopup.showPopup("Failed to start trip",true);
+                        notificationPopup.showPopup("Chuyến đi bắt đầu thất bại",true);
                     }
                 });
             }
@@ -113,18 +126,25 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String userId = user.getDriver().getUserId();
                 ITripMobileApiService apiService = ApiClient.getClientWithToken(TripActiveDetailActivity.this).create(ITripMobileApiService.class);
                 Call<Void> call = apiService.completeTrip(tripId);
                 call.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         loadTripDetails();
-                        notificationPopup.showPopup("Trip completed",false);
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã hoàn thành chuyến đi thành công!", // title or message
+                                "Mã chuyến đi: " + tripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
+                        notificationPopup.showPopup("Chuyến đi hoàn thành thành công",false);
                     }
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        notificationPopup.showPopup("Failed to complete trip",true);
+                        notificationPopup.showPopup("Chuyến đi hoàn thành thất bại",true);
                     }
                 });
             }
@@ -218,6 +238,36 @@ public class TripActiveDetailActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<TripDetail> call, @NonNull Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
+        });
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(TripActiveDetailActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
                 notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });

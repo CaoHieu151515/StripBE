@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.Driver.AddTripActivity;
+import com.example.strip.Activities.Driver.AddVehicleActivity;
 import com.example.strip.Activities.Driver.DriverProfileActivity;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.VehicleAdapter;
@@ -35,8 +36,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class DriverProfileFragment extends Fragment {
-    private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvCountTrip, tvBannedDay;
-    private ImageView ivProfile, ivChangeToPassenger;
+    private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob;
+    private ImageView ivProfile, ivChangeToPassenger, ivVehicleIcon;
     private RecyclerView rvVehicles;
     private VehicleAdapter vehicleAdapter;
     private List<DriverVehicleDTO> vehicleList = new ArrayList<>();
@@ -46,8 +47,6 @@ public class DriverProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_driver_profile, container, false);
         ImageView btnBack = view.findViewById(R.id.backButton);
-        tvCountTrip = view.findViewById(R.id.tvCountTrip);
-        tvBannedDay = view.findViewById(R.id.tvBannedDay);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvFullName = view.findViewById(R.id.tvFullName);
         tvPhone = view.findViewById(R.id.tvPhone);
@@ -56,14 +55,24 @@ public class DriverProfileFragment extends Fragment {
         tvDob = view.findViewById(R.id.tvDob);
         ivProfile = view.findViewById(R.id.ivProfile);
         rvVehicles = view.findViewById(R.id.rvVehicles);
+        ivVehicleIcon = view.findViewById(R.id.ivVehicleIcon);
         ivChangeToPassenger = view.findViewById(R.id.ivChangeToPassenger);
         rvVehicles.setLayoutManager(new LinearLayoutManager(getContext()));
         vehicleAdapter = new VehicleAdapter(vehicleList);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rvVehicles.setLayoutManager(layoutManager);
         rvVehicles.setAdapter(vehicleAdapter);
         ivChangeToPassenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), StripActivity.class);
+                startActivity(intent);
+            }
+        });
+        ivVehicleIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), AddVehicleActivity.class);
                 startActivity(intent);
             }
         });
@@ -86,16 +95,13 @@ public class DriverProfileFragment extends Fragment {
                             (user.getUser().getLastName() != null ? " " + user.getUser().getLastName() : "");
 
                     if (fullName.trim().isEmpty()) {
-                        fullName = "N/A";
+                        fullName = "";
                     }
                     tvFullName.setText(fullName);
-                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "N/A");
-                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "N/A");
-                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "N/A");
-                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? user.getUserDetailsCusDTO().getDob() : "N/A");
-                    int driverPoint = (user.getDriver() != null) ? user.getDriver().getDriverPoint() : -1;
-                    tvCountTrip.setText(driverPoint >= 0 ? "" + driverPoint : "N/A");
-                    tvBannedDay.setText(user.getDriver().getBannedDay() != null ? user.getDriver().getBannedDay() : "N/A");
+                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "");
+                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "");
+                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "");
+                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? user.getUserDetailsCusDTO().getDob() : "");
                     // Hiển thị ảnh nếu có
                     String imageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (imageUrl != null && !imageUrl.isEmpty()) {

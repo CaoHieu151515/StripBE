@@ -1,5 +1,7 @@
 package com.example.strip.Adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.strip.Activities.Driver.RatingFeedbackDriverActivity;
 import com.example.strip.Models.Response.StopLocationBookingResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.R;
@@ -21,8 +24,10 @@ import java.util.List;
 
 public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.TripViewHolder>{
     private List<TripBookingResponse> tripBookingResponseList;
+    private Context context;
 
-    public TripBookingAdapter(List<TripBookingResponse> tripBookingResponseList) {
+    public TripBookingAdapter(Context context, List<TripBookingResponse> tripBookingResponseList) {
+        this.context = context;
         this.tripBookingResponseList = tripBookingResponseList;
     }
 
@@ -61,7 +66,11 @@ public class TripBookingAdapter extends RecyclerView.Adapter<TripBookingAdapter.
                 holder.stopLocationContainer.addView(stopView);
             }
         }
-
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, RatingFeedbackDriverActivity.class);
+            intent.putExtra("driverId", trip.getDriverID()); // Pass tripId to detail activity
+            context.startActivity(intent);
+        });
     }
 
     @Override

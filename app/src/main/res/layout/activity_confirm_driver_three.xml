@@ -263,7 +263,7 @@
             android:id="@+id/btnConfirmDriver"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Confirm Driver"
+            android:text="Xác nhận tài xế"
             android:textSize="15sp"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

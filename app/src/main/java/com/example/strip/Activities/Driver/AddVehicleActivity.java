@@ -18,8 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Account.LoginActivity;
-import com.example.strip.Activities.StripActivity;
+import com.example.strip.Models.Request.AddVehicleRequest;
 import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
@@ -37,18 +36,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ConfirmDriverThreeActivity extends AppCompatActivity {
+public class AddVehicleActivity extends AppCompatActivity {
     private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand;
     private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView;
     private Button btnConfirmDriver;
-    private byte[] vehicleImageBytes, carRegistrationImageBytes, inspectionCertificateImageBytes, insuranceImageBytes,
-            licenseImageBytes, faceUpImageBytes, faceDownImageBytes;
-    private String firstName, lastName, phone;
+    private byte[] vehicleImageBytes, carRegistrationImageBytes, inspectionCertificateImageBytes, insuranceImageBytes;
     private Retrofit retrofit;
     private static final int REQUEST_IMAGE_PICK = 100;
     private static final int REQUEST_IMAGE_TWO_PICK = 101;
@@ -56,10 +54,11 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_FOUR_PICK = 103;
     private NotificationPopup notificationPopup;
     private UserMoreResponse user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_confirm_driver_three);
+        setContentView(R.layout.activity_add_vehicle);
         etVehicleType = findViewById(R.id.etVehicleType);
         etVehicleColor = findViewById(R.id.etVehicleColor);
         etVehicleNumber = findViewById(R.id.etVehicleNumber);
@@ -72,6 +71,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         btnConfirmDriver = findViewById(R.id.btnConfirmDriver);
         retrofit = ApiClient.getClientWithToken(this);
         notificationPopup = new NotificationPopup(this);
+
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +115,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         });
         fetchUserInfo();
         Retrofit retrofit = ApiClient.getClientWithToken(this);
+
         IUserMobileApiService userService = retrofit.create(IUserMobileApiService.class);
 
         Call<ConfirmDriverResponse> call = userService.getConfirmDriver();
@@ -170,49 +171,38 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     loadImageWithFixHost(data.getDriverLicenseUrl(), inspectionCertificateImageView);
                     loadImageWithFixHost(data.getDriverLicenseUrl(), insuranceImageView);
                 } else {
-                    Toast.makeText(ConfirmDriverThreeActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddVehicleActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ConfirmDriverResponse> call, Throwable t) {
-                Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddVehicleActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            licenseImageBytes = intent.getByteArrayExtra("driverLicense");
-            firstName = intent.getStringExtra("firstName");
-            lastName = intent.getStringExtra("lastName");
-            phone = intent.getStringExtra("phone");
-
-            faceUpImageBytes = intent.getByteArrayExtra("identityCardFaceUp");
-            faceDownImageBytes = intent.getByteArrayExtra("identityCardFacedown");
-        }
         btnConfirmDriver.setOnClickListener(v -> {
             String userId = user.getDriver().getUserId();
-
             // 2. Create request object
-            ConfirmDriverRequest request = new ConfirmDriverRequest(
-                    firstName, lastName, phone,
-                    licenseImageBytes, faceUpImageBytes,
-                    "image/png", "image/png",
-                    faceDownImageBytes, "image/png",
-                    Integer.parseInt(etSeats.getText().toString()), etVehicleType.getText().toString(), etVehicleNumber.getText().toString(), etVehicleColor.getText().toString(),
-                    vehicleImageBytes, etVehicleBrand.getText().toString(), "image/png",
+            AddVehicleRequest request = new AddVehicleRequest(
+                    etVehicleNumber.getText().toString(),
+                    Integer.parseInt(etSeats.getText().toString()),
+                    etVehicleColor.getText().toString(),
+                    etVehicleBrand.getText().toString(),
+                    etVehicleType.getText().toString(),
+                    vehicleImageBytes, "image/png",
                     carRegistrationImageBytes, "image/png",
                     inspectionCertificateImageBytes, "image/png",
                     insuranceImageBytes, "image/png"
             );
             // 3. Make API call
             IUserMobileApiService apiService = ApiClient.getClientWithToken(this).create(IUserMobileApiService.class);
-            apiService.confirmDriver(request).enqueue(new Callback<RequestBody>() {
+            apiService.addVehicle(request).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
                         NotificationRequest notiRequest = new NotificationRequest(
-                                "Bạn đã xác nhận chuyến đi!", // title or message
+                                "Bạn đã thêm xe rồi!", // title or message
                                 "Bạn đã xác nhận chuyến đi vui lòng chờ kết quả! ", // detailed message
                                 userId // or other target
                         );
@@ -225,7 +215,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     } else {
                         try {
                             String errorBody = response.errorBody().string();
-                            Log.e("Failed", "Không thể gửi phản hồi. " + errorBody);
+                            Log.e("Failed", "Không thể thêm xe. " + errorBody);
 
                             JSONObject jsonObject = new JSONObject(errorBody);
 
@@ -259,24 +249,24 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                             // Dịch lỗi
                             String translated = ErrorTranslate.translateError(errorMessageCode);
-                            notificationPopup.showPopup("Không thể gửi phản hồi.\n" + translated, true);
+                            notificationPopup.showPopup("Không thể thêm xe.\n" + translated, true);
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            notificationPopup.showPopup("Không thể gửi phản hồi.\nKhông thể lấy thông báo lỗi", true);
+                            notificationPopup.showPopup("Không thể thêm xe.\nKhông thể lấy thông báo lỗi", true);
                         }
 
                     }
                 }
 
+
+
                 @Override
-                public void onFailure(Call<RequestBody> call, Throwable t) {
-                    Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(AddVehicleActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         });
-
-
     }
     private void loadImageWithFixHost(String url, ImageView target) {
         if (url != null && !url.isEmpty()) {
@@ -387,7 +377,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         }
     }
     private void fetchUserInfo() {
-        Retrofit retrofit = ApiClient.getClientWithToken(ConfirmDriverThreeActivity.this);
+        Retrofit retrofit = ApiClient.getClientWithToken(AddVehicleActivity.this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
         Call<UserMoreResponse> call = apiService.getUserInfo();
 
@@ -401,7 +391,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                         String errorBody = response.errorBody().string();
 
                         Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
-                        Toast.makeText(ConfirmDriverThreeActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(AddVehicleActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                         notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
@@ -416,6 +406,4 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

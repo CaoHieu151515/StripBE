@@ -7,16 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.strip.Activities.Trip.EditTripActivity;
+import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.RequestTripResponse;
+import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
+import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.network.ApiClient;
 
 import org.json.JSONObject;
@@ -27,6 +33,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.ViewHolder> {
     private OnTripActionListener listener;
@@ -35,6 +42,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
 
     private List<RequestTripResponse> requestTripList;
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
     public TripRequestAdapter(Context context, List<RequestTripResponse> requestTripList, OnTripActionListener listener) {
         this.context = context;
         this.requestTripList = requestTripList;
@@ -74,6 +82,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     @Override
     public TripRequestAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_request_trip, parent, false);
+        fetchUserInfo();
         return new ViewHolder(view);
     }
 
@@ -82,15 +91,15 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
         RequestTripResponse trip = requestTripList.get(position);
         holder.txtStartLocation.setText("Bắt đầu: " + trip.startLoca.stopLoca);
         holder.txtEndLocation.setText("Kết thúc: " + trip.endLoca.stopLoca);
-        holder.txtStatus.setText("Trạng thái : " + trip.status);
+        holder.txtStatus.setText("Trạng thái : " + TripStatusTranslate.translateStatus(trip.status));
         holder.txtLuggage.setText("Hành lý: " + trip.luggageDescription);
         holder.txtFee.setText("Phí: " + trip.amountApproveFee + " VND");
 
-        String pickUp = trip.pickUpTime != null ? DateFormatter.formatDate(trip.pickUpTime) : "N/A";
-        String checkIn = trip.checkInTime != null ? DateFormatter.formatDate(trip.checkInTime) : "N/A";
-        String checkOut = trip.checkOutTIme != null ? DateFormatter.formatDate(trip.checkOutTIme) : "N/A";
-        holder.txtCheckIn.setText("Lên xe lúc: " + checkIn);
-        holder.txtCheckOut.setText("Xuống xe lúc: " + checkOut);
+        String pickUp = trip.pickUpTime != null ? DateFormatter.formatDate(trip.pickUpTime) : "";
+        String checkIn = trip.checkInTime != null ? DateFormatter.formatDate(trip.checkInTime) : "";
+        String checkOut = trip.checkOutTIme != null ? DateFormatter.formatDate(trip.checkOutTIme) : "";
+        holder.txtCheckIn.setText("Lên xe: " + checkIn);
+        holder.txtCheckOut.setText("Xuống xe: " + checkOut);
         holder.txtPickupTime.setText("Thời gian đón: " + pickUp);
 
         holder.btnAccept.setOnClickListener(v -> {
@@ -120,10 +129,10 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     }
 
     private void acceptTrip(String requestTripId) {
+        String userId = user.getDriver().getUserId();
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.acceptRequestTrip(requestTripId);
         notificationPopup = new NotificationPopup(context);
-
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -133,6 +142,12 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     }
                     // Success, you can handle it here
                     try {
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã chấp nhận yêu cầu chuyến đi thành công!", // title or message
+                                "Mã yêu cầu chuyến đi: " + requestTripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
                         notificationPopup.showPopup("Chấp nhận chuyến đi thành công!", false);
 
                     } catch (Exception e) {
@@ -166,6 +181,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     }
 
     private void rejectTrip(String requestTripId) {
+        String userId = user.getDriver().getUserId();
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.rejectRequestTrip(requestTripId);
         notificationPopup = new NotificationPopup(context);
@@ -179,6 +195,12 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     }
                     // Success, you can handle it here
                     try {
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã từ chối yêu cầu chuyến đi thành công!", // title or message
+                                "Mã yêu cầu chuyến đi: " + requestTripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
                         // Show success or do something
                         notificationPopup.showPopup("Từ chối chuyến đi thành công!", false);
                     } catch (Exception e) {
@@ -213,6 +235,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     }
 
     private void checkInTrip(String requestTripId) {
+        String userId = user.getDriver().getUserId();
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.checkInRequestTrip(requestTripId);
         notificationPopup = new NotificationPopup(context);
@@ -226,6 +249,12 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     // Success, you can handle it here
                     try {
                         String responseBody = response.body().string();
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã cho lên xe với yêu cầu chuyến đi thành công!", // title or message
+                                "Mã yêu cầu chuyến đi: " + requestTripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
                         // Show success or do something
                         notificationPopup.showPopup("Cho lên xe thành công!", false);
                     } catch (Exception e) {
@@ -260,6 +289,7 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
     }
 
     private void checkOutTrip(String requestTripId) {
+        String userId = user.getDriver().getUserId();
         ITripMobileApiService tripService = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = tripService.checkOutRequestTrip(requestTripId);
         notificationPopup = new NotificationPopup(context);
@@ -272,7 +302,12 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
                     }
                     // Success, you can handle it here
                     try {
-                        String responseBody = response.body().string();
+                        NotificationRequest notiRequest = new NotificationRequest(
+                                "Bạn đã cho xuống xe với yêu cầu chuyến đi thành công!", // title or message
+                                "Mã yêu cầu chuyến đi: " + requestTripId, // detailed message
+                                userId // or other target
+                        );
+                        notificationPopup.createNotification(notiRequest);
                         // Show success or do something
                         notificationPopup.showPopup("Cho xuống xe thành công!", false);
                     } catch (Exception e) {
@@ -302,6 +337,36 @@ public class TripRequestAdapter extends RecyclerView.Adapter<TripRequestAdapter.
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Network error, server unreachable, etc.
                 Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
+        });
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(context);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(context, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
                 notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });

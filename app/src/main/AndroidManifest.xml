@@ -118,6 +118,14 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".Activities.Driver.RatingFeedbackDriverActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Activities.Driver.AddVehicleActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".Activities.Trip.TripDetailActivity"
             android:exported="true">
         </activity>

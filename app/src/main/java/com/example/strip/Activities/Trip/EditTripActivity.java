@@ -33,6 +33,7 @@ import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Adapters.TripStopAdapter;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.Models.LocationInfo;
+import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Request.StopLocationUpdateRequest;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.StopLocation;
@@ -40,6 +41,7 @@ import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
@@ -98,6 +100,8 @@ public class EditTripActivity extends AppCompatActivity {
     private List<LocationInfo> availableLocations = new ArrayList<>();
     private EditText edtStopLocaTime;
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
+
     // Inside EditTripActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +246,7 @@ public class EditTripActivity extends AppCompatActivity {
             return;
         }
         loadTripDetails();
-
+        fetchUserInfo();
         btnUpdateTripLocation.setOnClickListener(v -> {
             if (tempStopList.isEmpty()) {
                 notificationPopup.showPopup("Chưa có điểm dừng nào để cập nhật!",true);
@@ -253,15 +257,26 @@ public class EditTripActivity extends AppCompatActivity {
 //
         btnAddLocation.setOnClickListener(v -> {
             try {
+                // Validation
+                String stopLoca = tvStopLoca.getText().toString().trim();
+                String time = edtStopLocaTime.getText().toString().trim();
+                String estTime = tvEstimatedTime.getText().toString().trim();
+                String estKm = tvEstimatedKM.getText().toString().trim();
+
+                if (stopLoca.isEmpty() || time.isEmpty() || estTime.isEmpty() || estKm.isEmpty()) {
+                    notificationPopup.showPopup("Vui lòng điền đầy đủ thông tin điểm dừng!", true);
+                    return;
+                }
+
                 StopLocationUpdateRequest newStop = new StopLocationUpdateRequest();
-                newStop.setStopLoca(tvStopLoca.getText().toString());
+                newStop.setStopLoca(stopLoca);
                 newStop.setStopLocaTime(formatTimeStore);
                 newStop.setStopLocaStatus("UPCOMING");
                 newStop.setEstimatedTime(duration);
                 newStop.setEstimatedKM(distance);
                 newStop.setStoplocaPosition(position);
 
-                tempStopList.add(newStop); // for updateTripStops()
+                tempStopList.add(newStop); // For updateTripStops()
 
                 // Convert to StopLocation for display
                 StopLocation displayStop = new StopLocation();
@@ -278,6 +293,7 @@ public class EditTripActivity extends AppCompatActivity {
                 tripStopAdapter.notifyItemInserted(currentList.size() - 1);
                 loadTripDetails();
 
+                // Reset fields
                 tvStopLoca.setText("");
                 tvEstimatedTime.setText("");
                 tvEstimatedKM.setText("");
@@ -286,9 +302,10 @@ public class EditTripActivity extends AppCompatActivity {
                 tvStopLocaPosition.setText("" + position);
 
             } catch (Exception ex) {
-                notificationPopup.showPopup("Thông tin điểm dừng không hợp lệ!" + ex.getMessage(),true);
+                notificationPopup.showPopup("Lỗi: " + ex.getMessage(), true);
             }
         });
+
 
     }
     private int parseDurationToInt(String durationStr) {
@@ -406,21 +423,42 @@ public class EditTripActivity extends AppCompatActivity {
         });
     }
     private void updateTripStops() {
+        String userId = user.getDriver().getUserId();
         tripService.updateTripLocations(tripId, tempStopList).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(EditTripActivity.this, "Stops updated successfully!", Toast.LENGTH_SHORT).show();
+                    NotificationRequest notiRequest = new NotificationRequest(
+                            "Bạn đã cập nhật điểm dừng cho chuyến đi!", // title or message
+                            "Mã chuyến đi: " + tripId, // detailed message
+                            userId // or other target
+                    );
+                    notificationPopup.createNotification(notiRequest);
+                    notificationPopup.showPopup("Tạo chuyến đi thành công", false);
                     loadTripDetails();
                 } else {
-                    Toast.makeText(EditTripActivity.this, "Failed to update: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e("Failed", "Thất bại khi cập nhật điểm dừng gia chuyến đi!" + response.code());
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Failed", "Thất bại khi cập nhật điểm dừng gia chuyến đi " + errorBody);
+
+                        JSONObject jsonObject = new JSONObject(errorBody);
+                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
+                        // Dịch sang tiếng Việt
+                        String translated = ErrorTranslate.translateError(detailMessage);
+
+                        notificationPopup.showPopup("Thất bại khi cập nhật điểm dừng gia chuyến đi \n" + translated, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Thất bại khi cập nhật điểm dừng gia chuyến đi \n Không thể lấy thông báo lỗi", true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Toast.makeText(EditTripActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);                 }
         });
     }
     @Override
@@ -438,6 +476,36 @@ public class EditTripActivity extends AppCompatActivity {
 
             // Do something with the returned data
         }
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(this);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(EditTripActivity.this, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
+        });
     }
 
 }

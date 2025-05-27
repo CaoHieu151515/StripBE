@@ -55,7 +55,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
 
-    private TextView tvLogin, tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvNotificationBadge;
+    private TextView tvEmail, tvFullName, tvPhone, tvGender, tvAddress, tvDob, tvNotificationBadge;
     private ImageView ivProfile, ivChangePassword, ivUpdateToDriver, ivConfirmDriver, ivChangeToDriver, ivLogout, ivNotification;
     private Button btnEditProfile;
     private UserMoreResponse user;
@@ -66,7 +66,6 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         // Ánh xạ UI
-        tvLogin = view.findViewById(R.id.tvLogin);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvFullName = view.findViewById(R.id.tvFullName);
         tvPhone = view.findViewById(R.id.tvPhone);
@@ -137,19 +136,18 @@ public class AccountFragment extends Fragment {
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
-                    tvLogin.setText(user.getUser().getLogin());
                     tvEmail.setText(user.getUser().getEmail());
                     String fullName = (user.getUser().getFirstName() != null ? user.getUser().getFirstName() : "") +
                             (user.getUser().getLastName() != null ? " " + user.getUser().getLastName() : "");
 
                     if (fullName.trim().isEmpty()) {
-                        fullName = "N/A";
+                        fullName = "";
                     }
                     tvFullName.setText(fullName);
-                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "N/A");
-                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "N/A");
-                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "N/A");
-                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? DateFormatter.formatDatePrimary(user.getUserDetailsCusDTO().getDob()) : "N/A");
+                    tvPhone.setText(user.getUserDetailsCusDTO().getPhone() != null ? user.getUserDetailsCusDTO().getPhone() : "");
+                    tvGender.setText(user.getUserDetailsCusDTO().getGender() != null ? user.getUserDetailsCusDTO().getGender() : "");
+                    tvAddress.setText(user.getUserDetailsCusDTO().getAddress() != null ? user.getUserDetailsCusDTO().getAddress() : "");
+                    tvDob.setText(user.getUserDetailsCusDTO().getDob() != null ? DateFormatter.formatDatePrimary(user.getUserDetailsCusDTO().getDob()) : "");
                     // Hiển thị ảnh nếu có
                     String ivImageUrl = user.getUserDetailsCusDTO().getImageUrl();
                     if (ivImageUrl != null && !ivImageUrl.isEmpty()) {

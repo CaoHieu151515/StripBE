@@ -65,7 +65,15 @@ public class TripBookingResponse {
     public String tripHandleID;
     @SerializedName("stopLocations")
     public List<StopLocationBookingResponse> stopLocationBookingResponseList;
+    @SerializedName("driverID")
+    public String driverID;
 
+    public String getDriverID() {
+        return driverID;
+    }
+    public void setDriverID(String driverID) {
+        this.driverID = driverID;
+    }
     public String getTripHandleID() {
         return tripHandleID;
     }

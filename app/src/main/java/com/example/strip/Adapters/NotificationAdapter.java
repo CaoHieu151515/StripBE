@@ -64,12 +64,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         // Change icon based on read status
         if (notification.isRead()) {
-            holder.readStatus.setImageResource(R.drawable.book); // icon for read
+            holder.readStatus.setImageResource(R.drawable.comment_alt_check); // icon for read
             holder.date.setTextColor(Color.parseColor("#4CAF50")); // ✅ green
+            holder.itemView.setBackgroundColor(Color.WHITE); // hoặc dùng màu tuỳ thích
         } else {
             holder.readStatus.setImageResource(R.drawable.bell); // icon for unread
             holder.date.setTextColor(Color.parseColor("#FF4433")); // ❌ red
+            holder.itemView.setBackgroundColor(Color.parseColor("#F0F0F0")); // Màu xám nhạt
         }
+
         notificationPopup = new NotificationPopup(context);
         holder.itemView.setOnClickListener(v -> {
             if (!notification.isRead()) {

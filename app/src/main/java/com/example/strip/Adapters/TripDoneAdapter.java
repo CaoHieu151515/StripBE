@@ -3,6 +3,7 @@ package com.example.strip.Adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +13,23 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.strip.Activities.Driver.RatingFeedbackDriverActivity;
+import com.example.strip.Activities.Trip.TripDetailActivity;
 import com.example.strip.Models.Request.FeedbackRequest;
+import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.StopLocationBookingResponse;
 import com.example.strip.Models.Response.StopLocationDoneResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
 import com.example.strip.Models.Response.TripDoneResponse;
+import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
+import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
@@ -39,12 +46,14 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripViewHolder>{
     private Context context;
 
     private List<TripDoneResponse> tripDoneResponseList;
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
     public TripDoneAdapter(Context context, List<TripDoneResponse> tripDoneResponseList) {
         this.context = context;
         this.tripDoneResponseList = tripDoneResponseList;
@@ -54,6 +63,7 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
     @Override
     public TripDoneAdapter.TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_trip_2, parent, false);
+        fetchUserInfo();
         return new TripDoneAdapter.TripViewHolder(view);
     }
 
@@ -91,7 +101,11 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
                 holder.stopLocationContainer.addView(stopView);
             }
         }
-
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, RatingFeedbackDriverActivity.class);
+            intent.putExtra("driverId", trip.getDriverID()); // Pass tripId to detail activity
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -141,6 +155,7 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
     }
 
     private void sendFeedbackToDriver(String tripId, FeedbackRequest request) {
+        String userId = user.getDriver().getUserId();
         ITripMobileApiService service = ApiClient.getClientWithToken(context).create(ITripMobileApiService.class);
         Call<ResponseBody> call = service.sendFeedbackToDriver(tripId, request);
         notificationPopup = new NotificationPopup(context);
@@ -148,6 +163,12 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    NotificationRequest notiRequest = new NotificationRequest(
+                            "Bạn đã gửi phản hồi chuyến đi thành công!", // title or message
+                            "Mã chuyến đi: " + tripId, // detailed message
+                            userId // or other target
+                    );
+                    notificationPopup.createNotification(notiRequest);
                     notificationPopup.showPopup("Gửi phản hồi thành công!", false);
                 } else {
                     try {
@@ -155,15 +176,44 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
                         Log.e("Failed", "Không thể gửi phản hồi. " + errorBody);
 
                         JSONObject jsonObject = new JSONObject(errorBody);
-                        String detailMessage = jsonObject.optString("detail", "Lỗi không xác định");
-                        // Dịch sang tiếng Việt
-                        String translated = ErrorTranslate.translateError(detailMessage);
 
-                        notificationPopup.showPopup("Không thể gửi phản hồi. Mã lỗi: \n" + translated, true);
+                        String errorMessageCode = "";
+
+                        // Trường hợp 1: properties là JSONObject
+                        if (jsonObject.has("properties")) {
+                            Object props = jsonObject.get("properties");
+
+                            if (props instanceof JSONObject) {
+                                errorMessageCode = ((JSONObject) props).optString("message", "");
+                            } else if (props instanceof String) {
+                                // Trường hợp 2: properties là chuỗi như {message=error.already-exists, params=feedback}
+                                String propsStr = (String) props;
+                                // Chuyển sang dạng JSON hợp lệ
+                                propsStr = propsStr.replace("=", "\":\"").replace(", ", "\", \"").replace("{", "{\"").replace("}", "\"}");
+
+                                try {
+                                    JSONObject propsJson = new JSONObject(propsStr);
+                                    errorMessageCode = propsJson.optString("message", "");
+                                } catch (Exception e) {
+                                    errorMessageCode = "Lỗi không xác định";
+                                }
+                            }
+                        }
+
+                        // Fallback nếu không có message
+                        if (errorMessageCode.isEmpty()) {
+                            errorMessageCode = jsonObject.optString("message", "Lỗi không xác định");
+                        }
+
+                        // Dịch lỗi
+                        String translated = ErrorTranslate.translateError(errorMessageCode);
+                        notificationPopup.showPopup("Không thể gửi phản hồi.\n" + translated, true);
+
                     } catch (Exception e) {
                         e.printStackTrace();
-                        notificationPopup.showPopup("Không thể gửi phản hồi. \n Không thể lấy thông báo lỗi", true);
+                        notificationPopup.showPopup("Không thể gửi phản hồi.\nKhông thể lấy thông báo lỗi", true);
                     }
+
                 }
             }
 
@@ -174,5 +224,34 @@ public class TripDoneAdapter extends RecyclerView.Adapter<TripDoneAdapter.TripVi
             }
         });
     }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(context);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
 
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(context, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
+        });
+    }
 }

@@ -7,14 +7,14 @@
     android:layout_marginTop="5dp"
     android:background="@drawable/bg_square_gray">
 
-    <!-- Transaction ID (Full Width) -->
-    <TextView
-        android:id="@+id/tvTransID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Transaction ID"
-        android:textStyle="bold"
-        android:textSize="15sp"/>
+<!--    &lt;!&ndash; Transaction ID (Full Width) &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:id="@+id/tvTransID"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Transaction ID"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textSize="15sp"/>-->
 
     <!-- Horizontal Layout for Left & Right Alignment -->
     <LinearLayout

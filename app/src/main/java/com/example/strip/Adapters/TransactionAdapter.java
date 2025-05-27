@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.TripStatusTranslate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,11 +36,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
         Transaction transaction = transactionList.get(position);
-        holder.tvTransID.setText(transaction.getTransID());
         holder.tvAmount.setText(String.format("%.2f", transaction.getAmount()));
         holder.tvDate.setText(DateFormatter.formatDate(transaction.getDate()));
-        holder.tvWalletType.setText(transaction.getWalletType());
-        holder.tvTransStatus.setText(transaction.getTransStatus());
+        holder.tvWalletType.setText(TripStatusTranslate.translateWalletTypeTransaction(transaction.getWalletType()));
+        holder.tvTransStatus.setText(TripStatusTranslate.translateWalletStatusTransaction(transaction.getTransStatus()));
     }
 
     @Override
@@ -48,11 +48,10 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTransID, tvAmount, tvDate, tvWalletType, tvTransStatus;
+        TextView tvAmount, tvDate, tvWalletType, tvTransStatus;
 
         public TransactionViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTransID = itemView.findViewById(R.id.tvTransID);
             tvAmount = itemView.findViewById(R.id.tvAmount);
             tvDate = itemView.findViewById(R.id.tvDate);
             tvWalletType = itemView.findViewById(R.id.tvWalletType);

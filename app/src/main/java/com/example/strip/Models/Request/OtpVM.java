@@ -18,12 +18,15 @@ public class OtpVM {
     @NotNull
     @Size(min = 1, max = 50)
     private String otp;
-
-    public OtpVM(@NotNull String email, @NotNull String password, @NotNull String login, boolean activated, @NotNull String otp) {
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String phone;
+    public OtpVM(@NotNull String email, @NotNull String password, @NotNull String login, boolean activated, @NotNull String otp, @NotNull String phone) {
         this.email = email;
         this.password = password;
         this.login = login;
         this.activated = activated;
         this.otp = otp;
+        this.phone = phone;
     }
 }

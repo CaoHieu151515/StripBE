@@ -15,15 +15,19 @@ public class RegisterVM {
     @Size(min = 1, max = 50)
     private String login;
     private boolean activated;
+
     @NotNull
     @Size(min = 1, max = 50)
     private String otp;
-
-    public RegisterVM(@NotNull String email, @NotNull String password, @NotNull String login, boolean activated, @NotNull String otp) {
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String phone;
+    public RegisterVM(@NotNull String email, @NotNull String password, @NotNull String login, boolean activated, @NotNull String otp, @NotNull String phone) {
         this.email = email;
         this.password = password;
         this.login = login;
         this.activated = activated;
         this.otp = otp;
+        this.phone = phone;
     }
 }
