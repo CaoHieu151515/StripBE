@@ -135,13 +135,21 @@ public class ManagerResource {
         @RequestParam(required = false) String firstName,
         @RequestParam(required = false) String lastName,
         @RequestParam(required = false) String email,
-        @RequestParam(required = false) String phone
+        @RequestParam(required = false) String phone,
+        @RequestParam(required = false) UUID driverId
     ) {
         if (!onlyContainsAllowedPropertiesVehicle(pageable)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Page<ConfirmingVehicleDriverDTO> page = usermanageService.getAllConfirmingVehicles(pageable, firstName, lastName, email, phone);
+        Page<ConfirmingVehicleDriverDTO> page = usermanageService.getAllConfirmingVehicles(
+            pageable,
+            firstName,
+            lastName,
+            email,
+            phone,
+            driverId
+        );
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }
 
@@ -176,13 +184,21 @@ public class ManagerResource {
         @RequestParam(required = false) String firstName,
         @RequestParam(required = false) String lastName,
         @RequestParam(required = false) String email,
-        @RequestParam(required = false) String phone
+        @RequestParam(required = false) String phone,
+        @RequestParam(required = false) UUID driverId
     ) {
         if (!onlyContainsAllowedPropertiesDriverConfirming(pageable)) {
             return ResponseEntity.badRequest().build();
         }
 
-        Page<ConfirmingVehicleDriverDTO> page = usermanageService.getConfirmingDrivers(pageable, firstName, lastName, email, phone);
+        Page<ConfirmingVehicleDriverDTO> page = usermanageService.getConfirmingDrivers(
+            pageable,
+            firstName,
+            lastName,
+            email,
+            phone,
+            driverId
+        );
 
         return ResponseEntity.ok(new CustomPageDTO<>(page));
     }

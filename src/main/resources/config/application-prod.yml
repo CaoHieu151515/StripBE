@@ -51,7 +51,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: hieuctse151515@fpt.edu.vn
-    password: vhpz rkuu eium cpov
+    password: hbor jftk bqun yilp
     properties:
       mail:
         smtp:

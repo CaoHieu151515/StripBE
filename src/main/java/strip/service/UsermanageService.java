@@ -266,7 +266,8 @@ public class UsermanageService {
         String firstName,
         String lastName,
         String email,
-        String phone
+        String phone,
+        UUID driverId
     ) {
         List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRaw();
 
@@ -277,6 +278,7 @@ public class UsermanageService {
             .filter(dto -> lastName == null || dto.getLastName().toLowerCase().contains(lastName.toLowerCase()))
             .filter(dto -> email == null || dto.getEmail().toLowerCase().contains(email.toLowerCase()))
             .filter(dto -> phone == null || dto.getPhone().toLowerCase().contains(phone.toLowerCase()))
+            .filter(dto -> driverId == null || driverId.equals(dto.getDriverId()))
             .toList();
 
         // ↕️ Sort
@@ -377,7 +379,8 @@ public class UsermanageService {
         String firstName,
         String lastName,
         String email,
-        String phone
+        String phone,
+        UUID driverId
     ) {
         List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRaw();
 
@@ -388,6 +391,7 @@ public class UsermanageService {
             .filter(dto -> lastName == null || dto.getLastName().toLowerCase().contains(lastName.toLowerCase()))
             .filter(dto -> email == null || dto.getEmail().toLowerCase().contains(email.toLowerCase()))
             .filter(dto -> phone == null || dto.getPhone().toLowerCase().contains(phone.toLowerCase()))
+            .filter(dto -> driverId == null || driverId.equals(dto.getDriverId()))
             .collect(Collectors.toList());
 
         // Sắp xếp (nếu có)
@@ -399,6 +403,7 @@ public class UsermanageService {
                     case "lastName" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getLastName, String.CASE_INSENSITIVE_ORDER);
                     case "email" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getEmail, String.CASE_INSENSITIVE_ORDER);
                     case "phone" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getPhone, String.CASE_INSENSITIVE_ORDER);
+                    case "driverId" -> Comparator.comparing(ConfirmingVehicleDriverDTO::getDriverId, Comparator.nullsLast(UUID::compareTo));
                     default -> null;
                 };
 
