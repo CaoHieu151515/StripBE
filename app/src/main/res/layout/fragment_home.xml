@@ -41,13 +41,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
-                <!-- Right Image (Menu Icon) -->
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/list"
-                    android:padding="3dp"
-                    android:background="@drawable/bg_square_gray"/>
+
             </LinearLayout>
             <!-- Search Bar -->
             <LinearLayout
@@ -59,6 +53,7 @@
                 android:layout_marginTop="16dp">
 
                 <EditText
+                    android:id="@+id/edFindByLocation"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="48dp"
@@ -88,130 +83,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"/>
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="7dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center">
-
-                        <!-- Image -->
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/car"
-                            android:padding="5dp"
-                            android:background="@drawable/bg_square_gray"
-                            android:layout_gravity="center"/>
-
-                        <!-- Text below Image -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Xe Hơi"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center">
-
-                        <!-- Image -->
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/sportbike"
-                            android:padding="5dp"
-                            android:background="@drawable/bg_square_gray"
-                            android:layout_gravity="center"/>
-
-                        <!-- Text below Image -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Xe Máy"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center">
-
-                        <!-- Image -->
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:padding="10dp"
-                            android:src="@drawable/sunset"
-                            android:background="@drawable/bg_square_gray"
-                            android:layout_gravity="center"/>
-
-                        <!-- Text below Image -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Chuyến Đi"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:layout_marginEnd="10dp"
-                        android:gravity="center">
-
-                        <!-- Image -->
-                        <ImageView
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:src="@drawable/add__1_"
-                            android:padding="10dp"
-                            android:background="@drawable/bg_square_gray"
-                            android:layout_gravity="center"/>
-
-                        <!-- Text below Image -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Thêm"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center"/>
-                    </LinearLayout>
-
-
-                    <!-- Add More Category Icons -->
-                </LinearLayout>
-            </HorizontalScrollView>
 
             <!-- Featured Places -->
             <androidx.cardview.widget.CardView

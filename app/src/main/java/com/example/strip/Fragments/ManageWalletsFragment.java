@@ -105,7 +105,10 @@ public class ManageWalletsFragment extends Fragment {
                             txtEmail.setText("Email: "+driver.email);
                             txtAddress.setText("Địa chỉ: "+driver.address);
                             txtRating.setText("Xếp hạng: " + driver.averageRating);
-                            Glide.with(getContext()).load(driver.avatar).into(imgAvatar);
+                            if (isAdded() && getContext() != null) {
+                                Glide.with(getContext()).load(driver.avatar).into(imgAvatar);
+                                // an toàn để update UI hoặc dùng Glide
+                            }
 
                             RatingAdapter adapter = new RatingAdapter(driver.ratingOfDriverInfoResponseList);
                             rvRatings.setAdapter(adapter);

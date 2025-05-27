@@ -155,14 +155,16 @@ public class AccountFragment extends Fragment {
                             ivImageUrl = ivImageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
                         }
                         Log.d("ImageDebug", "URL=[" + ivImageUrl + "]");
-
-                        Glide.with(requireContext()) // or getContext(), depending on where this is
-                                .load(ivImageUrl.trim())
-                                .placeholder(R.drawable.logo)
-                                .error(R.drawable.logout)
-                                .skipMemoryCache(true)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                .into(ivProfile);
+                        if (isAdded() && getContext() != null) {
+                            Glide.with(requireContext()) // or getContext(), depending on where this is
+                                    .load(ivImageUrl.trim())
+                                    .placeholder(R.drawable.logo)
+                                    .error(R.drawable.logout)
+                                    .skipMemoryCache(true)
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                    .into(ivProfile);
+                            // an toàn để update UI hoặc dùng Glide
+                        }
 
                         Log.e("ImageLoadError", "Failed to load image from: [" + ivImageUrl + "]");
                     }

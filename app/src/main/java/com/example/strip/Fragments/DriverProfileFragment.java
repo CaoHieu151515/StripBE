@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Activities.Driver.AddTripActivity;
 import com.example.strip.Activities.Driver.AddVehicleActivity;
 import com.example.strip.Activities.Driver.DriverProfileActivity;
@@ -108,9 +109,13 @@ public class DriverProfileFragment extends Fragment {
                         if (imageUrl.contains("localhost")) {
                             imageUrl = imageUrl.replace("https://localhost:8080", "http://10.0.2.2:8080");
                         }
-                        Glide.with(getContext())
-                                .load(imageUrl)
-                                .into(ivProfile);
+                        if (isAdded() && getContext() != null) {
+                            Glide.with(getContext())
+                                    .load(imageUrl)
+                                    .into(ivProfile);
+                            // an toàn để update UI hoặc dùng Glide
+                        }
+
                     }
                     // Update Vehicle List
                     if (user.getDriverVehicleDTO() != null) {

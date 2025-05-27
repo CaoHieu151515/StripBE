@@ -88,9 +88,15 @@ public class ChatFragment extends Fragment {
                         if (imageUrl.contains("localhost")) {
                             imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
                         }
-                        Glide.with(getContext())
-                                .load(imageUrl)
-                                .into(ivProfile);
+                        if (isAdded() && ivProfile != null && imageUrl != null && !imageUrl.isEmpty()) {
+                            if (imageUrl.contains("localhost")) {
+                                imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
+                            }
+                            Glide.with(requireContext())
+                                    .load(imageUrl)
+                                    .into(ivProfile);
+                        }
+
                     }
                 } else {
                     try {
