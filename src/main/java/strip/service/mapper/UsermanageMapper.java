@@ -76,8 +76,10 @@ public interface UsermanageMapper {
     @Mapping(target = "numberOfSeats", source = "vehicle.numberOfSeats")
     @Mapping(target = "vehicleColor", source = "vehicle.vehicleColor")
     @Mapping(target = "vehicleBrand", source = "vehicle.vehicleBrand")
+    @Mapping(target = "tripHandleID", ignore = true)
     @Mapping(target = "vehicleImageUrl", ignore = true)
     @Mapping(target = "stopLocations", ignore = true)
+    @Mapping(target = "driverID", ignore = true)
     TripCusDTO toTripCusDTO(Trip trip);
 
     @Mapping(target = "trip", ignore = true) // chỉ map tripID nếu cần
@@ -129,6 +131,7 @@ public interface UsermanageMapper {
     @Mapping(target = "driver", ignore = true)
     @Mapping(target = "vehicle", ignore = true)
     @Mapping(target = "stoplocation", ignore = true)
+    @Mapping(target = "tripHandleId", expression = "java(TripCodeUtils.encode(trip.getId()))")
     TripDetailDTO toTripDetailDTO(Trip trip);
 
     @Mapping(target = "vehicleImageUrl", ignore = true)
@@ -153,5 +156,6 @@ public interface UsermanageMapper {
     DriverRawDTO toRawDTO(Driver driver, UserDetail userDetail);
 
     @Mapping(target = "userName", ignore = true)
+    @Mapping(target = "disable", ignore = true)
     DriverPointHistoryListDTO toListDtoBase(DriverPointHistory entity);
 }

@@ -1,6 +1,7 @@
 package strip.service.mapper;
 
 import org.mapstruct.*;
+import strip.config.IgnoreUnmappedConfig;
 import strip.domain.Driver;
 import strip.domain.Vehicle;
 import strip.service.dto.DriverDTO;
@@ -9,7 +10,7 @@ import strip.service.dto.VehicleDTO;
 /**
  * Mapper for the entity {@link Vehicle} and its DTO {@link VehicleDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedConfig.class)
 public interface VehicleMapper extends EntityMapper<VehicleDTO, Vehicle> {
     @Mapping(target = "driver", source = "driver", qualifiedByName = "driverId")
     VehicleDTO toDto(Vehicle s);

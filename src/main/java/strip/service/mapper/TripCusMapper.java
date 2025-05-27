@@ -40,6 +40,7 @@ public interface TripCusMapper {
     @Mapping(target = "tripImgUrl", ignore = true)
     @Mapping(target = "vehicleImageUrl", ignore = true)
     @Mapping(target = "stopLocations", ignore = true)
+    @Mapping(target = "tripHandleID", ignore = true)
     TripCusDTO toDto(Trip trip, Driver driver, Vehicle vehicle);
 
     List<TripStopLocationDTO> toDto(List<TripStopLocation> entities);

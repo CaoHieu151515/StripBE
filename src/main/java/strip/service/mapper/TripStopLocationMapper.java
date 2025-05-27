@@ -1,6 +1,7 @@
 package strip.service.mapper;
 
 import org.mapstruct.*;
+import strip.config.IgnoreUnmappedConfig;
 import strip.domain.Trip;
 import strip.domain.TripStopLocation;
 import strip.service.dto.TripDTO;
@@ -9,7 +10,7 @@ import strip.service.dto.TripStopLocationDTO;
 /**
  * Mapper for the entity {@link TripStopLocation} and its DTO {@link TripStopLocationDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedConfig.class)
 public interface TripStopLocationMapper extends EntityMapper<TripStopLocationDTO, TripStopLocation> {
     @Mapping(target = "trip", source = "trip", qualifiedByName = "tripId")
     TripStopLocationDTO toDto(TripStopLocation s);

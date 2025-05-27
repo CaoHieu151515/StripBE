@@ -1,6 +1,7 @@
 package strip.service.mapper;
 
 import org.mapstruct.*;
+import strip.config.IgnoreUnmappedConfig;
 import strip.domain.PackageDriver;
 import strip.domain.Payment;
 import strip.domain.User;
@@ -11,7 +12,7 @@ import strip.service.dto.UserDTO;
 /**
  * Mapper for the entity {@link Payment} and its DTO {@link PaymentDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", config = IgnoreUnmappedConfig.class)
 public interface PaymentMapper extends EntityMapper<PaymentDTO, Payment> {
     @Mapping(target = "user", source = "user", qualifiedByName = "userId")
     @Mapping(target = "packageDriver", source = "packageDriver", qualifiedByName = "packageDriverId")
