@@ -1246,6 +1246,7 @@ public class UsermanageService {
 
         // ✅ Ghi lịch sử phạt
         DriverPointHistory history = new DriverPointHistory();
+        history.setPointId(UUID.randomUUID());
         history.setPoint(minusPoint);
         history.setReason(reason);
         history.setDate(Instant.now());
