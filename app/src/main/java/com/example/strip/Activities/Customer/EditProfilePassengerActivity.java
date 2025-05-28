@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,6 +37,7 @@ import com.example.strip.network.ApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -184,14 +186,38 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_PICK) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
                 ivProfile.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    ivProfile.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     userImageBytes = stream.toByteArray();
@@ -202,33 +228,9 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
                 }
             }
         }
+
     }
 
-
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(EditProfilePassengerActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//
-//
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void updateUserProfile() {
         String firstName = etFirstName.getText().toString();
         String lastName = etLastName.getText().toString();
