@@ -1,7 +1,9 @@
 package com.example.strip.Activities.Driver;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -14,6 +16,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
@@ -47,6 +52,10 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         licenseImageView = findViewById(R.id.licenseImageView);
         btnNext = findViewById(R.id.btnNext);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
 
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +109,6 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
             if (url.contains("localhost")) {
                 url = url.replace("https://localhost", "http://10.0.2.2:8080");
             }
-
             if (!ConfirmDriverOneActivity.this.isFinishing()
                     && !ConfirmDriverOneActivity.this.isDestroyed()) {
                 Glide.with(this)
@@ -132,6 +140,9 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();

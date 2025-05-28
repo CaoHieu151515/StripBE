@@ -48,6 +48,8 @@ public class TripActiveDetailActivity extends AppCompatActivity {
     private ImageView ivDetail;
     private NotificationPopup notificationPopup;
     private UserMoreResponse user;
+    private String currentTripStatus;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +95,11 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if ("CONFIRMING".equalsIgnoreCase(currentTripStatus)) {
+                    notificationPopup.showPopup("Chuyến đi chưa sẵn sàng để bắt đầu!\n Đang chờ xác nhận", true);
+                    return;
+                }
+
                 String userId = user.getDriver().getUserId();
                 ITripMobileApiService apiService = ApiClient.getClientWithToken(TripActiveDetailActivity.this).create(ITripMobileApiService.class);
                 Call<Void> call = apiService.startTrip(tripId);
@@ -184,6 +191,7 @@ public class TripActiveDetailActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<TripDetail> call, @NonNull Response<TripDetail> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     TripDetail trip = response.body();
+                    currentTripStatus = trip.getTripStatus();
                     tvStartLocation.setText(trip.getStartLocation());
                     tvEndLocation.setText(trip.getEndLocation());
                     tvTripStatus.setText(TripStatusTranslate.translateStatus(trip.getTripStatus()));

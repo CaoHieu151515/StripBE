@@ -1,7 +1,9 @@
 package com.example.strip.Activities.Driver;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -16,6 +18,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
 import com.example.strip.Models.Request.AddVehicleRequest;
 import com.example.strip.Models.Request.NotificationRequest;
@@ -67,7 +72,10 @@ public class AddVehicleActivity extends AppCompatActivity {
         btnConfirmDriver = findViewById(R.id.btnConfirmDriver);
         retrofit = ApiClient.getClientWithToken(this);
         notificationPopup = new NotificationPopup(this);
-
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -294,6 +302,9 @@ public class AddVehicleActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -334,6 +345,9 @@ public class AddVehicleActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -373,6 +387,9 @@ public class AddVehicleActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -413,6 +430,9 @@ public class AddVehicleActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();

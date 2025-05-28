@@ -1,10 +1,12 @@
 package com.example.strip.Activities.Driver;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -24,6 +26,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Activities.Trip.EditTripActivity;
 import com.example.strip.Models.DriverVehicleDTO;
@@ -91,6 +96,10 @@ public class AddTripActivity extends AppCompatActivity{
         tvDuration = findViewById(R.id.tvDurationValue);
         btnShowRoute = findViewById(R.id.btnShowRoute);
         notificationPopup = new NotificationPopup(this);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
         // Initialize MapView
         ImageView btnBack = findViewById(R.id.backButton);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -380,6 +389,9 @@ public class AddTripActivity extends AppCompatActivity{
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
 
 // decode bounds first
                     BitmapFactory.Options options = new BitmapFactory.Options();
