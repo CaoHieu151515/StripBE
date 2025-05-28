@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.DriverPackageSubscription;
+import strip.domain.Notification;
 import strip.domain.PackageDriver;
 import strip.domain.Payment;
 import strip.domain.RequestTrip;
@@ -31,6 +32,7 @@ import strip.domain.Vehicle;
 import strip.domain.WalletDeposit;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.DriverStatus;
+import strip.domain.enumeration.NotificationType;
 import strip.domain.enumeration.PackageDriverStatus;
 import strip.domain.enumeration.PassengerStatus;
 import strip.domain.enumeration.PaymentStatus;
@@ -99,6 +101,7 @@ public class UserMobileService {
     private final RequestTripMapper requestTripMapper;
     private final PaymentRepository paymentRepository;
     private final VehicleMapper vehicleMapper;
+    private final NotificationService notificationService;
 
     public UserMobileService(
         UserRepository userRepository,
@@ -118,7 +121,8 @@ public class UserMobileService {
         TripRepository tripRepository,
         RequestTripMapper requestTripMapper,
         PaymentRepository paymentRepository,
-        VehicleMapper vehicleMapper
+        VehicleMapper vehicleMapper,
+        NotificationService notificationService
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -138,6 +142,7 @@ public class UserMobileService {
         this.requestTripMapper = requestTripMapper;
         this.paymentRepository = paymentRepository;
         this.vehicleMapper = vehicleMapper;
+        this.notificationService = notificationService;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -463,7 +468,15 @@ public class UserMobileService {
         // UserDetail userDetail = saveOrUpdateUserDetail(user, dto);
         Driver driver = saveOrUpdateDriver(user, dto);
         Vehicle vehicle = saveOrUpdateVehicle(driver, dto);
-
+        Notification noti = new Notification();
+        noti.setTitle("Xét duyệt tài xế mới");
+        noti.setDate(Instant.now());
+        noti.content("Tài xế với ID: " + driver.getDriverID() + " Đang đợi duyệt");
+        noti.setCreatedDate(Instant.now());
+        noti.setRelatedId(driver.getDriverID());
+        noti.setType(NotificationType.DRIVER_REGISTER);
+        noti.setUser(driver.getUser());
+        notificationService.createSystemNotificationFromEntity(noti);
         return buildConfirmingVehicleDriverDTO(user, userDetail, driver, vehicle);
     }
 
@@ -1097,6 +1110,16 @@ public class UserMobileService {
         vehicle.setVehicleBrand(dto.getVehicleBrand());
 
         vehicle.setStatus(VehicleStatus.CONFIRMING);
+
+        Notification noti = new Notification();
+        noti.setTitle("Xét duyệt phượng tiện mới");
+        noti.setDate(Instant.now());
+        noti.content("Phương tiện ID: " + vehicle.getVehicleID() + " Đang đợi duyệt");
+        noti.setCreatedDate(Instant.now());
+        noti.setRelatedId(driver.getDriverID());
+        noti.setType(NotificationType.VEHICLE_REQUEST);
+        noti.setUser(driver.getUser());
+        notificationService.createSystemNotificationFromEntity(noti);
 
         vehicle = vehicleRepository.save(vehicle);
         return vehicleMapper.toDto(vehicle);

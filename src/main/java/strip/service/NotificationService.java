@@ -252,4 +252,32 @@ public class NotificationService {
             .map(this::toDto)
             .toList();
     }
+
+    @Transactional
+    public void createSystemNotificationFromEntity(Notification notification) {
+        if (notification.getUser() == null || notification.getUser().getId() == null) {
+            throw new BadRequestAlertException("User is required", "notification", "user-null");
+        }
+
+        if (!userRepository.existsById(notification.getUser().getId())) {
+            throw new BadRequestAlertException("User not found", "notification", "user-not-found");
+        }
+
+        if (notification.getDate() == null) {
+            notification.setDate(Instant.now());
+        }
+
+        if (notification.getCreatedDate() == null) {
+            notification.setCreatedDate(Instant.now());
+        }
+
+        if (notification.getIsRead() == null) {
+            notification.setIsRead(false);
+        }
+        notification.setIsRead(false);
+        notification.setSourceType(NotificationSourceType.SYSTEM);
+
+        notificationRepository.save(notification);
+        notificationMessageService.notifyUser(notification.getUser().getLogin());
+    }
 }

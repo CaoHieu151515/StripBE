@@ -269,7 +269,7 @@ public class UsermanageService {
         String phone,
         UUID driverId
     ) {
-        List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRaw();
+        List<ConfirmingVehicleDriverDTO> all = getAllConfirmingDriversRawDriver();
 
         // 🔍 Filter theo từng trường
         List<ConfirmingVehicleDriverDTO> filtered = all
@@ -355,6 +355,35 @@ public class UsermanageService {
             userRepository
                 .findById(driver.getUser().getId())
                 .filter(UserRoleUtils::isNormalUser)
+                .ifPresent(user -> {
+                    Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
+                    vehicleRepository
+                        .findFirstByDriver_DriverIDAndStatus(driver.getDriverID(), VehicleStatus.CONFIRMING)
+                        .ifPresent(vehicle -> {
+                            ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(
+                                user,
+                                userDetail.orElse(null),
+                                driver,
+                                vehicle
+                            );
+                            confirmingDrivers.add(dto);
+                        });
+                });
+        }
+
+        return confirmingDrivers;
+    }
+
+    public List<ConfirmingVehicleDriverDTO> getAllConfirmingDriversRawDriver() {
+        List<ConfirmingVehicleDriverDTO> confirmingDrivers = new ArrayList<>();
+
+        List<Driver> drivers = driverRepository.findByUsedtoDriverFalseAndDriverStatus(DriverStatus.CONFIRMING);
+        log.debug("Found {} drivers with status CONFIRMING", drivers.size());
+
+        for (Driver driver : drivers) {
+            userRepository
+                .findById(driver.getUser().getId())
+                .filter(UserRoleUtils::isDriver)
                 .ifPresent(user -> {
                     Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
                     vehicleRepository

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import strip.config.ApplicationProperties;
 import strip.domain.Driver;
 import strip.domain.Feedback;
+import strip.domain.Notification;
 import strip.domain.Rating;
 import strip.domain.RequestTrip;
 import strip.domain.SystemWallet;
@@ -30,6 +31,7 @@ import strip.domain.Vehicle;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.NotificationType;
 import strip.domain.enumeration.PassengerStatus;
 import strip.domain.enumeration.RatingType;
 import strip.domain.enumeration.TransactionStatus;
@@ -98,6 +100,7 @@ public class TripCustomService {
     private final FeedbackRepository feedbackRepository;
     private final FeedbackMapper feedbackMapper;
     private final DriverInfoMapper driverInfoMapper;
+    private final NotificationService notificationService;
 
     public TripCustomService(
         TripRepository tripRepository,
@@ -118,7 +121,8 @@ public class TripCustomService {
         RatingRepository ratingRepository,
         FeedbackRepository feedbackRepository,
         FeedbackMapper feedbackMapper,
-        DriverInfoMapper driverInfoMapper
+        DriverInfoMapper driverInfoMapper,
+        NotificationService notificationService
     ) {
         this.tripRepository = tripRepository;
         this.driverRepository = driverRepository;
@@ -139,6 +143,7 @@ public class TripCustomService {
         this.feedbackRepository = feedbackRepository;
         this.feedbackMapper = feedbackMapper;
         this.driverInfoMapper = driverInfoMapper;
+        this.notificationService = notificationService;
     }
 
     public Trip createTripWithFee(TripCreateDTO dto, UUID driverId) {
@@ -157,6 +162,15 @@ public class TripCustomService {
         saveStopLocations(dto, trip);
 
         createAndSaveWalletTransactions(userWallet, systemWallet, trip, fee);
+        Notification noti = new Notification();
+        noti.setTitle("Thông báo chuyến đi mới");
+        noti.setDate(Instant.now());
+        noti.content("chuyến đi mã " + trip.getTripID() + " đã được tạo");
+        noti.setCreatedDate(Instant.now());
+        noti.setRelatedId(trip.getTripID());
+        noti.setType(NotificationType.TRIP_REQUEST);
+        noti.setUser(driver.getUser());
+        notificationService.createSystemNotificationFromEntity(noti);
         return trip;
     }
 

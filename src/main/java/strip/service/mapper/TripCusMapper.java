@@ -53,6 +53,7 @@ public interface TripCusMapper {
     @Mapping(source = "pricePerSeat", target = "price")
     @Mapping(source = "tripStatus", target = "status")
     @Mapping(source = "totalTime", target = "totalTime")
+    @Mapping(target = "tripHandleId", ignore = true)
     TripListDTO toTripListDTO(Trip trip);
 
     @Mapping(source = "tripID", target = "tripID")
