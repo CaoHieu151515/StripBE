@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.example.strip.BuildConfig;
 import com.example.strip.Models.DriverVehicleDTO;
 import com.example.strip.R;
+import com.example.strip.Utils.TripStatusTranslate;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.VehicleV
         holder.tvVehicleBrand.setText(vehicle.getVehicleBrand());
         holder.tvVehicleColor.setText(vehicle.getVehicleColor());
         holder.tvVehicleNumber.setText(vehicle.getVehicleNumber());
-        holder.tvStatus.setText(vehicle.getStatus());
+        holder.tvStatus.setText(TripStatusTranslate.translateStatus(vehicle.getStatus()));
 
         // Load vehicle image
         String imageUrl = vehicle.getVehicleImageUrl();
