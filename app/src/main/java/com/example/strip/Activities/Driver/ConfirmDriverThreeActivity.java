@@ -608,7 +608,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 }
             }
         }
-        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_SIX_PICK) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_SEVEN_PICK) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
                 faceDownImageView.setImageURI(selectedImageUri);
