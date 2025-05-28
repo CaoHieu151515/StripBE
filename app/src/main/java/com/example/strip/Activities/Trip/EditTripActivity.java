@@ -203,7 +203,10 @@ public class EditTripActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(EditTripActivity.this, TripStoreActivity.class);
                 intent.putExtra("startLocation", tvStartLocation.getText().toString());
+                intent.putExtra("tripId", tripId);
+
                 startActivityForResult(intent, REQUEST_MAP);
+                finish();
             }
         });
         recyclerTripStops.setAdapter(tripStopAdapter);
@@ -277,6 +280,12 @@ public class EditTripActivity extends AppCompatActivity {
 
 
     }
+    private List<LocationInfo> loadLocationInfos() {
+        SharedPreferences prefs = getSharedPreferences("LOCATION_PREFS", MODE_PRIVATE);
+        String json = prefs.getString("location_list", "[]");
+        Type type = new TypeToken<ArrayList<LocationInfo>>(){}.getType();
+        return new Gson().fromJson(json, type);
+    }
     private int parseDurationToInt(String durationStr) {
         // Example: "45 mins" or "45 minutes"
         return Integer.parseInt(durationStr.replaceAll("[^\\d]", ""));
@@ -321,12 +330,7 @@ public class EditTripActivity extends AppCompatActivity {
 
 
 
-    private List<LocationInfo> loadLocationInfos() {
-        SharedPreferences prefs = getSharedPreferences("LOCATION_PREFS", MODE_PRIVATE);
-        String json = prefs.getString("location_list", "[]");
-        Type type = new TypeToken<ArrayList<LocationInfo>>(){}.getType();
-        return new Gson().fromJson(json, type);
-    }
+
 
     private void loadTripDetails() {
         tripService = ApiClient.getClientWithToken(this).create(ITripMobileApiService.class);

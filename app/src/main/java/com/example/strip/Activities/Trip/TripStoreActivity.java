@@ -17,6 +17,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
+import com.example.strip.Activities.Driver.ConfirmDriverThreeActivity;
 import com.example.strip.Adapters.LocationAdapter;
 import com.example.strip.Models.LocationInfo;
 import com.example.strip.R;
@@ -49,6 +52,8 @@ public class TripStoreActivity extends AppCompatActivity {
     private int duration;
     private RecyclerView recyclerView;
     private NotificationPopup notificationPopup;
+    private String tripId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +114,9 @@ public class TripStoreActivity extends AppCompatActivity {
         ivExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(TripStoreActivity.this, EditTripActivity.class);
+                intent.putExtra("tripId", tripId);
+                startActivity(intent);
                 finish();
             }
         });
@@ -121,15 +129,26 @@ public class TripStoreActivity extends AppCompatActivity {
         btnChooseLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("startLocation", etStartLocation.getText().toString().trim());
-                resultIntent.putExtra("endLocation", etEndLocation.getText().toString().trim());
-                resultIntent.putExtra("distance", distance);
-                resultIntent.putExtra("duration", duration);
-                setResult(RESULT_OK, resultIntent);
-                finish();
+                String start = etStartLocation.getText().toString().trim();
+                String end = etEndLocation.getText().toString().trim();
+
+                Intent intent = new Intent(TripStoreActivity.this, EditTripActivity.class);
+                intent.putExtra("startLocation", start);
+                intent.putExtra("endLocation", end);
+                intent.putExtra("distance", distance);
+                intent.putExtra("duration", duration);
+                intent.putExtra("tripId", tripId);
+                startActivity(intent);
+                finish(); // Optional: if you don't want to return to TripStoreActivity
             }
         });
+
+        tripId = getIntent().getStringExtra("tripId");
+        if (tripId == null) {
+            Toast.makeText(this, "Invalid Trip ID!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
     }
     private void saveLocationInfo(LocationInfo info) {
         SharedPreferences prefs = getSharedPreferences("LOCATION_PREFS", MODE_PRIVATE);
@@ -182,6 +201,8 @@ public class TripStoreActivity extends AppCompatActivity {
         new TripStoreActivity.GetRouteTask().execute(routeUrl);
         tvDistanceValue.setText(String.format("%.2f km", distance));
         tvDurationValue.setText(String.format("%d mins", duration));
+        notificationPopup.showPopup("Lấy thông tin từ OpenStreetMap!\n"+"Khoảng cách: " + distance + " km\nKhoảng thời gian: " + duration + " phút", false);
+
     }
     private GeoPoint getLocationFromAddress(Context context, String strAddress) {
         Geocoder coder = new Geocoder(context);

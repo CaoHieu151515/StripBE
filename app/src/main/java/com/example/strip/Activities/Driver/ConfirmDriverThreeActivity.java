@@ -23,6 +23,8 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.Activities.Intro.IntroFiveActivity;
+import com.example.strip.Activities.Intro.IntroFourActivity;
 import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
@@ -48,7 +50,8 @@ import retrofit2.Retrofit;
 
 public class ConfirmDriverThreeActivity extends AppCompatActivity {
     private EditText etVehicleType, etVehicleColor, etVehicleNumber, etSeats, etVehicleBrand;
-    private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView;
+    private ImageView vehicleImageView, carRegistrationImageView, inspectionCertificateImageView, insuranceImageView,
+            licenseImageView, faceUpImageView, faceDownImageView;
     private Button btnConfirmDriver;
     private byte[] vehicleImageBytes, carRegistrationImageBytes, inspectionCertificateImageBytes, insuranceImageBytes,
             licenseImageBytes, faceUpImageBytes, faceDownImageBytes;
@@ -58,6 +61,9 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_TWO_PICK = 101;
     private static final int REQUEST_IMAGE_THREE_PICK = 102;
     private static final int REQUEST_IMAGE_FOUR_PICK = 103;
+    private static final int REQUEST_IMAGE_FIVE_PICK = 104;
+    private static final int REQUEST_IMAGE_SIX_PICK = 105;
+    private static final int REQUEST_IMAGE_SEVEN_PICK = 106;
     private NotificationPopup notificationPopup;
     private UserMoreResponse user;
     @Override
@@ -73,6 +79,12 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         carRegistrationImageView = findViewById(R.id.carRegistrationImageView);
         inspectionCertificateImageView = findViewById(R.id.inspectionCertificateImageView);
         insuranceImageView = findViewById(R.id.insuranceImageView);
+
+        licenseImageView = findViewById(R.id.licenseImageView);
+        faceUpImageView = findViewById(R.id.faceUpImageView);
+        faceDownImageView = findViewById(R.id.faceDownImageView);
+
+
         btnConfirmDriver = findViewById(R.id.btnConfirmDriver);
         retrofit = ApiClient.getClientWithToken(this);
         notificationPopup = new NotificationPopup(this);
@@ -84,6 +96,8 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(ConfirmDriverThreeActivity.this, ConfirmDriverOneActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -121,6 +135,15 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         insuranceImageView.setOnClickListener(v -> {
             openInsuranceImageViewPicker();
         });
+        licenseImageView.setOnClickListener(v -> {
+            openLicenseImageViewPicker();
+        });
+        faceUpImageView.setOnClickListener(v -> {
+            openFaceUpImageViewPicker();
+        });
+        faceDownImageView.setOnClickListener(v -> {
+            openFaceDownImageViewPicker();
+        });
         fetchUserInfo();
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService userService = retrofit.create(IUserMobileApiService.class);
@@ -153,6 +176,9 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                         loadImageWithFixHost(vehicle.getVehicleInspectionCertificateUrl(), inspectionCertificateImageView);
                         loadImageWithFixHost(vehicle.getCarInsuranceUrl(), insuranceImageView);
                     }
+                    loadImageWithFixHost(data.getDriverLicenseUrl(),licenseImageView);
+                    loadImageWithFixHost(data.getIdentityCardFaceUpUrl(),faceUpImageView);
+                    loadImageWithFixHost(data.getIdentityCardFaceDownUrl(),faceDownImageView);
 
                     // Update UI fields
                     etVehicleType.setText(vehicleType);
@@ -177,10 +203,6 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             firstName = intent.getStringExtra("firstName");
             lastName = intent.getStringExtra("lastName");
             phone = intent.getStringExtra("phone");
-            licenseImageBytes = ImageHolder.licenseImageBytes;
-            faceUpImageBytes = ImageHolder.faceUpImageBytes;
-            faceDownImageBytes = ImageHolder.faceDownImageBytes;
-
         }
         btnConfirmDriver.setOnClickListener(v -> {
             String userId = user.getDriver().getUserId();
@@ -311,6 +333,20 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_IMAGE_FOUR_PICK);
     }
+    private void openLicenseImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_FIVE_PICK);
+    }private void openFaceUpImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_SIX_PICK);
+    }private void openFaceDownImageViewPicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_SEVEN_PICK);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -480,6 +516,135 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     insuranceImageBytes = stream.toByteArray();
 
                     Log.d("ImageBytes", "Byte array size: " + insuranceImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_FIVE_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                licenseImageView.setImageURI(selectedImageUri);
+
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    licenseImageView.setImageBitmap(bitmap);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    licenseImageBytes = stream.toByteArray();
+
+                    Log.d("ImageBytes", "Byte array size: " + licenseImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_SIX_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                faceUpImageView.setImageURI(selectedImageUri);
+
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    faceUpImageView.setImageBitmap(bitmap);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    faceUpImageBytes = stream.toByteArray();
+
+                    Log.d("ImageBytes", "Byte array size: " + faceUpImageBytes.length);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_SIX_PICK) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                faceDownImageView.setImageURI(selectedImageUri);
+
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    if (inputStream == null) {
+                        throw new IOException("InputStream is null");
+                    }
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    faceDownImageView.setImageBitmap(bitmap);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    faceDownImageBytes = stream.toByteArray();
+
+                    Log.d("ImageBytes", "Byte array size: " + faceDownImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();

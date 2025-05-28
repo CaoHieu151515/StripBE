@@ -136,22 +136,87 @@
                     android:textSize="15sp"
                     android:inputType="textPersonName" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/statusTextView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textStyle="bold"-->
-<!--                    android:textSize="16dp"-->
-<!--                    android:text="Vehicle Status:" />-->
-<!--                <EditText-->
-<!--                    android:id="@+id/etVehicleStatus"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    android:hint="Vehicle Status"-->
-<!--                    android:background="@drawable/input_field_bg"-->
-<!--                    android:paddingStart="16dp"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:inputType="textPersonName" />-->
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_field_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:gravity="center"
+                    android:text="Giấy phép lái xe:"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <ImageView android:id="@+id/licenseImageView"
+                    android:background="@android:color/darker_gray"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_field_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:gravity="center"
+                    android:text="Thẻ căn cước mặt trước:"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <ImageView android:id="@+id/faceUpImageView"
+                    android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:padding="10dp"
+            android:background="@drawable/input_field_bg"
+            android:layout_marginTop="10dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/input_field_bg"
+                android:orientation="vertical">
+                <TextView
+                    android:gravity="center"
+                    android:text="Thẻ căn cước mặt sau:"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <ImageView android:id="@+id/faceDownImageView"
+                    android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -180,6 +245,7 @@
                     android:background="@android:color/darker_gray" android:layout_width="match_parent" android:layout_height="200dp" android:scaleType="centerCrop"/>
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
