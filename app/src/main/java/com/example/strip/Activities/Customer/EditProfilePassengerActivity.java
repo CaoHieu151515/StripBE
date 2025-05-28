@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -27,10 +29,13 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.Activities.Account.LoginActivity;
 import com.example.strip.Activities.Driver.RatingFeedbackDriverActivity;
+import com.example.strip.Activities.StripActivity;
 import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
@@ -45,6 +50,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import im.crisp.client.internal.j.n;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -60,7 +66,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
     private ImageView ivProfile, ivCamera;
     private byte[] userImageBytes;
     private static final int REQUEST_IMAGE_PICK = 100;
-
+    private NotificationPopup notificationPopup;
     private String formatTimeShow, formatTimeStore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,7 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
         etGender = findViewById(R.id.etGender);
         ivProfile = findViewById(R.id.ivProfile);
         ivCamera = findViewById(R.id.ivCamera);
+        notificationPopup = new NotificationPopup(this);
         Button btnSave = findViewById(R.id.btnSave);
 
         // Retrieve data from intent
@@ -228,7 +235,6 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     private void updateUserProfile() {
@@ -263,10 +269,18 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    finish();
-                    Toast.makeText(EditProfilePassengerActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                    notificationPopup.showPopup("Cập nhật hồ sơ thành công!",false);
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        finish();
+                    }, 1500);
                 } else {
-                    Log.e("Failed:", "Update failed! Code: " + response.code());
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                        Log.e("Failed:", "Update failed! Code: " + response.code());
+                        Log.e("Failed:", "Update failed! Body: " + errorBody);
+                    } catch (IOException e) {
+                        Log.e("Failed:", "Error reading error body", e);
+                    }
                     Toast.makeText(EditProfilePassengerActivity.this, "Update failed!", Toast.LENGTH_SHORT).show();
                 }
             }

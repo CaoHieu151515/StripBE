@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Models.PackageDriver;
 
+import com.example.strip.Models.Request.NotificationRequest;
+import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
@@ -42,6 +44,8 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     private Context context;
     private OnPackagePurchaseListener purchaseListener;
     private NotificationPopup notificationPopup;
+    private UserMoreResponse user;
+
     public PackageAdapter(Context context, List<PackageDriver> packageList, OnPackagePurchaseListener purchaseListener) {
         this.context = context;
         this.packageList = packageList;
@@ -53,6 +57,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_package, parent, false);
+        fetchUserInfo();
         return new ViewHolder(view);
     }
 
@@ -121,6 +126,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
 //    }
 
     private void buyPackage(String packageId, View view) {
+        String userId = user.getDriver().getUserId();
         notificationPopup = new NotificationPopup(context);
         Retrofit retrofit = ApiClient.getClientWithToken(context);
 
@@ -134,7 +140,13 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
                     if (purchaseListener != null) {
                         purchaseListener.onPackagePurchased(); // Notify activity
                     }
-
+                    NotificationRequest notiRequest = new NotificationRequest(
+                            "Bạn đã mua gói thành công!", // title or message
+                            "Mã gói: " + packageId, // detailed message
+                            userId // or other target
+                    );
+                    notificationPopup.createNotification(notiRequest);
+                    notificationPopup.showPopup("Mua gói thành công!", false);
                 } else {
                     Log.e("Failed", "Failed to buy package!" + response.code());
                     try {
@@ -157,6 +169,36 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.ViewHold
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("API_ERROR", "Error: " + t.getMessage());
+                notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
+            }
+        });
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(context);
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(context, "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        notificationPopup.showPopup("Lỗi khi lấy thông tin: \nKhông thể lấy thông báo lỗi\n" + response.code(), true);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
                 notificationPopup.showPopup("Lỗi: " + t.getMessage(), true);
             }
         });
