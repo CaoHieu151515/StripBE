@@ -3,6 +3,7 @@ package com.example.strip.Activities.Driver;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,8 @@ import com.example.strip.network.ApiClient;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -308,9 +311,11 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 vehicleImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     vehicleImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + vehicleImageBytes.length);
                 } catch (IOException e) {
@@ -325,9 +330,11 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 carRegistrationImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     carRegistrationImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + carRegistrationImageBytes.length);
                 } catch (IOException e) {
@@ -342,9 +349,11 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 inspectionCertificateImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     inspectionCertificateImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + inspectionCertificateImageBytes.length);
                 } catch (IOException e) {
@@ -359,9 +368,11 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 insuranceImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     insuranceImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + insuranceImageBytes.length);
                 } catch (IOException e) {

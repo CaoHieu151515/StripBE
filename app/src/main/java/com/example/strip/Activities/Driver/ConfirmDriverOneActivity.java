@@ -3,6 +3,7 @@ package com.example.strip.Activities.Driver;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,6 +22,8 @@ import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.network.ApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -128,9 +131,12 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
                 licenseImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     licenseImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + licenseImageBytes.length);
                 } catch (IOException e) {

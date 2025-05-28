@@ -2,6 +2,7 @@ package com.example.strip.Activities.Driver;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +25,7 @@ import com.example.strip.network.ApiClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,9 +150,12 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                 faceUpImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     faceUpImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + faceUpImageBytes.length);
                 } catch (IOException e) {
@@ -165,9 +170,12 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                 faceDownImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     faceDownImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + faceDownImageBytes.length);
                 } catch (IOException e) {
