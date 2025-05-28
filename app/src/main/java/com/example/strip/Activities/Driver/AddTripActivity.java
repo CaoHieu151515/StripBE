@@ -413,6 +413,10 @@ public class AddTripActivity extends AppCompatActivity{
                     inputStream.close();
 
                     ivTripImage.setImageBitmap(bitmap);
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    ImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

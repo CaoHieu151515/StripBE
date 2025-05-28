@@ -25,6 +25,7 @@ import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.ImageHolder;
 import com.example.strip.network.ApiClient;
 
 import java.io.ByteArrayOutputStream;
@@ -47,7 +48,7 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 100;
     private static final int REQUEST_IMAGE_TWO_PICK = 101;
     private String firstName, lastName, phone;
-    private byte[] licenseImageBytes, faceUpImageBytes, faceDownImageBytes;
+    private byte[] faceUpImageBytes, faceDownImageBytes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,15 +73,13 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
             intent.putExtra("firstName", firstName);
             intent.putExtra("lastName", lastName);
             intent.putExtra("phone", phone);
-            intent.putExtra("driverLicense", licenseImageBytes);
-
-            intent.putExtra("identityCardFaceUp", faceUpImageBytes);
-            intent.putExtra("identityCardFacedown", faceDownImageBytes);
+            ImageHolder.faceUpImageBytes = faceUpImageBytes;
+            ImageHolder.faceDownImageBytes = faceDownImageBytes;
             startActivity(intent);
         });
+
         Intent intent = getIntent();
         if (intent != null) {
-            licenseImageBytes = intent.getByteArrayExtra("driverLicense");
             firstName = intent.getStringExtra("firstName");
             lastName = intent.getStringExtra("lastName");
             phone = intent.getStringExtra("phone");
@@ -187,6 +186,7 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     faceUpImageBytes = stream.toByteArray();
+                    Log.d("ImageBytes", "Byte array size: " + faceUpImageBytes.length);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -226,17 +226,10 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
 
                     faceDownImageView.setImageBitmap(bitmap);
 
-//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                    faceDownImageBytes = stream.toByteArray();
-//
-//                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-//                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-//                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
-//
-//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                    faceDownImageBytes = stream.toByteArray();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    faceDownImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + faceDownImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

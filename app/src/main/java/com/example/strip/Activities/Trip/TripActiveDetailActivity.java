@@ -126,6 +126,10 @@ public class TripActiveDetailActivity extends AppCompatActivity {
         btnComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if ("CONFIRMING".equalsIgnoreCase(currentTripStatus)) {
+                    notificationPopup.showPopup("Chuyến đi chưa sẵn sàng để hoàn thành!\n Đang chờ xác nhận và chờ bắt đầu chuyến đi", true);
+                    return;
+                }
                 String userId = user.getDriver().getUserId();
                 ITripMobileApiService apiService = ApiClient.getClientWithToken(TripActiveDetailActivity.this).create(ITripMobileApiService.class);
                 Call<Void> call = apiService.completeTrip(tripId);

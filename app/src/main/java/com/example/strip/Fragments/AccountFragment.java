@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,43 +13,28 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Activities.Account.BeginActivity;
 import com.example.strip.Activities.Customer.ChangePasswordActivity;
-import com.example.strip.Activities.Customer.ConfirmDriverActivity;
 import com.example.strip.Activities.Customer.EditProfilePassengerActivity;
 import com.example.strip.Activities.Customer.ViewPackagesActivity;
 import com.example.strip.Activities.Driver.ConfirmDriverOneActivity;
 import com.example.strip.Activities.NotificationListActivity;
-import com.example.strip.Activities.StripActivity;
 import com.example.strip.Activities.StripDriverActivity;
-import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Models.Response.NotificationResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.R;
 import com.example.strip.Services.INotificationApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import im.crisp.client.external.Crisp;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AccountFragment extends Fragment {
 
@@ -194,6 +177,7 @@ public class AccountFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                if (!isAdded()) return;
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -223,28 +207,26 @@ public class AccountFragment extends Fragment {
             @Override
             public void onResponse(Call<List<NotificationResponse>> call, Response<List<NotificationResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    if (!isAdded()) return;
                     List<NotificationResponse> notifications = response.body();
 
-                    // Count unread notifications (assuming `isRead` field exists)
                     long unreadCount = notifications.stream()
-                            .filter(n -> !n.isRead()) // or n.getIsRead() == false depending on your model
+                            .filter(n -> !n.isRead())
                             .count();
 
-                    // Show unread count in a TextView, Badge, etc.
-                    if (unreadCount > 0) {
-                        // Example: update a TextView next to the bell icon
-                        TextView tvNotificationCount = requireView().findViewById(R.id.tvNotificationBadge);
-                        tvNotificationCount.setVisibility(View.VISIBLE);
-                        tvNotificationCount.setText(String.valueOf(unreadCount));
+                    if (isAdded() && tvNotificationBadge != null && unreadCount > 0) {
+                        tvNotificationBadge.setVisibility(View.VISIBLE);
+                        tvNotificationBadge.setText(String.valueOf(unreadCount));
                     }
-
-                } else {
+                }
+                else {
                     Log.e("NotificationError", "Error getting notifications: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<NotificationResponse>> call, Throwable t) {
+                if (!isAdded()) return;
                 Log.e("NotificationError", "API failure: " + t.getMessage());
             }
         });

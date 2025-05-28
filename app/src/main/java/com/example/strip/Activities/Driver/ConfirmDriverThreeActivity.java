@@ -31,6 +31,7 @@ import com.example.strip.Models.Response.VehicleResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
+import com.example.strip.Utils.ImageHolder;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
 import org.json.JSONObject;
@@ -173,13 +174,13 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            licenseImageBytes = intent.getByteArrayExtra("driverLicense");
             firstName = intent.getStringExtra("firstName");
             lastName = intent.getStringExtra("lastName");
             phone = intent.getStringExtra("phone");
+            licenseImageBytes = ImageHolder.licenseImageBytes;
+            faceUpImageBytes = ImageHolder.faceUpImageBytes;
+            faceDownImageBytes = ImageHolder.faceDownImageBytes;
 
-            faceUpImageBytes = intent.getByteArrayExtra("identityCardFaceUp");
-            faceDownImageBytes = intent.getByteArrayExtra("identityCardFacedown");
         }
         btnConfirmDriver.setOnClickListener(v -> {
             String userId = user.getDriver().getUserId();

@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
+import com.example.strip.Utils.ImageHolder;
 import com.example.strip.network.ApiClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
             intent.putExtra("firstName", etFullName.getText().toString());
             intent.putExtra("lastName", etLastName.getText().toString());
             intent.putExtra("phone", etPhone.getText().toString());
-            intent.putExtra("driverLicense", licenseImageBytes);
+            ImageHolder.licenseImageBytes = licenseImageBytes;
             startActivity(intent);
         });
         licenseImageView.setOnClickListener(v -> {
