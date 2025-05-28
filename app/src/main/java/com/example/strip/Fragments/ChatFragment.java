@@ -1,34 +1,36 @@
 package com.example.strip.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Driver.WalletActivity;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.TransactionAdapter;
+import com.example.strip.Models.Request.WithDrawRequest;
 import com.example.strip.Models.Response.UserMoreResponse;
 import com.example.strip.Models.Response.WalletResponse;
 import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
+import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
-
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,12 +39,13 @@ import retrofit2.Retrofit;
 public class ChatFragment extends Fragment {
 
     private TextView tvMobifyDate, tvCurrent, tvBefore, tvAmount;
-    private ImageView ivProfile,ivPayment;
+    private ImageView ivProfile,ivPayment, ivWithDraw;
     private RecyclerView recyclerView;
     private TransactionAdapter transactionAdapter;
 
+    private UserMoreResponse user;
 
-
+    private NotificationPopup notificationPopup;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,6 +56,15 @@ public class ChatFragment extends Fragment {
         tvAmount = view.findViewById(R.id.tvAmount);
         ivProfile = view.findViewById(R.id.profileImage);
         ivPayment = view.findViewById(R.id.ivPayment);
+        ivWithDraw = view.findViewById(R.id.ivWithDraw);
+        notificationPopup = new NotificationPopup(requireContext());
+        ivWithDraw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWithdrawDialog();
+            }
+        });
+
         ivPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,8 +78,40 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fetchTransactionsList();
+        fetchUserInfo();
         // Inflate the layout for this fragment
         return view;
+    }
+    private void fetchUserInfo() {
+        Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+        Call<UserMoreResponse> call = apiService.getUserInfo();
+
+        call.enqueue(new Callback<UserMoreResponse>() {
+            @Override
+            public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    user = response.body();
+
+                } else {
+                    try {
+                        String errorBody = response.errorBody().string();
+                        Log.e("Error", "Lỗi khi lấy thông tin: " + errorBody);
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: " + response.code(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Lỗi khi lấy thông tin: Không thể lấy thông báo lỗi" + response.code(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
     private void fetchWalletInfo() {
         Retrofit retrofit = ApiClient.getClientWithToken(getContext());
@@ -77,6 +121,7 @@ public class ChatFragment extends Fragment {
         call.enqueue(new Callback<UserMoreResponse>() {
             @Override
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     UserMoreResponse user = response.body();
                     tvMobifyDate.setText(user.getUserWallet().getMobifyDate() != null ? DateFormatter.formatDate(user.getUserWallet().getMobifyDate()) : "");
@@ -113,7 +158,9 @@ public class ChatFragment extends Fragment {
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
-                Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -124,6 +171,7 @@ public class ChatFragment extends Fragment {
         call.enqueue(new Callback<WalletResponse>() {
             @Override
             public void onResponse(Call<WalletResponse> call, Response<WalletResponse> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     List<Transaction> transactions = response.body().getTransactions();
                     transactionAdapter = new TransactionAdapter(transactions);
@@ -135,9 +183,62 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onFailure(Call<WalletResponse> call, Throwable t) {
+                if (!isAdded()) return;
                 Log.e("API_ERROR", "Error: " + t.getMessage());
-                Toast.makeText(getContext(), "API request failed", Toast.LENGTH_SHORT).show();
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "API request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }           }
+        });
+    }
+    private void showWithdrawDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View dialogView = inflater.inflate(R.layout.dialog_withdraw, null);
+        builder.setView(dialogView);
+
+        EditText etWithdrawAmount = dialogView.findViewById(R.id.etWithdrawAmount);
+
+        builder.setPositiveButton("Rút", (dialog, which) -> {
+            String inputAmount = etWithdrawAmount.getText().toString().trim();
+            if (!inputAmount.isEmpty()) {
+                int amount = Integer.parseInt(inputAmount);
+                sendWithdrawRequest(amount);
+            } else {
+                Toast.makeText(getContext(), "Vui lòng nhập số tiền!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void sendWithdrawRequest(int amount) {
+        String email = user.getUser().getEmail(); // You should define how to retrieve the email
+        WithDrawRequest request = new WithDrawRequest(amount, email);
+        Retrofit retrofit = ApiClient.getClientWithToken(requireContext());
+        IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
+
+        Call<Void> call = apiService.withdrawMoney(request);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful()) {
+                    notificationPopup.showPopup("Yêu cầu rút tiền thành công!", false);
+                    fetchWalletInfo(); // Refresh wallet info
+                } else {
+                    Toast.makeText(getContext(), "Failed to withdraw: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 }

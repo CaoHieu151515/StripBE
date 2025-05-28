@@ -8,33 +8,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.braintreepayments.api.BraintreeClient;
-import com.braintreepayments.api.Card;
-import com.braintreepayments.api.CardClient;
-import com.braintreepayments.api.CardNonce;
 import com.braintreepayments.api.ClientTokenCallback;
-import com.braintreepayments.api.ClientTokenProvider;
 import com.braintreepayments.api.DropInClient;
 import com.braintreepayments.api.DropInListener;
 import com.braintreepayments.api.DropInRequest;
 import com.braintreepayments.api.DropInResult;
-import com.braintreepayments.api.PayPalClient;
 import com.braintreepayments.api.UserCanceledException;
-
-
-
-import com.example.strip.Models.Request.PaymentRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IBrainTreeApiService;
 import com.example.strip.network.ApiClient;
-
 import java.io.IOException;
-import java.math.BigDecimal;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;

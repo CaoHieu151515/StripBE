@@ -15,6 +15,8 @@ public class ErrorTranslate {
                 return "Phản hồi này đã được gửi trước đó";
             case "error.alreadyJoined":
                 return "Bạn đã tham gia chuyến đi này rồi";
+            case "error.alreadySubmitted":
+                return "Bạn đã gửi xác nhận tài xế trước đó rồi";
             case "Bad credentials":
                 return "Sai tài khoản hoặc mật khẩu";
             case "User is disabled":

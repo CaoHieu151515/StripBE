@@ -14,12 +14,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.strip.Activities.OpenStreetMapActivity;
 import com.example.strip.Adapters.LocationAdapter;
 import com.example.strip.Models.LocationInfo;
 import com.example.strip.R;

@@ -110,6 +110,7 @@ public class AccountFragment extends Fragment {
             Intent intent = new Intent(getActivity(), StripDriverActivity.class);
             startActivity(intent);
         });
+
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditProfilePassengerActivity.class);
             intent.putExtra("imageUrl", user.getUserDetailsCusDTO().getImageUrl());
@@ -134,8 +135,18 @@ public class AccountFragment extends Fragment {
         call.enqueue(new Callback<UserMoreResponse>() {
             @Override
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
+                    // Check role and hide the ivChangeToDriver if already a DRIVER
+                    List<String> roles = user.getRoles(); // returns List<String>
+
+                    if (roles != null && !roles.contains("ROLE_DRIVER")) {
+                        ivChangeToDriver.setVisibility(View.GONE); // Hide the button
+
+                    }
+
+
                     tvEmail.setText(user.getUser().getEmail());
                     String fullName = (user.getUser().getFirstName() != null ? user.getUser().getFirstName() : "") +
                             (user.getUser().getLastName() != null ? " " + user.getUser().getLastName() : "");

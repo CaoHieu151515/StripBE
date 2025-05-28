@@ -5,6 +5,7 @@ import com.example.strip.Models.Request.AddVehicleRequest;
 import com.example.strip.Models.Request.ChangePasswordRequest;
 import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.PassengerProfileRequest;
+import com.example.strip.Models.Request.WithDrawRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.Models.Response.DriverResponse;
 import com.example.strip.Models.Response.TripBookingResponse;
@@ -38,7 +39,7 @@ public interface IUserMobileApiService {
     @PUT("api/mobile/user/update-profile")
     Call<Void> updateProfile(@Body PassengerProfileRequest passengerProfileRequest);
     @POST("api/mobile/user/confirm-driver")
-    Call<RequestBody> confirmDriver(@Body ConfirmDriverRequest confirmDriverRequest);
+    Call<ResponseBody> confirmDriver(@Body ConfirmDriverRequest confirmDriverRequest);
     @GET("api/mobile/user/confirm-driver")
     Call<DriverResponse> getDriverDetails();
     @GET("api/mobile/user/confirm-driver")
@@ -53,4 +54,7 @@ public interface IUserMobileApiService {
     Call<List<TripDoneResponse>> getDoneTrips();
     @POST("api/mobile/user/driver/vehicles/add")
     Call<ResponseBody> addVehicle(@Body AddVehicleRequest addVehicleRequest);
+
+    @POST("api/mobile/user/withdraw/request")
+    Call<Void> withdrawMoney(@Body WithDrawRequest withDrawRequest);
 }

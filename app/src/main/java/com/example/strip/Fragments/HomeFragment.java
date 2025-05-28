@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,25 +44,29 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerViewTrips;
     private TripAdapter tripAdapter;
     private TextView tvLoading;
+    private EditText edFindByLocation;
+    private ImageView ivSearchLocation;
+    private List<Trip> allTrips = new ArrayList<>(); // Giữ toàn bộ danh sách
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         tvLoading = view.findViewById(R.id.tvLoading);
-
         recyclerViewTrips = view.findViewById(R.id.recyclerViewTrips);
+        edFindByLocation = view.findViewById(R.id.edFindByLocation);
+        ivSearchLocation = view.findViewById(R.id.ivSearchLocation);
 
-        // Set up RecyclerView with horizontal scrolling
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewTrips.setLayoutManager(layoutManager);
+        recyclerViewTrips.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        ivSearchLocation.setOnClickListener(v -> performSearch());
+
         loadTrips();
         return view;
     }
 
     private void loadTrips() {
-        // Hiện Loading, ẩn danh sách
         tvLoading.setVisibility(View.VISIBLE);
         recyclerViewTrips.setVisibility(View.GONE);
 
@@ -68,18 +74,12 @@ public class HomeFragment extends Fragment {
         tripService.getAllTrips().enqueue(new Callback<List<Trip>>() {
             @Override
             public void onResponse(@NonNull Call<List<Trip>> call, @NonNull Response<List<Trip>> response) {
-                if (!isAdded()) return; // tránh crash nếu fragment bị detach
+                if (!isAdded()) return;
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Trip> trips = response.body();
-                    Collections.sort(trips, (t1, t2) -> t2.getHandleId().compareTo(t1.getHandleId()));
-
-                    tripAdapter = new TripAdapter(getContext(), trips);
-                    recyclerViewTrips.setAdapter(tripAdapter);
-
-                    // Dữ liệu đã có => ẩn Loading, hiện danh sách
-                    tvLoading.setVisibility(View.GONE);
-                    recyclerViewTrips.setVisibility(View.VISIBLE);
+                    allTrips = response.body(); // Lưu tất cả dữ liệu
+                    Collections.sort(allTrips, (t1, t2) -> t2.getHandleId().compareTo(t1.getHandleId()));
+                    updateTripList(allTrips);
                 } else {
                     tvLoading.setText("Failed to load trips.");
                 }
@@ -93,5 +93,28 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void updateTripList(List<Trip> trips) {
+        tripAdapter = new TripAdapter(getContext(), trips);
+        recyclerViewTrips.setAdapter(tripAdapter);
+        tvLoading.setVisibility(View.GONE);
+        recyclerViewTrips.setVisibility(View.VISIBLE);
+    }
 
+    private void performSearch() {
+        String keyword = edFindByLocation.getText().toString().trim().toLowerCase();
+        if (keyword.isEmpty()) {
+            updateTripList(allTrips); // Show all if empty
+            return;
+        }
+
+        List<Trip> filteredTrips = new ArrayList<>();
+        for (Trip trip : allTrips) {
+            if ((trip.getStartLocation() != null && trip.getStartLocation().toLowerCase().contains(keyword)) ||
+                    (trip.getEndLocation() != null && trip.getEndLocation().toLowerCase().contains(keyword))) {
+                filteredTrips.add(trip);
+            }
+        }
+
+        updateTripList(filteredTrips);
+    }
 }

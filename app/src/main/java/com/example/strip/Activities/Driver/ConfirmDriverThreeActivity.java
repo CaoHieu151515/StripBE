@@ -14,12 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Account.LoginActivity;
-import com.example.strip.Activities.StripActivity;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
@@ -30,13 +27,11 @@ import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
-
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -124,51 +119,34 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             public void onResponse(Call<ConfirmDriverResponse> call, Response<ConfirmDriverResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ConfirmDriverResponse data = response.body();
+                    VehicleResponse vehicle = data.getVehicleResponse();
 
-                    String vehicleType = "N/A";
-                    String vehicleColor = "N/A";
-                    String vehicleNumber = "N/A";
-                    String vehicleBrand = "N/A";
+                    String vehicleType = "";
+                    String vehicleColor = "";
+                    String vehicleNumber = "";
+                    String vehicleBrand = "";
                     String numberOfSeats = "0";
-                    if (data.getVehicleResponse() != null) {
-                        VehicleResponse vehicle = data.getVehicleResponse();
+
+                    if (vehicle != null) {
+                        if (vehicle.getVehicleType() != null) vehicleType = vehicle.getVehicleType();
+                        if (vehicle.getVehicleColor() != null) vehicleColor = vehicle.getVehicleColor();
+                        if (vehicle.getVehicleNumber() != null) vehicleNumber = vehicle.getVehicleNumber();
+                        if (vehicle.getVehicleBrand() != null) vehicleBrand = vehicle.getVehicleBrand();
                         numberOfSeats = String.valueOf(vehicle.getNumberOfSeats());
+
+                        // Load images safely
+                        loadImageWithFixHost(vehicle.getVehicleImageUrl(), vehicleImageView);
+                        loadImageWithFixHost(vehicle.getCarregistrationUrl(), carRegistrationImageView);
+                        loadImageWithFixHost(vehicle.getVehicleInspectionCertificateUrl(), inspectionCertificateImageView);
+                        loadImageWithFixHost(vehicle.getCarInsuranceUrl(), insuranceImageView);
                     }
 
-                    if (data.getVehicleResponse() != null) {
-                        VehicleResponse vehicle = data.getVehicleResponse();
-
-                        if (vehicle.getVehicleType() != null) {
-                            vehicleType = vehicle.getVehicleType();
-                        }
-
-                        if (vehicle.getVehicleColor() != null) {
-                            vehicleColor = vehicle.getVehicleColor();
-                        }
-
-                        if (vehicle.getVehicleNumber() != null) {
-                            vehicleNumber = vehicle.getVehicleNumber();
-                        }
-
-                        if (vehicle.getVehicleBrand() != null) {
-                            vehicleBrand = vehicle.getVehicleBrand();
-                        }
-
-
-                    }
-
+                    // Update UI fields
                     etVehicleType.setText(vehicleType);
                     etVehicleColor.setText(vehicleColor);
                     etVehicleNumber.setText(vehicleNumber);
                     etSeats.setText(numberOfSeats);
                     etVehicleBrand.setText(vehicleBrand);
-
-
-                    // ✅ Load ảnh đơn giản hơn nhiều
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), vehicleImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), carRegistrationImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), inspectionCertificateImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), insuranceImageView);
                 } else {
                     Toast.makeText(ConfirmDriverThreeActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
                 }
@@ -179,6 +157,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -207,17 +186,18 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
             );
             // 3. Make API call
             IUserMobileApiService apiService = ApiClient.getClientWithToken(this).create(IUserMobileApiService.class);
-            apiService.confirmDriver(request).enqueue(new Callback<RequestBody>() {
+            apiService.confirmDriver(request).enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
+                        Log.e("Success", "Xác nhận tài xế thành công! " + response.body());
                         NotificationRequest notiRequest = new NotificationRequest(
-                                "Bạn đã xác nhận chuyến đi!", // title or message
-                                "Bạn đã xác nhận chuyến đi vui lòng chờ kết quả! ", // detailed message
+                                "Bạn đã xác nhận tài xế!", // title or message
+                                "Bạn đã xác nhận tài xế vui lòng chờ kết quả! ", // detailed message
                                 userId // or other target
                         );
-                        notificationPopup.createNotification(notiRequest);
                         notificationPopup.showPopup("Xác nhận tài xế thành công!", false);
+                        notificationPopup.createNotification(notiRequest);
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             finish();
                         }, 1500);
@@ -225,7 +205,7 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                     } else {
                         try {
                             String errorBody = response.errorBody().string();
-                            Log.e("Failed", "Không thể gửi phản hồi. " + errorBody);
+                            Log.e("Failed", "Không thể gửi xác nhận tài xế. " + errorBody);
 
                             JSONObject jsonObject = new JSONObject(errorBody);
 
@@ -259,18 +239,18 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                             // Dịch lỗi
                             String translated = ErrorTranslate.translateError(errorMessageCode);
-                            notificationPopup.showPopup("Không thể gửi phản hồi.\n" + translated, true);
+                            notificationPopup.showPopup("Không thể gửi xác nhận tài xế.\n" + translated, true);
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            notificationPopup.showPopup("Không thể gửi phản hồi.\nKhông thể lấy thông báo lỗi", true);
+                            notificationPopup.showPopup("Không thể gửi xác nhận tài xế.\nKhông thể lấy thông báo lỗi", true);
                         }
 
                     }
                 }
 
                 @Override
-                public void onFailure(Call<RequestBody> call, Throwable t) {
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Toast.makeText(ConfirmDriverThreeActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
@@ -284,13 +264,18 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
                 url = url.replace("http://localhosts", "http://10.0.2.2:8080");
             }
 
+            if (!ConfirmDriverThreeActivity.this.isFinishing()
+                    && !ConfirmDriverThreeActivity.this.isDestroyed()) {
+                Glide.with(this)
+                        .load(url)
+                        .skipMemoryCache(true) // Skip memory cache
+                        .diskCacheStrategy(DiskCacheStrategy.NONE) // Skip disk cache
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logout)
+                        .into(target);
+            }
             Log.d("ImageDebug", "Image URL: " + url);
 
-            Glide.with(this)
-                    .load(url)
-                    .placeholder(R.drawable.logo)
-                    .error(R.drawable.logout)
-                    .into(target);
         }
     }
     private void openVehicleImageViewicker() {

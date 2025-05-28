@@ -1,8 +1,6 @@
 package com.example.strip.Activities.Trip;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,27 +8,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.Driver.WalletActivity;
-import com.example.strip.Activities.StripActivity;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Utils.DateFormatter;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TripDetailActivity extends AppCompatActivity {
     private TextView tvStartLocation, tvEndLocation, tvPrice, tvDescription, tvPricePerSeat, tvSeats,
@@ -149,7 +138,10 @@ public class TripDetailActivity extends AppCompatActivity {
                         if (imageUrlVehicle.startsWith("https://localhost")) {
                             imageUrlVehicle = imageUrlVehicle.replace("https://localhost", "http://10.0.2.2");
                         }
-                        Glide.with(TripDetailActivity.this).load(imageUrlVehicle).into(ivVehicleImage);
+                        if (!TripDetailActivity.this.isFinishing()
+                                && !TripDetailActivity.this.isDestroyed()) {
+                            Glide.with(TripDetailActivity.this).load(imageUrlVehicle).into(ivVehicleImage);
+                        }
                     }
 
 
@@ -159,7 +151,10 @@ public class TripDetailActivity extends AppCompatActivity {
                         if (imageUrlTrip.startsWith("https://localhost")) {
                             imageUrlTrip = imageUrlTrip.replace("https://localhost", "http://10.0.2.2");
                         }
-                        Glide.with(TripDetailActivity.this).load(imageUrlTrip).into(ivTripImage);
+                        if (!TripDetailActivity.this.isFinishing()
+                                && !TripDetailActivity.this.isDestroyed()) {
+                            Glide.with(TripDetailActivity.this).load(imageUrlTrip).into(ivTripImage);
+                        }
                     }
 
                     String imageUrlDriver = trip.getDriverOfTripDetail().getAvatarUrl();
@@ -167,7 +162,10 @@ public class TripDetailActivity extends AppCompatActivity {
                         if (imageUrlDriver.startsWith("https://localhost")) {
                             imageUrlDriver = imageUrlDriver.replace("https://localhost", "http://10.0.2.2");
                         }
-                        Glide.with(TripDetailActivity.this).load(imageUrlDriver).into(ivDriverImage);
+                        if (!TripDetailActivity.this.isFinishing()
+                                && !TripDetailActivity.this.isDestroyed()) {
+                            Glide.with(TripDetailActivity.this).load(imageUrlDriver).into(ivDriverImage);
+                        }
                     }
                 } else {
                     Log.e("Failed", "Failed to load trips!" + response.code());

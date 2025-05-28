@@ -4,13 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.strip.Activities.Intro.IntroFiveActivity;
-import com.example.strip.Activities.Intro.IntroFourActivity;
-import com.example.strip.Activities.StripActivity;
 import com.example.strip.R;
 
 public class BeginActivity extends AppCompatActivity {

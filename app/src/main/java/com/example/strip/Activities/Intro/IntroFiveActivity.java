@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.strip.Activities.Account.BeginActivity;
-import com.example.strip.Activities.StripActivity;
 import com.example.strip.R;
 
 public class IntroFiveActivity extends AppCompatActivity {

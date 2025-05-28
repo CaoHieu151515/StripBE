@@ -92,8 +92,8 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ConfirmDriverResponse data = response.body();
                     // ✅ Load ảnh đơn giản hơn nhiều
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), faceUpImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), faceDownImageView);
+                    loadImageWithFixHost(data.getIdentityCardFaceUpUrl(), faceUpImageView);
+                    loadImageWithFixHost(data.getIdentityCardFaceDownUrl(), faceDownImageView);
                 } else {
                     Toast.makeText(ConfirmDriverTwoActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
                 }
@@ -114,13 +114,18 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
                 url = url.replace("https://localhost", "http://10.0.2.2:8080");
             }
 
+            if (!ConfirmDriverTwoActivity.this.isFinishing()
+                    && !ConfirmDriverTwoActivity.this.isDestroyed()) {
+                Glide.with(this)
+                        .load(url)
+                        .skipMemoryCache(true) // Skip memory cache
+                        .diskCacheStrategy(DiskCacheStrategy.NONE) // Skip disk cache
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logout)
+                        .into(target);
+            }
             Log.d("ImageDebug", "Image URL: " + url);
 
-            Glide.with(this)
-                    .load(url)
-                    .placeholder(R.drawable.logo)
-                    .error(R.drawable.logout)
-                    .into(target);
         }
     }
     private void openFaceUpImageViewPicker() {

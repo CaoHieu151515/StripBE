@@ -9,29 +9,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.strip.Activities.Intro.IntroFiveActivity;
-import com.example.strip.Activities.Intro.IntroFourActivity;
-import com.example.strip.Activities.StripActivity;
 import com.example.strip.Models.Request.RegisterVM;
-import com.example.strip.Models.Response.ResponseMessage;
 import com.example.strip.R;
 import com.example.strip.Services.IAccountApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
-
 import org.json.JSONObject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText edPhone, edEmail, edPassword, edConfirmPassword;

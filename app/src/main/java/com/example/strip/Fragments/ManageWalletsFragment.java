@@ -69,6 +69,7 @@ public class ManageWalletsFragment extends Fragment {
         call.enqueue(new Callback<UserMoreResponse>() {
             @Override
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     user = response.body();
                     driverId = user.getDriver().getDriverID().toString();
@@ -87,6 +88,7 @@ public class ManageWalletsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<UserMoreResponse> call, Throwable t) {
+                if (!isAdded()) return;
                 Log.e("Error", "Lỗi khi gọi API: " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Lỗi API: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -98,6 +100,7 @@ public class ManageWalletsFragment extends Fragment {
                 .enqueue(new Callback<DriverInfoResponse>() {
                     @Override
                     public void onResponse(Call<DriverInfoResponse> call, Response<DriverInfoResponse> response) {
+                        if (!isAdded()) return;
                         if (response.isSuccessful()) {
                             DriverInfoResponse driver = response.body();
                             txtName.setText("Họ và tên: "+ driver.firstName + " " + driver.lastName);
@@ -117,6 +120,7 @@ public class ManageWalletsFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<DriverInfoResponse> call, Throwable t) {
+                        if (!isAdded()) return;
                         Toast.makeText(getContext(), "Failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });

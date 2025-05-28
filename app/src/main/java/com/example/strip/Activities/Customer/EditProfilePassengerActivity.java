@@ -26,6 +26,7 @@ import androidx.core.content.FileProvider;
 import com.bumptech.glide.Glide;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.strip.Activities.Driver.RatingFeedbackDriverActivity;
 import com.example.strip.Models.Request.PassengerProfileRequest;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
@@ -81,13 +82,17 @@ public class EditProfilePassengerActivity extends AppCompatActivity {
                 if (imageUrl.contains("localhost")) {
                     imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
                 }
-                Glide.with(EditProfilePassengerActivity.this)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.logo)
-                        .error(R.drawable.logout)
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(ivProfile);;
+                if (!EditProfilePassengerActivity.this.isFinishing()
+                        && !EditProfilePassengerActivity.this.isDestroyed()) {
+                    Glide.with(EditProfilePassengerActivity.this)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.logo)
+                            .error(R.drawable.logout)
+                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .into(ivProfile);;
+                }
+
             }
             etFirstName.setText(intent.getStringExtra("firstName"));
             etLastName.setText(intent.getStringExtra("lastName"));

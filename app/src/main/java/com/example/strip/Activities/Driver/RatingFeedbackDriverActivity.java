@@ -1,19 +1,15 @@
 package com.example.strip.Activities.Driver;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.RatingAdapter;
 import com.example.strip.Models.Response.DriverInfoResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
@@ -21,7 +17,6 @@ import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.network.ApiClient;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,7 +100,12 @@ public class RatingFeedbackDriverActivity extends AppCompatActivity {
                             txtEmail.setText("Email: "+driver.email);
                             txtAddress.setText("Địa chỉ: "+driver.address);
                             txtRating.setText("Xếp hạng: " + driver.averageRating);
-                            Glide.with(RatingFeedbackDriverActivity.this).load(driver.avatar).into(imgAvatar);
+                            if (!RatingFeedbackDriverActivity.this.isFinishing()
+                                    && !RatingFeedbackDriverActivity.this.isDestroyed()) {
+                                Glide.with(RatingFeedbackDriverActivity.this)
+                                        .load(driver.avatar)
+                                        .into(imgAvatar);
+                            }
 
                             RatingAdapter adapter = new RatingAdapter(driver.ratingOfDriverInfoResponseList);
                             rvRatings.setAdapter(adapter);

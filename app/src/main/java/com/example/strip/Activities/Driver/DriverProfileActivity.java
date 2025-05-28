@@ -1,20 +1,14 @@
 package com.example.strip.Activities.Driver;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-
 import com.bumptech.glide.Glide;
 import com.example.strip.Activities.StripActivity;
 import com.example.strip.Adapters.VehicleAdapter;
@@ -24,21 +18,14 @@ import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
-
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DriverProfileActivity extends AppCompatActivity {
 
@@ -135,9 +122,12 @@ public class DriverProfileActivity extends AppCompatActivity {
                         if (imageUrl.contains("localhost")) {
                             imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
                         }
-                        Glide.with(DriverProfileActivity.this)
-                                .load(imageUrl)
-                                .into(ivProfile);
+                        if (!DriverProfileActivity.this.isFinishing()
+                                && !DriverProfileActivity.this.isDestroyed()) {
+                            Glide.with(DriverProfileActivity.this)
+                                    .load(imageUrl)
+                                    .into(ivProfile);
+                        }
                     }
                     // Update Vehicle List
                     if (user.getDriverVehicleDTO() != null) {

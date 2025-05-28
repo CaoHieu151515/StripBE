@@ -8,18 +8,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.strip.Adapters.TripRequestAdapter;
-import com.example.strip.Adapters.TripStopAdapter;
 import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.RequestTripResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
-import com.example.strip.Models.StopLocation;
 import com.example.strip.Models.TripDetail;
 import com.example.strip.R;
 import com.example.strip.Services.ITripMobileApiService;
@@ -28,16 +24,13 @@ import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.Utils.TripStatusTranslate;
 import com.example.strip.network.ApiClient;
-
 import org.json.JSONObject;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

@@ -16,15 +16,33 @@ import com.example.strip.Activities.Trip.TripDetailActivity;
 import com.example.strip.Models.Trip;
 import com.example.strip.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder> {
     private Context context;
     private List<Trip> tripList;
+    private List<Trip> originalTripList;
 
     public TripAdapter(Context context, List<Trip> tripList) {
         this.context = context;
         this.tripList = tripList;
+        this.originalTripList = new ArrayList<>(tripList); // lưu bản gốc
+    }
+    public void filter(String keyword) {
+        tripList.clear();
+        if (keyword.isEmpty()) {
+            tripList.addAll(originalTripList);
+        } else {
+            String lowerKeyword = keyword.toLowerCase();
+            for (Trip trip : originalTripList) {
+                if ((trip.getStartLocation() != null && trip.getStartLocation().toLowerCase().contains(lowerKeyword)) ||
+                        (trip.getEndLocation() != null && trip.getEndLocation().toLowerCase().contains(lowerKeyword))) {
+                    tripList.add(trip);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -61,7 +79,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.TripViewHolder
     }
 
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        TextView tvStartLocation, tvEndLocation, tvPrice, tvSeats, tvDriver, tvVehicleType;
+        TextView tvStartLocation, tvEndLocation, tvPrice, tvSeats;
         ImageView ivTripImage;
 
         public TripViewHolder(@NonNull View itemView) {

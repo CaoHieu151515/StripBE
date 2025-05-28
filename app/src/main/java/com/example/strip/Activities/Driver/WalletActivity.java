@@ -1,23 +1,16 @@
 package com.example.strip.Activities.Driver;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Trip.TripFindActivity;
-import com.example.strip.Activities.Trip.TripPublishActivity;
-//import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Activities.Wallet.PaymentActivity;
 import com.example.strip.Adapters.TransactionAdapter;
 import com.example.strip.Models.Response.UserMoreResponse;
@@ -26,18 +19,12 @@ import com.example.strip.Models.Transaction;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.DateFormatter;
-import com.example.strip.Utils.UnsafeOkHttpClient;
 import com.example.strip.network.ApiClient;
-
 import java.util.List;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WalletActivity extends AppCompatActivity {
 
@@ -70,28 +57,6 @@ public class WalletActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         fetchTransactionsList();
     }
-//    private Retrofit getRetrofitClient() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-//        String jwtToken = sharedPreferences.getString("jwtToken", null);
-//        if (jwtToken == null) {
-//            Toast.makeText(WalletActivity.this, "Bạn chưa đăng nhập!", Toast.LENGTH_LONG).show();
-//        }
-//        OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient()
-//                .newBuilder()
-//                .addInterceptor(chain -> {
-//                    Request.Builder requestBuilder = chain.request().newBuilder();
-//                    if (jwtToken != null) {
-//                        requestBuilder.addHeader("Authorization", "Bearer " + jwtToken);
-//                    }
-//                    return chain.proceed(requestBuilder.build());
-//                })
-//                .build();
-//        return new Retrofit.Builder()
-//                .baseUrl("http://10.0.2.2:8080/")
-//                .client(client)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//    }
     private void fetchWalletInfo() {
         Retrofit retrofit = ApiClient.getClientWithToken(this);
         IUserMobileApiService apiService = retrofit.create(IUserMobileApiService.class);
@@ -112,9 +77,12 @@ public class WalletActivity extends AppCompatActivity {
                         if (imageUrl.contains("localhost")) {
                             imageUrl = imageUrl.replace("https://localhost", "http://10.0.2.2:8080");
                         }
-                        Glide.with(WalletActivity.this)
-                                .load(imageUrl)
-                                .into(ivProfile);
+                        if (!WalletActivity.this.isFinishing()
+                                && !WalletActivity.this.isDestroyed()) {
+                            Glide.with(WalletActivity.this)
+                                    .load(imageUrl)
+                                    .into(ivProfile);
+                        }
                     }
                 } else {
                     try {

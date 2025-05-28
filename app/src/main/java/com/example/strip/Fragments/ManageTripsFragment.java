@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.strip.Activities.Driver.AddTripActivity;
@@ -35,6 +36,7 @@ public class ManageTripsFragment extends Fragment {
     private RecyclerView recyclerView;
     private TripActiveAdapter tripActiveAdapter;
     private List<TripActiveResponse> tripList = new ArrayList<>();
+    private TextView tvLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +47,8 @@ public class ManageTripsFragment extends Fragment {
         tripActiveAdapter = new TripActiveAdapter(getContext(), tripList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(tripActiveAdapter);
+        tvLoading = view.findViewById(R.id.tvLoading);
+
         fetchTrips();
         // Find the ImageView by its ID
         // Set an OnClickListener for the ImageView
@@ -60,25 +64,33 @@ public class ManageTripsFragment extends Fragment {
         return view;
     }
     private void fetchTrips() {
-        ITripMobileApiService service = ApiClient.getClientWithToken(getContext()).create(ITripMobileApiService.class);
+        tvLoading.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        ITripMobileApiService service = ApiClient.getClientWithToken(requireContext()).create(ITripMobileApiService.class);
         Call<List<TripActiveResponse>> call = service.getActiveTrips(0, 20);
 
         call.enqueue(new Callback<List<TripActiveResponse>>() {
             @Override
             public void onResponse(Call<List<TripActiveResponse>> call, Response<List<TripActiveResponse>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     tripList.clear();
                     List<TripActiveResponse> trips = response.body();
                     Collections.sort(trips, (t1, t2) -> t2.getTripHandleId().compareTo(t1.getTripHandleId()));
                     tripList.addAll(response.body());
                     tripActiveAdapter.notifyDataSetChanged();
+                    // Dữ liệu đã có => ẩn Loading, hiện danh sách
+                    tvLoading.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }else {
+                    tvLoading.setText("Failed to load trips.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<TripActiveResponse>> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to load trips", Toast.LENGTH_SHORT).show();
-            }
+                if (!isAdded()) return;
+                tvLoading.setText("Error: " + t.getMessage());            }
         });
     }
 }

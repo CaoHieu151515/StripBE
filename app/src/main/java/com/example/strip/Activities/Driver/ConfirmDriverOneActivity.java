@@ -12,19 +12,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
-import com.example.strip.Activities.Customer.ConfirmDriverActivity;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.R;
 import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.network.ApiClient;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,6 +68,8 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
                     etEmail.setText("" + data.getEmail());
                     // ✅ Load ảnh đơn giản hơn nhiều
                     loadImageWithFixHost(data.getDriverLicenseUrl(), licenseImageView);
+                    Log.d("ImageDebug2", "Image URL: " + data.getDriverLicenseUrl());
+
                 } else {
                     Toast.makeText(ConfirmDriverOneActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
                 }
@@ -100,13 +98,19 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
                 url = url.replace("https://localhost", "http://10.0.2.2:8080");
             }
 
+            if (!ConfirmDriverOneActivity.this.isFinishing()
+                    && !ConfirmDriverOneActivity.this.isDestroyed()) {
+                Glide.with(this)
+                        .load(url)
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logout)
+                        .skipMemoryCache(true) // Skip memory cache
+                        .diskCacheStrategy(DiskCacheStrategy.NONE) // Skip disk cache
+                        .into(target);
+
+            }
             Log.d("ImageDebug", "Image URL: " + url);
 
-            Glide.with(this)
-                    .load(url)
-                    .placeholder(R.drawable.logo)
-                    .error(R.drawable.logout)
-                    .into(target);
         }
     }
     private void openImagePicker() {

@@ -235,6 +235,7 @@
             android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/ivWithDraw"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/send_money" />

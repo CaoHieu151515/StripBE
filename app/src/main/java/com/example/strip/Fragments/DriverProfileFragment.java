@@ -89,6 +89,7 @@ public class DriverProfileFragment extends Fragment {
         call.enqueue(new Callback<UserMoreResponse>() {
             @Override
             public void onResponse(Call<UserMoreResponse> call, Response<UserMoreResponse> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     UserMoreResponse user = response.body();
                     tvEmail.setText(user.getUser().getEmail());

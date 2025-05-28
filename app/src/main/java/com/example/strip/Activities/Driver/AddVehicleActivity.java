@@ -14,12 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.example.strip.Models.Request.AddVehicleRequest;
-import com.example.strip.Models.Request.ConfirmDriverRequest;
 import com.example.strip.Models.Request.NotificationRequest;
 import com.example.strip.Models.Response.ConfirmDriverResponse;
 import com.example.strip.Models.Response.UserMoreResponse;
@@ -29,13 +26,9 @@ import com.example.strip.Services.IUserMobileApiService;
 import com.example.strip.Utils.ErrorTranslate;
 import com.example.strip.Utils.NotificationPopup;
 import com.example.strip.network.ApiClient;
-
 import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -275,12 +268,14 @@ public class AddVehicleActivity extends AppCompatActivity {
             }
 
             Log.d("ImageDebug", "Image URL: " + url);
-
-            Glide.with(this)
-                    .load(url)
-                    .placeholder(R.drawable.logo)
-                    .error(R.drawable.logout)
-                    .into(target);
+            if (!AddVehicleActivity.this.isFinishing()
+                    && !AddVehicleActivity.this.isDestroyed()) {
+                Glide.with(this)
+                        .load(url)
+                        .placeholder(R.drawable.logo)
+                        .error(R.drawable.logout)
+                        .into(target);
+            }
         }
     }
     private void openVehicleImageViewicker() {
