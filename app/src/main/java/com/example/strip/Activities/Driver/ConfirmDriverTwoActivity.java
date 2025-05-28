@@ -151,13 +151,32 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    faceUpImageView.setImageBitmap(bitmap);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     faceUpImageBytes = stream.toByteArray();
-                    Log.d("ImageBytes", "Byte array size: " + faceUpImageBytes.length);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed to process image!", Toast.LENGTH_SHORT).show();
@@ -171,12 +190,39 @@ public class ConfirmDriverTwoActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
 
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    faceDownImageBytes = stream.toByteArray();
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    faceDownImageView.setImageBitmap(bitmap);
+
+//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                    faceDownImageBytes = stream.toByteArray();
+//
+//                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+//                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+//                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+//
+//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                    faceDownImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + faceDownImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

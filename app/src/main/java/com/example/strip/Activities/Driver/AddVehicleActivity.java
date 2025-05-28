@@ -3,6 +3,7 @@ package com.example.strip.Activities.Driver;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,8 @@ import com.example.strip.network.ApiClient;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,7 +111,6 @@ public class AddVehicleActivity extends AppCompatActivity {
         });
         fetchUserInfo();
         Retrofit retrofit = ApiClient.getClientWithToken(this);
-
         IUserMobileApiService userService = retrofit.create(IUserMobileApiService.class);
 
         Call<ConfirmDriverResponse> call = userService.getConfirmDriver();
@@ -118,51 +120,34 @@ public class AddVehicleActivity extends AppCompatActivity {
             public void onResponse(Call<ConfirmDriverResponse> call, Response<ConfirmDriverResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ConfirmDriverResponse data = response.body();
+                    VehicleResponse vehicle = data.getVehicleResponse();
 
-                    String vehicleType = "N/A";
-                    String vehicleColor = "N/A";
-                    String vehicleNumber = "N/A";
-                    String vehicleBrand = "N/A";
+                    String vehicleType = "";
+                    String vehicleColor = "";
+                    String vehicleNumber = "";
+                    String vehicleBrand = "";
                     String numberOfSeats = "0";
-                    if (data.getVehicleResponse() != null) {
-                        VehicleResponse vehicle = data.getVehicleResponse();
+
+                    if (vehicle != null) {
+                        if (vehicle.getVehicleType() != null) vehicleType = vehicle.getVehicleType();
+                        if (vehicle.getVehicleColor() != null) vehicleColor = vehicle.getVehicleColor();
+                        if (vehicle.getVehicleNumber() != null) vehicleNumber = vehicle.getVehicleNumber();
+                        if (vehicle.getVehicleBrand() != null) vehicleBrand = vehicle.getVehicleBrand();
                         numberOfSeats = String.valueOf(vehicle.getNumberOfSeats());
+
+                        // Load images safely
+                        loadImageWithFixHost(vehicle.getVehicleImageUrl(), vehicleImageView);
+                        loadImageWithFixHost(vehicle.getCarregistrationUrl(), carRegistrationImageView);
+                        loadImageWithFixHost(vehicle.getVehicleInspectionCertificateUrl(), inspectionCertificateImageView);
+                        loadImageWithFixHost(vehicle.getCarInsuranceUrl(), insuranceImageView);
                     }
 
-                    if (data.getVehicleResponse() != null) {
-                        VehicleResponse vehicle = data.getVehicleResponse();
-
-                        if (vehicle.getVehicleType() != null) {
-                            vehicleType = vehicle.getVehicleType();
-                        }
-
-                        if (vehicle.getVehicleColor() != null) {
-                            vehicleColor = vehicle.getVehicleColor();
-                        }
-
-                        if (vehicle.getVehicleNumber() != null) {
-                            vehicleNumber = vehicle.getVehicleNumber();
-                        }
-
-                        if (vehicle.getVehicleBrand() != null) {
-                            vehicleBrand = vehicle.getVehicleBrand();
-                        }
-
-
-                    }
-
+                    // Update UI fields
                     etVehicleType.setText(vehicleType);
                     etVehicleColor.setText(vehicleColor);
                     etVehicleNumber.setText(vehicleNumber);
                     etSeats.setText(numberOfSeats);
                     etVehicleBrand.setText(vehicleBrand);
-
-
-                    // ✅ Load ảnh đơn giản hơn nhiều
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), vehicleImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), carRegistrationImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), inspectionCertificateImageView);
-                    loadImageWithFixHost(data.getDriverLicenseUrl(), insuranceImageView);
                 } else {
                     Toast.makeText(AddVehicleActivity.this, "Failed to get data", Toast.LENGTH_SHORT).show();
                 }
@@ -308,10 +293,33 @@ public class AddVehicleActivity extends AppCompatActivity {
                 vehicleImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    vehicleImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     vehicleImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + vehicleImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -325,7 +333,29 @@ public class AddVehicleActivity extends AppCompatActivity {
                 carRegistrationImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    carRegistrationImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     carRegistrationImageBytes = stream.toByteArray();
@@ -342,10 +372,33 @@ public class AddVehicleActivity extends AppCompatActivity {
                 inspectionCertificateImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    inspectionCertificateImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     inspectionCertificateImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + inspectionCertificateImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -359,10 +412,33 @@ public class AddVehicleActivity extends AppCompatActivity {
                 insuranceImageView.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    insuranceImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     insuranceImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + insuranceImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +41,7 @@ import com.example.strip.network.ApiClient;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -377,10 +379,28 @@ public class AddTripActivity extends AppCompatActivity{
                 ivTripImage.setImageURI(selectedImageUri);
 
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    ImageBytes = stream.toByteArray();
+                    InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    ivTripImage.setImageBitmap(bitmap);
                     Log.d("ImageBytes", "Byte array size: " + ImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

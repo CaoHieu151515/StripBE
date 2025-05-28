@@ -113,6 +113,8 @@ public class DriverProfileFragment extends Fragment {
                         if (isAdded() && getContext() != null) {
                             Glide.with(getContext())
                                     .load(imageUrl)
+                                    .skipMemoryCache(true) // Skip memory cache
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE) // Skip disk cache
                                     .into(ivProfile);
                             // an toàn để update UI hoặc dùng Glide
                         }

@@ -132,12 +132,32 @@ public class ConfirmDriverOneActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    licenseImageView.setImageBitmap(bitmap);
 
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     licenseImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + licenseImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();

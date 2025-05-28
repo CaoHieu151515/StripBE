@@ -312,11 +312,32 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    vehicleImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     vehicleImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + vehicleImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -331,10 +352,30 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    carRegistrationImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     carRegistrationImageBytes = stream.toByteArray();
                     Log.d("ImageBytes", "Byte array size: " + carRegistrationImageBytes.length);
                 } catch (IOException e) {
@@ -350,11 +391,32 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    inspectionCertificateImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     inspectionCertificateImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + inspectionCertificateImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -369,11 +431,32 @@ public class ConfirmDriverThreeActivity extends AppCompatActivity {
 
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+
+// decode bounds first
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(inputStream, null, options);
+                    inputStream.close();
+
+// calculate sample size
+                    int scale = 1;
+                    while (options.outWidth / scale > 800 || options.outHeight / scale > 800) {
+                        scale *= 2;
+                    }
+
+// decode actual bitmap
+                    inputStream = getContentResolver().openInputStream(selectedImageUri);
+                    BitmapFactory.Options finalOptions = new BitmapFactory.Options();
+                    finalOptions.inSampleSize = scale;
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, finalOptions);
+                    inputStream.close();
+
+                    insuranceImageView.setImageBitmap(bitmap);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     insuranceImageBytes = stream.toByteArray();
+
                     Log.d("ImageBytes", "Byte array size: " + insuranceImageBytes.length);
                 } catch (IOException e) {
                     e.printStackTrace();
