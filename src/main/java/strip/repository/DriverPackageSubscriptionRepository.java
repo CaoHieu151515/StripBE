@@ -4,9 +4,11 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import strip.domain.Driver;
 import strip.domain.DriverPackageSubscription;
 import strip.service.dto.dashboard.PackageSalesPieStatDTO;
 
@@ -47,4 +49,12 @@ public interface DriverPackageSubscriptionRepository extends JpaRepository<Drive
         "GROUP BY p.name"
     )
     List<PackageSalesPieStatDTO> getTotalSoldByPackageInRange(@Param("from") Instant from, @Param("to") Instant to);
+
+    List<DriverPackageSubscription> findByActiveTrueAndExpirationDateBefore(Instant now);
+
+    boolean existsByDriverAndActiveTrue(Driver driver);
+
+    @Modifying
+    @Query("UPDATE DriverPackageSubscription s SET s.active = false WHERE s.active = true AND s.expirationDate < :now")
+    int deactivateExpiredSubscriptions(@Param("now") Instant now);
 }

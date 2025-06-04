@@ -3,8 +3,6 @@ package strip.scheduler;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,7 @@ public class TripPayoutScheduler {
 
     private final TripCustomService tripCustomService;
 
-    private final Logger log = LoggerFactory.getLogger(TripPayoutScheduler.class);
+    // private final Logger log = LoggerFactory.getLogger(TripPayoutScheduler.class);
 
     private final TripRepository tripRepository;
     private final WalletTransactionRepository walletTransactionRepository;
@@ -49,7 +47,7 @@ public class TripPayoutScheduler {
         List<Trip> trips = tripRepository.findByTripStatusAndEndDateBefore(TripStatus.DONE, cutoff);
 
         for (Trip trip : trips) {
-            String tripId = trip.getTripID().toString();
+            // String tripId = trip.getTripID().toString();
 
             boolean alreadyPaid = walletTransactionRepository.existsByWalletTypeAndTransactionThirdPartyIDAndTransStatus(
                 WalletTransactionType.DRIVER_DONE_TRIP_REFUND,
@@ -57,17 +55,17 @@ public class TripPayoutScheduler {
                 TransactionStatus.SUCCESS
             );
 
-            log.info("👉 alreadyPaid = {} for trip {}", alreadyPaid, tripId);
+            // log.info("👉 alreadyPaid = {} for trip {}", alreadyPaid, tripId);
 
             if (!alreadyPaid) {
                 try {
                     tripCustomService.payoutToDriver(trip);
-                    log.info("✅ Payout done for trip {}", tripId);
+                    // log.info("✅ Payout done for trip {}", tripId);
                 } catch (Exception e) {
-                    log.error("❌ Failed to payout for trip {}", tripId, e);
+                    // log.error("❌ Failed to payout for trip {}", tripId, e);
                 }
             } else {
-                log.info("⚠ Trip {} already paid — skipping", tripId);
+                // log.info("⚠ Trip {} already paid — skipping", tripId);
             }
         }
     }
@@ -83,9 +81,9 @@ public class TripPayoutScheduler {
             try {
                 trip.setTripStatus(TripStatus.DONE);
                 tripRepository.save(trip);
-                log.info("✅ Auto-completed trip {} -> DONE", trip.getTripID());
+                // log.info("✅ Auto-completed trip {} -> DONE", trip.getTripID());
             } catch (Exception e) {
-                log.error("❌ Failed to complete trip {}: {}", trip.getTripID(), e.getMessage(), e);
+                // log.error("❌ Failed to complete trip {}: {}", trip.getTripID(), e.getMessage(), e);
             }
         }
     }
@@ -104,10 +102,10 @@ public class TripPayoutScheduler {
                 );
 
                 if (updated > 0) {
-                    log.info("✅ Updated {} passenger(s) from BOOKED → DONE for trip {}", updated, trip.getTripID());
+                    // log.info("✅ Updated {} passenger(s) from BOOKED → DONE for trip {}", updated, trip.getTripID());
                 }
             } catch (Exception e) {
-                log.error("❌ Failed to update passenger status for trip {}: {}", trip.getTripID(), e.getMessage(), e);
+                // log.error("❌ Failed to update passenger status for trip {}: {}", trip.getTripID(), e.getMessage(), e);
             }
         }
     }
