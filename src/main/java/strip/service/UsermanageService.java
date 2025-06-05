@@ -24,6 +24,7 @@ import strip.domain.Authority;
 import strip.domain.Driver;
 import strip.domain.DriverPointHistory;
 import strip.domain.Feedback;
+import strip.domain.Notification;
 import strip.domain.PackageDriver;
 import strip.domain.Rating;
 import strip.domain.Report;
@@ -39,6 +40,7 @@ import strip.domain.enumeration.DriverPointHistoryStatus;
 import strip.domain.enumeration.DriverStatus;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.NotificationSourceType;
 import strip.domain.enumeration.PackageDriverStatus;
 import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.ReportStatus;
@@ -115,6 +117,7 @@ public class UsermanageService {
     private final TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper;
     private final RatingRepository ratingRepository;
     private final SystemWalletRepository systemWalletRepository;
+    private final NotificationService notificationService;
 
     public UsermanageService(
         UserRepository userRepository,
@@ -135,7 +138,8 @@ public class UsermanageService {
         WalletTransactionRepository walletTransactionRepository,
         TripStopLocationSkipTripMapper tripStopLocationSkipTripMapper,
         RatingRepository ratingRepository,
-        SystemWalletRepository systemWalletRepository
+        SystemWalletRepository systemWalletRepository,
+        NotificationService notificationService
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -156,6 +160,7 @@ public class UsermanageService {
         this.tripStopLocationSkipTripMapper = tripStopLocationSkipTripMapper;
         this.ratingRepository = ratingRepository;
         this.systemWalletRepository = systemWalletRepository;
+        this.notificationService = notificationService;
     }
 
     public List<UsermanageDTO> getAllUsers() {
@@ -332,6 +337,11 @@ public class UsermanageService {
 
         vehicle.setStatus(VehicleStatus.ACTIVE);
         vehicleRepository.save(vehicle);
+        User user = userRepository
+            .findById(vehicle.getDriver().getUser().getId())
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        createNotification("Xe của bạn đã được duyệt", "Xe đã được duyệt", user, vehicleId);
         return true;
     }
 
@@ -342,6 +352,12 @@ public class UsermanageService {
 
         vehicle.setStatus(VehicleStatus.REJECTED);
         vehicleRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
+        User user = userRepository
+            .findById(vehicle.getDriver().getUser().getId())
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        createNotification("Xe của bạn đã bị từ chối", "Xe đã bị từ chối", user, vehicleId);
         return true;
     }
 
@@ -468,12 +484,13 @@ public class UsermanageService {
                 vehicleRepository.save(vehicle);
             });
 
+        User user = userRepository.findById(driver.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         // Cập nhật trạng thái tài xế
         driver.setDriverStatus(DriverStatus.ACTIVE);
         driver.setUsedtoDriver(true);
         driverRepository.save(driver);
-
-        log.debug("Driver {} approved successfully", driverId);
+        createNotification("Duyệt tài xế", "Bạn đã trở thành tài xế của app", user, driverId);
+        // log.debug("Driver {} approved successfully", driverId);
     }
 
     @Transactional
@@ -492,11 +509,11 @@ public class UsermanageService {
                 vehicleRepository.save(vehicle);
             });
 
-        // Cập nhật trạng thái tài xế
+        User user = userRepository.findById(driver.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         driver.setDriverStatus(DriverStatus.NOT_DRIVER);
         driverRepository.save(driver);
-
-        log.debug("Driver {} rejected successfully", driverId);
+        createNotification("Duyệt tài xế", "Bạn đã bị từ chối chở thành tài xế", user, driverId);
+        // log.debug("Driver {} rejected successfully", driverId);
     }
 
     public Page<PackageDriverDTO> getAllPackagesWithFilter(
@@ -795,6 +812,12 @@ public class UsermanageService {
 
         trip.setTripStatus(TripStatus.UPCOMING);
         tripRepository.save(trip);
+
+        User user = userRepository
+            .findById(trip.getDriver().getUser().getId())
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        createNotification("Chuyến đi của bạn đã được duyệt", "Chuyến đi đã được duyệt", user, tripId);
     }
 
     @Transactional
@@ -806,6 +829,11 @@ public class UsermanageService {
         trip.setTripStatus(TripStatus.REJECTED);
         trip.setCancelReason(reason);
         tripRepository.save(trip);
+        User user = userRepository
+            .findById(trip.getDriver().getUser().getId())
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        createNotification("Chuyến đi của bạn đã bị từ chối", "Chuyến đi đã bị từ chối", user, tripId);
     }
 
     public Page<FeedbackCusDTO> getAllFeedbacks(Pageable pageable, FeedbackStatus status, FeedbackType type, String tripCode) {
@@ -1306,5 +1334,19 @@ public class UsermanageService {
 
         driverRepository.save(driver);
         feedbackRepository.save(feedback);
+        createNotification("Bạn đã bị trừ điểm tài xế", reason, currentUser, currentUserDetail.getAppUserDetail());
+    }
+
+    public void createNotification(String title, String content, User user, UUID relatedId) {
+        Notification noti = new Notification();
+        noti.setCreatedDate(Instant.now());
+        noti.setDate(Instant.now());
+        noti.setContent(content);
+        noti.setRelatedId(relatedId);
+        noti.setTitle(title);
+        noti.setUser(user);
+        noti.setSourceType(NotificationSourceType.USER);
+
+        notificationService.createSystemNotificationFromEntityUser(noti);
     }
 }
