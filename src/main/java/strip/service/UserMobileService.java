@@ -414,6 +414,7 @@ public class UserMobileService {
         sysTx.setSystemWallet(systemWallet);
         sysTx.setPayment(payment);
         sysTx.setUserWallet(userWallet);
+        sysTx.setTransactionThirdPartyID(pkg.getPackageID().toString());
         systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
         systemWalletRepository.save(systemWallet);
     }
