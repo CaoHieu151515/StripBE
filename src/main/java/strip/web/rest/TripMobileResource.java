@@ -46,7 +46,6 @@ public class TripMobileResource {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('ROLE_DRIVER')")
     public ResponseEntity<Trip> createTrip(@RequestBody TripCreateDTO dto) {
         UUID driverId = dto.getDriverId();
         Trip createdTrip = tripCustomService.createTripWithFee(dto, driverId);
