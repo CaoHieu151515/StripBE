@@ -4,12 +4,14 @@ import com.braintreegateway.BraintreeGateway;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import strip.domain.Payment;
+import strip.domain.SystemWallet;
 import strip.domain.User;
 import strip.domain.UserWallet;
 import strip.domain.WalletTransaction;
@@ -17,6 +19,7 @@ import strip.domain.enumeration.PaymentStatus;
 import strip.domain.enumeration.TransactionStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.PaymentRepository;
+import strip.repository.SystemWalletRepository;
 import strip.repository.UserRepository;
 import strip.repository.UserWalletRepository;
 import strip.security.SecurityUtils;
@@ -28,17 +31,20 @@ public class PaymentBrainTreeService {
     private final UserRepository userRepository;
     private final PaymentRepository paymentRepository;
     private final UserWalletRepository userWalletRepository;
+    private final SystemWalletRepository systemWalletRepository;
 
     public PaymentBrainTreeService(
         BraintreeGateway braintreeGateway,
         UserRepository userRepository,
         PaymentRepository paymentRepository,
-        UserWalletRepository userWalletRepository
+        UserWalletRepository userWalletRepository,
+        SystemWalletRepository systemWalletRepository
     ) {
         this.braintreeGateway = braintreeGateway;
         this.userRepository = userRepository;
         this.paymentRepository = paymentRepository;
         this.userWalletRepository = userWalletRepository;
+        this.systemWalletRepository = systemWalletRepository;
     }
 
     public String generateClientToken() {
@@ -117,5 +123,20 @@ public class PaymentBrainTreeService {
 
         userWalletRepository.save(wallet);
         // walletTransactionRepository.save(walletTransaction);
+
+        SystemWallet sys = systemWalletRepository
+            .findTopByOrderByMobifyDateDesc()
+            .orElseThrow(() -> new EntityNotFoundException("not found"));
+        WalletTransaction systrans = new WalletTransaction();
+        systrans.setTransID(UUID.randomUUID());
+        systrans.setAmount(amount.doubleValue());
+        systrans.setDate(Instant.now());
+        systrans.setWalletType(WalletTransactionType.SYSTEM_GAIN_DEPOSIT);
+        systrans.setTransStatus(TransactionStatus.SUCCESS);
+        systrans.setTransactionThirdPartyID(transactionId);
+        systrans.setPayment(payment);
+        systrans.setUserWallet(wallet);
+        sys.addWalletTransactionAndUpdateBalance(systrans);
+        systemWalletRepository.save(sys);
     }
 }
