@@ -12,7 +12,7 @@ public class UserRoleUtils {
     }
 
     public static boolean isDriver(User user) {
-        return user.getAuthorities().stream().noneMatch(auth -> "ROLE_DRIVER".equalsIgnoreCase(auth.getName()));
+        return user.getAuthorities().stream().anyMatch(auth -> "ROLE_DRIVER".equalsIgnoreCase(auth.getName()));
     }
 
     public static boolean isAdmin(User user) {
