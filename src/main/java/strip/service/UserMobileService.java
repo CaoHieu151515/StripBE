@@ -1087,6 +1087,11 @@ public class UserMobileService {
             .findByUser_id(user.getId())
             .orElseThrow(() -> new BadRequestAlertException("Driver not found", "vehicle", "driver-not-found"));
 
+        boolean hasPendingVehicle = vehicleRepository.existsByDriverAndStatus(driver, VehicleStatus.CONFIRMING);
+        if (hasPendingVehicle) {
+            throw new BadRequestAlertException("Bạn đã có phương tiện đang chờ duyệt", "vehicle", "already-confirming");
+        }
+
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleID(UUID.randomUUID());
         vehicle.setDriver(driver);

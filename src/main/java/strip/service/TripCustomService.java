@@ -642,6 +642,12 @@ public class TripCustomService {
             dto.setLuggageImgUrl(imageUrlService.buildLuggageImageUrl(request.getRequestTripID()));
         }
 
+        userDetailRepository
+            .findByUserId(request.getUser().getId())
+            .ifPresent(detail -> {
+                dto.setUserID(detail.getAppUserDetail());
+            });
+
         return dto;
     }
 

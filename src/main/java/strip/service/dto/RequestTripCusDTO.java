@@ -8,6 +8,7 @@ import strip.domain.enumeration.PassengerType;
 public class RequestTripCusDTO {
 
     private UUID requestTripID;
+    private UUID UserID;
     private TripStopLocationSkipTripDTO startLoca;
     private TripStopLocationSkipTripDTO endLoca;
     private Double amountApproveFee;
@@ -156,5 +157,13 @@ public class RequestTripCusDTO {
 
     public void setAppliedAt(Instant appliedAt) {
         this.appliedAt = appliedAt;
+    }
+
+    public UUID getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(UUID userID) {
+        UserID = userID;
     }
 }

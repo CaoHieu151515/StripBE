@@ -121,7 +121,6 @@ public class ManagerResource {
     // -> ResponseEntity.notFound().build());
     // }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/details/{userId}")
     public ResponseEntity<DriverInfoDTO> getDriverDetailsByUsername(@PathVariable UUID userId) {
         Optional<DriverInfoDTO> driverInfo = usermanageService.getDriverDetailsByUserId(userId);
