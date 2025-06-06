@@ -31,6 +31,7 @@ import strip.domain.Vehicle;
 import strip.domain.WalletTransaction;
 import strip.domain.enumeration.FeedbackStatus;
 import strip.domain.enumeration.FeedbackType;
+import strip.domain.enumeration.NotificationSourceType;
 import strip.domain.enumeration.NotificationType;
 import strip.domain.enumeration.PassengerStatus;
 import strip.domain.enumeration.RatingType;
@@ -701,10 +702,12 @@ public class TripCustomService {
     private void refundTripCreateFee(UserWallet driverWallet, SystemWallet systemWallet, double createFee, double gainFee, Trip trip) {
         double refund = createFee - gainFee;
 
-        // LOG.info("🔄 Đang tính refund: createFee = {}, gainFee = {}, refund = {}", createFee, gainFee, refund);
+        // LOG.info("🔄 Đang tính refund: createFee = {}, gainFee = {}, refund = {}",
+        // createFee, gainFee, refund);
 
         if (refund >= 0) {
-            // LOG.info("✅ Thực hiện hoàn lại {} cho tài xế (trip = {})", refund, trip.getTripID());
+            // LOG.info("✅ Thực hiện hoàn lại {} cho tài xế (trip = {})", refund,
+            // trip.getTripID());
 
             WalletTransaction sysTx = new WalletTransaction();
             sysTx.setTransID(UUID.randomUUID());
@@ -728,7 +731,8 @@ public class TripCustomService {
             driverWallet.addWalletTransactionAndUpdateBalance(driverTx);
             userWalletRepository.save(driverWallet);
         } else {
-            // LOG.info("⚠ Không hoàn tiền cho tài xế vì gainFee ({}) >= createFee ({}).", gainFee, createFee);
+            // LOG.info("⚠ Không hoàn tiền cho tài xế vì gainFee ({}) >= createFee ({}).",
+            // gainFee, createFee);
         }
     }
 
@@ -799,7 +803,8 @@ public class TripCustomService {
 
             requestTripRepository.save(request);
             userWalletRepository.save(driverWallet);
-            // LOG.info("✅ Đã hoàn {} cho tài xế từ passenger {} trong trip {}", amount, request.getUser().getId(), trip.getTripID());
+            // LOG.info("✅ Đã hoàn {} cho tài xế từ passenger {} trong trip {}", amount,
+            // request.getUser().getId(), trip.getTripID());
         }
     }
 
@@ -860,15 +865,18 @@ public class TripCustomService {
         List<RequestTrip> passengers = requestTripRepository.findByTripAndStatus(trip, PassengerStatus.DONE);
 
         // passengers.forEach(
-        //     p -> LOG.info("📦 Passenger DONE: {} | Số tiền duyệt (approveFee) = {}", p.getRequestTripID(), p.getAmountApproveFee())
+        // p -> LOG.info("📦 Passenger DONE: {} | Số tiền duyệt (approveFee) = {}",
+        // p.getRequestTripID(), p.getAmountApproveFee())
         // );
 
         double createFee = trip.getMaxSeat() * trip.getPricePerSeat() * 0.1;
         double totalEarnings = passengers.stream().mapToDouble(RequestTrip::getAmountApproveFee).sum();
         double gainFee = totalEarnings * 0.1;
 
-        // LOG.info("💰 MaxSeat: {}, PricePerSeat: {}", trip.getMaxSeat(), trip.getPricePerSeat());
-        // LOG.info("💰 Tính phí: CreateFee = {}, TotalEarnings = {}, GainFee (10%) = {}", createFee, totalEarnings, gainFee);
+        // LOG.info("💰 MaxSeat: {}, PricePerSeat: {}", trip.getMaxSeat(),
+        // trip.getPricePerSeat());
+        // LOG.info("💰 Tính phí: CreateFee = {}, TotalEarnings = {}, GainFee (10%) =
+        // {}", createFee, totalEarnings, gainFee);
         // LOG.info("👥 Tổng số passenger DONE = {}", passengers.size());
 
         refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee, trip);
@@ -1073,6 +1081,23 @@ public class TripCustomService {
         rating.setUser(currentUser);
         ratingRepository.save(rating);
 
+        User Driveruser = userRepository
+            .findById(trip.getDriver().getUser().getId())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        createNotification(
+            "Bạn đã nhận đánh giá từ chuyến đi :" + TripCodeUtils.encode(trip.getId()),
+            "Bạn đã nhận được đánh giá " + feedback.getFeedbackRating(),
+            Driveruser,
+            feedback.getFeedbackID()
+        );
+
+        createNotificationSystem(
+            "Khách hàng phản hồi từ chuyến đi :" + TripCodeUtils.encode(trip.getId()),
+            "Chuyến đi nhận được đánh giá " + feedback.getFeedbackRating(),
+            Driveruser,
+            feedback.getFeedbackID()
+        );
         return feedbackMapper.toDto(feedback);
     }
 
@@ -1198,5 +1223,30 @@ public class TripCustomService {
                 return dto;
             })
             .collect(Collectors.toList());
+    }
+
+    public void createNotification(String title, String content, User user, UUID relatedId) {
+        Notification noti = new Notification();
+        noti.setCreatedDate(Instant.now());
+        noti.setDate(Instant.now());
+        noti.setContent(content);
+        noti.setRelatedId(relatedId);
+        noti.setTitle(title);
+        noti.setUser(user);
+        noti.setSourceType(NotificationSourceType.USER);
+
+        notificationService.createSystemNotificationFromEntityUser(noti);
+    }
+
+    public void createNotificationSystem(String title, String content, User user, UUID relatedId) {
+        Notification noti = new Notification();
+        noti.setCreatedDate(Instant.now());
+        noti.setDate(Instant.now());
+        noti.setContent(content);
+        noti.setRelatedId(relatedId);
+        noti.setTitle(title);
+        noti.setUser(user);
+
+        notificationService.createSystemNotificationFromEntity(noti);
     }
 }

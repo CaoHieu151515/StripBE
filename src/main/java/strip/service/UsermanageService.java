@@ -1015,7 +1015,9 @@ public class UsermanageService {
             driver.setBannedDay(null);
         }
 
+        User user = userRepository.findById(driver.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         driverRepository.save(driver);
+        createNotification("Bạn đã được hoàn điểm tài xế", "Bạn đã được hoàn điểm", user, pointId);
         return usermanageMapper.toDto(original);
     }
 
