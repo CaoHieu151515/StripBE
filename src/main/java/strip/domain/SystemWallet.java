@@ -218,9 +218,6 @@ public class SystemWallet implements Serializable {
             case SYSTEM_GAIN_PACKAGE_FEE:
                 this.current += amount;
                 break;
-            case SYSTEM_GAIN_DEPOSIT:
-                this.current += amount;
-                break;
             case SYSTEM_REFUND_TO_PASSENGER:
                 isDebit = true;
                 this.current -= amount;

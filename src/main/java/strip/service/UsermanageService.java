@@ -1156,7 +1156,6 @@ public class UsermanageService {
                 PASSENGER_APPROVE_FEE,
                 SYSTEM_GAIN_CREATE_TRIP_FEE,
                 SYSTEM_GAIN_DONE_TRIP_FEE,
-                SYSTEM_GAIN_DEPOSIT,
                 SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> resolveUserName(tx.getUserWallet());
             case DRIVER_DONE_TRIP_FEE -> "Passenger(s)";
             case SYSTEM_REFUND_TO_DRIVER_DONE_TRIP, SYSTEM_REFUND_TO_PASSENGER, DRIVER_DONE_TRIP_REFUND, REFUND -> "System";
@@ -1176,7 +1175,6 @@ public class UsermanageService {
                 SYSTEM_GAIN_CREATE_TRIP_FEE,
                 SYSTEM_GAIN_PACKAGE_FEE,
                 SYSTEM_GAIN_DONE_TRIP_FEE,
-                SYSTEM_GAIN_DEPOSIT,
                 SYSTEM_GAIN_PASSENGER_APPROVE_FEE -> "System";
             case DRIVER_DONE_TRIP_FEE -> "System";
             default -> "Unknown";
@@ -1198,7 +1196,6 @@ public class UsermanageService {
             case DRIVER_BUY_PACKAGE -> "Tài xế mua gói dịch vụ" + getPackageIdSuffix(tx);
             case SYSTEM_GAIN_PACKAGE_FEE -> "Hệ thống thu tiền từ tài xế mua gói" + getPackageIdSuffix(tx);
             // 🔹 Giao dịch người dùng
-            case SYSTEM_GAIN_DEPOSIT -> "Hệ thống nhận tiền từ người dùng nạp tiền vào ví";
             case DEPOSIT -> "Người dùng nạp tiền vào ví";
             case WITHDRAW -> "Người dùng rút tiền từ ví";
             case REFUND -> "Hoàn tiền về ví người dùng";
