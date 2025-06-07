@@ -776,21 +776,36 @@ public class TripCustomService {
                 continue;
             }
 
+            // ✅ Kiểm tra xem đã hoàn tiền cho tài xế chưa
+            boolean alreadyRefunded =
+                walletTransactionRepository.existsByWalletTypeAndTransactionThirdPartyIDAndUserWallet_User_IdAndTransStatus(
+                    WalletTransactionType.DRIVER_DONE_TRIP_REFUND,
+                    trip.getTripID().toString(),
+                    request.getUser().getId(),
+                    TransactionStatus.SUCCESS
+                );
+
+            if (alreadyRefunded) {
+                LOG.warn("⚠ Passenger {} đã được hoàn tiền rồi cho trip {} — bỏ qua.", request.getUser().getId(), trip.getTripID());
+                continue;
+            }
+
+            // ✅ Cập nhật trạng thái DONE cho passenger
             request.setStatus(PassengerStatus.DONE);
 
-            // Trừ từ ví hệ thống
+            // ✅ Trừ từ ví hệ thống
             WalletTransaction sysTx = new WalletTransaction();
             sysTx.setTransID(UUID.randomUUID());
             sysTx.setAmount(amount);
             sysTx.setDate(Instant.now());
             sysTx.setWalletType(WalletTransactionType.SYSTEM_REFUND_TO_DRIVER_DONE_TRIP);
             sysTx.setTransStatus(TransactionStatus.SUCCESS);
-            sysTx.setUserWallet(driverWallet);
+            sysTx.setUserWallet(driverWallet); // vẫn gán ví người nhận để tiện truy xuất
             sysTx.setTransactionThirdPartyID(trip.getTripID().toString());
             systemWallet.addWalletTransactionAndUpdateBalance(sysTx);
             systemWalletRepository.save(systemWallet);
 
-            // Cộng cho tài xế
+            // ✅ Cộng tiền cho tài xế
             WalletTransaction driverTx = new WalletTransaction();
             driverTx.setTransID(UUID.randomUUID());
             driverTx.setAmount(amount);
@@ -803,8 +818,8 @@ public class TripCustomService {
 
             requestTripRepository.save(request);
             userWalletRepository.save(driverWallet);
-            // LOG.info("✅ Đã hoàn {} cho tài xế từ passenger {} trong trip {}", amount,
-            // request.getUser().getId(), trip.getTripID());
+
+            LOG.info("✅ Đã hoàn {} cho tài xế từ passenger {} trong trip {}", amount, request.getUser().getId(), trip.getTripID());
         }
     }
 
@@ -881,7 +896,7 @@ public class TripCustomService {
 
         refundTripCreateFee(driverWallet, systemWallet, createFee, gainFee, trip);
         logSystemGainFee(systemWallet, gainFee, trip, driverWallet);
-        transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet, trip);
+        // transferPassengerMoneyToDriver(passengers, driverWallet, systemWallet, trip);
 
         LOG.info("✅ KẾT THÚC payout cho trip {}", trip.getTripID());
     }

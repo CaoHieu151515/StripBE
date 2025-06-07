@@ -400,6 +400,7 @@ public class UserMobileService {
         userTx.setTransactionThirdPartyID(null);
         userTx.setUserWallet(userWallet);
         userTx.setPayment(payment);
+        userTx.setTransactionThirdPartyID(pkg.getPackageID().toString());
         userWallet.addWalletTransactionAndUpdateBalance(userTx);
         userWalletRepository.save(userWallet);
 
@@ -1010,6 +1011,8 @@ public class UserMobileService {
         pendingTx.setTransStatus(TransactionStatus.PENDING);
         pendingTx.setUserWallet(wallet);
         pendingTx.setTransactionThirdPartyID(tripId.toString());
+        pendingTx.setBefore(wallet.getCurrent());
+        pendingTx.setCurrent(wallet.getCurrent());
         wallet.addWalletTransactionAndUpdateBalance(pendingTx);
         userWalletRepository.save(wallet);
     }
