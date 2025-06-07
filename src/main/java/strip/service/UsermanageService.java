@@ -512,7 +512,7 @@ public class UsermanageService {
         User user = userRepository.findById(driver.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         driver.setDriverStatus(DriverStatus.NOT_DRIVER);
         driverRepository.save(driver);
-        createNotification("Duyệt tài xế", "Bạn đã bị từ chối chở thành tài xế", user, driverId);
+        createNotification("Duyệt tài xế", "Bạn đã bị từ chối trở thành tài xế", user, driverId);
         // log.debug("Driver {} rejected successfully", driverId);
     }
 
