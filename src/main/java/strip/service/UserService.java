@@ -504,7 +504,7 @@ public class UserService {
         Driver driver = new Driver();
         driver.setDriverID(UUID.randomUUID());
         driver.setUser(user);
-        driver.setDriverPoint(0);
+        driver.setDriverPoint(14);
         driver.setUsedtoDriver(false);
         driver.setDriverStatus(DriverStatus.NOT_DRIVER);
         driverRepository.save(driver);
