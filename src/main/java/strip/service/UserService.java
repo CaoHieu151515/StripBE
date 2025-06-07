@@ -501,49 +501,59 @@ public class UserService {
         wallet.setMobifyDate(Instant.now());
         userWalletRepository.save(wallet);
 
-        UUID packageID = UUID.fromString("529eb83b-3256-4cff-bdd8-b9dbd073a9cd");
-        PackageDriver Addpackage = packageDriverRepository
-            .findByPackageID(packageID)
-            .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ", "user", "notfound"));
+        Driver driver = new Driver();
+        driver.setDriverID(UUID.randomUUID());
+        driver.setUser(user);
+        driver.setDriverPoint(0);
+        driver.setUsedtoDriver(false);
+        driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+        driverRepository.save(driver);
+        // UUID packageID = UUID.fromString("529eb83b-3256-4cff-bdd8-b9dbd073a9cd");
+        // PackageDriver Addpackage = packageDriverRepository
+        // .findByPackageID(packageID)
+        // .orElseThrow(() -> new BadRequestAlertException("Người dùng không hợp lệ",
+        // "user", "notfound"));
 
-        // Driver nếu có quyền DRIVER
-        if (user.getAuthorities().stream().anyMatch(auth -> AuthoritiesConstants.DRIVER.equals(auth.getName()))) {
-            int totalMonths = Addpackage.getBonus() + Addpackage.getTime();
-            LocalDate expiryDate = LocalDate.now().plusMonths(totalMonths);
-            Instant expiryInstant = expiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        // // Driver nếu có quyền DRIVER
+        // if (user.getAuthorities().stream().anyMatch(auth ->
+        // AuthoritiesConstants.DRIVER.equals(auth.getName()))) {
+        // int totalMonths = Addpackage.getBonus() + Addpackage.getTime();
+        // LocalDate expiryDate = LocalDate.now().plusMonths(totalMonths);
+        // Instant expiryInstant =
+        // expiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
-            Driver driver = new Driver();
-            driver.setDriverID(UUID.randomUUID());
-            driver.setUser(user);
-            driver.setExpirationDate(expiryInstant);
-            driver.setDriverPoint(14);
-            driver.setUsedtoDriver(true);
-            driver.setDriverStatus(DriverStatus.ACTIVE);
+        // Driver driver = new Driver();
+        // driver.setDriverID(UUID.randomUUID());
+        // driver.setUser(user);
+        // driver.setExpirationDate(expiryInstant);
+        // driver.setDriverPoint(14);
+        // driver.setUsedtoDriver(true);
+        // driver.setDriverStatus(DriverStatus.ACTIVE);
 
-            DriverPackageSubscription subPackage = new DriverPackageSubscription();
-            subPackage.setId(UUID.randomUUID());
-            subPackage.setActive(true);
-            subPackage.setPurchaseDate(Instant.now());
-            subPackage.setPackagePrice(Addpackage.getPrice());
-            PackageDriver managedPackage = entityManager.merge(Addpackage);
-            subPackage.setPackageDriver(managedPackage);
-            subPackage.setExpirationDate(expiryInstant);
+        // DriverPackageSubscription subPackage = new DriverPackageSubscription();
+        // subPackage.setId(UUID.randomUUID());
+        // subPackage.setActive(true);
+        // subPackage.setPurchaseDate(Instant.now());
+        // subPackage.setPackagePrice(Addpackage.getPrice());
+        // PackageDriver managedPackage = entityManager.merge(Addpackage);
+        // subPackage.setPackageDriver(managedPackage);
+        // subPackage.setExpirationDate(expiryInstant);
 
-            driverRepository.save(driver);
-            driver.addDriverPackageSubscription(subPackage);
+        // driverRepository.save(driver);
+        // driver.addDriverPackageSubscription(subPackage);
 
-            // Lưu driver, Hibernate sẽ cascade lưu luôn subscription
-            driverRepository.save(driver);
-        } else {
-            // Mặc định NOT_DRIVER
-            Driver driver = new Driver();
-            driver.setDriverID(UUID.randomUUID());
-            driver.setUser(user);
-            driver.setDriverPoint(0);
-            driver.setUsedtoDriver(false);
-            driver.setDriverStatus(DriverStatus.NOT_DRIVER);
-            driverRepository.save(driver);
-        }
+        // // Lưu driver, Hibernate sẽ cascade lưu luôn subscription
+        // driverRepository.save(driver);
+        // } else {
+        // // Mặc định NOT_DRIVER
+        // Driver driver = new Driver();
+        // driver.setDriverID(UUID.randomUUID());
+        // driver.setUser(user);
+        // driver.setDriverPoint(0);
+        // driver.setUsedtoDriver(false);
+        // driver.setDriverStatus(DriverStatus.NOT_DRIVER);
+        // driverRepository.save(driver);
+        // }
     }
 
     @Transactional
