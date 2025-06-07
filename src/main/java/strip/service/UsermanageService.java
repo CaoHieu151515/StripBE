@@ -486,7 +486,7 @@ public class UsermanageService {
 
         User user = userRepository.findById(driver.getUser().getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         // Cập nhật trạng thái tài xế
-        driver.setDriverStatus(DriverStatus.ACTIVE);
+        driver.setDriverStatus(DriverStatus.NOT_DRIVER);
         driver.setUsedtoDriver(true);
         driverRepository.save(driver);
         createNotification("Duyệt tài xế", "Bạn đã trở thành tài xế của app", user, driverId);
