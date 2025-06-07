@@ -391,28 +391,23 @@ public class UsermanageService {
     }
 
     public List<ConfirmingVehicleDriverDTO> getAllConfirmingDriversRawDriver() {
+        List<Vehicle> vehicles = vehicleRepository.findByStatus(VehicleStatus.CONFIRMING);
         List<ConfirmingVehicleDriverDTO> confirmingDrivers = new ArrayList<>();
 
-        List<Driver> drivers = driverRepository.findByUsedtoDriverFalseAndDriverStatus(DriverStatus.CONFIRMING);
-        log.debug("Found {} drivers with status CONFIRMING", drivers.size());
+        for (Vehicle vehicle : vehicles) {
+            Driver driver = vehicle.getDriver();
+            if (driver == null || !Boolean.TRUE.equals(driver.getUsedtoDriver())) {
+                continue; // ❌ không phải tài xế thực sự
+            }
 
-        for (Driver driver : drivers) {
             userRepository
                 .findById(driver.getUser().getId())
-                .filter(UserRoleUtils::isDriver)
+                .filter(UserRoleUtils::isDriver) // ✅ chỉ nhận user có ROLE_DRIVER
                 .ifPresent(user -> {
                     Optional<UserDetail> userDetail = userDetailRepository.findByUserId(user.getId());
-                    vehicleRepository
-                        .findFirstByDriver_DriverIDAndStatus(driver.getDriverID(), VehicleStatus.CONFIRMING)
-                        .ifPresent(vehicle -> {
-                            ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(
-                                user,
-                                userDetail.orElse(null),
-                                driver,
-                                vehicle
-                            );
-                            confirmingDrivers.add(dto);
-                        });
+
+                    ConfirmingVehicleDriverDTO dto = mapToConfirmingVehicleDriverDTO(user, userDetail.orElse(null), driver, vehicle);
+                    confirmingDrivers.add(dto);
                 });
         }
 
