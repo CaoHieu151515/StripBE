@@ -303,8 +303,31 @@ public class UserMobileService {
         SystemWallet systemWallet = systemWalletRepository.findTopByOrderByMobifyDateDesc().orElseGet(this::createInitialSystemWallet);
 
         Payment payment = createPaymentForDriverPackage(user, pkg, price);
-        createAndAssignSubscription(driver, pkg, price);
-        updateDriverStatusAndExpiration(driver, pkg);
+
+        // 💥 Gọi hàm add đúng cách (đã set driver trong đó)
+        DriverPackageSubscription subscription = new DriverPackageSubscription();
+        Instant now = Instant.now();
+
+        // ✅ Xác định baseTime: nếu driver chưa có hạn thì dùng now
+        ZonedDateTime baseTimeUtc = driver.getExpirationDate() == null ? now.atZone(ZoneId.of("UTC")) : getBaseTimeForNewPackage(driver);
+
+        Instant expiration = baseTimeUtc.plusMonths(pkg.getTime()).toInstant();
+
+        subscription.setPackageDriver(pkg);
+        subscription.setPurchaseDate(now);
+        subscription.setExpirationDate(expiration);
+        subscription.setPackagePrice(price);
+        subscription.setActive(true);
+
+        driver.addDriverPackageSubscription(subscription);
+
+        if (driver.getDriverStatus() == DriverStatus.NOT_DRIVER) {
+            driver.setDriverStatus(DriverStatus.ACTIVE);
+        }
+
+        driver.setExpirationDate(expiration);
+        driverRepository.save(driver);
+
         handleWalletTransactions(userWallet, systemWallet, price, pkg, payment);
         addDriverRoleIfMissing(user);
     }
@@ -349,22 +372,21 @@ public class UserMobileService {
         return wallet;
     }
 
-    private void createAndAssignSubscription(Driver driver, PackageDriver pkg, double price) {
-        DriverPackageSubscription subscription = new DriverPackageSubscription();
-        subscription.setPackageDriver(pkg);
+    // private void createAndAssignSubscription(Driver driver, PackageDriver pkg, double price) {
+    //     DriverPackageSubscription subscription = new DriverPackageSubscription();
+    //     subscription.setPackageDriver(pkg);
 
-        Instant now = Instant.now();
-        ZonedDateTime baseTimeUtc = getBaseTimeForNewPackage(driver);
-        Instant expiration = baseTimeUtc.plusMonths(pkg.getTime()).toInstant();
+    //     Instant now = Instant.now();
+    //     ZonedDateTime baseTimeUtc = getBaseTimeForNewPackage(driver);
+    //     Instant expiration = baseTimeUtc.plusMonths(pkg.getTime()).toInstant();
 
-        subscription.setPurchaseDate(now);
-        subscription.setExpirationDate(expiration);
-        subscription.setPackagePrice(price);
-        subscription.setActive(true);
+    //     subscription.setPurchaseDate(now);
+    //     subscription.setExpirationDate(expiration);
+    //     subscription.setPackagePrice(price);
+    //     subscription.setActive(true);
 
-        driver.addDriverPackageSubscription(subscription);
-        driverRepository.save(driver);
-    }
+    //     driver.addDriverPackageSubscription(subscription);
+    // }
 
     private void addDriverRoleIfMissing(User user) {
         Authority driverRole = authorityRepository
@@ -431,17 +453,17 @@ public class UserMobileService {
         return systemWalletRepository.save(sw);
     }
 
-    private void updateDriverStatusAndExpiration(Driver driver, PackageDriver pkg) {
-        if (driver.getDriverStatus() == DriverStatus.NOT_DRIVER) {
-            driver.setDriverStatus(DriverStatus.ACTIVE);
-        }
+    // private void updateDriverStatusAndExpiration(Driver driver, PackageDriver pkg) {
+    //     if (driver.getDriverStatus() == DriverStatus.NOT_DRIVER) {
+    //         driver.setDriverStatus(DriverStatus.ACTIVE);
+    //     }
 
-        ZonedDateTime base = getBaseTimeForNewPackage(driver);
-        Instant newExpiration = base.plusMonths(pkg.getTime()).toInstant();
+    //     ZonedDateTime base = getBaseTimeForNewPackage(driver);
+    //     Instant newExpiration = base.plusMonths(pkg.getTime()).toInstant();
 
-        driver.setExpirationDate(newExpiration);
-        driverRepository.save(driver);
-    }
+    //     driver.setExpirationDate(newExpiration);
+
+    // }
 
     private ZonedDateTime getBaseTimeForNewPackage(Driver driver) {
         Instant now = Instant.now();
