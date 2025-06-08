@@ -41,6 +41,7 @@ import strip.domain.enumeration.TripStatus;
 import strip.domain.enumeration.VehicleStatus;
 import strip.domain.enumeration.WalletTransactionType;
 import strip.repository.AuthorityRepository;
+import strip.repository.DriverPackageSubscriptionRepository;
 import strip.repository.DriverRepository;
 import strip.repository.PackageDriverRepository;
 import strip.repository.PaymentRepository;
@@ -82,6 +83,8 @@ import strip.web.rest.errors.BadRequestAlertException;
 @Transactional(readOnly = true)
 public class UserMobileService {
 
+    private final DriverPackageSubscriptionRepository driverPackageSubscriptionRepository;
+
     private static final Logger LOG = LoggerFactory.getLogger(UserMobileService.class);
     private final UserRepository userRepository;
     private final UserDetailRepository userDetailRepository;
@@ -122,7 +125,8 @@ public class UserMobileService {
         RequestTripMapper requestTripMapper,
         PaymentRepository paymentRepository,
         VehicleMapper vehicleMapper,
-        NotificationService notificationService
+        NotificationService notificationService,
+        DriverPackageSubscriptionRepository driverPackageSubscriptionRepository
     ) {
         this.userRepository = userRepository;
         this.userDetailRepository = userDetailRepository;
@@ -143,6 +147,7 @@ public class UserMobileService {
         this.paymentRepository = paymentRepository;
         this.vehicleMapper = vehicleMapper;
         this.notificationService = notificationService;
+        this.driverPackageSubscriptionRepository = driverPackageSubscriptionRepository;
     }
 
     public Optional<UserProfileDTO> getCurrentUserProfile() {
@@ -304,11 +309,9 @@ public class UserMobileService {
 
         Payment payment = createPaymentForDriverPackage(user, pkg, price);
 
-        // 💥 Gọi hàm add đúng cách (đã set driver trong đó)
         DriverPackageSubscription subscription = new DriverPackageSubscription();
         Instant now = Instant.now();
 
-        // ✅ Xác định baseTime: nếu driver chưa có hạn thì dùng now
         ZonedDateTime baseTimeUtc = driver.getExpirationDate() == null ? now.atZone(ZoneId.of("UTC")) : getBaseTimeForNewPackage(driver);
 
         Instant expiration = baseTimeUtc.plusMonths(pkg.getTime()).toInstant();
@@ -318,8 +321,8 @@ public class UserMobileService {
         subscription.setExpirationDate(expiration);
         subscription.setPackagePrice(price);
         subscription.setActive(true);
-
-        driver.addDriverPackageSubscription(subscription);
+        subscription.setDriver(driver);
+        driverPackageSubscriptionRepository.save(subscription);
 
         if (driver.getDriverStatus() == DriverStatus.NOT_DRIVER) {
             driver.setDriverStatus(DriverStatus.ACTIVE);
