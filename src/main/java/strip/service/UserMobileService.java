@@ -350,7 +350,7 @@ public class UserMobileService {
     }
 
     private Driver getValidatedDriver(User user) {
-        Driver driver = driverRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Driver not found"));
+        Driver driver = driverRepository.findByUser_id(user.getId()).orElseThrow(() -> new RuntimeException("Driver not found"));
         if (!driver.getUsedtoDriver()) {
             throw new RuntimeException("Bạn phải xác minh tài xế trước khi mua gói.");
         }
