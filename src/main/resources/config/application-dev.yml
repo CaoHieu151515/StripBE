@@ -32,11 +32,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://root:OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT@hopper.proxy.rlwy.net:56096/railway?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    # url: jdbc:mysql://localhost:3306/Strip?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+    url: 
     username: root
-    password: OWtcyLFmZslmDrGeCvtvrnioIBuhQSTT
-    # password: Delete123.
+    password: 
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -52,7 +50,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: hieuctse151515@fpt.edu.vn
-    password: fnes flic qwle iiay
+    password: 
     properties:
       mail:
         smtp:
